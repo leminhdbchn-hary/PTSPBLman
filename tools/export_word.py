@@ -54,6 +54,7 @@ def table(code, heads, rows, note=None, extra_new=3, wcur=None):
         MANIFEST[cid] = vals; addrow(cid, vals)
     for e in range(extra_new):
         addrow('%s-MOI%d' % (code, e + 1), [''] * k, True)
+    for i, c in enumerate(t.columns): c.width = Cm(cw[i])
     doc.add_paragraph().paragraph_format.space_after = Pt(2)
 
 def table_pos(code, rows, extra_new=0):
@@ -71,6 +72,7 @@ def table_pos(code, rows, extra_new=0):
             if j == 0: r.font.size = Pt(8); r.font.color.rgb = RGBColor(0x66, 0x66, 0x66)
             if j == 1: r.font.size = Pt(9); r.font.color.rgb = RGBColor(0x55, 0x55, 0x55)
             if j == 3: shade(cells[j], 'FFFBE6')
+    for i, c in enumerate(t.columns): c.width = Cm(cw[i])
     doc.add_paragraph().paragraph_format.space_after = Pt(2)
 
 def h1(t): doc.add_heading(t, level=1)

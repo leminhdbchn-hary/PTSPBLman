@@ -1,0 +1,964 @@
+{
+ "CE-CHUC-01": [
+  "Chúc {x} 20/10 được tặng hoa nhiều tới mức phải nhờ anh em bê hộ về nhà."
+ ],
+ "CE-CHUC-02": [
+  "Chúc {x} lúc nào cũng xinh, cười thật nhiều, còn deadline thì cứ từ từ hẵng tới."
+ ],
+ "CE-CHUC-03": [
+  "Chúc {x} gửi file một lần là sếp duyệt luôn, không có vòng hai vòng ba gì hết."
+ ],
+ "CE-CHUC-04": [
+  "Chúc {x} sáng nào đi làm cũng có chỗ đỗ xe, trưa nào cũng có món ngon, chiều nào cũng về đúng giờ."
+ ],
+ "CE-CHUC-05": [
+  "Chúc {x} hôm nay khỏi phải làm gì, chỉ cần ngồi xinh cho anh em ngắm thôi."
+ ],
+ "CE-CHUC-06": [
+  "Chúc {x} lúc nào cũng vui như ngày nhận lương, và bình tĩnh như hôm hệ thống chạy ngon lành."
+ ],
+ "CE-CHUC-07": [
+  "Chúc {x} ăn hoài không béo, tiêu hoài không hết, còn họp hoài thì… thôi khỏi họp."
+ ],
+ "CE-CHUC-08": [
+  "Chúc {x} mọi việc trôi chảy như chuyển khoản nội bộ: nhanh, gọn, không mất phí."
+ ],
+ "CE-CHUC-09": [
+  "Chúc {x} 20/10 nhận được thật nhiều lời khen thật lòng, kèm một cốc trà sữa full topping."
+ ],
+ "CE-CHUC-10": [
+  "Chúc {x} nụ cười lúc nào cũng tươi, dù cuối tháng có phải chạy số tới đâu."
+ ],
+ "CE-CHUC-11": [
+  "Chúc {x} thật khỏe, thật vui, và thật ít tin nhắn mở đầu bằng “chị ơi gấp”."
+ ],
+ "CE-CHUC-12": [
+  "Chúc {x} luôn được thương như ngày đầu về Phòng, và được chiều như ngày 20/10."
+ ],
+ "CE-CHUC-13": [
+  "Chúc sản phẩm nào {x} làm ra cũng được khách khen, còn {x} thì được cả Phòng khen."
+ ],
+ "CE-CHUC-14": [
+  "Chúc {x} ngày nào cũng đẹp trời, kể cả hôm phải làm báo cáo quý."
+ ],
+ "CE-CHUC-15": [
+  "Chúc {x} lúc nào cũng có người pha cà phê, có người đặt cơm, có người làm hộ slide."
+ ],
+ "CE-CHUC-16": [
+  "Chúc {x} xinh vừa đủ để cả Phòng mê, giỏi vừa đủ để sếp tin, vui thật nhiều để anh em đỡ sợ."
+ ],
+ "CE-CHUC-17": [
+  "Chúc {x} 20/10 thật ngọt ngào, ngọt hơn cả miếng bánh anh em mang tới."
+ ],
+ "CE-CHUC-18": [
+  "Chúc {x} cứ thong thả mà xinh, việc khó đã có anh em lo (lo được tới đâu hay tới đó)."
+ ],
+ "CE-CHUC-19": [
+  "Chúc {x} tờ trình nào cũng qua, ý tưởng nào cũng được khen, và lương thì cứ đều đều mà tăng."
+ ],
+ "CE-CHUC-20": [
+  "Chúc {x} một ngày 20/10 rộn ràng: sáng nhận hoa, trưa nhận quà, chiều nhận… lời khen của anh em."
+ ],
+ "CE-DANH-01": [
+  "Hoa khôi Phòng PTSPBL (do anh em tự bầu)"
+ ],
+ "CE-DANH-02": [
+  "Giám đốc Điều hành Nụ Cười"
+ ],
+ "CE-DANH-03": [
+  "Chuyên gia Gỡ Rối Mọi Báo Cáo"
+ ],
+ "CE-DANH-04": [
+  "Nữ hoàng Deadline"
+ ],
+ "CE-DANH-05": [
+  "Chủ tịch Hội Trà Chiều"
+ ],
+ "CE-DANH-06": [
+  "Người giữ lửa của Phòng"
+ ],
+ "CE-DANH-07": [
+  "Trưởng ban Ăn Vặt"
+ ],
+ "CE-DANH-08": [
+  "Phù thủy Excel"
+ ],
+ "CE-DANH-09": [
+  "Đệ nhất Pha Trò Lúc Mệt"
+ ],
+ "CE-DANH-10": [
+  "Bộ não của mọi ý tưởng sản phẩm"
+ ],
+ "CE-DANH-11": [
+  "Đại sứ Thân thiện của Phòng"
+ ],
+ "CE-DANH-12": [
+  "Cố vấn Cấp cao về Trà Sữa"
+ ],
+ "CE-DQ-01": [
+  "☕",
+  "Cốc cà phê có người pha sẵn"
+ ],
+ "CE-DQ-02": [
+  "😴",
+  "Thêm 1 tiếng ngủ nướng cuối tuần"
+ ],
+ "CE-DQ-03": [
+  "🛍️",
+  "Quyền mua sắm không phải giải trình"
+ ],
+ "CE-DQ-04": [
+  "🙅",
+  "Thẻ miễn 1 cuộc họp"
+ ],
+ "CE-DQ-05": [
+  "🎶",
+  "Playlist chill tự bật mỗi khi gần deadline"
+ ],
+ "CE-DQ-06": [
+  "🍰",
+  "Bánh ngọt không tính calo (hiệu lực đến hết 20/10)"
+ ],
+ "CE-DQ-07": [
+  "🚀",
+  "Tờ trình nào cũng được duyệt ngay lần đầu"
+ ],
+ "CE-DQ-08": [
+  "💐",
+  "Hoa tươi giao tận bàn, không cần đặt trước"
+ ],
+ "CE-NOTE-01": [
+  "✨",
+  "Tính năng mới",
+  "Nụ cười của chị em giờ tự gia hạn, không cần OTP, không giới hạn hạn mức."
+ ],
+ "CE-NOTE-02": [
+  "🐞",
+  "Đã sửa lỗi",
+  "Lỗi “chị ơi file này để đâu” đã được vá. Hiệu lực trong 24 giờ, sau đó… tính tiếp."
+ ],
+ "CE-NOTE-03": [
+  "⚡",
+  "Tăng tốc",
+  "Xử lý deadline nhanh gấp đôi. Riêng khoản pha cà phê được cố ý làm chậm để còn thưởng thức."
+ ],
+ "CE-NOTE-04": [
+  "🔒",
+  "Bảo mật",
+  "Bí kíp giữ dáng, giữ lương, giữ bình tĩnh của chị em được mã hóa tuyệt đối. Sếp cũng không xem được."
+ ],
+ "CE-NOTE-05": [
+  "📈",
+  "Tăng trưởng",
+  "Thị phần trong lòng anh em: 100%, vượt kế hoạch 20,10%."
+ ],
+ "CE-NOTE-06": [
+  "⚠️",
+  "Lưu ý",
+  "Bản này không quay về chế độ “ngày thường” được. Hôm nay cứ được chiều thôi."
+ ],
+ "CE-RUT-01": [
+  "Máy vừa soi hồ sơ: chị em PTSPBL đạt loại “xuất sắc” ở mọi tiêu chí, kể cả tiêu chí xinh."
+ ],
+ "CE-RUT-02": [
+  "Cảnh báo nhẹ: mức độ đáng yêu đang vượt ngưỡng cho phép. Anh em xin phép không xử lý."
+ ],
+ "CE-RUT-03": [
+  "Hệ thống xác nhận: nụ cười của chị em là sản phẩm chưa có đối thủ cạnh tranh."
+ ],
+ "CE-CAO-01": [
+  "🎟️",
+  "Miễn 1 cuộc họp",
+  "Dùng lúc nào tùy chị"
+ ],
+ "CE-CAO-02": [
+  "☕",
+  "1 cốc cà phê, anh em trả tiền",
+  "Hạn dùng: hôm nay"
+ ],
+ "CE-CAO-03": [
+  "🕊️",
+  "1 buổi về đúng giờ, không ai nhắn “chị ơi em hỏi chút”",
+  "Không áp dụng cuối quý"
+ ],
+ "CE-CAO-04": [
+  "🍰",
+  "1 miếng bánh ngọt 0 calo",
+  "Hiệu lực đến hết 20/10"
+ ],
+ "CE-CAO-05": [
+  "👑",
+  "Danh hiệu “Nữ hoàng của Phòng” cả ngày hôm nay",
+  "Không cần nộp hồ sơ"
+ ],
+ "CE-CAO-06": [
+  "🤝",
+  "Anh em làm hộ 1 việc vặt",
+  "Trong giờ hành chính nha"
+ ],
+ "CE-QUA-01": [
+  "1 cốc cà phê anh em đãi"
+ ],
+ "CE-QUA-02": [
+  "1 gói KitKat"
+ ],
+ "CE-QUA-03": [
+  "1 phần bánh ngọt chiều nay"
+ ],
+ "CE-QUA-04": [
+  "1 bó hoa nhỏ để bàn"
+ ],
+ "CE-QUA-05": [
+  "Thẻ nhờ anh em 1 việc bất kỳ"
+ ],
+ "CE-QUA-06": [
+  "Quà bí mật, nhận tại buổi gặp mặt"
+ ],
+ "CE-TUONG-01": [
+  "Chúc các chị em 20/10 không có việc gì gấp, trừ việc ăn bánh."
+ ],
+ "CE-TUONG-02": [
+  "Cảm ơn các chị em đã làm Phòng mình vui hơn nhiều lắm luôn."
+ ],
+ "CE-TUONG-03": [
+  "Anh em hứa hôm nay không hỏi “file này để đâu” nữa. Mai hỏi tiếp."
+ ],
+ "CE-TUONG-04": [
+  "Không có chị em chắc Phòng mình toàn mùi cà phê với tiếng gõ phím."
+ ],
+ "CE-KY-01": [
+  "Anh em Nam Phòng PTSPBL"
+ ],
+ "CE-TRANG-01": [
+  "20/10 · Bản phát hành đặc biệt dành cho chị em Phòng PTSPBL"
+ ],
+ "CE-TRANG-02": [
+  "🚀 GO-LIVE!"
+ ],
+ "CE-TRANG-03": [
+  "v20.10 · BẢN PHÁT HÀNH ĐẶC BIỆT"
+ ],
+ "CE-TRANG-04": [
+  "CHÚC MỪNG"
+ ],
+ "CE-TRANG-05": [
+  "Nhập tên để nhận thiệp riêng"
+ ],
+ "CE-TRANG-06": [
+  "Trang này có"
+ ],
+ "CE-TRANG-07": [
+  "7 phần quà"
+ ],
+ "CE-TRANG-08": [
+  ", mở lần lượt từng phần một. Xong phần nào là tự động sang phần kế tiếp nha 🎁"
+ ],
+ "CE-TRANG-09": [
+  "Mở quà thôi ↓"
+ ],
+ "CE-TRANG-10": [
+  "Phần 1/7 · Release Notes"
+ ],
+ "CE-TRANG-11": [
+  "Bản v20.10 có gì mới?"
+ ],
+ "CE-TRANG-12": [
+  "Chạm vào từng dòng để đọc. Đọc hết 6 dòng là mở được phần tiếp theo."
+ ],
+ "CE-TRANG-13": [
+  "Phần 2/7 · Máy rút lời chúc"
+ ],
+ "CE-TRANG-14": [
+  "Rút lời chúc, không cần thẻ"
+ ],
+ "CE-TRANG-15": [
+  "Bấm “Rút” 3 lần để nhận 3 lời chúc. Lần thứ 3 có bất ngờ đó."
+ ],
+ "CE-TRANG-16": [
+  "Mời chị bấm nút để bắt đầu giao dịch 💳"
+ ],
+ "CE-TRANG-17": [
+  "Giao dịch: 0"
+ ],
+ "CE-TRANG-18": [
+  "RÚT 💸"
+ ],
+ "CE-TRANG-19": [
+  "Phần 3/7 · Thẻ cào"
+ ],
+ "CE-TRANG-20": [
+  "Cào nhẹ tay thôi, quà không chạy đâu"
+ ],
+ "CE-TRANG-21": [
+  "Dùng ngón tay (hoặc chuột) cào lớp bạc cho tới khi lộ ưu đãi."
+ ],
+ "CE-TRANG-22": [
+  "Phần 4/7 · Cắm hoa"
+ ],
+ "CE-TRANG-23": [
+  "Tự cắm một bó hoa thật xinh"
+ ],
+ "CE-TRANG-24": [
+  "Chạm vào loại hoa chị thích, các anh sẽ chạy ra, mỗi anh cầm một bông cắm vào bó giúp chị. Cắm ít nhất 5 bông rồi bấm “Xong bó hoa”. Bó hoa sẽ nằm trên thiệp của chị."
+ ],
+ "CE-TRANG-25": [
+  "Phần 5/7 · Vòng quay quà"
+ ],
+ "CE-TRANG-26": [
+  "Quay 2 lượt, nhận 2 món quà"
+ ],
+ "CE-TRANG-27": [
+  "Mỗi người quay 2 lượt, ra 2 món quà khác nhau. Quà anh em chuẩn bị thật và trao tận tay ở buổi gặp mặt."
+ ],
+ "CE-TRANG-28": [
+  "🎡 QUAY LƯỢT 1/2"
+ ],
+ "CE-TRANG-29": [
+  "🙋 Chị muốn nhờ anh em việc gì?"
+ ],
+ "CE-TRANG-30": [
+  "VD: Bê giúp em thùng nước lên tầng, sửa giúp em cái máy in…"
+ ],
+ "CE-TRANG-31": [
+  "📨 Gửi cho anh em"
+ ],
+ "CE-TRANG-32": [
+  "Phần 6/7 · Anh em nhắn gửi"
+ ],
+ "CE-TRANG-33": [
+  "Mấy lời anh em muốn nói"
+ ],
+ "CE-TRANG-34": [
+  "Đọc hết rồi 💌"
+ ],
+ "CE-TRANG-35": [
+  "Phần 7/7 · Thiệp riêng"
+ ],
+ "CE-TRANG-36": [
+  "Thiệp 20/10 của riêng chị"
+ ],
+ "CE-TRANG-37": [
+  "Tải về đăng Facebook, Zalo hay làm hình nền đều xinh. Khung đứng 2:3 vừa đẹp để đăng mạng xã hội."
+ ],
+ "CE-TRANG-38": [
+  "⬇️ Tải thiệp về máy"
+ ],
+ "CE-TRANG-39": [
+  "📤 Chia sẻ"
+ ],
+ "CE-TRANG-40": [
+  "🎲 Đổi lời chúc khác"
+ ],
+ "CE-TRANG-41": [
+  "Cả nhà PTSPBL · 20.10"
+ ],
+ "CE-TRANG-42": [
+  "Chúc chị em Phòng PTSPBL một ngày 20/10 thật rực rỡ 🌹"
+ ],
+ "CE-TRANG-43": [
+  "Trang chúc mừng nội bộ, làm cho vui · không liên quan đến sản phẩm thật của ngân hàng."
+ ],
+ "CE-TB-01": [
+  "Đọc hết 6 dòng Release Notes"
+ ],
+ "CE-TB-02": [
+  "Rút đủ 3 lời chúc ở máy"
+ ],
+ "CE-TB-03": [
+  "Cào lộ thẻ ưu đãi"
+ ],
+ "CE-TB-04": [
+  "Cắm xong bó hoa"
+ ],
+ "CE-TB-05": [
+  "Quay đủ 2 lượt vòng quay quà"
+ ],
+ "CE-TB-06": [
+  "Đọc lời nhắn của anh em"
+ ],
+ "CE-TB-07": [
+  "Máy rút lời chúc"
+ ],
+ "CE-TB-08": [
+  "Thẻ cào"
+ ],
+ "CE-TB-09": [
+  "Cắm hoa"
+ ],
+ "CE-TB-10": [
+  "Vòng quay quà"
+ ],
+ "CE-TB-11": [
+  "Lời nhắn anh em"
+ ],
+ "CE-TB-12": [
+  "Thiệp riêng"
+ ],
+ "CE-TB-13": [
+  " ở phần trên nha."
+ ],
+ "CE-TB-14": [
+  "✔ Xong rồi!"
+ ],
+ "CE-TB-15": [
+  "✔ Xong! Đang sang phần tiếp theo…"
+ ],
+ "CE-TB-16": [
+  "▸ Kiểm thử UAT ..... ✔ Đạt (tester nào cũng cười)"
+ ],
+ "CE-TB-17": [
+  "▸ Rủi ro ........... ✔ 0% (đã bảo hiểm bằng đồ ăn)"
+ ],
+ "CE-TB-18": [
+  "▸ Độ hài lòng ...... ✔ 120% kế hoạch"
+ ],
+ "CE-TB-19": [
+  "Không cần thế chấp, không cần bảo lãnh, mà yêu thương thì không giới hạn hạn mức. 20/10 này chúc "
+ ],
+ "CE-TB-20": [
+  " thật vui, thật xinh và thật… ít việc nha!"
+ ],
+ "CE-TB-21": [
+  "Không cần thế chấp, không cần bảo lãnh, mà yêu thương thì không giới hạn hạn mức. Nhập tên để nhận thiệp riêng nha!"
+ ],
+ "CE-TB-22": [
+  " nữa. Chúc mừng sinh nhật "
+ ],
+ "CE-TB-23": [
+  "Thương mến, "
+ ],
+ "CE-TB-24": [
+  "Chị nhập tên trước nha 😄"
+ ],
+ "CE-TB-25": [
+  "Rút thêm "
+ ],
+ "CE-TB-26": [
+  " lần nữa nha"
+ ],
+ "CE-TB-27": [
+  "Bấm RÚT để nhận lời chúc đầu tiên"
+ ],
+ "CE-TB-28": [
+  "Đang xử lý giao dịch… 💳"
+ ],
+ "CE-TB-29": [
+  "Giao dịch: "
+ ],
+ "CE-TB-30": [
+  "🎉 TRÚNG THƯỞNG GIAO DỊCH THỨ 3!"
+ ],
+ "CE-TB-31": [
+  "Phí “chuyển tiền cảm xúc” được miễn 100%, áp dụng trọn đời."
+ ],
+ "CE-TB-32": [
+  "🔔 THÔNG BÁO"
+ ],
+ "CE-TB-33": [
+  "🤗 MÁY HẾT TIỀN MẶT RỒI…"
+ ],
+ "CE-TB-34": [
+  "Nhưng ôm thì còn vô hạn. Mời chị nhận một cái ôm (từ xa) của anh em."
+ ],
+ "CE-TB-35": [
+  "Giao dịch thành công ✔ Chị nhận phiếu bên dưới nha."
+ ],
+ "CE-TB-36": [
+  "✨ CÀO Ở ĐÂY ✨"
+ ],
+ "CE-TB-37": [
+  "Cào hơn nửa thẻ là lộ quà"
+ ],
+ "CE-TB-38": [
+  "Trúng rồi nè! 🎉"
+ ],
+ "CE-TB-39": [
+  "Bó hoa xinh quá trời 💐"
+ ],
+ "CE-TB-40": [
+  "Cắm ít nhất 5 bông rồi bấm “Xong bó hoa”"
+ ],
+ "CE-TB-41": [
+  "Còn 1 lượt quay nữa nha"
+ ],
+ "CE-TB-42": [
+  "Bấm QUAY để nhận món quà đầu tiên"
+ ],
+ "CE-TB-43": [
+  "Chị ghi việc cần nhờ trước nha ✍️"
+ ],
+ "CE-TB-44": [
+  " dùng “Thẻ nhờ anh em 1 việc bất kỳ”: "
+ ],
+ "CE-TB-45": [
+  "Đã mở form gửi anh em. Chị bấm Gửi trong form là xong nha."
+ ],
+ "CE-TB-46": [
+  "Đã sao chép lời nhờ. Chị dán vào nhóm chat của Phòng là anh em thấy liền!"
+ ],
+ "CE-TB-47": [
+  "Đọc xong thì bấm “Đọc hết rồi” nha"
+ ],
+ "CE-TB-48": [
+  "Gửi các chị em thương mến"
+ ],
+ "CE-TB-49": [
+  "Chị em Phòng PTSPBL"
+ ],
+ "CE-TB-50": [
+  "Đã tải thiệp về máy 🌹"
+ ],
+ "CE-TB-51": [
+  "Thiệp 20/10 của Phòng PTSPBL 🌹"
+ ],
+ "CE-TB-52": [
+  "Đã sao chép link 📋"
+ ],
+ "CE-TB-53": [
+  "Đổi lời chúc rồi nè 🎲"
+ ],
+ "CE-TB-54": [
+  "Chị Hạnh ơi 20.10"
+ ],
+ "SEP-CHUC-01": [
+  "Anh em chúc {x} 20/10 thật rực rỡ, và hứa hôm nay không gửi email nào có chữ “gấp”."
+ ],
+ "SEP-CHUC-02": [
+  "Chúc {x} mọi tờ trình đều được duyệt ngay lần đầu, ở cả hai chiều."
+ ],
+ "SEP-CHUC-03": [
+  "Cảm ơn {x} đã kiên nhẫn với những lần anh em xin thêm 5 phút nữa."
+ ],
+ "SEP-CHUC-04": [
+  "Chúc {x} nụ cười luôn tươi hơn mọi chỉ tiêu và vững hơn mọi kế hoạch."
+ ],
+ "SEP-CHUC-05": [
+  "Chúc {x} một ngày không họp, nhiều hoa, và có anh em pha sẵn cà phê."
+ ],
+ "SEP-CHUC-06": [
+  "Anh em xin gửi {x} lời chúc chân thành nhất, kèm cam kết nghiêm túc nhất: hôm nay sẽ tử tế hơn mọi ngày."
+ ],
+ "SEP-CHUC-07": [
+  "Chúc {x} luôn được quý trọng như sản phẩm chủ lực của cả khối."
+ ],
+ "SEP-CHUC-08": [
+  "Có {x}, cả phòng có phương hướng. Hôm nay anh em xin có hoa."
+ ],
+ "SEP-CHUC-09": [
+  "Chúc {x} sức khỏe dồi dào để tiếp tục “góp ý” cho anh em, chúng em sẽ cố tiếp thu."
+ ],
+ "SEP-CHUC-10": [
+  "Chúc {x} mọi quyết định đều đúng, mọi cuộc họp đều ngắn, mọi nụ cười đều thật."
+ ],
+ "SEP-CHUC-11": [
+  "Cảm ơn {x} đã là chỗ dựa vững chắc, dù đôi khi anh em làm {x} đau đầu."
+ ],
+ "SEP-CHUC-12": [
+  "Chúc {x} 20/10 này thật nhiều niềm vui, và thật ít… email “chị xem giúp em”."
+ ],
+ "SEP-DANH-01": [
+  "Thuyền trưởng Kiên Nhẫn của Con Tàu PTSPBL"
+ ],
+ "SEP-DANH-02": [
+  "Tổng chỉ huy Mọi Cuộc Họp (luôn đúng giờ)"
+ ],
+ "SEP-DANH-03": [
+  "Người Thắp Lửa Của Cả Phòng"
+ ],
+ "SEP-DANH-04": [
+  "Chủ tịch Danh dự Hội đồng Duyệt Tờ Trình Nhanh"
+ ],
+ "SEP-DANH-05": [
+  "Nữ Hoàng Của Những Lời Góp Ý Chuẩn Xác"
+ ],
+ "SEP-DANH-06": [
+  "Bộ Não Chiến Lược kiêm Trưởng Ban Tinh Thần"
+ ],
+ "SEP-DANH-07": [
+  "Chị Cả 5 Sao Không Cần Đánh Giá"
+ ],
+ "SEP-NL-01": [
+  "Tốc độ duyệt tờ trình: nhanh như chớp (khi anh em gửi đủ hồ sơ)"
+ ],
+ "SEP-NL-02": [
+  "Khả năng phát hiện lỗi chính tả: không cần kính lúp"
+ ],
+ "SEP-NL-03": [
+  "Độ kiên nhẫn: vô hạn (đã được kiểm chứng nhiều lần)"
+ ],
+ "SEP-NL-04": [
+  "Kỹ năng họp: luôn biết lúc nào nên kết thúc cuộc họp"
+ ],
+ "SEP-NL-05": [
+  "Khả năng đoán anh em đang nghĩ gì: chính xác 100%"
+ ],
+ "SEP-NL-06": [
+  "Nụ cười: không cần giải trình"
+ ],
+ "SEP-NL-07": [
+  "Gu cà phê: khó, nhưng anh em đang học"
+ ],
+ "SEP-NL-08": [
+  "Tầm nhìn chiến lược: xa hơn deadline anh em tự đặt"
+ ],
+ "SEP-NL-09": [
+  "Độ tin cậy: cao hơn mọi mức xếp hạng tín nhiệm"
+ ],
+ "SEP-NL-10": [
+  "Sức lan tỏa: cả phòng đều bị lây tinh thần"
+ ],
+ "SEP-NL-11": [
+  "Hạn mức quan tâm dành cho anh em: không giới hạn"
+ ],
+ "SEP-NL-12": [
+  "Khả năng nhìn ra giải pháp: nhanh hơn khả năng anh em tìm ra vấn đề"
+ ],
+ "SEP-CK-01": [
+  "Anh em cam kết gửi báo cáo trước deadline… ít nhất một lần trong năm."
+ ],
+ "SEP-CK-02": [
+  "Anh em cam kết không nhắn “Sếp ơi gấp ạ” vào cuối giờ."
+ ],
+ "SEP-CK-03": [
+  "Anh em cam kết nhớ món cà phê của Sếp, kể cả khi Sếp đổi ý."
+ ],
+ "SEP-CK-04": [
+  "Anh em cam kết luôn nói “cảm ơn” khi được góp ý (nói thật lòng)."
+ ],
+ "SEP-CK-05": [
+  "Anh em cam kết tặng hoa đúng ngày, không để Sếp phải nhắc."
+ ],
+ "SEP-CK-06": [
+  "Anh em cam kết đọc kỹ tờ trình trước khi trình (nỗ lực tối đa)."
+ ],
+ "SEP-CD-01": [
+  "Hôm nay mọi việc đều có thể chờ đến mai, trừ việc cười."
+ ],
+ "SEP-CD-02": [
+  "Giao anh em pha cà phê đến hết ngày. Chất lượng: theo cảm xúc."
+ ],
+ "SEP-CD-03": [
+  "Mỗi người khen Sếp ít nhất 3 câu, có minh chứng cụ thể."
+ ],
+ "SEP-CD-04": [
+  "Cấm họp “sync nhanh”. Thay bằng “ăn nhanh”."
+ ],
+ "SEP-CD-05": [
+  "Cuối giờ anh em tự dọn phòng họp. Sếp ở lại ngắm hoa."
+ ],
+ "SEP-CD-06": [
+  "Mọi email hôm nay phải bắt đầu bằng hai chữ “Chúc mừng”."
+ ],
+ "SEP-CD-07": [
+  "Tạm dừng toàn bộ deadline đến 17h30, nếu không ai phát hiện."
+ ],
+ "SEP-CD-08": [
+  "Hôm nay Sếp luôn đúng. Ngày mai sẽ xem xét lại."
+ ],
+ "SEP-CD-09": [
+  "Quà tặng Sếp phải là hoa tươi, không được là tờ trình."
+ ],
+ "SEP-CD-10": [
+  "Anh em xếp hàng chúc mừng theo thứ tự ai nhanh chân nhất."
+ ],
+ "SEP-CD-11": [
+  "Chủ đề cuộc họp ngày mai: “Cách để Sếp được thương nhiều hơn”."
+ ],
+ "SEP-CD-12": [
+  "Ai quên ngày 20/10 phải làm 10 chiếc bánh… tưởng tượng."
+ ],
+ "SEP-TUONG-01": [
+  "Cảm ơn Sếp đã kiên nhẫn với những lần anh em xin thêm 5 phút nữa."
+ ],
+ "SEP-TUONG-02": [
+  "Chúc Sếp thật nhiều sức khỏe để còn “góp ý” cho anh em, tụi em sẽ cố tiếp thu ạ."
+ ],
+ "SEP-TUONG-03": [
+  "Có Sếp là cả Phòng có phương hướng. Hôm nay anh em xin phép có hoa."
+ ],
+ "SEP-TUONG-04": [
+  "Chúc Sếp tờ trình nào cũng duyệt ngay vòng đầu, cả chiều đi lẫn chiều về."
+ ],
+ "SEP-TRANG-01": [
+  "20/10 · Tờ trình kính chúc các Sếp Phòng PTSPBL"
+ ],
+ "SEP-TRANG-02": [
+  "TỜ TRÌNH"
+ ],
+ "SEP-TRANG-03": [
+  "Số: 20/10/PTSPBL-TT · Mật độ yêu thương: CAO"
+ ],
+ "SEP-TRANG-04": [
+  "V/v:"
+ ],
+ "SEP-TRANG-05": [
+  "Xin phép được chúc mừng"
+ ],
+ "SEP-TRANG-06": [
+  "các Sếp"
+ ],
+ "SEP-TRANG-07": [
+  "nhân ngày Phụ nữ Việt Nam 20/10."
+ ],
+ "SEP-TRANG-08": [
+  "Kính trình:"
+ ],
+ "SEP-TRANG-09": [
+  "Quý Sếp"
+ ],
+ "SEP-TRANG-10": [
+  "Căn cứ:"
+ ],
+ "SEP-TRANG-11": [
+  "sự tận tâm của Sếp và lương tâm (hơi muộn) của anh em."
+ ],
+ "SEP-TRANG-12": [
+  "Đề xuất:"
+ ],
+ "SEP-TRANG-13": [
+  "Cho phép anh em được chúc, được tặng hoa, và được… nghỉ chiều nay (đề nghị này có thể bị bác)."
+ ],
+ "SEP-TRANG-14": [
+  "Kính trình,"
+ ],
+ "SEP-TRANG-15": [
+  "Anh em Nam Phòng PTSPBL"
+ ],
+ "SEP-TRANG-16": [
+  "ĐÃ DUYỆT"
+ ],
+ "SEP-TRANG-17": [
+  "✍️ Phê duyệt"
+ ],
+ "SEP-TRANG-18": [
+  "TỜ TRÌNH ĐÃ ĐƯỢC PHÊ DUYỆT ✔"
+ ],
+ "SEP-TRANG-19": [
+  "KÍNH CHÚC"
+ ],
+ "SEP-TRANG-20": [
+  "Tên của Sếp (VD: Lan)"
+ ],
+ "SEP-TRANG-21": [
+  "🎉 Có quà!"
+ ],
+ "SEP-TRANG-22": [
+  "Vuốt xuống để xem tiếp ↓"
+ ],
+ "SEP-TRANG-23": [
+  "Hồ sơ năng lực"
+ ],
+ "SEP-TRANG-24": [
+  "Báo cáo năng lực của Sếp"
+ ],
+ "SEP-TRANG-25": [
+  "Do anh em tự đánh giá (chưa có ai kiểm duyệt, kể cả chính Sếp)."
+ ],
+ "SEP-TRANG-26": [
+  "Bản cam kết"
+ ],
+ "SEP-TRANG-27": [
+  "Anh em xin cam kết"
+ ],
+ "SEP-TRANG-28": [
+  "Chạm từng mục để “ký” cam kết. Ký đủ cả 6 mục thì có hiệu lực ngay!"
+ ],
+ "SEP-TRANG-29": [
+  "Ý kiến chỉ đạo"
+ ],
+ "SEP-TRANG-30": [
+  "Sếp có chỉ đạo gì không ạ?"
+ ],
+ "SEP-TRANG-31": [
+  "Bấm để nhận một chỉ đạo của ngày 20/10. Anh em xin nghiêm túc thực hiện (có chọn lọc)."
+ ],
+ "SEP-TRANG-32": [
+  "Công văn chỉ đạo"
+ ],
+ "SEP-TRANG-33": [
+  "Chạm “Xin chỉ đạo” bên dưới nhé."
+ ],
+ "SEP-TRANG-34": [
+  "📜 Xin chỉ đạo"
+ ],
+ "SEP-TRANG-35": [
+  "Hoa tặng Sếp"
+ ],
+ "SEP-TRANG-36": [
+  "Anh em tự tay cắm một bó hoa"
+ ],
+ "SEP-TRANG-37": [
+  "Chọn từng bông rồi bấm “Tặng bó hoa”. Bó hoa sẽ được in lên thiệp ở cuối trang."
+ ],
+ "SEP-TRANG-38": [
+  "Vòng quay quà"
+ ],
+ "SEP-TRANG-39": [
+  "Quà bí mật của anh em"
+ ],
+ "SEP-TRANG-40": [
+  "Sếp quay 2 lượt, nhận 2 món quà khác nhau. Quà thật, anh em xin trao tận tay ở buổi gặp mặt của Phòng."
+ ],
+ "SEP-TRANG-41": [
+  "🎡 QUAY LƯỢT 1/2"
+ ],
+ "SEP-TRANG-42": [
+  "Tường lời chúc"
+ ],
+ "SEP-TRANG-43": [
+  "Anh em nhắn gửi"
+ ],
+ "SEP-TRANG-44": [
+  "Thiệp riêng"
+ ],
+ "SEP-TRANG-45": [
+  "Thiệp 20/10 của riêng chị"
+ ],
+ "SEP-TRANG-46": [
+  "Tải về làm kỷ niệm, hoặc gửi cho Sếp nhé."
+ ],
+ "SEP-TRANG-47": [
+  "⬇️ Tải thiệp về máy"
+ ],
+ "SEP-TRANG-48": [
+  "📤 Chia sẻ"
+ ],
+ "SEP-TRANG-49": [
+  "🎲 Đổi danh hiệu & lời chúc"
+ ],
+ "SEP-TRANG-50": [
+  "Cả nhà PTSPBL · 20.10"
+ ],
+ "SEP-TRANG-51": [
+  "Kính chúc các Sếp một ngày 20/10 thật rực rỡ, thật nhiều hoa và thật ít… họp 🌹"
+ ],
+ "SEP-TRANG-52": [
+  "Trang chúc mừng nội bộ, làm vì vui · không liên quan đến sản phẩm thật của ngân hàng."
+ ],
+ "SEP-TB-01": [
+  "Nhân ngày 20/10, anh em Phòng PTSPBL xin gửi "
+ ],
+ "SEP-TB-02": [
+  " lời chúc trân trọng nhất: thật khỏe, thật vui, và luôn được thương như cách "
+ ],
+ "SEP-TB-03": [
+  " thương anh em."
+ ],
+ "SEP-TB-04": [
+  "Anh em xin gửi lời chúc trân trọng nhất đến các Sếp nhân ngày 20/10. Nhập tên để nhận thiệp riêng nhé!"
+ ],
+ "SEP-TB-05": [
+  "Nhập tên Sếp trước nhé 🙂"
+ ],
+ "SEP-TB-06": [
+  "Kính chúc Sếp 20/10! 🌷"
+ ],
+ "SEP-TB-07": [
+  "Hoa đây, hoa đây! 💐"
+ ],
+ "SEP-TB-08": [
+  "Sếp ơi, hôm nay là ngày của Sếp!"
+ ],
+ "SEP-TB-09": [
+  "Tạm dừng deadline 1 phút 🕊️"
+ ],
+ "SEP-TB-10": [
+  "Đã ký 0/"
+ ],
+ "SEP-TB-11": [
+  " cam kết"
+ ],
+ "SEP-TB-12": [
+  "🎉 Bản cam kết có hiệu lực… đến hết ngày 20/10!"
+ ],
+ "SEP-TB-13": [
+  "Sếp chỉ đạo liên tục, anh em xin ghi nhận! 📝"
+ ],
+ "SEP-TB-14": [
+  "Đã tặng Sếp bó hoa 💐"
+ ],
+ "SEP-TB-15": [
+  "🎁 Tặng Sếp bó hoa"
+ ],
+ "SEP-TB-16": [
+  "Gửi chị thương mến"
+ ],
+ "SEP-TB-17": [
+  "Gửi các chị thương mến"
+ ],
+ "SEP-TB-18": [
+  "Các chị lãnh đạo của Phòng"
+ ],
+ "SEP-TB-19": [
+  "Đã tải thiệp về máy 🌹"
+ ],
+ "SEP-TB-20": [
+  "20/10 · Thiệp của chị "
+ ],
+ "SEP-TB-21": [
+  "Thiệp 20/10 của chị "
+ ],
+ "SEP-TB-22": [
+  "Đã sao chép link 📋"
+ ],
+ "SEP-TB-23": [
+  "Đã đổi danh hiệu & lời chúc 🎲"
+ ],
+ "SEP-TB-24": [
+  "Sếp Hạnh 20.10"
+ ],
+ "CHUNG-01": [
+  "\" aria-label=\"Thêm hoa "
+ ],
+ "CHUNG-02": [
+  "Chạm vào loại hoa để các anh chạy ra cắm giúp nha (tối đa "
+ ],
+ "CHUNG-03": [
+  " bông, cần thêm "
+ ],
+ "CHUNG-04": [
+  " bông nữa là đẹp"
+ ],
+ "CHUNG-05": [
+  " bông. Đẹp rồi đó!"
+ ],
+ "CHUNG-06": [
+  "Đợi các anh cắm xong đã nha 😄"
+ ],
+ "CHUNG-07": [
+  "Cắm ít nhất "
+ ],
+ "CHUNG-08": [
+  " bông rồi bấm Xong nha 🌷"
+ ],
+ "CHUNG-09": [
+  "Cả nhà vỗ tay chúc mừng chị nào! 👏👏👏"
+ ],
+ "CHUNG-10": [
+  "✔ Đã quay đủ 2 lượt"
+ ],
+ "CHUNG-11": [
+  "🎡 QUAY LƯỢT 2/2"
+ ],
+ "CHUNG-12": [
+  "🎡 QUAY LƯỢT 1/2"
+ ],
+ "CHUNG-13": [
+  "Đang quay…"
+ ],
+ "CHUNG-14": [
+  "PHÒNG PTSPBL  ·  20.10."
+ ],
+ "CHUNG-15": [
+  "Gửi chị em thương mến"
+ ],
+ "CHUNG-16": [
+  "Chị em Phòng PTSPBL"
+ ],
+ "CHUNG-17": [
+  "🎂 Và chúc mừng sinh nhật tháng 10 nữa nha!"
+ ],
+ "CHUNG-18": [
+  "Thương mến, "
+ ]
+}
