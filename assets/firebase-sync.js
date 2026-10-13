@@ -22,6 +22,7 @@ var W20DB = (function () {
     });
   }
   function clean(o) { try { return JSON.parse(JSON.stringify(o)); } catch (e) { return {}; } }
+  function dev() { try { var d = localStorage.getItem("w20dev"); if (!d) { d = Math.random().toString(36).slice(2, 8) + Date.now().toString(36).slice(-4); localStorage.setItem("w20dev", d); } return d; } catch (e) { return "nodev"; } }
   function key(k) { return String(k).replace(/[^\w\-:]/g, "_").slice(0, 100); }
   /* Gộp 2 bản tiến độ: bản nào đi xa hơn thì thắng, không bao giờ lùi lại (không cho mở lại / quay lại quà) */
   function merge(a, b) {
@@ -39,14 +40,14 @@ var W20DB = (function () {
     load: function (id, cb) {
       var fin = false, t = setTimeout(function () { end(null); }, 4000);
       function end(v) { if (fin) return; fin = true; clearTimeout(t); try { cb(v); } catch (e) {} }
-      ready(function () { db.collection("progress").doc(key(id)).get().then(function (d) { end(d.exists ? (d.data() || {}).data || null : null); }, function () { end(null); }); });
+      ready(function () { db.collection("progress").doc(key(id + "@" + dev())).get().then(function (d) { end(d.exists ? (d.data() || {}).data || null : null); }, function () { end(null); }); });
     },
     /* Lưu tiến độ của từng người (gộp, ghi trễ 1,5 giây để đỡ ghi nhiều) */
     progress: function (id, data) {
       clearTimeout(timers[id]);
       timers[id] = setTimeout(function () {
         ready(function () {
-          var ref = db.collection("progress").doc(key(id));
+          var ref = db.collection("progress").doc(key(id + "@" + dev()));
           /* đọc bản trên server rồi gộp, tránh máy mới/ngoại tuyến ghi đè mất tiến độ cũ */
           ref.get().then(function (d) { var rv = d.exists ? (d.data() || {}).data : null; return ref.set({ data: clean(merge(rv, clean(data))), updated: firebase.firestore.FieldValue.serverTimestamp() }); }, function () { return ref.set({ data: clean(data), updated: firebase.firestore.FieldValue.serverTimestamp() }); }).catch(function () {});
         });

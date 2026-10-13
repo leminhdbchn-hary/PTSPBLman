@@ -201,8 +201,6 @@
   }
   function wheel() {
     var K = "w20sep2:" + (me ? me.id : "guest"), had = [], TEST = !!(me && me.test); try { if (!TEST) had = JSON.parse(localStorage.getItem(K) || "[]"); } catch (e) {}
-    /* quà đã quay lưu trên Firebase: mở lại / đổi máy vẫn ra đúng quà cũ */
-    var rmt = window.W20SEPREMOTE; if (rmt && rmt.length > had.length) had = rmt.slice();
     var as = me ? w20Assign()[me.id] : null;
     w20Wheel2({ cv: $("#wcv"), btn: $("#spin"), out: $("#prize"), prizes: W20CFG.prizes, assigned: as, got: had,
       onGot: function (l) { if (!TEST) { try { localStorage.setItem(K, JSON.stringify(l)); } catch (e) {} try { W20DB.progress(K, { prizes: l, step: l.length }); } catch (e) {} } else window.W20TESTGOT = l; setTimeout(card, 50); },
@@ -233,7 +231,7 @@
   function boot() {
   FX.init(); paper(); hero(); profile(); pledges(); flowers(); wheel(); w20Wall($("#wall"), W20CFG.wallSep); if (!W20CFG.wallSep.length) $("#wallsec").style.display = "none"; card(); reveal();
   }
-  if (!me || me.test) boot(); else W20DB.load("w20sep2:" + me.id, function (rv) { if (rv && rv.prizes) { window.W20SEPREMOTE = rv.prizes; try { localStorage.setItem("w20sep2:" + me.id, JSON.stringify(rv.prizes)); } catch (e) {} } boot(); });
+  boot();
   if (document.fonts && document.fonts.load) Promise.all(["700 80px 'Playfair Display'", "italic 700 80px 'Playfair Display'", "italic 500 40px 'Playfair Display'", "700 60px 'Dancing Script'", "600 28px 'Be Vietnam Pro'", "700 28px 'Be Vietnam Pro'", "500 28px 'Be Vietnam Pro'", "italic 600 26px 'Be Vietnam Pro'"].map(function (f) { return document.fonts.load(f, 'Sếp Hạnh 20.10'); })).then(card, card);
 })();
 </script>

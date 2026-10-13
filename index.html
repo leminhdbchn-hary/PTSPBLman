@@ -359,8 +359,8 @@
   notes(); atm(); scratch(); flowers(); wheel(); wall(); card();
   loading = false; showSteps();
   }
-  /* Lấy tiến độ đã lưu trên Firebase trước khi mở: máy nào mở link này cũng thấy đúng phần đã mở/quà đã quay, không bốc lại */
-  if (TEST) boot(); else W20DB.load(KEY, function (rv) { if (rv) { ST = W20DB.merge(ST, rv); norm(); try { localStorage.setItem(KEY, JSON.stringify(ST)); } catch (e) {} } boot(); });
+  /* Dữ liệu lưu theo từng điện thoại (localStorage): máy nào mở lần đầu thì mở bình thường, máy đó mở lại chỉ thấy đúng dữ liệu cũ của nó */
+  boot();
   if (document.fonts && document.fonts.load) Promise.all(FONTS.map(function (f) { return document.fonts.load(f, "Chị Hạnh ơi 20.10"); })).then(card, card);
   /* vẽ lại lớp bạc khi phần thẻ cào vừa mở (lúc trước đang ẩn nên chưa có kích thước) */
   new MutationObserver(function () { if ($("#s2").classList.contains("open") && !cleared && window.w20PaintScratch) window.w20PaintScratch(); }).observe($("#s2"), { attributes: true, attributeFilter: ["class"] });
