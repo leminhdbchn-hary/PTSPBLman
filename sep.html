@@ -96,7 +96,7 @@
     <h2>Giấy khen của riêng Sếp</h2>
     <p class="sub">Tải về làm kỷ niệm, hoặc gửi cho Sếp nhé.</p>
     <div class="cardbox">
-      <canvas id="card" width="1080" height="1350"></canvas>
+      <canvas id="card" width="1080" height="1620"></canvas>
       <div class="acts">
         <button class="btn" id="dl" type="button">⬇️ Tải giấy khen (PNG)</button>
         <button class="btn pink" id="shr" type="button">📤 Chia sẻ</button>
@@ -114,6 +114,7 @@
 <div class="toast" id="toast" role="status"></div>
 
 <script src="assets/config.js"></script>
+<script src="assets/stock.js"></script>
 <script src="assets/people.js"></script>
 <script src="assets/common.js"></script>
 <script src="assets/modules.js"></script>
@@ -195,27 +196,16 @@
     var K = "w20sep2:" + (me ? me.id : "guest"), had = []; try { had = JSON.parse(localStorage.getItem(K) || "[]"); } catch (e) {}
     var as = me ? w20Assign()[me.id] : null;
     w20Wheel2({ cv: $("#wcv"), btn: $("#spin"), out: $("#prize"), prizes: W20CFG.prizes, assigned: as, got: had,
-      onGot: function (l) { try { localStorage.setItem(K, JSON.stringify(l)); } catch (e) {} },
+      onGot: function (l) { try { localStorage.setItem(K, JSON.stringify(l)); } catch (e) {} setTimeout(card, 50); },
       onShow: function (i, k, fresh) { if (fresh) { FX.burst(innerWidth / 2, innerHeight * .5, 130); FX.rain(); } } });
   }
   /* giấy khen */
   function card() {
-    var c = $("#card"), g = c.getContext("2d"), W = 1080, H = 1350, i, F = "'Segoe UI','Helvetica Neue',Arial,sans-serif";
-    var bg = g.createLinearGradient(0, 0, W, H); bg.addColorStop(0, "#00381f"); bg.addColorStop(.55, "#0b6a40"); bg.addColorStop(1, "#8a2160"); g.fillStyle = bg; g.fillRect(0, 0, W, H);
-    g.globalAlpha = .12; g.fillStyle = "#fff"; for (i = 0; i < 9; i++) { g.beginPath(); g.arc((i * 211) % W, (i * 389) % H, 60 + (i % 4) * 40, 0, 6.283); g.fill(); } g.globalAlpha = 1;
-    g.strokeStyle = "#ffd76a"; g.lineWidth = 10; g.strokeRect(36, 36, W - 72, H - 72); g.lineWidth = 3; g.strokeRect(58, 58, W - 116, H - 116);
-    g.textAlign = "center"; g.fillStyle = "#ffd76a"; g.font = "800 34px " + F; g.fillText("PHÒNG PTSPBL · GIẤY KHEN 20/10", W / 2, 150);
-    g.fillStyle = "#fff"; g.font = "900 96px " + F; g.fillText("GIẤY KHEN", W / 2, 270);
-    g.font = "700 36px " + F; g.fillStyle = "#ffe9a0"; g.fillText("Trân trọng tặng", W / 2, 335);
-    var nm = who(); if (!S.to) nm = "Các Sếp của Phòng"; g.fillStyle = "#fff"; var fs = 88; g.font = "900 " + fs + "px " + F; while (g.measureText(nm).width > W - 160 && fs > 40) { fs -= 4; g.font = "900 " + fs + "px " + F; } g.fillText(nm, W / 2, 440);
-    var rl = W20.sep.roles[ri()]; g.font = "800 32px " + F; var rw = Math.min(g.measureText(rl).width + 70, W - 120);
-    g.fillStyle = "#ffd76a"; rr(g, (W - rw) / 2, 470, rw, 62, 31); g.fill(); g.fillStyle = "#3d0a24"; var rs = 32; g.font = "800 " + rs + "px " + F; while (g.measureText(rl).width > rw - 40 && rs > 20) { rs--; g.font = "800 " + rs + "px " + F; } g.fillText(rl, W / 2, 512);
-    w20DrawBouquet(g, W / 2, 680, S.bq.length ? 150 : 0, S.bq);
-    g.fillStyle = "rgba(255,247,230,.96)"; rr(g, 100, 940, W - 200, 270, 30); g.fill();
-    g.fillStyle = "#3b0a26"; g.font = "700 36px " + F; var txt = w20SepWish(wi(), xw()), wl = w20Wrap(g, txt, W - 280); if (wl.length > 5) { g.font = "700 31px " + F; wl = w20Wrap(g, txt, W - 280); }
-    var y = 1010; for (i = 0; i < wl.length && i < 6; i++) { g.fillText(wl[i], W / 2, y); y += 50; }
-    g.fillStyle = "#ffd76a"; g.font = "800 30px " + F; g.fillText("Từ: " + S.f, W / 2, 1290);
+    var c = $("#card"), g = c.getContext("2d");
+    var got = []; try { got = JSON.parse(localStorage.getItem("w20sep2:" + (me ? me.id : "guest")) || "[]"); } catch (e) {}
+    w20DrawCard(g, { mode: "sep", name: S.to ? who() : "Các Sếp của Phòng", sub: me ? me.t : "", role: W20.sep.roles[ri()], wish: w20SepWish(wi(), xw()), prizes: got.map(function (i) { return W20CFG.prizes[i]; }).filter(Boolean), from: S.f, bq: S.bq });
   }
+  var bgImg = w20Img("assets/card-bg.webp"); if (!bgImg.complete) bgImg.onload = function () { card(); };
   var cardT = 0; function cardSoon() { cancelAnimationFrame(cardT); cardT = requestAnimationFrame(card); }
   function rr(g, x, y, w, h, r) { g.beginPath(); g.moveTo(x + r, y); g.arcTo(x + w, y, x + w, y + h, r); g.arcTo(x + w, y + h, x, y + h, r); g.arcTo(x, y + h, x, y, r); g.arcTo(x, y, x + w, y, r); g.closePath(); }
   $("#dl").onclick = function () { card(); $("#card").toBlob(function (b) { var a = document.createElement("a"); a.href = URL.createObjectURL(b); a.download = "giay-khen-20-10-" + (S.to || "sep").replace(/\s+/g, "-") + ".png"; document.body.appendChild(a); a.click(); setTimeout(function () { URL.revokeObjectURL(a.href); a.remove(); }, 1500); toast("Đã tải giấy khen 🌹"); FX.burst(innerWidth / 2, innerHeight * .6, 80); }, "image/png"); };
@@ -232,6 +222,7 @@
     for (var j = 0; j < els.length; j++) io.observe(els[j]);
   }
   FX.init(); paper(); hero(); profile(); pledges(); flowers(); wheel(); w20Wall($("#wall"), W20CFG.wallSep); if (!W20CFG.wallSep.length) $("#wallsec").style.display = "none"; card(); reveal();
+  if (document.fonts && document.fonts.load) Promise.all(["700 80px 'Playfair Display'", "italic 700 80px 'Playfair Display'", "italic 500 40px 'Playfair Display'", "700 60px 'Dancing Script'", "600 28px 'Be Vietnam Pro'", "700 28px 'Be Vietnam Pro'", "500 28px 'Be Vietnam Pro'", "italic 600 26px 'Be Vietnam Pro'"].map(function (f) { return document.fonts.load(f, 'Sếp Hạnh 20.10'); })).then(card, card);
 })();
 </script>
 </body>

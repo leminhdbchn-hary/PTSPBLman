@@ -21,20 +21,17 @@ var W20CFG = {
     { img: "assets/men/h10.webp", shirt: "#ffffff" }
   ],
 
-  /* Quà ở Vòng quay. qty = số lượng món đó. Mỗi chị em quay 2 lần và nhận 2 món KHÁC NHAU, chia sẵn theo số lượng này
-     (tổng số suất cần = 2 × số người). Quay ở đâu cũng ra đúng 2 món đó.
-     Bỏ trống qty (hoặc tổng nhỏ hơn 2 × số người) thì phần còn thiếu được chia đều.
-     key "nho" = thẻ nhờ việc: người nhận được ghi việc muốn nhờ. */
+  /* Quà ở Vòng quay (thứ tự này phải khớp với số lượng trong assets/stock.js).
+     Mỗi chị em quay 2 lượt và nhận 2 món KHÁC NHAU, ngẫu nhiên và không ai chọn sẵn.
+     Số lượng từng món chỉnh ở trang admin.html (tab "Chia quà"). key "nho" = thẻ nhờ việc. */
   prizes: [
-    { icon: "☕", name: "1 cốc cà phê / trà sữa anh em đãi", qty: 0 },
-    { icon: "🍰", name: "1 phần bánh ngọt chiều nay", qty: 0 },
-    { icon: "🌸", name: "1 bó hoa nhỏ để bàn", qty: 0 },
-    { icon: "🍫", name: "1 hộp sô-cô-la", qty: 0 },
-    { icon: "🙋", name: "Thẻ nhờ anh em 1 việc bất kỳ", qty: 0, key: "nho" },
-    { icon: "🎁", name: "Quà bí mật, nhận tại buổi gặp mặt", qty: 0 }
+    { icon: "☕", name: "1 cốc cà phê anh em đãi" },
+    { icon: "🍫", name: "1 gói KitKat" },
+    { icon: "🍰", name: "1 phần bánh ngọt chiều nay" },
+    { icon: "🌸", name: "1 bó hoa nhỏ để bàn" },
+    { icon: "🙋", name: "Thẻ nhờ anh em 1 việc bất kỳ", key: "nho" },
+    { icon: "🎁", name: "Quà bí mật, nhận tại buổi gặp mặt" }
   ],
-  /* Đổi chữ này nếu muốn xáo lại cách chia quà (chỉ đổi TRƯỚC khi gửi link) */
-  seed: "2010",
 
   /* (Không bắt buộc) Nhận "Thẻ nhờ việc" qua Google Form để anh em xem tập trung trong Google Sheet.
      Cách lấy: tạo Form có 1 câu hỏi dạng đoạn văn → ⋮ → "Nhận đường liên kết điền sẵn" → điền chữ "x" → lấy link.

@@ -4,43 +4,53 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="robots" content="noindex">
-<title>Quản lý 20/10 · Link chị em & thống kê quà</title>
+<title>Quản lý 20/10 · Link, chia quà, thống kê</title>
 <meta name="theme-color" content="#00381f">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E🗂️%3C/text%3E%3C/svg%3E">
 <link rel="stylesheet" href="assets/style.css">
 <style>
-section{max-width:980px}
-.pin{max-width:360px;margin:12vh auto 0;text-align:center}
-.pin input{font:inherit;font-size:24px;letter-spacing:.3em;text-align:center;width:100%;border-radius:16px;border:2px solid rgba(255,255,255,.4);background:rgba(255,255,255,.12);color:#fff;padding:12px;margin:14px 0}
-.tabs{display:flex;gap:8px;margin:6px 0 16px;flex-wrap:wrap}
-.tab{appearance:none;font:inherit;font-weight:800;border-radius:99px;padding:10px 18px;border:2px solid rgba(255,255,255,.35);background:rgba(255,255,255,.08);color:#fff;cursor:pointer}
-.tab.on{background:var(--gold);color:#3d0a24;border-color:var(--gold)}
+section.adm{max-width:1000px}
+.pin{max-width:380px;margin:12vh auto 0;text-align:center;background:linear-gradient(180deg,rgba(255,255,255,.1),rgba(255,255,255,.04));border:1px solid rgba(255,255,255,.18);border-radius:28px;padding:28px 22px}
+.pin input{font:inherit;font-size:26px;letter-spacing:.35em;text-align:center;width:100%;border-radius:16px;border:2px solid rgba(255,255,255,.35);background:rgba(0,0,0,.18);color:#fff;padding:12px;margin:14px 0}
+.tabs{display:flex;gap:8px;margin:6px 0 18px;flex-wrap:wrap}
+.tab{appearance:none;font:inherit;font-weight:700;border-radius:99px;padding:11px 20px;border:1.5px solid rgba(255,255,255,.3);background:rgba(255,255,255,.07);color:#fff;cursor:pointer;transition:.15s}
+.tab.on{background:linear-gradient(180deg,#ffe9a0,var(--gold));color:#3d0a24;border-color:var(--gold);box-shadow:0 4px 14px rgba(255,215,106,.3)}
 .search{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
-.search input{flex:1 1 240px;font:inherit;font-size:17px;border-radius:14px;border:2px solid rgba(255,255,255,.35);background:rgba(255,255,255,.12);color:#fff;padding:12px 14px}
+.search input{flex:1 1 240px;font:inherit;font-size:17px;border-radius:14px;border:1.5px solid rgba(255,255,255,.3);background:rgba(0,0,0,.18);color:#fff;padding:12px 14px}
 .list{display:grid;gap:8px}
-.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);border-radius:16px;padding:10px 12px}
-.row .who{flex:1 1 220px;min-width:0}
-.row .who b{display:block;font-size:17px}.row .who small{opacity:.75}
-.row .lk{flex:2 1 260px;min-width:0;font-size:12px;opacity:.7;word-break:break-all}
-.row .bt{display:flex;gap:6px;flex-wrap:wrap}
-.row .btn{font-size:14px;padding:8px 14px;box-shadow:0 3px 0 #b98d1a}
-.row .btn.ghost{box-shadow:inset 0 0 0 2px rgba(255,255,255,.4)}
-.tag{display:inline-block;font-size:11px;font-weight:800;border-radius:99px;padding:2px 8px;margin-left:6px;vertical-align:middle;background:rgba(255,215,106,.25);color:var(--gold)}
-.stats{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px;margin-bottom:18px}
-.stat{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);border-radius:18px;padding:14px;cursor:pointer}
-.stat.on{border-color:var(--gold);background:rgba(255,215,106,.15)}
-.stat .ic{font-size:34px}.stat .num{font-size:34px;font-weight:800;color:var(--gold);line-height:1}.stat .nm{font-size:14px;font-weight:600;margin-top:6px}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.14);border-radius:16px;padding:10px 14px}
+.row .who{flex:1 1 220px;min-width:0}.row .who b{display:block;font-size:16px}.row .who small{opacity:.72}
+.row .lk{flex:2 1 260px;min-width:0;font-size:12px;opacity:.6;word-break:break-all}
+.row .bt{display:flex;gap:6px;flex-wrap:wrap}.row .btn{font-size:14px;padding:8px 14px;box-shadow:0 3px 0 #b98d1a}.row .btn.ghost{box-shadow:inset 0 0 0 2px rgba(255,255,255,.35)}
+.tag{display:inline-block;font-size:11px;font-weight:800;border-radius:99px;padding:2px 9px;margin-left:6px;vertical-align:middle;background:rgba(255,215,106,.22);color:var(--gold)}
+.panel{background:linear-gradient(180deg,rgba(255,255,255,.09),rgba(255,255,255,.03));border:1px solid rgba(255,255,255,.16);border-radius:24px;padding:18px;margin-bottom:16px}
+.panel h3{margin:0 0 6px;font-size:18px}
 .muted{opacity:.75;font-size:14px}
-@media print{body:before,#fx,.litebtn,.tabs,.search,.noprint{display:none!important}body{color:#000;background:#fff}.row,.stat{border-color:#999;background:#fff}.stat .num{color:#000}}
+.prow{display:grid;grid-template-columns:44px 1fr auto;gap:12px;align-items:center;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.1)}
+.prow:last-child{border-bottom:0}
+.prow .ic{font-size:30px;text-align:center}.prow .nm b{display:block}.prow .bar2{height:6px;border-radius:99px;background:rgba(255,255,255,.12);margin-top:6px;overflow:hidden}.prow .bar2 i{display:block;height:100%;background:linear-gradient(90deg,var(--g3),var(--gold));border-radius:99px;transition:width .25s}
+.step2{display:flex;align-items:center;gap:4px}
+.step2 button{width:40px;height:40px;border-radius:12px;border:1.5px solid rgba(255,255,255,.3);background:rgba(255,255,255,.1);color:#fff;font-size:22px;font-weight:700;cursor:pointer}
+.step2 input{width:64px;height:40px;text-align:center;font:inherit;font-size:18px;font-weight:800;border-radius:12px;border:1.5px solid rgba(255,255,255,.35);background:rgba(0,0,0,.2);color:#fff}
+.sum{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:12px 0}
+.chip{display:inline-flex;align-items:center;gap:6px;font-weight:800;border-radius:99px;padding:8px 16px;background:rgba(255,255,255,.1)}
+.chip.ok{background:rgba(124,240,176,.2);color:#9ff0c4}.chip.bad{background:rgba(255,120,120,.2);color:#ffb3b3}
+.acts2{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}.acts2 .btn{font-size:15px;padding:11px 18px}
+.msg{margin-top:12px;font-weight:700;min-height:1.4em}.msg.err{color:#ffb3b3}.msg.ok{color:#9ff0c4}
+details.tok{margin-top:14px;background:rgba(0,0,0,.18);border-radius:16px;padding:12px 14px}details.tok summary{cursor:pointer;font-weight:700}
+details.tok input{width:100%;font:inherit;font-size:15px;border-radius:12px;border:1.5px solid rgba(255,255,255,.3);background:rgba(0,0,0,.2);color:#fff;padding:10px 12px;margin:8px 0}
+details.tok ol{margin:8px 0 0 18px;padding:0;font-size:14px;opacity:.9}
+code{background:rgba(0,0,0,.25);border-radius:6px;padding:1px 6px;font-size:.92em}
+@media print{body:before,#fx,.litebtn,.tabs,.search,.noprint{display:none!important}body{color:#000;background:#fff}.row,.panel{border-color:#999;background:#fff}}
 @media (max-width:640px){.row .lk{display:none}}
 </style>
 </head>
 <body>
 <canvas id="fx" aria-hidden="true"></canvas>
-<section id="lockscr">
+<section id="lockscr" class="adm">
   <div class="pin">
     <div style="font-size:52px">🔐</div>
-    <h2>Trang quản lý</h2>
+    <h2 style="font-size:28px">Trang quản lý</h2>
     <p class="sub">Dành cho anh em tổ chức. Nhập mã PIN để mở.</p>
     <input id="pin" type="password" inputmode="numeric" maxlength="12" autocomplete="off" aria-label="Mã PIN">
     <button class="btn pink" id="unlock" type="button" style="width:100%">Mở</button>
@@ -48,10 +58,10 @@ section{max-width:980px}
   </div>
 </section>
 
-<section id="main" hidden>
+<section id="main" class="adm" hidden>
   <span class="kicker">Anh em tổ chức</span>
   <h2>Quản lý quà 20/10</h2>
-  <div class="tabs"><button class="tab on" data-t="links" type="button">🔗 Link từng chị em</button><button class="tab" data-t="stats" type="button">🎁 Thống kê quà</button></div>
+  <div class="tabs"><button class="tab on" data-t="links" type="button">🔗 Link từng người</button><button class="tab" data-t="stock" type="button">🎁 Chia quà & thống kê</button></div>
 
   <div id="tlinks">
     <div class="search">
@@ -62,50 +72,82 @@ section{max-width:980px}
     <div class="list" id="list"></div>
   </div>
 
-  <div id="tstats" hidden>
-    <p class="muted">Mỗi chị em có <b>2 món quà khác nhau</b>, chia sẵn cố định theo số lượng trong <code>assets/config.js</code>. Quay ở máy nào, lúc nào cũng ra đúng 2 món dưới đây. Số bên trên là số suất mỗi món cần chuẩn bị.</p>
-    <div class="stats" id="stats"></div>
-    <div class="search noprint">
-      <input id="q2" placeholder="🔍 Tìm theo tên" aria-label="Tìm theo tên">
-      <button class="btn" id="csv" type="button" style="font-size:15px;padding:10px 18px">⬇️ Tải Excel (CSV)</button>
-      <button class="btn ghost" id="print" type="button" style="font-size:15px;padding:10px 18px">🖨️ In danh sách</button>
+  <div id="tstock" hidden>
+    <div class="panel">
+      <h3>Chia số lượng quà</h3>
+      <p class="muted" id="need"></p>
+      <div id="prows"></div>
+      <div class="sum"><span class="chip" id="sumchip"></span><span class="muted" id="diff"></span></div>
+      <div class="acts2 noprint">
+        <button class="btn ghost" id="reset" type="button">↺ Gợi ý ban đầu</button>
+        <button class="btn ghost" id="shuffle" type="button">🎲 Xáo lại (ai nhận món nào)</button>
+        <button class="btn pink" id="save" type="button">💾 Lưu lên GitHub</button>
+        <button class="btn ghost" id="copycfg" type="button">📋 Sao chép cấu hình</button>
+      </div>
+      <div class="msg" id="smsg" role="status"></div>
+      <details class="tok noprint">
+        <summary>🔑 Để nút “Lưu lên GitHub” chạy (làm một lần)</summary>
+        <ol>
+          <li>Vào GitHub → ảnh đại diện → <b>Settings</b> → <b>Developer settings</b> → <b>Personal access tokens</b> → <b>Fine-grained tokens</b> → <b>Generate new token</b>.</li>
+          <li><b>Repository access</b>: chọn <b>Only select repositories</b> → <code>PTSPBLman</code>. <b>Permissions</b> → <b>Contents</b>: <b>Read and write</b>. Đặt hạn ngắn (ví dụ 7 ngày).</li>
+          <li>Dán token vào ô dưới. Token chỉ nằm trong trình duyệt của bạn, không gửi đi đâu ngoài GitHub.</li>
+        </ol>
+        <input id="tok" type="password" placeholder="github_pat_…" autocomplete="off" aria-label="GitHub token">
+        <p class="muted" style="margin:6px 0 0">Không muốn dùng token? Bấm <b>Sao chép cấu hình</b>, rồi mở <a id="ghlink" target="_blank" rel="noopener" style="color:var(--gold)">file stock.js trên GitHub</a> → ✏️ → dán đè → Commit.</p>
+      </details>
     </div>
-    <div class="list" id="plist"></div>
+
+    <div class="panel">
+      <h3>Xem chi tiết từng người</h3>
+      <p class="muted">Quà được chia ngẫu nhiên, không ai chọn sẵn. Phần này chỉ để anh em tra cứu khi <b>phát quà</b> ở buổi gặp mặt. Nếu muốn giữ bất ngờ, đừng mở.</p>
+      <div class="acts2 noprint"><button class="btn ghost" id="peek" type="button">👁 Mở danh sách chi tiết</button></div>
+      <div id="detail" hidden>
+        <div class="search noprint" style="margin-top:12px">
+          <input id="q2" placeholder="🔍 Tìm theo tên" aria-label="Tìm theo tên">
+          <button class="btn" id="csv" type="button" style="font-size:15px;padding:10px 18px">⬇️ Tải Excel (CSV)</button>
+          <button class="btn ghost" id="print" type="button" style="font-size:15px;padding:10px 18px">🖨️ In danh sách</button>
+        </div>
+        <div class="list" id="plist"></div>
+      </div>
+    </div>
   </div>
 </section>
 <div class="toast" id="toast" role="status"></div>
 
 <script src="assets/config.js"></script>
+<script src="assets/stock.js"></script>
 <script src="assets/people.js"></script>
 <script src="assets/common.js"></script>
 <script>
 (function () {
   var $ = function (s) { return document.querySelector(s); };
   var base = new URL("index.html", location.href).href, baseSep = new URL("sep.html", location.href).href;
-  var A = w20Assign(), PR = W20CFG.prizes, filt = null;
-  function xw(p) { return p.lead ? "Sếp" : (p.x || "Chị"); }
-  function toast(t) { var e = $("#toast"); e.textContent = t; e.className = "toast show"; clearTimeout(toast.t); toast.t = setTimeout(function () { e.className = "toast"; }, 1800); }
+  var PR = W20CFG.prizes, N = W20P.length, NEED = N * 2, REC = [34, 34, 14, 8, 10, 4];
+  var draft = { qty: W20STOCK.qty.slice(), seed: String(W20STOCK.seed) }, A = w20Assign(draft);
+  var REPO = "leminhdbchn-hary/PTSPBLman", BRANCH = "main", FILE = "assets/stock.js";
+  function toast(t) { var e = $("#toast"); e.textContent = t; e.className = "toast show"; clearTimeout(toast.t); toast.t = setTimeout(function () { e.className = "toast"; }, 2000); }
   function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); }
-  function link(p) { return p.lead ? baseSep + "?u=" + p.id : base + "?u=" + p.id; }
+  function xw(p) { return p.lead ? "Sếp" : (p.x || "Chị"); }
+  function link(p) { return (p.lead ? baseSep : base) + "?u=" + p.id; }
   function match(p, q) { return !q || w20Fold(p.n).indexOf(w20Fold(q)) >= 0; }
 
-  function open() { $("#lockscr").hidden = true; $("#main").hidden = false; renderLinks(); renderStats(); }
+  function open() { $("#lockscr").hidden = true; $("#main").hidden = false; renderLinks(); renderStock(); }
   $("#unlock").onclick = function () {
     if ($("#pin").value === String(W20CFG.adminPin)) { try { sessionStorage.setItem("w20admin", "1"); } catch (e) {} open(); }
     else { $("#pinmsg").textContent = "Sai mã rồi, thử lại nha."; $("#pin").value = ""; }
   };
   $("#pin").onkeydown = function (e) { if (e.key === "Enter") $("#unlock").click(); };
   try { if (sessionStorage.getItem("w20admin") === "1") open(); } catch (e) {}
-
   document.querySelector(".tabs").onclick = function (e) {
     var b = e.target.closest(".tab"); if (!b) return; [].forEach.call(document.querySelectorAll(".tab"), function (x) { x.classList.toggle("on", x === b); });
-    $("#tlinks").hidden = b.getAttribute("data-t") !== "links"; $("#tstats").hidden = b.getAttribute("data-t") !== "stats";
+    $("#tlinks").hidden = b.getAttribute("data-t") !== "links"; $("#tstock").hidden = b.getAttribute("data-t") !== "stock";
   };
 
+  /* ---- Link ---- */
   function shown() { var q = $("#q").value; return W20P.filter(function (p) { return match(p, q); }); }
   function renderLinks() {
     var L = shown();
-    $("#cnt").textContent = "Đang hiện " + L.length + "/" + W20P.length + " người. Bấm “Sao chép link” rồi dán vào Zalo/Teams gửi riêng từng người.";
+    $("#cnt").textContent = "Đang hiện " + L.length + "/" + N + " người. Bấm “Sao chép link” rồi dán vào Zalo/Teams gửi riêng từng người.";
     $("#list").innerHTML = L.map(function (p) {
       return '<div class="row"><div class="who"><b>' + esc(p.n) + (p.lead ? '<span class="tag">Lãnh đạo · trang Sếp</span>' : "") + (p.bd ? '<span class="tag">🎂 SN tháng 10</span>' : "") + '</b><small>' + esc(p.t) + " · xưng " + esc(xw(p)) + '</small></div>'
         + '<div class="lk">' + esc(link(p)) + '</div><div class="bt">'
@@ -117,25 +159,59 @@ section{max-width:980px}
   function msgFor(p) { var x = xw(p).toLowerCase(); return "🌹 Chúc mừng 20/10! Anh em Phòng PTSPBL có món quà nhỏ gửi " + x + " " + w20Short(p.n) + ", " + x + " bấm vào đây mở nha: " + link(p); }
   $("#list").onclick = function (e) {
     var b = e.target.closest("button"); if (!b) return; var p = w20Person(b.getAttribute("data-id")), a = b.getAttribute("data-a"); if (!p) return;
-    if (a === "c") w20Copy(msgFor(p), function () { toast("Đã sao chép link của " + p.n + " 📋"); });
-    else window.open(link(p), "_blank");
+    if (a === "c") w20Copy(msgFor(p), function () { toast("Đã sao chép link của " + p.n + " 📋"); }); else window.open(link(p), "_blank");
   };
   $("#copyAll").onclick = function () { var L = shown(); w20Copy(L.map(function (p) { return p.n + ": " + link(p); }).join("\n"), function () { toast("Đã sao chép " + L.length + " link 📋"); }); };
 
-  function renderStats() {
-    var cnt = PR.map(function () { return 0; }), has = PR.map(function () { return 0; });
-    W20P.forEach(function (p) { A[p.id].forEach(function (i) { cnt[i]++; }); });
-    var tot = W20P.length * 2;
-    $("#stats").innerHTML = PR.map(function (p, i) { return '<div class="stat' + (filt === i ? " on" : "") + '" data-i="' + i + '"><div class="ic">' + p.icon + '</div><div class="num">' + cnt[i] + '</div><div class="nm">' + esc(p.name) + '</div></div>'; }).join("")
-      + '<div class="stat' + (filt === null ? " on" : "") + '" data-i="all"><div class="ic">🎁</div><div class="num">' + tot + '</div><div class="nm">Tổng số suất quà (' + W20P.length + ' người × 2). Bấm để xem tất cả</div></div>';
-    var q = $("#q2").value, L = W20P.filter(function (p) { return match(p, q) && (filt === null || A[p.id].indexOf(filt) >= 0); });
+  /* ---- Chia quà ---- */
+  function total() { return draft.qty.reduce(function (a, b) { return a + b; }, 0); }
+  function valid() { return total() === NEED && draft.qty.every(function (q) { return q >= 0 && q <= N; }); }
+  function dirty() { return draft.seed !== String(W20STOCK.seed) || draft.qty.join() !== W20STOCK.qty.join(); }
+  function renderStock() {
+    $("#need").innerHTML = "Có <b>" + N + "</b> người, mỗi người nhận <b>2 món khác nhau</b> → cần đúng <b>" + NEED + "</b> suất quà. Mỗi món tối đa " + N + " suất (mỗi người chỉ nhận mỗi món 1 lần).";
+    $("#prows").innerHTML = PR.map(function (p, i) {
+      return '<div class="prow"><div class="ic">' + p.icon + '</div><div class="nm"><b>' + esc(p.name) + '</b><div class="bar2"><i style="width:' + Math.min(100, draft.qty[i] / N * 100) + '%"></i></div></div>'
+        + '<div class="step2"><button type="button" data-i="' + i + '" data-d="-1" aria-label="Giảm">−</button><input type="number" min="0" max="' + N + '" inputmode="numeric" data-i="' + i + '" value="' + draft.qty[i] + '" aria-label="Số lượng"><button type="button" data-i="' + i + '" data-d="1" aria-label="Tăng">+</button></div></div>';
+    }).join("");
+    var t = total(), ok = valid();
+    $("#sumchip").className = "chip " + (ok ? "ok" : "bad"); $("#sumchip").textContent = (ok ? "✔ " : "⚠ ") + "Tổng " + t + "/" + NEED + " suất";
+    $("#diff").textContent = ok ? (dirty() ? "Đã đủ. Bấm Lưu để áp dụng cho chị em." : "Đang áp dụng đúng như thế này.") : (t < NEED ? "Còn thiếu " + (NEED - t) + " suất." : "Đang dư " + (t - NEED) + " suất.");
+    $("#save").disabled = !ok || !dirty(); $("#copycfg").disabled = !ok;
+    A = valid() ? w20Assign(draft) : A; renderDetail();
+  }
+  $("#prows").addEventListener("click", function (e) { var b = e.target.closest("button[data-d]"); if (!b) return; var i = +b.getAttribute("data-i"); draft.qty[i] = Math.max(0, Math.min(N, draft.qty[i] + (+b.getAttribute("data-d")))); renderStock(); });
+  $("#prows").addEventListener("change", function (e) { var t = e.target; if (t.tagName !== "INPUT") return; draft.qty[+t.getAttribute("data-i")] = Math.max(0, Math.min(N, parseInt(t.value, 10) || 0)); renderStock(); });
+  $("#reset").onclick = function () { draft.qty = REC.slice(); renderStock(); toast("Đã về gợi ý ban đầu"); };
+  $("#shuffle").onclick = function () { draft.seed = Math.random().toString(36).slice(2, 8); renderStock(); toast("Đã xáo lại ngẫu nhiên"); };
+  function cfgText() { return "/* Số lượng từng món quà ở Vòng quay (do trang admin.html chỉnh và lưu).\n   Thứ tự đúng với danh sách quà trong config.js: " + PR.map(function (p) { return p.name.replace(/^1 /, ""); }).join(", ") + ".\n   Tổng phải bằng 2 × số người (" + N + " người → " + NEED + " suất). Mỗi món tối đa " + N + " suất.\n   seed: chuỗi xáo trộn ngẫu nhiên. Đổi seed = xáo lại ai nhận món nào. */\nvar W20STOCK = { qty: [" + draft.qty.join(", ") + "], seed: \"" + draft.seed + "\" };\n"; }
+  $("#copycfg").onclick = function () { w20Copy(cfgText(), function () { toast("Đã sao chép nội dung stock.js 📋"); }); };
+  $("#ghlink").href = "https://github.com/" + REPO + "/edit/" + BRANCH + "/" + FILE;
+  try { $("#tok").value = localStorage.getItem("w20tok") || ""; } catch (e) {}
+  function say(t, cls) { var m = $("#smsg"); m.textContent = t; m.className = "msg " + (cls || ""); }
+  function b64(str) { var u = new TextEncoder().encode(str), s = ""; for (var i = 0; i < u.length; i++) s += String.fromCharCode(u[i]); return btoa(s); }
+  $("#save").onclick = function () {
+    var tok = $("#tok").value.trim(); if (!tok) { say("Chưa có token. Mở mục “Để nút Lưu chạy” bên dưới để làm một lần, hoặc dùng “Sao chép cấu hình”.", "err"); $("details.tok").open = true; return; }
+    try { localStorage.setItem("w20tok", tok); } catch (e) {}
+    say("Đang lưu lên GitHub…");
+    var api = "https://api.github.com/repos/" + REPO + "/contents/" + FILE, H = { Authorization: "Bearer " + tok, Accept: "application/vnd.github+json" };
+    fetch(api + "?ref=" + BRANCH, { headers: H }).then(function (r) { if (!r.ok) throw new Error(r.status === 401 || r.status === 403 ? "Token chưa đúng hoặc chưa có quyền ghi (Contents: Read and write)." : "Không đọc được file trên GitHub (" + r.status + ")."); return r.json(); })
+      .then(function (j) { return fetch(api, { method: "PUT", headers: H, body: JSON.stringify({ message: "Chia lại số lượng quà 20/10 (admin)", content: b64(cfgText()), sha: j.sha, branch: BRANCH }) }); })
+      .then(function (r) { if (!r.ok) throw new Error(r.status === 403 || r.status === 404 ? "Token không có quyền ghi vào repo này." : "Lưu không được (" + r.status + ")."); return r.json(); })
+      .then(function () { W20STOCK.qty = draft.qty.slice(); W20STOCK.seed = draft.seed; say("✔ Đã lưu! Web cập nhật sau khoảng 1–3 phút. Chị em đã quay trước đó vẫn giữ 2 món cũ trên máy của họ, nên chỉ chia lại khi chưa gửi link hoặc chưa ai quay.", "ok"); renderStock(); })
+      .catch(function (e) { say("⚠ " + (e.message || "Không lưu được. Thử “Sao chép cấu hình”."), "err"); });
+  };
+
+  /* ---- Chi tiết (ẩn mặc định) ---- */
+  function renderDetail() {
+    if ($("#detail").hidden) return;
+    var q = $("#q2").value, L = W20P.filter(function (p) { return match(p, q); });
     $("#plist").innerHTML = L.map(function (p, k) { var z = A[p.id]; return '<div class="row"><div class="who"><b>' + (k + 1) + ". " + esc(p.n) + '</b><small>' + esc(p.t) + '</small></div><div class="who" style="flex:1 1 300px"><b>' + PR[z[0]].icon + " " + esc(PR[z[0]].name) + '</b><br><b>' + PR[z[1]].icon + " " + esc(PR[z[1]].name) + "</b></div></div>"; }).join("");
   }
-  $("#stats").onclick = function (e) { var b = e.target.closest(".stat"); if (!b) return; var v = b.getAttribute("data-i"); filt = v === "all" ? null : +v; renderStats(); };
-  $("#q2").oninput = renderStats;
+  $("#peek").onclick = function () { if ($("#detail").hidden && !confirm("Danh sách này tiết lộ ai nhận món gì. Chỉ nên xem khi phát quà. Mở chứ?")) return; $("#detail").hidden = !$("#detail").hidden; $("#peek").textContent = $("#detail").hidden ? "👁 Mở danh sách chi tiết" : "🙈 Ẩn danh sách"; renderDetail(); };
+  $("#q2").oninput = renderDetail;
   $("#csv").onclick = function () {
     var rows = [["STT", "Họ tên", "Chức vụ", "Quà 1", "Quà 2", "Link"]]; W20P.forEach(function (p, i) { rows.push([i + 1, p.n, p.t, PR[A[p.id][0]].name, PR[A[p.id][1]].name, link(p)]); });
-    var csv = "\ufeff" + rows.map(function (r) { return r.map(function (v) { return '"' + String(v).replace(/"/g, '""') + '"'; }).join(","); }).join("\r\n");
+    var csv = "﻿" + rows.map(function (r) { return r.map(function (v) { return '"' + String(v).replace(/"/g, '""') + '"'; }).join(","); }).join("\r\n");
     var a = document.createElement("a"); a.href = URL.createObjectURL(new Blob([csv], { type: "text/csv;charset=utf-8" })); a.download = "qua-20-10-ptspbl.csv"; document.body.appendChild(a); a.click(); setTimeout(function () { URL.revokeObjectURL(a.href); a.remove(); }, 1500);
   };
   $("#print").onclick = function () { window.print(); };

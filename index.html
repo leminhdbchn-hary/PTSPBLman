@@ -24,10 +24,13 @@
   </div>
 </div>
 
+<nav id="prog" aria-label="Tiến độ"><div class="pt"><span id="progT"></span><b id="progN"></b></div><div class="dots" id="progD"></div></nav>
+
 <main id="app">
   <section id="hero">
     <span class="badge">v20.10 · BẢN PHÁT HÀNH ĐẶC BIỆT</span>
     <div class="big">CHÚC MỪNG<br>20/10</div>
+    <div class="orn">✦</div>
     <p class="hello" id="hello"></p>
     <div id="bday"></div>
     <p class="lead" id="lead"></p>
@@ -111,9 +114,9 @@
   <section class="step" id="s6">
     <span class="kicker">Phần 7/7 · Thiệp riêng</span>
     <h2>Thiệp 20/10 của riêng chị</h2>
-    <p class="sub">Tải về đăng Facebook, Zalo hay làm hình nền đều xinh. Khung 4:5 vừa đẹp để đăng mạng xã hội.</p>
+    <p class="sub">Tải về đăng Facebook, Zalo hay làm hình nền đều xinh. Khung đứng 2:3 vừa đẹp để đăng mạng xã hội.</p>
     <div class="cardbox">
-      <canvas id="card" width="1080" height="1350"></canvas>
+      <canvas id="card" width="1080" height="1620"></canvas>
       <div class="acts">
         <button class="btn" id="dl" type="button">⬇️ Tải thiệp về máy</button>
         <button class="btn pink" id="shr" type="button">📤 Chia sẻ</button>
@@ -133,6 +136,7 @@
 <div class="toast" id="toast" role="status"></div>
 
 <script src="assets/config.js"></script>
+<script src="assets/stock.js"></script>
 <script src="assets/people.js"></script>
 <script src="assets/common.js"></script>
 <script src="assets/modules.js"></script>
@@ -158,7 +162,15 @@
 
   /* ---------- Mở khóa từng phần ---------- */
   var N = 7, HINT = ["Đọc hết 6 dòng Release Notes", "Rút đủ 3 lời chúc ở máy", "Cào lộ thẻ ưu đãi", "Cắm xong bó hoa", "Quay đủ 2 lượt vòng quay quà", "Đọc lời nhắn của anh em"];
+  var NAMES = ["Release Notes", "Máy rút lời chúc", "Thẻ cào", "Cắm hoa", "Vòng quay quà", "Lời nhắn anh em", "Thiệp riêng"];
+  function prog() {
+    var cur = Math.min(ST.step, N - 1);
+    $("#progT").textContent = "Phần " + (cur + 1) + "/" + N + " · " + NAMES[cur]; $("#progN").textContent = Math.round(Math.min(ST.step, N) / N * 100) + "%";
+    $("#progD").innerHTML = NAMES.map(function (n, i) { return '<button type="button" data-i="' + i + '" aria-label="' + n + '" class="' + (i < ST.step ? "done" : i === ST.step ? "cur" : "") + '"></button>'; }).join("");
+  }
+  $("#progD").onclick = function (e) { var b = e.target.closest("button"); if (!b) return; var i = +b.getAttribute("data-i"); if (i <= ST.step) $("#s" + i).scrollIntoView({ behavior: "smooth", block: "start" }); };
   function showSteps(scrollTo) {
+    prog();
     for (var i = 0; i < N; i++) $("#s" + i).classList.toggle("open", i <= ST.step);
     var lk = $("#lock");
     if (ST.step >= N - 1) lk.style.display = "none";
@@ -186,7 +198,7 @@
     ];
     var i = 0, bar = $("#bar"), reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
     (function step() { if (i < lines.length) { $("#t" + (i + 1)).innerHTML = lines[i]; bar.style.width = ((i + 1) / lines.length * 100) + "%"; i++; setTimeout(step, reduce ? 120 : 650); } else $("#go").classList.add("show"); })();
-    $("#go").onclick = function (e) { $("#splash").classList.add("off"); FX.burst(e.clientX || innerWidth / 2, e.clientY || innerHeight / 2, 110); FX.rain(); setTimeout(function () { scrollTo(0, 0); }, 50); };
+    $("#go").onclick = function (e) { $("#splash").classList.add("off"); $("#prog").classList.add("on"); FX.burst(e.clientX || innerWidth / 2, e.clientY || innerHeight / 2, 110); FX.rain(); setTimeout(function () { scrollTo(0, 0); }, 50); };
   }
 
   /* ---------- Lời chào ---------- */
@@ -305,57 +317,14 @@
 
   /* ---------- 7. Thiệp ---------- */
   var cardT = 0; function cardSoon() { cancelAnimationFrame(cardT); cardT = requestAnimationFrame(card); }
-  var FONTS = ["700 80px 'Playfair Display'", "italic 700 80px 'Playfair Display'", "italic 500 40px 'Playfair Display'", "700 60px 'Dancing Script'", "600 28px 'Be Vietnam Pro'", "800 28px 'Be Vietnam Pro'", "400 28px 'Be Vietnam Pro'"];
+  var FONTS = ["700 80px 'Playfair Display'", "italic 700 80px 'Playfair Display'", "italic 500 40px 'Playfair Display'", "700 60px 'Dancing Script'", "600 28px 'Be Vietnam Pro'", "700 28px 'Be Vietnam Pro'", "500 28px 'Be Vietnam Pro'", "italic 600 26px 'Be Vietnam Pro'"];
   function card() {
-    var c = $("#card"), g = c.getContext("2d"), W = 1080, H = 1350, i, rnd = function (k) { return ((Math.sin(k * 127.1 + 3) * 43758.5) % 1 + 1) % 1; };
-    var PF = "'Playfair Display',Georgia,serif", DS = "'Dancing Script','Brush Script MT',cursive", BV = "'Be Vietnam Pro','Segoe UI',Arial,sans-serif";
-    g.save(); g.textBaseline = "alphabetic";
-    /* nền */
-    var bg = g.createLinearGradient(0, 0, W * .6, H); bg.addColorStop(0, "#01331e"); bg.addColorStop(.5, "#0a5737"); bg.addColorStop(1, "#6e1744"); g.fillStyle = bg; g.fillRect(0, 0, W, H);
-    for (i = 0; i < 22; i++) { var bx = rnd(i) * W, by = rnd(i + 50) * H, br = 40 + rnd(i + 9) * 140, rg = g.createRadialGradient(bx, by, 0, bx, by, br); rg.addColorStop(0, i % 3 ? "rgba(255,215,106,.13)" : "rgba(255,120,170,.16)"); rg.addColorStop(1, "rgba(255,215,106,0)"); g.fillStyle = rg; g.fillRect(bx - br, by - br, br * 2, br * 2); }
-    g.fillStyle = "#ffe7a3"; for (i = 0; i < 40; i++) { var sx = rnd(i + 100) * W, sy = rnd(i + 200) * H, ss = 2 + rnd(i + 300) * 5; g.globalAlpha = .35 + rnd(i + 400) * .5; g.beginPath(); g.moveTo(sx, sy - ss * 2); g.lineTo(sx + ss * .5, sy - ss * .5); g.lineTo(sx + ss * 2, sy); g.lineTo(sx + ss * .5, sy + ss * .5); g.lineTo(sx, sy + ss * 2); g.lineTo(sx - ss * .5, sy + ss * .5); g.lineTo(sx - ss * 2, sy); g.lineTo(sx - ss * .5, sy - ss * .5); g.closePath(); g.fill(); } g.globalAlpha = 1;
-    /* khung vàng */
-    var gold = g.createLinearGradient(0, 0, W, H); gold.addColorStop(0, "#fff1b8"); gold.addColorStop(.35, "#e8b84a"); gold.addColorStop(.6, "#fff4c8"); gold.addColorStop(1, "#c8922e");
-    g.strokeStyle = gold; g.lineWidth = 5; rr(g, 34, 34, W - 68, H - 68, 36); g.stroke(); g.lineWidth = 1.5; g.globalAlpha = .7; rr(g, 52, 52, W - 104, H - 104, 26); g.stroke(); g.globalAlpha = 1;
-    /* chùm hoa góc */
-    function cluster(x, y, flip) { var fl = ["🌹", "🌸", "🌷", "🌺", "🌸"]; for (var k = 0; k < 7; k++) w20Leaf(g, x, y, 110 + rnd(k + 60) * 60, 26, (flip ? Math.PI : 0) + (k / 6) * 1.5 + (flip ? 0 : 0) + (flip ? -.1 : .05), "#2f7d4f", "#9fd8ac"); g.shadowColor = "rgba(0,0,0,.3)"; g.shadowBlur = 8; for (k = 0; k < 5; k++) { var a = (flip ? Math.PI : 0) + .15 + k * .32, d = 30 + (k % 2) * 46, sz = 92 - k * 8; g.drawImage(w20Spr(fl[k], 128), x + Math.cos(a) * d - sz / 2, y + Math.sin(a) * d - sz / 2, sz, sz); } g.shadowColor = "transparent"; g.shadowBlur = 0; }
-    cluster(70, 70, false);
-    /* tiêu đề */
-    g.textAlign = "center";
-    g.fillStyle = "#ffe7a3"; g.font = "600 25px " + BV; if ("letterSpacing" in g) g.letterSpacing = "6px"; g.fillText("PHÒNG PTSPBL  ·  20.10." + new Date().getFullYear(), W / 2 + 3, 128); if ("letterSpacing" in g) g.letterSpacing = "0px";
-    g.fillStyle = gold; g.font = "700 76px " + DS; g.fillText("Happy Women's Day", W / 2, 222);
-    g.shadowColor = "rgba(0,0,0,.35)"; g.shadowBlur = 18; g.shadowOffsetY = 6; g.font = "700 220px " + PF; g.fillText("20.10", W / 2, 432); g.shadowColor = "transparent"; g.shadowBlur = 0; g.shadowOffsetY = 0;
-    /* tên */
-    g.fillStyle = "#fff7e6"; g.font = "600 28px " + BV; g.fillText(S.full ? "Gửi " + S.x.toLowerCase() + " thương mến" : "Gửi các chị em thương mến", W / 2, 498);
-    var nm = S.full || "Chị em Phòng PTSPBL", fs = 86; g.fillStyle = "#fff"; g.font = "italic 700 " + fs + "px " + PF; while (g.measureText(nm).width > W - 200 && fs > 44) { fs -= 3; g.font = "italic 700 " + fs + "px " + PF; } g.fillText(nm, W / 2, 590);
-    var y0 = 590;
-    if (S.title) { g.fillStyle = "rgba(255,247,230,.8)"; g.font = "400 27px " + BV; g.fillText(S.title, W / 2, 636); y0 = 636; }
-    var rl = role(); g.font = "800 27px " + BV; var rw = Math.min(g.measureText(rl).width + 64, W - 160), ry = y0 + 26;
-    g.fillStyle = gold; rr(g, (W - rw) / 2, ry, rw, 56, 28); g.fill(); g.fillStyle = "#4a0d2a"; var rs = 27; while (g.measureText(rl).width > rw - 40 && rs > 18) { rs--; g.font = "800 " + rs + "px " + BV; } g.fillText(rl, W / 2, ry + 38);
-    /* lời chúc */
-    var wy = ry + 130;
-    g.fillStyle = "#fff4dc"; var wsz = 40; g.font = "italic 500 " + wsz + "px " + PF; var txt = w20Wish(wishIdx(), S.full ? S.x.toLowerCase() : "chị em"), wl = w20Wrap(g, txt, W - 300);
-    while (wl.length > 4 && wsz > 30) { wsz -= 2; g.font = "italic 500 " + wsz + "px " + PF; wl = w20Wrap(g, txt, W - 300); }
-    for (i = 0; i < wl.length && i < 5; i++) g.fillText(wl[i], W / 2, wy + i * (wsz * 1.42));
-    /* dấu ngoặc kép trang trí ở hai đầu đoạn chúc */
-    var fw = g.measureText(wl[0]).width, lw = g.measureText(wl[Math.min(wl.length, 5) - 1]).width, ly = wy + (Math.min(wl.length, 5) - 1) * (wsz * 1.42);
-    g.fillStyle = gold; g.font = "700 96px " + PF; g.textAlign = "right"; g.fillText("“", W / 2 - fw / 2 - 10, wy + 34); g.textAlign = "left"; g.fillText("”", W / 2 + lw / 2 + 10, ly + 56); g.textAlign = "center";
-    var by0 = wy + Math.min(wl.length, 5) * (wsz * 1.42) + 20;
-    /* đặc quyền + bó hoa */
-    var hasBq = ST.bq && ST.bq.length, pk = ST.prizes.map(function (i) { return W20CFG.prizes[i]; }).filter(Boolean), leftW = hasBq ? 600 : W - 200, lx = hasBq ? 100 : (W - leftW) / 2, py = Math.min(Math.max(by0 + 10, 1000), 1040);
-    g.textAlign = "left";
-    if (S.bd) { g.fillStyle = "#ffe7a3"; g.font = "700 28px " + BV; g.fillText("🎂 Và chúc mừng sinh nhật tháng 10 nữa nha!", lx, py - 14); py += 26; }
-    g.fillStyle = "#ffe7a3"; g.font = "800 22px " + BV; if ("letterSpacing" in g) g.letterSpacing = "3px"; g.fillText(pk.length ? "QUÀ CỦA " + (S.x || "CHỊ").toUpperCase() : "", lx, py + 18); if ("letterSpacing" in g) g.letterSpacing = "0px";
-    for (i = 0; i < pk.length && i < 3; i++) {
-      var p = pk[i], t = p.icon + "  " + p.name, ps = 25; g.font = "600 " + ps + "px " + BV; while (g.measureText(t).width > leftW - 40 && ps > 16) { ps--; g.font = "600 " + ps + "px " + BV; }
-      var tw = g.measureText(t).width + 36, yy = py + 36 + i * 56; g.fillStyle = "rgba(255,255,255,.12)"; rr(g, lx, yy, tw, 48, 24); g.fill(); g.strokeStyle = "rgba(255,231,163,.45)"; g.lineWidth = 1.5; g.stroke(); g.fillStyle = "#fff"; g.fillText(t, lx + 18, yy + 32);
-    }
-    if (hasBq) w20DrawBouquet(g, 868, 1030, 124, ST.bq);
-    else cluster(W - 70, H - 70, true);
-    /* ký tên */
-    g.textAlign = "center"; g.fillStyle = gold; var sg = "Thương mến, " + S.f, sgs = 44; g.font = "700 " + sgs + "px " + DS; while (g.measureText(sg).width > W - 360 && sgs > 30) { sgs -= 2; g.font = "700 " + sgs + "px " + DS; } g.fillText(sg, W / 2 - (hasBq ? 0 : 50), H - 80);
-    g.restore();
+    var c = $("#card"), g = c.getContext("2d");
+    var pk = ST.prizes.map(function (i) { return W20CFG.prizes[i]; }).filter(Boolean);
+    w20DrawCard(g, { mode: "chi", greet: S.full ? "Gửi " + S.x.toLowerCase() + " thương mến" : "Gửi các chị em thương mến", name: S.full || "Chị em Phòng PTSPBL", sub: S.title || "", role: role(),
+      wish: w20Wish(wishIdx(), S.full ? S.x.toLowerCase() : "chị em"), bd: S.bd, prizes: pk, from: S.f, bq: ST.bq });
   }
+  var bgImg = w20Img("assets/card-bg.webp"); if (!bgImg.complete) bgImg.onload = function () { card(); };
   function rr(g, x, y, w, h, r) { g.beginPath(); g.moveTo(x + r, y); g.arcTo(x + w, y, x + w, y + h, r); g.arcTo(x + w, y + h, x, y + h, r); g.arcTo(x, y + h, x, y, r); g.arcTo(x, y, x + w, y, r); g.closePath(); }
   function fname() { return "thiep-20-10-" + w20Fold(S.full || "ptspbl").replace(/[^a-z0-9]+/g, "-") + ".png"; }
   $("#dl").onclick = function () {

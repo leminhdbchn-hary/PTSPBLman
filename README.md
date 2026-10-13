@@ -16,12 +16,17 @@ Link trang: https://leminhdbchn-hary.github.io/PTSPBLman/
 | File | Nội dung |
 | --- | --- |
 | `assets/people.js` | Danh sách chị em (chỉ **tên + chức vụ**; không có ngày sinh, email). `bd: 1` = sinh nhật tháng 10 để chúc thêm |
-| `assets/config.js` | **Chỗ anh em chỉnh**: PIN trang quản lý, danh sách quà + số lượng, form nhận “thẻ nhờ việc”, lời nhắn trên tường |
+| `assets/config.js` | **Chỗ anh em chỉnh**: PIN trang quản lý, tên + biểu tượng các món quà, form nhận “thẻ nhờ việc”, lời nhắn trên tường, danh sách các anh chibi |
+| `assets/stock.js` | **Số lượng từng món quà** + hạt giống xáo ngẫu nhiên. Chỉnh bằng trang `admin.html` (tab Chia quà), không cần sửa tay |
+| `assets/card-bg.webp` | Nền hoa của thiệp / giấy khen (đổi ảnh khác cùng khổ 2:3 là đổi nền) |
 | `assets/common.js` | Lời chúc, chức danh vui, đặc quyền, thẻ cào… |
 
 ## Quà và vòng quay
-- Mỗi chị em quay **2 lượt, nhận 2 món KHÁC NHAU**, chia sẵn theo số lượng `qty` trong `config.js` (tổng cần = 2 × số người; để trống thì chia đều). Quay ở máy nào cũng ra đúng 2 món đó.
-- Xem ai nhận gì ở `admin.html` → tab **Thống kê quà** (số suất mỗi món cần chuẩn bị, có tải Excel). Chỉ đổi `qty` hoặc `seed` **trước khi gửi link**.
+- Mỗi chị em quay **2 lượt, nhận 2 món KHÁC NHAU**, chia **ngẫu nhiên** (không ai chọn sẵn) theo số lượng trong `assets/stock.js`. Quay ở máy nào cũng ra đúng 2 món đó.
+- **Gợi ý số lượng (52 người → 104 suất):** cà phê 34 · KitKat 34 · bánh ngọt 14 · hoa nhỏ 8 · thẻ nhờ việc 10 · quà bí mật 4.
+- **Chia lại số lượng:** vào `admin.html` → tab **Chia quà & thống kê** → chỉnh số (tổng phải đúng 104) → **Lưu lên GitHub**. Nút Lưu cần một token GitHub (hướng dẫn ngay trong trang). Không muốn dùng token thì bấm **Sao chép cấu hình** rồi dán vào `assets/stock.js` trên GitHub. Nút **Xáo lại** đổi ai nhận món nào.
+- Chỉ chia lại **trước khi gửi link** (hoặc khi chưa ai quay): ai đã quay rồi vẫn giữ 2 món cũ trên máy của họ.
+- Danh sách chi tiết ai nhận món gì ẩn mặc định, chỉ mở khi cần phát quà (có tải Excel, in).
 - **Thẻ nhờ anh em 1 việc bất kỳ**: chị em ghi việc muốn nhờ rồi bấm Gửi. Mặc định nút này sao chép lời nhờ để dán vào nhóm chat. Muốn gom tập trung thì tạo Google Form và điền vào `requestForm` trong `config.js`.
 - Xưng hô: mặc định "Chị"; sinh từ 1995 trở đi là "Em" (trường `x` trong `assets/people.js`). Lãnh đạo (6 người) dùng trang Sếp.
 

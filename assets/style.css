@@ -165,3 +165,70 @@ h2{letter-spacing:-.01em}
 .bqan{position:absolute;left:0;top:0;width:100%!important;height:auto;pointer-events:none}
 .pzrow{display:flex;gap:12px;align-items:center;text-align:left;background:rgba(255,215,106,.14);border:1px solid rgba(255,215,106,.5);border-radius:18px;padding:10px 14px;margin:10px auto 0;max-width:420px;animation:stepin .5s ease}
 .pzrow .pz{font-size:38px;flex:none}.pzrow small{display:block;font-size:12px;opacity:.75;font-weight:600}.pzrow b{color:#fff;font-size:16px;line-height:1.3}
+
+/* ===================== v4: giao diện đẹp hơn ===================== */
+:root{--rose:#ff5d9e;--gold2:#f3c969;--glass:linear-gradient(180deg,rgba(255,255,255,.1),rgba(255,255,255,.035));--ring:1px solid rgba(255,255,255,.16)}
+body:before{background:radial-gradient(1200px 700px at 85% -10%,rgba(255,93,158,.22),transparent 60%),radial-gradient(900px 600px at -10% 40%,rgba(18,160,95,.28),transparent 60%),linear-gradient(165deg,#012d19 0%,#0a5232 50%,#5f1840 115%)}
+h2{font-family:"Playfair Display","Be Vietnam Pro",Georgia,serif;font-weight:700;letter-spacing:0}
+.kicker{display:inline-flex;align-items:center;gap:8px;font-size:12px;letter-spacing:.12em;font-weight:800;color:#3d2506;background:linear-gradient(180deg,#ffeaa6,#f1c45a);border-radius:999px;padding:6px 14px;box-shadow:0 3px 0 #b98d1a,0 8px 18px rgba(0,0,0,.25)}
+.sub{font-size:16px;line-height:1.55;max-width:560px}
+/* các phần là thẻ kính */
+#app>section:not(#hero){width:calc(100% - 28px);max-width:700px;margin:22px auto;padding:30px 20px 28px;background:var(--glass);border:var(--ring);border-radius:32px;box-shadow:0 18px 50px rgba(0,0,0,.28),inset 0 1px 0 rgba(255,255,255,.12)}
+.step.open{animation:stepin .6s cubic-bezier(.2,.8,.2,1) both}
+/* nút */
+.btn{font-weight:800;letter-spacing:.01em;background:linear-gradient(180deg,#fff0b8 0%,#f6cf6a 55%,#e8b53f 100%);color:#43200f;box-shadow:inset 0 1px 0 rgba(255,255,255,.7),0 5px 0 #b3861c,0 14px 26px rgba(0,0,0,.3);transition:transform .12s,box-shadow .12s,filter .12s}
+.btn:hover{filter:brightness(1.05);transform:translateY(-1px)}
+.btn:active{transform:translateY(4px);box-shadow:inset 0 1px 0 rgba(255,255,255,.5),0 1px 0 #b3861c}
+.btn.pink{background:linear-gradient(180deg,#ff9cc4 0%,#ff5d9e 60%,#e23a80 100%);color:#fff;box-shadow:inset 0 1px 0 rgba(255,255,255,.45),0 5px 0 #a6205c,0 14px 26px rgba(0,0,0,.3)}
+.btn.pink:active{box-shadow:inset 0 1px 0 rgba(255,255,255,.3),0 1px 0 #a6205c}
+.btn.ghost{background:rgba(255,255,255,.1);color:#fff;box-shadow:inset 0 0 0 1.5px rgba(255,255,255,.4)}
+.btn:focus-visible,.tab:focus-visible,.fl:focus-visible,.perk:focus-visible{outline:3px solid #fff;outline-offset:3px}
+.btn:disabled{filter:grayscale(.4);opacity:.6;transform:none;cursor:default}
+/* thanh tiến độ */
+#prog{position:fixed;left:0;right:0;top:0;z-index:30;display:none;padding:calc(env(safe-area-inset-top,0px) + 8px) 14px 8px;background:linear-gradient(180deg,rgba(1,38,21,.92),rgba(1,38,21,.7));border-bottom:1px solid rgba(255,255,255,.12)}
+#prog.on{display:block}
+#prog .pt{display:flex;justify-content:space-between;align-items:center;font-size:13px;font-weight:700;margin-bottom:6px;max-width:700px;margin-left:auto;margin-right:auto}
+#prog .pt b{color:var(--gold)}
+#prog .dots{display:flex;gap:6px;max-width:700px;margin:0 auto}
+#prog .dots button{flex:1;height:8px;border:0;border-radius:99px;background:rgba(255,255,255,.2);cursor:default;padding:0;transition:background .3s}
+#prog .dots button.done{background:var(--g3);cursor:pointer}
+#prog .dots button.cur{background:linear-gradient(90deg,var(--gold),var(--rose));cursor:pointer}
+#hero{padding-top:84px}
+/* hero */
+#hero:before{content:"";position:absolute;left:50%;top:70px;width:min(520px,100%);height:520px;transform:translateX(-50%);background:radial-gradient(circle,rgba(255,215,106,.22),transparent 65%);pointer-events:none;z-index:-1}
+.badge{background:linear-gradient(180deg,#fff0b8,#f1c45a);color:#43200f;letter-spacing:.06em;font-size:13px;padding:6px 14px;border-radius:999px;transform:none;box-shadow:0 3px 0 #b3861c,0 10px 22px rgba(0,0,0,.28)}
+.big{font-family:"Playfair Display",Georgia,serif;line-height:1.02;margin:6px 0 2px;filter:none;text-shadow:none}
+.hello{font-family:"Be Vietnam Pro",sans-serif;font-weight:700;line-height:1.45}
+.hello .line2{font-family:"Playfair Display",Georgia,serif;font-style:italic;font-weight:700;font-size:1.25em;background:linear-gradient(180deg,#fff3c4,#f3c969);-webkit-background-clip:text;background-clip:text;color:transparent;display:inline-block;margin-top:6px}
+.lead{font-size:16.5px;line-height:1.6}
+/* chữ ký trang trí */
+.orn{display:flex;align-items:center;gap:12px;justify-content:center;color:var(--gold);margin:14px auto;opacity:.9}
+.orn:before,.orn:after{content:"";height:1px;width:70px;background:linear-gradient(90deg,transparent,var(--gold))}.orn:after{transform:scaleX(-1)}
+/* nội dung các phần */
+.note{background:linear-gradient(180deg,rgba(255,255,255,.1),rgba(255,255,255,.04));border:var(--ring);border-radius:22px;padding:14px 16px;gap:14px;box-shadow:0 6px 16px rgba(0,0,0,.18)}
+.note .ic{width:48px;height:48px;border-radius:50%;background:rgba(255,215,106,.18);display:flex;align-items:center;justify-content:center;font-size:26px;flex:none}
+.note.tap:hover{background:rgba(255,255,255,.14)}
+.gate{display:table;margin:18px auto 0;padding:9px 18px;border-radius:99px;background:rgba(255,255,255,.1);font-size:14.5px}
+.gate.ok{background:rgba(124,240,176,.16)}
+.gate:empty{display:none}
+.atm{background:linear-gradient(180deg,#f4f7f8,#c6d0d5);border-radius:30px;padding:20px;box-shadow:inset 0 2px 0 #fff,0 10px 0 #7b8b92,0 28px 44px rgba(0,0,0,.4)}
+.atm .scr{background:radial-gradient(circle at 50% 0%,#0b3d27,#04180e);box-shadow:inset 0 0 24px rgba(0,0,0,.6);border:5px solid #44525a;font-size:16px;line-height:1.5}
+.scwrap{border:3px solid #f3c969;box-shadow:0 0 0 6px rgba(243,201,105,.18),0 18px 36px rgba(0,0,0,.4);border-radius:22px}
+.perk{border-radius:20px}
+.wheelbox{padding:14px;border-radius:50%;background:conic-gradient(from 0deg,#f3c969,#fff3c4,#f3c969,#b98d1a,#f3c969,#fff3c4,#f3c969,#b98d1a,#f3c969);box-shadow:0 0 0 4px rgba(0,0,0,.25),0 18px 40px rgba(0,0,0,.45)}
+.wheelbox canvas{box-shadow:inset 0 0 0 4px rgba(255,255,255,.35)}
+.wheelbox:before{top:-14px;border-width:15px 13px 0;border-top-color:#ffe08a;z-index:3;filter:drop-shadow(0 2px 3px rgba(0,0,0,.5))}
+.pzrow{background:linear-gradient(180deg,rgba(255,215,106,.2),rgba(255,215,106,.08));border:1px solid rgba(255,215,106,.55);box-shadow:0 8px 20px rgba(0,0,0,.2)}
+.cardbox #card{border-radius:14px;box-shadow:0 24px 60px rgba(0,0,0,.55);background:#fff8f5}
+.acts{gap:12px}
+.lockbox{background:rgba(0,0,0,.18);border:1.5px dashed rgba(255,255,255,.28);border-radius:26px}
+footer{padding:40px 18px 90px}footer p:first-child{font-family:"Playfair Display",Georgia,serif;font-style:italic;font-size:20px;color:#ffe9a0}
+.toast{box-shadow:0 10px 28px rgba(0,0,0,.4);background:linear-gradient(180deg,#fff0b8,#f1c45a)}
+.litebtn{left:auto;right:8px;bottom:calc(env(safe-area-inset-bottom,0px) + 8px);font-size:11px;padding:6px 10px;opacity:.5}
+html,body{overflow-x:hidden}
+#app{overflow-x:clip}
+/* splash */
+#splash{background:radial-gradient(circle at 50% 25%,#127a4a,#03170d 70%)}
+.term{background:rgba(2,18,10,.88);border:1.5px solid rgba(124,240,176,.35);box-shadow:0 0 60px rgba(18,160,95,.25),0 24px 60px rgba(0,0,0,.5);border-radius:20px}
+@media (min-width:760px){#app>section:not(#hero){padding:38px 34px 34px}}
+#app>section{scroll-margin-top:64px}
