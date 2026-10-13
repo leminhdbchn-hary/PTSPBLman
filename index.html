@@ -303,7 +303,7 @@
 
   /* ---------- 5. Vòng quay 1 lượt, quà đã chia sẵn ---------- */
   function wheel() {
-    var prizes = W20CFG.prizes, assigned = me ? w20Assign()[me.id] : null;
+    var prizes = W20CFG.prizes, assigned = me ? (me.test ? null : w20Assign()[me.id]) : [w20Hash("guest|" + KEY) % prizes.length]; /* mỗi người 1 quà cố định: quay lại ở máy khác vẫn ra đúng quà đó */
     function showReq() { var has = ST.prizes.some(function (i) { return prizes[i] && prizes[i].key === "nho"; }); if (has) { $("#reqbox").classList.add("show"); if (ST.req) $("#reqtxt").value = ST.req; } }
     w20Wheel2({ cv: $("#wcv"), btn: $("#spin"), out: $("#prize"), prizes: prizes, assigned: assigned, got: ST.prizes,
       onGot: function (l) { ST.prizes = l; save(); },

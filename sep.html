@@ -204,7 +204,7 @@
   }
   function wheel() {
     var K = "w20sep3:" + (me ? me.id : "guest"), had = [], TEST = !!(me && me.test); try { if (!TEST) had = JSON.parse(localStorage.getItem(K) || "[]"); } catch (e) {}
-    var as = me ? w20Assign()[me.id] : null;
+    var as = me ? (me.test ? null : w20Assign()[me.id]) : [w20Hash("guest|" + K) % W20CFG.prizes.length]; /* quà cố định theo từng người */
     w20Wheel2({ cv: $("#wcv"), btn: $("#spin"), out: $("#prize"), prizes: W20CFG.prizes, assigned: as, got: had,
       onGot: function (l) { if (!TEST) { try { localStorage.setItem(K, JSON.stringify(l)); } catch (e) {} try { W20DB.progress(K, { prizes: l, step: l.length }); } catch (e) {} } else window.W20TESTGOT = l; setTimeout(card, 50); },
       onShow: function (i, k, fresh) { if (fresh) { FX.burst(innerWidth / 2, innerHeight * .5, 130); FX.rain(); } } });
