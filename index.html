@@ -142,6 +142,7 @@
 
 <script src="assets/config.js"></script>
 <script src="assets/stock.js"></script>
+<script src="assets/firebase-sync.js"></script>
 <script src="assets/people.js"></script>
 <script src="assets/common.js"></script>
 <script src="assets/flowers.js"></script>
@@ -155,7 +156,7 @@
   var KEY = "w20v3:" + (me ? me.id : "guest:" + w20Fold(S.to || ""));
   var loading = true; var ST = load(); /* tiến độ đã lưu: step, notes[], pulls, scratched, perks[], bq[], prize, req, wall */
   function load() { try { return JSON.parse(localStorage.getItem(KEY) || "{}"); } catch (e) { return {}; } }
-  function save() { try { localStorage.setItem(KEY, JSON.stringify(ST)); } catch (e) {} }
+  function save() { try { localStorage.setItem(KEY, JSON.stringify(ST)); } catch (e) {} try { W20DB.progress(KEY, ST); } catch (e) {} }
   ST.step = ST.step || 0; ST.notes = ST.notes || []; ST.bq = ST.bq || []; ST.prizes = ST.prizes || [];
 
   function toast(t) { var e = $("#toast"); e.textContent = t; e.className = "toast show"; clearTimeout(toast.t); toast.t = setTimeout(function () { e.className = "toast"; }, 2400); }
@@ -305,7 +306,7 @@
     $("#reqtxt").oninput = function () { ST.req = $("#reqtxt").value; save(); };
     $("#reqsend").onclick = function () {
       var t = w20Clean($("#reqtxt").value, 300).trim(); if (!t) { toast("Chị ghi việc cần nhờ trước nha ✍️"); return; }
-      ST.req = t; save();
+      ST.req = t; save(); try { W20DB.request(KEY, S.full || "Một chị em", t); } catch (e) {}
       var msg = "🙋 " + (S.full ? S.x + " " + S.full : "Một chị em") + " dùng “Thẻ nhờ anh em 1 việc bất kỳ”: " + t;
       var F = W20CFG.requestForm || {};
       if (F.url && F.field) { window.open(F.url + "?usp=pp_url&" + F.field + "=" + encodeURIComponent(msg), "_blank"); $("#reqmsg").textContent = "Đã mở form gửi anh em. Chị bấm Gửi trong form là xong nha."; return; }
