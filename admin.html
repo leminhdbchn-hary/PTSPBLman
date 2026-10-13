@@ -123,8 +123,8 @@ code{background:rgba(0,0,0,.25);border-radius:6px;padding:1px 6px;font-size:.92e
 (function () {
   var $ = function (s) { return document.querySelector(s); };
   var base = new URL("index.html", location.href).href, baseSep = new URL("sep.html", location.href).href;
-  (function () { var h = "<p style='margin:0 0 6px'><b>🧪 Link thử cho anh em Nam</b> (mở đi mở lại thoải mái, không lưu tiến độ, không tính vào quà)</p>"; W20TEST.forEach(function (t) { var a = base + "?u=" + t.id, b = baseSep + "?u=" + t.id; h += "<p style='margin:4px 0;word-break:break-all'>" + t.n + ":<br><a href='" + a + "' target='_blank' style='color:inherit'>" + a + "</a><br><a href='" + b + "' target='_blank' style='color:inherit'>" + b + "</a></p>"; }); document.getElementById("testlinks").innerHTML = h; })();
-  var PR = W20CFG.prizes, N = W20P.length, NEED = N * 2, REC = [34, 34, 14, 8, 10, 4];
+  (function () { var h = "<p style='margin:0 0 6px'><b>🧪 Link thử</b> (mở đi mở lại thoải mái, không lưu tiến độ, không tính vào quà)</p>"; W20TEST.forEach(function (t) { var a = (t.lead ? baseSep : base) + "?u=" + t.id; h += "<p style='margin:4px 0;word-break:break-all'>" + t.n + " · " + t.t + ":<br><a href='" + a + "' target='_blank' style='color:inherit'>" + a + "</a></p>"; }); document.getElementById("testlinks").innerHTML = h; })();
+  var PR = W20CFG.prizes, N = W20P.length, NEED = N * 2, REC = [34, 34, 18, 18];
   var draft = { qty: W20STOCK.qty.slice(), seed: String(W20STOCK.seed) }, A = w20Assign(draft);
   var REPO = "leminhdbchn-hary/PTSPBLman", BRANCH = "main", FILE = "assets/stock.js";
   function toast(t) { var e = $("#toast"); e.textContent = t; e.className = "toast show"; clearTimeout(toast.t); toast.t = setTimeout(function () { e.className = "toast"; }, 2000); }

@@ -102,6 +102,9 @@
         <button class="btn pink" id="shr" type="button">📤 Chia sẻ</button>
         <button class="btn ghost" id="rnd" type="button">🎲 Đổi danh hiệu & lời chúc</button>
       </div>
+      <div class="cwbox" style="margin:14px 0 0;text-align:left"><label for="cw" style="font-weight:700;font-size:15px">✍️ Sửa lời chúc trên thiệp</label>
+        <textarea id="cw" maxlength="220" rows="3" placeholder="Gõ lời chúc của riêng mình vào đây, thiệp cập nhật ngay" style="width:100%;margin-top:6px;font:inherit;font-size:16px;border-radius:14px;border:2px solid rgba(255,255,255,.35);background:rgba(255,255,255,.12);color:#fff;padding:10px 12px;resize:vertical;box-sizing:border-box"></textarea>
+        <button class="btn ghost" id="cwreset" type="button" style="margin-top:8px;font-size:14px;padding:8px 14px">↩️ Về lời chúc gốc</button></div>
     </div>
     <figure class="frame" id="teamframe" tabindex="0" role="button" aria-label="Phóng to ảnh tập thể">
       <span class="nail"></span>
@@ -210,7 +213,7 @@
   function card() {
     var c = $("#card"), g = c.getContext("2d");
     var got = []; try { got = (me && me.test) ? (window.W20TESTGOT || []) : JSON.parse(localStorage.getItem("w20sep2:" + (me ? me.id : "guest")) || "[]"); } catch (e) {}
-    w20DrawCard(g, { mode: "sep", greet: "Thân gửi:", name: S.to ? "Chị " + S.to : "Các chị lãnh đạo của Phòng", sub: me ? me.t : "", role: W20.sep.roles[ri()], wish: w20SepWish(wi(), "chị"), prizes: got.map(function (i) { return W20CFG.prizes[i]; }).filter(Boolean), from: S.f, bq: S.bq });
+    w20DrawCard(g, { mode: "sep", greet: "Thân gửi:", name: S.to ? "Chị " + S.to : "Các chị lãnh đạo của Phòng", sub: me ? me.t : "", role: W20.sep.roles[ri()], wish: CW ? CW : w20SepWish(wi(), "chị"), prizes: got.map(function (i) { return W20CFG.prizes[i]; }).filter(Boolean), from: S.f, bq: S.bq });
   }
   var bgImg = w20Img("assets/card-bg.webp"); if (!bgImg.complete) bgImg.onload = function () { card(); };
   var cardT = 0; function cardSoon() { cancelAnimationFrame(cardT); cardT = requestAnimationFrame(card); }
@@ -221,7 +224,13 @@
     var data = { title: "20/10 · Thiệp của chị " + (S.to || ""), text: "Thiệp 20/10 của chị " + (S.to || "") + " 🌹", url: url };
     if (navigator.share) navigator.share(data).catch(function () {}); else w20Copy(url, function () { toast("Đã sao chép link 📋"); });
   };
-  $("#rnd").onclick = function (e) { S.r = (Math.random() * W20.sep.roles.length) | 0; S.w = (Math.random() * W20.sep.wishes.length) | 0; card(); FX.burst(e.clientX, e.clientY, 60); toast("Đã đổi danh hiệu & lời chúc 🎲"); };
+  var CW = ""; try { if (!(me && me.test)) CW = localStorage.getItem("w20sepcw:" + (me ? me.id : "guest")) || ""; } catch (e) {}
+  function saveCW() { try { if (!(me && me.test)) localStorage.setItem("w20sepcw:" + (me ? me.id : "guest"), CW); } catch (e) {} }
+  var cwEl = $("#cw"); function curWish() { return CW ? CW : w20SepWish(wi(), "chị"); }
+  cwEl.value = curWish();
+  var cwT = 0; cwEl.oninput = function () { CW = cwEl.value.replace(/\s+/g, " ").slice(0, 220).trim(); saveCW(); clearTimeout(cwT); cwT = setTimeout(card, 120); };
+  $("#cwreset").onclick = function () { CW = ""; saveCW(); cwEl.value = curWish(); card(); toast("Đã về lời chúc gốc"); };
+  $("#rnd").onclick = function (e) { S.r = (Math.random() * W20.sep.roles.length) | 0; S.w = (Math.random() * W20.sep.wishes.length) | 0; CW = ""; saveCW(); cwEl.value = curWish(); card(); FX.burst(e.clientX, e.clientY, 60); toast("Đã đổi danh hiệu & lời chúc 🎲"); }
   $("#ask").onclick = ask;
   function reveal() {
     var els = document.querySelectorAll(".rv"); if (!("IntersectionObserver" in window)) { for (var i = 0; i < els.length; i++) els[i].classList.add("in"); return; }

@@ -25,12 +25,10 @@ var W20CFG = {
      Mỗi chị em quay 2 lượt và nhận 2 món KHÁC NHAU, ngẫu nhiên và không ai chọn sẵn.
      Số lượng từng món chỉnh ở trang admin.html (tab "Chia quà"). key "nho" = thẻ nhờ việc. */
   prizes: [
-    { icon: "☕", name: "1 cốc cà phê anh em đãi" },
     { icon: "🍫", name: "1 gói KitKat" },
-    { icon: "🍰", name: "1 phần bánh ngọt chiều nay" },
-    { icon: "🌸", name: "1 bó hoa nhỏ để bàn" },
-    { icon: "🙋", name: "Thẻ nhờ anh em 1 việc bất kỳ", key: "nho" },
-    { icon: "🎁", name: "Quà bí mật, nhận tại buổi gặp mặt" }
+    { icon: "☕", name: "1 ly cà phê / trà sữa anh em đãi" },
+    { icon: "🙋", name: "Nhờ anh em giúp 1 việc vặt", key: "nho" },
+    { icon: "🎁", name: "1 món quà nhỏ" }
   ],
 
   /* (Không bắt buộc) Nhận "Thẻ nhờ việc" qua Google Form để anh em xem tập trung trong Google Sheet.
