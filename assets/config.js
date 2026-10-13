@@ -6,9 +6,21 @@ var W20CFG = {
   /* Mã PIN để mở trang quản lý (admin.html): danh sách link + thống kê quà */
   adminPin: "2010",
 
-  /* Quà ở Vòng quay. qty = số lượng món đó. Mỗi chị em được chia sẵn 1 món theo số lượng này,
-     quay ở đâu cũng ra đúng món đó (mỗi người chỉ quay 1 lần).
-     Bỏ trống qty (hoặc tổng nhỏ hơn số người) thì phần còn thiếu được chia đều.
+  /* Các anh chạy ra tặng hoa ở phần Cắm hoa (ảnh đầu đã cắt sẵn trong assets/men).
+     Thêm người: bỏ ảnh h8.webp… vào assets/men rồi thêm một dòng ở đây. shirt = màu áo (trắng "#ffffff", đen "#1d1f2a"). */
+  men: [
+    { img: "assets/men/h1.webp", shirt: "#ffffff" },
+    { img: "assets/men/h2.webp", shirt: "#1d1f2a" },
+    { img: "assets/men/h3.webp", shirt: "#ffffff" },
+    { img: "assets/men/h4.webp", shirt: "#ffffff" },
+    { img: "assets/men/h5.webp", shirt: "#ffffff" },
+    { img: "assets/men/h6.webp", shirt: "#ffffff" },
+    { img: "assets/men/h7.webp", shirt: "#ffffff" }
+  ],
+
+  /* Quà ở Vòng quay. qty = số lượng món đó. Mỗi chị em quay 2 lần và nhận 2 món KHÁC NHAU, chia sẵn theo số lượng này
+     (tổng số suất cần = 2 × số người). Quay ở đâu cũng ra đúng 2 món đó.
+     Bỏ trống qty (hoặc tổng nhỏ hơn 2 × số người) thì phần còn thiếu được chia đều.
      key "nho" = thẻ nhờ việc: người nhận được ghi việc muốn nhờ. */
   prizes: [
     { icon: "☕", name: "1 cốc cà phê / trà sữa anh em đãi", qty: 0 },

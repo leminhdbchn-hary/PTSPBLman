@@ -36,13 +36,13 @@
       <input id="nameinp" placeholder="Nhập tên để nhận thiệp riêng" maxlength="40" aria-label="Tên của bạn">
       <button class="btn pink" style="padding:10px 18px;font-size:16px" type="submit">OK</button>
     </form>
-    <p class="sub" style="max-width:520px;margin:6px auto 18px">Trang này có <b>8 phần quà</b>, mở lần lượt từng phần một. Xong phần trên thì phần dưới mới hiện ra nha 🎁</p>
+    <p class="sub" style="max-width:520px;margin:6px auto 18px">Trang này có <b>7 phần quà</b>, mở lần lượt từng phần một. Xong phần nào là tự động sang phần kế tiếp nha 🎁</p>
     <button class="btn" id="start" type="button">Mở quà thôi ↓</button>
   </section>
 
   <!-- 1. Release notes -->
   <section class="step" id="s0">
-    <span class="kicker">Phần 1/8 · Release Notes</span>
+    <span class="kicker">Phần 1/7 · Release Notes</span>
     <h2>Bản v20.10 có gì mới?</h2>
     <p class="sub">Chạm vào từng dòng để đọc. Đọc hết 6 dòng là mở được phần tiếp theo.</p>
     <div class="notes" id="noteList"></div>
@@ -51,7 +51,7 @@
 
   <!-- 2. Máy rút lời chúc -->
   <section class="step" id="s1">
-    <span class="kicker">Phần 2/8 · Máy rút lời chúc</span>
+    <span class="kicker">Phần 2/7 · Máy rút lời chúc</span>
     <h2>Rút lời chúc, không cần thẻ</h2>
     <p class="sub">Bấm “Rút” 3 lần để nhận 3 lời chúc. Lần thứ 3 có bất ngờ đó.</p>
     <div class="atm">
@@ -65,60 +65,51 @@
 
   <!-- 3. Thẻ cào -->
   <section class="step" id="s2">
-    <span class="kicker">Phần 3/8 · Thẻ cào</span>
+    <span class="kicker">Phần 3/7 · Thẻ cào</span>
     <h2>Cào nhẹ tay thôi, quà không chạy đâu</h2>
     <p class="sub">Dùng ngón tay (hoặc chuột) cào lớp bạc cho tới khi lộ ưu đãi.</p>
     <div class="scwrap" id="scwrap"><div class="under" id="under"></div><canvas id="scv"></canvas></div>
     <div class="gate" id="g2"></div>
   </section>
 
-  <!-- 4. Đặc quyền -->
+  <!-- 5. Cắm hoa -->
   <section class="step" id="s3">
-    <span class="kicker">Phần 4/8 · Đặc quyền</span>
-    <h2>Chọn 3 đặc quyền cho riêng chị</h2>
-    <p class="sub">Chọn đủ 3 cái nha. 3 đặc quyền này sẽ được in lên thiệp ở cuối trang.</p>
-    <div class="perks" id="perkList"></div>
+    <span class="kicker">Phần 4/7 · Cắm hoa</span>
+    <h2>Tự cắm một bó hoa thật xinh</h2>
+    <p class="sub">Chạm vào loại hoa chị thích, các anh sẽ chạy ra, mỗi anh cầm một bông cắm vào bó giúp chị. Cắm ít nhất 5 bông rồi bấm “Xong bó hoa”. Bó hoa sẽ nằm trên thiệp của chị.</p>
+    <div id="bqbox"></div>
     <div class="gate" id="g3"></div>
   </section>
 
-  <!-- 5. Cắm hoa -->
-  <section class="step" id="s4">
-    <span class="kicker">Phần 5/8 · Cắm hoa</span>
-    <h2>Tự cắm một bó hoa thật xinh</h2>
-    <p class="sub">Chạm vào từng loại hoa để cắm vào bó (ít nhất 5 bông), xong thì bấm “Xong bó hoa”. Bó hoa sẽ nằm trên thiệp của chị.</p>
-    <div id="bqbox"></div>
-    <div class="gate" id="g4"></div>
-  </section>
-
   <!-- 6. Vòng quay -->
-  <section class="step" id="s5">
-    <span class="kicker">Phần 6/8 · Vòng quay quà</span>
-    <h2>Quay một lần, quà thật nha</h2>
-    <p class="sub">Mỗi người được quay đúng 1 lần. Quà anh em chuẩn bị thật và trao tận tay ở buổi gặp mặt.</p>
+  <section class="step" id="s4">
+    <span class="kicker">Phần 5/7 · Vòng quay quà</span>
+    <h2>Quay 2 lượt, nhận 2 món quà</h2>
+    <p class="sub">Mỗi người quay 2 lượt, ra 2 món quà khác nhau. Quà anh em chuẩn bị thật và trao tận tay ở buổi gặp mặt.</p>
     <div class="wheelbox"><canvas id="wcv" width="640" height="640"></canvas></div>
-    <p style="text-align:center;margin-top:14px"><button class="btn pink" id="spin" type="button">🎡 QUAY</button></p>
-    <div class="prize" id="prize"></div>
+    <p style="text-align:center;margin-top:14px"><button class="btn pink" id="spin" type="button">🎡 QUAY LƯỢT 1/2</button></p>
+    <div id="prize"></div>
     <div class="reqbox" id="reqbox">
       <b>🙋 Chị muốn nhờ anh em việc gì?</b>
       <textarea id="reqtxt" maxlength="300" placeholder="VD: Bê giúp em thùng nước lên tầng, sửa giúp em cái máy in…"></textarea>
       <button class="btn pink" id="reqsend" type="button" style="width:100%">📨 Gửi cho anh em</button>
       <div class="spun" id="reqmsg"></div>
     </div>
-    <div class="gate" id="g5"></div>
+    <div class="gate" id="g4"></div>
   </section>
 
   <!-- 7. Tường lời chúc -->
-  <section class="step" id="s6">
-    <span class="kicker">Phần 7/8 · Anh em nhắn gửi</span>
+  <section class="step" id="s5">
+    <span class="kicker">Phần 6/7 · Anh em nhắn gửi</span>
     <h2>Mấy lời anh em muốn nói</h2>
     <div class="wall" id="wall"></div>
     <p style="text-align:center;margin-top:18px"><button class="btn" id="readwall" type="button">Đọc hết rồi 💌</button></p>
-    <div class="gate" id="g6"></div>
+    <div class="gate" id="g5"></div>
   </section>
 
   <!-- 8. Thiệp riêng -->
-  <section class="step" id="s7">
-    <span class="kicker">Phần 8/8 · Thiệp riêng</span>
+  <section class="step" id="s6">
+    <span class="kicker">Phần 7/7 · Thiệp riêng</span>
     <h2>Thiệp 20/10 của riêng chị</h2>
     <p class="sub">Tải về đăng Facebook, Zalo hay làm hình nền đều xinh. Khung 4:5 vừa đẹp để đăng mạng xã hội.</p>
     <div class="cardbox">
@@ -149,12 +140,13 @@
 (function () {
   var $ = function (s) { return document.querySelector(s); };
   var P = w20Params(), me = w20Person(P.u);
-  var S = { to: me ? w20Short(me.n) : P.to, full: me ? me.n : P.to, title: me ? me.t : "", bd: me && me.bd, x: P.x || "Chị", f: P.f || W20CFG.from, r: P.r, w: P.w, n: 0, bag: [] };
-  var KEY = "w20v2:" + (me ? me.id : "guest:" + w20Fold(S.to || ""));
-  var ST = load(); /* tiến độ đã lưu: step, notes[], pulls, scratched, perks[], bq[], prize, req, wall */
+  if (me && me.lead) { location.replace("sep.html?u=" + me.id); return; } /* lãnh đạo chỉ dùng trang riêng của Sếp */
+  var S = { to: me ? w20Short(me.n) : P.to, full: me ? me.n : P.to, title: me ? me.t : "", bd: me && me.bd, x: P.x || (me && me.x) || "Chị", f: P.f || W20CFG.from, r: P.r, w: P.w, n: 0, bag: [] };
+  var KEY = "w20v3:" + (me ? me.id : "guest:" + w20Fold(S.to || ""));
+  var loading = true; var ST = load(); /* tiến độ đã lưu: step, notes[], pulls, scratched, perks[], bq[], prize, req, wall */
   function load() { try { return JSON.parse(localStorage.getItem(KEY) || "{}"); } catch (e) { return {}; } }
   function save() { try { localStorage.setItem(KEY, JSON.stringify(ST)); } catch (e) {} }
-  ST.step = ST.step || 0; ST.notes = ST.notes || []; ST.perks = ST.perks || []; ST.bq = ST.bq || [];
+  ST.step = ST.step || 0; ST.notes = ST.notes || []; ST.bq = ST.bq || []; ST.prizes = ST.prizes || [];
 
   function toast(t) { var e = $("#toast"); e.textContent = t; e.className = "toast show"; clearTimeout(toast.t); toast.t = setTimeout(function () { e.className = "toast"; }, 2400); }
   function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); }
@@ -165,7 +157,7 @@
   function wishIdx() { return S.w !== null && S.w !== undefined ? S.w : dv().w; }
 
   /* ---------- Mở khóa từng phần ---------- */
-  var N = 8, HINT = ["Đọc hết 6 dòng Release Notes", "Rút đủ 3 lời chúc ở máy", "Cào lộ thẻ ưu đãi", "Chọn đủ 3 đặc quyền", "Cắm xong bó hoa", "Quay vòng quay quà", "Đọc lời nhắn của anh em"];
+  var N = 7, HINT = ["Đọc hết 6 dòng Release Notes", "Rút đủ 3 lời chúc ở máy", "Cào lộ thẻ ưu đãi", "Cắm xong bó hoa", "Quay đủ 2 lượt vòng quay quà", "Đọc lời nhắn của anh em"];
   function showSteps(scrollTo) {
     for (var i = 0; i < N; i++) $("#s" + i).classList.toggle("open", i <= ST.step);
     var lk = $("#lock");
@@ -173,10 +165,13 @@
     else { lk.style.display = ""; lk.innerHTML = "<b>🔒 Còn " + (N - 1 - ST.step) + " phần quà đang khóa</b>Mở khóa bằng cách: " + esc(HINT[ST.step]) + " ở phần trên nha."; }
     if (scrollTo !== undefined) setTimeout(function () { var el = $("#s" + scrollTo); if (el) el.scrollIntoView({ behavior: "smooth", block: "start" }); }, 250);
   }
-  function done(k) {
+  var advT = 0;
+  function done(k, delay, quiet) {
     if (ST.step !== k) return; ST.step = k + 1; save(); showSteps();
-    var g = $("#g" + k); if (g) { g.className = "gate ok"; g.innerHTML = "✔ Xong! Phần tiếp theo đã mở <br><button class='btn nextbtn' type='button'>Sang phần " + (k + 2) + " ↓</button>"; g.querySelector("button").onclick = function () { $("#s" + (k + 1)).scrollIntoView({ behavior: "smooth", block: "start" }); }; }
+    var g = $("#g" + k); if (g) { g.className = "gate ok"; g.textContent = quiet ? "✔ Xong rồi!" : "✔ Xong! Đang sang phần tiếp theo…"; }
     FX.burst(innerWidth / 2, innerHeight * .55, 70);
+    if (quiet) return; /* mở lại trang: giữ nguyên chỗ cũ, không tự cuộn */
+    clearTimeout(advT); advT = setTimeout(function () { var el = $("#s" + (k + 1)); if (el) el.scrollIntoView({ behavior: "smooth", block: "start" }); }, delay === undefined ? 1500 : delay);
   }
   function gate(k, txt) { var g = $("#g" + k); if (g && ST.step === k) { g.className = "gate"; g.textContent = txt; } }
 
@@ -217,7 +212,7 @@
   /* ---------- 1. Release notes ---------- */
   function notes() {
     $("#noteList").innerHTML = W20.notes.map(function (n, i) { return '<div class="note tap' + (ST.notes.indexOf(i) >= 0 ? " open" : "") + '" data-i="' + i + '"><div class="ic">' + n[0] + '</div><div><b>' + n[1] + '</b><span>' + n[2] + '</span><div class="more">Chạm để đọc 👆</div></div></div>'; }).join("");
-    function upd() { var c = ST.notes.length; if (c >= W20.notes.length) done(0); else gate(0, "Đã đọc " + c + "/" + W20.notes.length + " dòng"); }
+    function upd() { var c = ST.notes.length; if (c >= W20.notes.length) done(0, 1300, loading); else gate(0, "Đã đọc " + c + "/" + W20.notes.length + " dòng"); }
     $("#noteList").onclick = function (e) { var b = e.target.closest(".note"); if (!b) return; var i = +b.getAttribute("data-i"); b.classList.add("open"); if (ST.notes.indexOf(i) < 0) { ST.notes.push(i); save(); } upd(); };
     upd();
   }
@@ -225,7 +220,7 @@
   /* ---------- 2. Máy rút lời chúc ---------- */
   function bag() { var a = W20.wishes.map(function (_, i) { return i; }), i, j, t; for (i = a.length - 1; i > 0; i--) { j = (Math.random() * (i + 1)) | 0; t = a[i]; a[i] = a[j]; a[j] = t; } return a; }
   function atm() {
-    function upd() { var c = ST.pulls || 0; if (c >= 3) done(1); else gate(1, c ? "Rút thêm " + (3 - c) + " lần nữa nha" : "Bấm RÚT để nhận lời chúc đầu tiên"); }
+    function upd() { var c = ST.pulls || 0; if (c >= 3) done(1, 2200, loading); else gate(1, c ? "Rút thêm " + (3 - c) + " lần nữa nha" : "Bấm RÚT để nhận lời chúc đầu tiên"); }
     $("#pull").onclick = function () {
       var b = $("#pull"), scr = $("#scr"), slip = $("#slip"); b.disabled = true; slip.classList.remove("out"); scr.className = "scr"; scr.textContent = "Đang xử lý giao dịch… 💳";
       S.n++; $("#cnt").textContent = "Giao dịch: " + S.n; if (navigator.vibrate) navigator.vibrate(30);
@@ -259,12 +254,12 @@
       sctx.fillStyle = "#6b727a"; sctx.font = "800 22px 'Be Vietnam Pro',Arial,sans-serif"; sctx.textAlign = "center"; sctx.fillText("✨ CÀO Ở ĐÂY ✨", w / 2, h / 2 + 8);
       sctx.globalCompositeOperation = "destination-out";
     }
-    if (ST.scratched) { cleared = true; scv.style.display = "none"; done(2); } else { gate(2, "Cào hơn nửa thẻ là lộ quà"); setTimeout(paint, 30); }
+    if (ST.scratched) { cleared = true; scv.style.display = "none"; done(2, 0, true); } else { gate(2, "Cào hơn nửa thẻ là lộ quà"); setTimeout(paint, 30); }
     function at(e) { var r = scv.getBoundingClientRect(); sctx.beginPath(); sctx.arc(e.clientX - r.left, e.clientY - r.top, 22, 0, 6.283); sctx.fill(); }
     function check() {
       if (cleared) return; var d = sctx.getImageData(0, 0, scv.width, scv.height).data, c = 0, n = 0;
       for (var i = 3; i < d.length; i += 64) { n++; if (d[i] < 20) c++; }
-      if (c / n > .5) { cleared = true; sctx.clearRect(0, 0, scv.width, scv.height); ST.scratched = 1; save(); var r = scv.getBoundingClientRect(); FX.burst(r.left + r.width / 2, r.top + r.height / 2, 100); toast("Trúng rồi nè! 🎉"); done(2); }
+      if (c / n > .5) { cleared = true; sctx.clearRect(0, 0, scv.width, scv.height); ST.scratched = 1; save(); var r = scv.getBoundingClientRect(); FX.burst(r.left + r.width / 2, r.top + r.height / 2, 100); toast("Trúng rồi nè! 🎉"); done(2, 2200); }
     }
     scv.addEventListener("pointerdown", function (e) { scratching = true; try { scv.setPointerCapture(e.pointerId); } catch (x) {} at(e); });
     scv.addEventListener("pointermove", function (e) { if (scratching) at(e); });
@@ -273,47 +268,27 @@
     window.w20PaintScratch = paint;
   }
 
-  /* ---------- 4. Đặc quyền ---------- */
-  function perks() {
-    function render() {
-      $("#perkList").innerHTML = W20.perks.map(function (p, i) { return '<button type="button" class="perk' + (ST.perks.indexOf(i) >= 0 ? " on" : "") + '" data-i="' + i + '"><div class="ic">' + p[0] + '</div><span>' + p[1] + '</span></button>'; }).join("");
-      if (ST.perks.length === 3) done(3); else gate(3, "Đã chọn " + ST.perks.length + "/3 đặc quyền");
-    }
-    $("#perkList").onclick = function (e) {
-      var b = e.target.closest(".perk"); if (!b) return; var i = +b.getAttribute("data-i"), k = ST.perks.indexOf(i);
-      if (k >= 0) ST.perks.splice(k, 1); else { if (ST.perks.length >= 3) ST.perks.shift(); ST.perks.push(i); }
-      save(); render(); card();
-    };
-    render();
-  }
-
-  /* ---------- 5. Cắm hoa ---------- */
+  /* ---------- 4. Cắm hoa ---------- */
   function flowers() {
-    var ui = w20BouquetUI($("#bqbox"), { min: 5, start: ST.bq, onChange: function (l) { ST.bq = l; save(); cardSoon(); },
-      onDone: function (l, e) { ST.bq = l; ST.bqDone = 1; save(); card(); FX.burst(e.clientX, e.clientY, 120); toast("Bó hoa xinh quá trời 💐"); done(4); } });
-    if (ST.bqDone) done(4); else gate(4, "Cắm ít nhất 5 bông rồi bấm “Xong bó hoa”");
+    w20BouquetUI($("#bqbox"), { min: 5, start: ST.bq, onChange: function (l) { ST.bq = l; save(); cardSoon(); },
+      onDone: function (l, e) { ST.bq = l; ST.bqDone = 1; save(); card(); FX.burst(e.clientX, e.clientY, 120); toast("Bó hoa xinh quá trời 💐"); done(3, 1800); } });
+    if (ST.bqDone) done(3, 0, true); else gate(3, "Cắm ít nhất 5 bông rồi bấm “Xong bó hoa”");
   }
 
-  /* ---------- 6. Vòng quay (mỗi người 1 lần, quà đã chia sẵn) ---------- */
+  /* ---------- 5. Vòng quay 2 lượt, quà đã chia sẵn ---------- */
   function wheel() {
     var prizes = W20CFG.prizes, assigned = me ? w20Assign()[me.id] : null;
-    var wv = w20Wheel($("#wcv"), prizes, function (p, idx) { show(idx, true); });
-    function show(idx, fresh) {
-      var p = prizes[idx]; ST.prize = idx; save();
-      $("#prize").innerHTML = "<span class='pz'>" + p.icon + "</span>" + esc(p.name) + "<br><small style='opacity:.85;font-weight:600'>" + (p.key === "nho" ? "Anh em sẵn sàng rồi, chị cứ nhờ thoải mái!" : "Anh em sẽ trao tận tay chị ở buổi gặp mặt nha!") + "</small>";
-      $("#spin").disabled = true; $("#spin").textContent = "✔ Chị đã quay rồi";
-      if (p.key === "nho") { $("#reqbox").classList.add("show"); if (ST.req) $("#reqtxt").value = ST.req; }
-      if (fresh) { FX.burst(innerWidth / 2, innerHeight * .5, 140); FX.rain(); }
-      done(5);
-    }
-    if (ST.prize !== undefined && ST.prize !== null && prizes[ST.prize]) { wv.setAt(ST.prize); show(ST.prize, false); }
-    else gate(5, "Bấm QUAY để nhận quà");
-    $("#spin").onclick = function () { if (ST.prize !== undefined && ST.prize !== null) return; $("#spin").disabled = true; $("#prize").textContent = "Đang quay…"; wv.spin(assigned !== null && assigned !== undefined ? assigned : (Math.random() * prizes.length) | 0); };
+    function showReq() { var has = ST.prizes.some(function (i) { return prizes[i] && prizes[i].key === "nho"; }); if (has) { $("#reqbox").classList.add("show"); if (ST.req) $("#reqtxt").value = ST.req; } }
+    w20Wheel2({ cv: $("#wcv"), btn: $("#spin"), out: $("#prize"), prizes: prizes, assigned: assigned, got: ST.prizes,
+      onGot: function (l) { ST.prizes = l; save(); },
+      onShow: function (idx, k, fresh) { showReq(); if (fresh) { FX.burst(innerWidth / 2, innerHeight * .5, 130); FX.rain(); } if (ST.prizes.length < 2) gate(4, "Còn 1 lượt quay nữa nha"); },
+      onAll: function (fresh) { card(); done(4, 3800, !fresh); } });
+    if (ST.prizes.length < 2 && !ST.prizes.length) gate(4, "Bấm QUAY để nhận món quà đầu tiên");
     $("#reqtxt").oninput = function () { ST.req = $("#reqtxt").value; save(); };
     $("#reqsend").onclick = function () {
       var t = w20Clean($("#reqtxt").value, 300).trim(); if (!t) { toast("Chị ghi việc cần nhờ trước nha ✍️"); return; }
       ST.req = t; save();
-      var msg = "🙋 " + (S.full ? S.x + " " + S.full : "Một chị em") + " dùng “Thẻ nhờ anh em 1 việc”: " + t;
+      var msg = "🙋 " + (S.full ? S.x + " " + S.full : "Một chị em") + " dùng “Thẻ nhờ anh em 1 việc bất kỳ”: " + t;
       var F = W20CFG.requestForm || {};
       if (F.url && F.field) { window.open(F.url + "?usp=pp_url&" + F.field + "=" + encodeURIComponent(msg), "_blank"); $("#reqmsg").textContent = "Đã mở form gửi anh em. Chị bấm Gửi trong form là xong nha."; return; }
       if (navigator.share) navigator.share({ text: msg }).catch(function () {});
@@ -321,14 +296,14 @@
     };
   }
 
-  /* ---------- 7. Tường lời chúc ---------- */
+  /* ---------- 6. Tường lời chúc ---------- */
   function wall() {
     w20Wall($("#wall"), W20CFG.wallChiEm);
-    $("#readwall").onclick = function () { ST.wall = 1; save(); done(6); };
-    if (ST.wall) done(6); else gate(6, "Đọc xong thì bấm “Đọc hết rồi” nha");
+    $("#readwall").onclick = function () { ST.wall = 1; save(); done(5, 900); };
+    if (ST.wall) done(5, 0, true); else gate(5, "Đọc xong thì bấm “Đọc hết rồi” nha");
   }
 
-  /* ---------- 8. Thiệp ---------- */
+  /* ---------- 7. Thiệp ---------- */
   var cardT = 0; function cardSoon() { cancelAnimationFrame(cardT); cardT = requestAnimationFrame(card); }
   var FONTS = ["700 80px 'Playfair Display'", "italic 700 80px 'Playfair Display'", "italic 500 40px 'Playfair Display'", "700 60px 'Dancing Script'", "600 28px 'Be Vietnam Pro'", "800 28px 'Be Vietnam Pro'", "400 28px 'Be Vietnam Pro'"];
   function card() {
@@ -367,12 +342,12 @@
     g.fillStyle = gold; g.font = "700 96px " + PF; g.textAlign = "right"; g.fillText("“", W / 2 - fw / 2 - 10, wy + 34); g.textAlign = "left"; g.fillText("”", W / 2 + lw / 2 + 10, ly + 56); g.textAlign = "center";
     var by0 = wy + Math.min(wl.length, 5) * (wsz * 1.42) + 20;
     /* đặc quyền + bó hoa */
-    var hasBq = ST.bq && ST.bq.length, pk = ST.perks.length ? ST.perks : dv().p, leftW = hasBq ? 600 : W - 200, lx = hasBq ? 100 : (W - leftW) / 2, py = Math.min(Math.max(by0 + 10, 1000), 1040);
+    var hasBq = ST.bq && ST.bq.length, pk = ST.prizes.map(function (i) { return W20CFG.prizes[i]; }).filter(Boolean), leftW = hasBq ? 600 : W - 200, lx = hasBq ? 100 : (W - leftW) / 2, py = Math.min(Math.max(by0 + 10, 1000), 1040);
     g.textAlign = "left";
     if (S.bd) { g.fillStyle = "#ffe7a3"; g.font = "700 28px " + BV; g.fillText("🎂 Và chúc mừng sinh nhật tháng 10 nữa nha!", lx, py - 14); py += 26; }
-    g.fillStyle = "#ffe7a3"; g.font = "800 22px " + BV; if ("letterSpacing" in g) g.letterSpacing = "3px"; g.fillText("ĐẶC QUYỀN ĐÃ KÍCH HOẠT", lx, py + 18); if ("letterSpacing" in g) g.letterSpacing = "0px";
+    g.fillStyle = "#ffe7a3"; g.font = "800 22px " + BV; if ("letterSpacing" in g) g.letterSpacing = "3px"; g.fillText(pk.length ? "QUÀ CỦA " + (S.x || "CHỊ").toUpperCase() : "", lx, py + 18); if ("letterSpacing" in g) g.letterSpacing = "0px";
     for (i = 0; i < pk.length && i < 3; i++) {
-      var p = W20.perks[pk[i]], t = p[0] + "  " + p[1], ps = 25; g.font = "600 " + ps + "px " + BV; while (g.measureText(t).width > leftW - 40 && ps > 16) { ps--; g.font = "600 " + ps + "px " + BV; }
+      var p = pk[i], t = p.icon + "  " + p.name, ps = 25; g.font = "600 " + ps + "px " + BV; while (g.measureText(t).width > leftW - 40 && ps > 16) { ps--; g.font = "600 " + ps + "px " + BV; }
       var tw = g.measureText(t).width + 36, yy = py + 36 + i * 56; g.fillStyle = "rgba(255,255,255,.12)"; rr(g, lx, yy, tw, 48, 24); g.fill(); g.strokeStyle = "rgba(255,231,163,.45)"; g.lineWidth = 1.5; g.stroke(); g.fillStyle = "#fff"; g.fillText(t, lx + 18, yy + 32);
     }
     if (hasBq) w20DrawBouquet(g, 868, 1030, 124, ST.bq);
@@ -399,8 +374,8 @@
 
   /* ---------- khởi động ---------- */
   FX.init(); splash(); hero(); showSteps();
-  notes(); atm(); scratch(); perks(); flowers(); wheel(); wall(); card();
-  showSteps();
+  notes(); atm(); scratch(); flowers(); wheel(); wall(); card();
+  loading = false; showSteps();
   if (document.fonts && document.fonts.load) Promise.all(FONTS.map(function (f) { return document.fonts.load(f, "Chị Hạnh ơi 20.10"); })).then(card, card);
   /* vẽ lại lớp bạc khi phần thẻ cào vừa mở (lúc trước đang ẩn nên chưa có kích thước) */
   new MutationObserver(function () { if ($("#s2").classList.contains("open") && !cleared && window.w20PaintScratch) window.w20PaintScratch(); }).observe($("#s2"), { attributes: true, attributeFilter: ["class"] });

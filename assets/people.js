@@ -1,5 +1,5 @@
 /* Danh sách chị em Phòng PTSPBL (chỉ tên và chức vụ).
-   id = mã riêng trong link; lead = lãnh đạo phòng; bd = sinh nhật tháng 10 (để chúc thêm).
+   id = mã riêng trong link; x = xưng hô (mặc định Chị; sinh từ 1995 là Em); lead = lãnh đạo phòng; bd = sinh nhật tháng 10 (để chúc thêm).
    Thêm / bớt người: thêm một dòng mới với id khác nhau (6 ký tự). */
 var W20P = [
   {"id": "f513a5", "n": "Trần Thị Hạnh", "t": "Trưởng Phòng PTSPBL", "lead": 1},
@@ -10,7 +10,7 @@ var W20P = [
   {"id": "ab0777", "n": "Nguyễn Hồng Thanh", "t": "Phó trưởng Phòng PTSPBL", "lead": 1},
   {"id": "533d4c", "n": "Đoàn Anh Thư", "t": "Chuyên viên Phòng PTSPBL"},
   {"id": "e97542", "n": "Nguyễn Thị Thanh", "t": "Chuyên viên Phòng PTSPBL"},
-  {"id": "683207", "n": "Vũ Thị Hà Phương", "t": "Chuyên viên Phòng PTSPBL"},
+  {"id": "683207", "n": "Vũ Thị Hà Phương", "t": "Chuyên viên Phòng PTSPBL", "x": "Em"},
   {"id": "761c47", "n": "Lê Lan Phương", "t": "Chuyên viên Phòng PTSPBL"},
   {"id": "d9bb15", "n": "Hà Thị Tuyết Hạnh", "t": "Chuyên viên Phòng PTSPBL"},
   {"id": "7040ce", "n": "Trần Thị Vân Anh", "t": "Chuyên viên Phòng PTSPBL"},
@@ -34,13 +34,13 @@ var W20P = [
   {"id": "aae83c", "n": "Đoàn Mai Anh", "t": "Chuyên viên Phòng PTSPBL"},
   {"id": "6f5c9f", "n": "Nguyễn Minh Ngọc", "t": "Chuyên viên Phòng PTSPBL"},
   {"id": "5f5ed4", "n": "Lê Thu Hiền", "t": "Chuyên viên Phòng PTSPBL"},
-  {"id": "e722db", "n": "Nguyễn Tú Anh", "t": "Chuyên viên Phòng PTSPBL"},
+  {"id": "e722db", "n": "Nguyễn Tú Anh", "t": "Chuyên viên Phòng PTSPBL", "x": "Em"},
   {"id": "ee895a", "n": "Vũ Thu Huyền Mi", "t": "Chuyên viên Phòng PTSPBL", "bd": 1},
   {"id": "d7dcca", "n": "Đào Thị Kim Ngọc", "t": "Chuyên viên Phòng PTSPBL"},
   {"id": "8584e8", "n": "Hoàng Hồng Hà", "t": "Chuyên viên Phòng PTSPBL"},
   {"id": "5fccc2", "n": "Đinh Thu Trang", "t": "Chuyên viên Phòng PTSPBL", "bd": 1},
   {"id": "917f80", "n": "Nguyễn Thùy Dương", "t": "Chuyên viên Phòng PTSPBL"},
-  {"id": "fb1654", "n": "Nguyễn Vũ Phương Linh", "t": "Chuyên viên Phòng PTSPBL"},
+  {"id": "fb1654", "n": "Nguyễn Vũ Phương Linh", "t": "Chuyên viên Phòng PTSPBL", "x": "Em"},
   {"id": "6d93ba", "n": "Chu Lê Mỹ Nga", "t": "Chuyên viên Phòng PTSPBL"},
   {"id": "3a116f", "n": "Viên Ngọc Bích", "t": "Chuyên viên Phòng PTSPBL"},
   {"id": "334f8f", "n": "Vũ Thị Thu Huyền", "t": "Chuyên viên Phòng PTSPBL"},
@@ -50,8 +50,8 @@ var W20P = [
   {"id": "a9dadf", "n": "Nguyễn Thu Huyền", "t": "Chuyên viên Phòng PTSPBL"},
   {"id": "4d50b3", "n": "Phạm Thị Linh", "t": "Chuyên viên Phòng PTSPBL"},
   {"id": "5d4d57", "n": "Nguyễn Mỹ Linh", "t": "Chuyên viên Phòng PTSPBL"},
-  {"id": "d80a9c", "n": "Mai Thanh Thùy Linh", "t": "Chuyên viên Phòng PTSPBL"},
+  {"id": "d80a9c", "n": "Mai Thanh Thùy Linh", "t": "Chuyên viên Phòng PTSPBL", "x": "Em"},
   {"id": "e0bd72", "n": "Trần Thái Phương", "t": "Chuyên viên Phòng PTSPBL"},
   {"id": "bae0d6", "n": "Nguyễn Thị Thu Trang", "t": "Chuyên viên Phòng PTSPBL"},
-  {"id": "15c819", "n": "Nguyễn Thị Ngân Giang", "t": "Chuyên viên Phòng PTSPBL"}
+  {"id": "15c819", "n": "Nguyễn Thị Ngân Giang", "t": "Chuyên viên Phòng PTSPBL", "x": "Em"}
 ];

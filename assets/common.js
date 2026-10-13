@@ -260,15 +260,21 @@ function w20SepWish(i, x) {
 function w20Person(id) { if (!id || typeof W20P === "undefined") return null; for (var i = 0; i < W20P.length; i++) if (W20P[i].id === id) return W20P[i]; return null; }
 function w20Short(n) { var a = String(n || "").trim().split(/\s+/); return a[a.length - 1] || ""; }
 function w20Fold(s) { return String(s || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/đ/g, "d").replace(/Đ/g, "D").toLowerCase(); }
-/* Chia quà cố định cho từng người theo số lượng ở config (qty). Cùng một danh sách luôn cho cùng kết quả,
-   nên quay ở máy nào, quay mấy lần cũng ra đúng món đã chia. Trả về { id: chỉ số quà } */
+/* Chia quà cố định: mỗi người 2 món KHÁC NHAU theo số lượng qty ở config (tổng cần = 2 × số người).
+   Cùng danh sách + seed luôn cho cùng kết quả, nên quay ở máy nào, lúc nào cũng ra đúng 2 món đã chia.
+   Trả về { id: [món1, món2] } (chỉ số trong W20CFG.prizes). */
 function w20Assign() {
-  var P = W20CFG.prizes, ppl = (typeof W20P === "undefined" ? [] : W20P).slice(), n = ppl.length, seed = String(W20CFG.seed || "2010"), i, k;
+  var P = W20CFG.prizes, ppl = (typeof W20P === "undefined" ? [] : W20P).slice(), n = ppl.length, seed = String(W20CFG.seed || "2010"), i, j, k;
   ppl.sort(function (a, b) { return w20Hash(a.id + "|" + seed) - w20Hash(b.id + "|" + seed); });
-  var q = P.map(function (p) { return Math.max(0, parseInt(p.qty, 10) || 0); }), tot = q.reduce(function (a, b) { return a + b; }, 0), slots = [];
-  if (tot < n) { /* chưa ghi đủ số lượng: chia đều phần còn thiếu cho các món */ var rest = n - tot; for (k = 0; rest > 0; k = (k + 1) % P.length, rest--) q[k]++; }
-  var used = P.map(function () { return 0; });
-  while (slots.length < n) { var moved = false; for (i = 0; i < P.length && slots.length < n; i++) if (used[i] < q[i]) { used[i]++; slots.push(i); moved = true; } if (!moved) break; }
-  var out = {}; for (i = 0; i < n; i++) out[ppl[i].id] = slots[i] !== undefined ? slots[i] : i % P.length;
+  var q = P.map(function (p) { return Math.max(0, parseInt(p.qty, 10) || 0); }), tot = q.reduce(function (a, b) { return a + b; }, 0), need = 2 * n;
+  if (tot < need) { var rest = need - tot; for (k = 0; rest > 0; k = (k + 1) % P.length, rest--) q[k]++; }
+  var slots = [], used = P.map(function () { return 0; });
+  while (slots.length < need) { var moved = false; for (i = 0; i < P.length && slots.length < need; i++) if (used[i] < q[i]) { used[i]++; slots.push(i); moved = true; } if (!moved) break; }
+  while (slots.length < need) slots.push(slots.length % P.length);
+  var A = slots.filter(function (_, x) { return x % 2 === 0; }).slice(0, n), B = slots.filter(function (_, x) { return x % 2 === 1; }).slice(0, n);
+  while (A.length < n) A.push(0); while (B.length < n) B.push(1 % P.length);
+  for (i = 0; i < n; i++) if (A[i] === B[i]) { /* hoán đổi với người khác để hai món của mỗi người luôn khác nhau */
+    for (j = 0; j < n; j++) { var jj = (i + 1 + j) % n; if (B[jj] !== A[i] && B[i] !== A[jj]) { var t = B[i]; B[i] = B[jj]; B[jj] = t; break; } } }
+  var out = {}; for (i = 0; i < n; i++) out[ppl[i].id] = [A[i], B[i]];
   return out;
 }

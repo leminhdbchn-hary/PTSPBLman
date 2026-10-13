@@ -160,3 +160,8 @@ h2{letter-spacing:-.01em}
 .bqstage{position:relative;max-width:340px;margin:0 auto;border-radius:24px;background:radial-gradient(circle at 50% 40%,rgba(255,255,255,.2),rgba(255,255,255,0) 70%)}
 .bqstage .bqcv{width:100%;background:none}
 .prize .pz{font-size:42px;display:block}
+
+.bqstage{position:relative;max-width:420px}
+.bqan{position:absolute;left:0;top:0;width:100%!important;height:auto;pointer-events:none}
+.pzrow{display:flex;gap:12px;align-items:center;text-align:left;background:rgba(255,215,106,.14);border:1px solid rgba(255,215,106,.5);border-radius:18px;padding:10px 14px;margin:10px auto 0;max-width:420px;animation:stepin .5s ease}
+.pzrow .pz{font-size:38px;flex:none}.pzrow small{display:block;font-size:12px;opacity:.75;font-weight:600}.pzrow b{color:#fff;font-size:16px;line-height:1.3}

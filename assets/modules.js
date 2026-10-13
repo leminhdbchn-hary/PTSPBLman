@@ -64,25 +64,89 @@ function w20DrawBouquet(g, cx, cy, S, list) {
   g.fillStyle = "rgba(255,255,255,.35)"; g.beginPath(); g.ellipse(cx - S * .02, neckY - S * .01, S * .03, S * .018, -.4, 0, 6.283); g.fill();
   g.restore();
 }
-/* Giao diện cắm hoa. opt: { min: số bông tối thiểu, onChange(list), onDone(list) } */
+/* ===== Chibi: đầu là ảnh thật (assets/men), thân vẽ bằng canvas ===== */
+var W20IMG = {};
+function w20Img(src) { if (!W20IMG[src]) { var im = new Image(); im.src = src; W20IMG[src] = im; } return W20IMG[src]; }
+function w20Rr(g, x, y, w, h, r) { g.beginPath(); g.moveTo(x + r, y); g.arcTo(x + w, y, x + w, y + h, r); g.arcTo(x + w, y + h, x, y + h, r); g.arcTo(x, y + h, x, y, r); g.arcTo(x, y, x + w, y, r); g.closePath(); }
+/* o: {img, shirt, step (pha chạy), up (0..1 giơ tay), lift (nhảy, px), flower (emoji hoặc null), dir (+1 nhìn phải, -1 nhìn trái)} */
+function w20Chibi(g, cx, gy, sc, o) {
+  var step = o.step || 0, up = o.up || 0, lift = o.lift || 0, shirt = o.shirt || "#ffffff", pants = o.pants || "#1b2a4a", skin = "#f2c9a6", dir = o.dir || 1;
+  g.save(); g.translate(cx, gy); g.scale(sc * dir, sc);
+  /* bóng */ g.fillStyle = "rgba(0,0,0,.25)"; g.beginPath(); g.ellipse(0, 2, 38 - lift * .1, 9 - lift * .03, 0, 0, 6.283); g.fill();
+  g.translate(0, -lift);
+  var swing = Math.sin(step) * 9, legH = 34;
+  /* chân */
+  [-1, 1].forEach(function (d) { var up2 = Math.max(0, Math.sin(step + (d > 0 ? 0 : 3.14))) * 8; g.fillStyle = pants; w20Rr(g, d * 12 - 7, -legH - up2 + 6, 14, legH - 4, 6); g.fill(); g.fillStyle = "#15151c"; g.beginPath(); g.ellipse(d * 12 + 2, -up2 + 2, 11, 6, 0, 0, 6.283); g.fill(); });
+  /* thân */
+  var top = -legH - 46;
+  g.fillStyle = shirt; w20Rr(g, -28, top, 56, 52, 16); g.fill(); g.strokeStyle = "rgba(0,0,0,.18)"; g.lineWidth = 2; g.stroke();
+  g.fillStyle = "#1b1b22"; g.fillRect(-28, top + 40, 56, 5);
+  g.fillStyle = shirt === "#ffffff" ? "#e9eef2" : "#33384a"; g.beginPath(); g.moveTo(-9, top); g.lineTo(0, top + 14); g.lineTo(9, top); g.closePath(); g.fill();
+  /* tay trái (vẫy theo nhịp chạy) */
+  g.lineCap = "round"; g.strokeStyle = shirt; g.lineWidth = 13;
+  g.beginPath(); g.moveTo(-26, top + 10); g.lineTo(-34 - swing * .3, top + 36 + swing * .5); g.stroke(); g.fillStyle = skin; g.beginPath(); g.arc(-34 - swing * .3, top + 40 + swing * .5, 7, 0, 6.283); g.fill();
+  /* tay phải giơ hoa */
+  var hx = 26 + 16 * up, hy = top + 12 + 30 * (1 - up) - 40 * up; g.strokeStyle = shirt; g.beginPath(); g.moveTo(26, top + 10); g.lineTo(hx, hy); g.stroke(); g.fillStyle = skin; g.beginPath(); g.arc(hx, hy, 7, 0, 6.283); g.fill();
+  if (o.flower) { var fs = 54; g.save(); g.translate(hx, hy - 16); g.rotate(-.1 + Math.sin(step) * .08); g.drawImage(w20Spr(o.flower, 128), -fs / 2, -fs / 2 - 6, fs, fs); g.restore(); }
+  /* đầu to */
+  var img = o.img, hw = 112, hh = 126; if (img && img.naturalWidth) { hh = hw * img.naturalHeight / img.naturalWidth; }
+  g.save(); g.translate(0, top - hh * .36); g.rotate(Math.sin(step) * .07 * (o.run ? 1 : .3));
+  if (img && img.complete && img.naturalWidth) { g.shadowColor = "rgba(0,0,0,.3)"; g.shadowBlur = 8; g.shadowOffsetY = 3; g.scale(dir, 1); g.drawImage(img, -hw / 2, -hh / 2, hw, hh); }
+  else { g.fillStyle = skin; g.beginPath(); g.ellipse(0, 0, 50, 56, 0, 0, 6.283); g.fill(); g.fillStyle = "#222"; g.beginPath(); g.arc(-16, -4, 5, 0, 6.283); g.arc(16, -4, 5, 0, 6.283); g.fill(); }
+  g.restore(); g.restore();
+}
+
+/* Giao diện cắm hoa: các anh chibi chạy ra, mỗi anh cầm 1 bông ném vào bó.
+   opt: { min, start, onChange(list), onDone(list, e) } */
 function w20BouquetUI(box, opt) {
   opt = typeof opt === "function" ? { onChange: opt } : (opt || {}); var list = (opt.start || []).slice(), MAX = W20SLOT.length, min = opt.min || 1;
-  box.innerHTML = '<div class="bqpal"></div><div class="bqstage"><canvas class="bqcv" width="560" height="620"></canvas></div><div class="bqinfo"></div>'
+  var MEN = (typeof W20CFG !== "undefined" && W20CFG.men) || [], CW = 640, CH = 620, CX = 320, CY = 300, SR = 230, GY = 598;
+  box.innerHTML = '<div class="bqpal"></div><div class="bqstage"><canvas class="bqcv" width="' + CW + '" height="' + CH + '"></canvas><canvas class="bqan" width="' + CW + '" height="' + CH + '"></canvas></div><div class="bqinfo"></div>'
     + '<div class="acts"><button type="button" class="btn ghost bqundo" style="font-size:15px;padding:10px 18px">↩️ Bỏ bông vừa cắm</button><button type="button" class="btn pink bqgive" style="font-size:16px;padding:12px 22px">💐 Xong bó hoa</button></div>';
-  var pal = box.querySelector(".bqpal"), cv = box.querySelector(".bqcv"), g = cv.getContext("2d"), info = box.querySelector(".bqinfo"), raf = 0;
+  var pal = box.querySelector(".bqpal"), cv = box.querySelector(".bqcv"), g = cv.getContext("2d"), an = box.querySelector(".bqan"), ag = an.getContext("2d"), info = box.querySelector(".bqinfo"), raf = 0, rafA = 0;
+  MEN.forEach(function (m) { w20Img(m.img); });
   pal.innerHTML = W20FL.map(function (f, i) { return '<button type="button" class="fl" data-i="' + i + '" aria-label="Thêm hoa">' + f + "</button>"; }).join("");
-  function draw() { g.clearRect(0, 0, 560, 620); w20DrawBouquet(g, 280, 300, 230, list); }
-  function upd() {
-    cancelAnimationFrame(raf); raf = requestAnimationFrame(draw);
-    info.textContent = !list.length ? "Chạm vào hoa để cắm nha (tối đa " + MAX + " bông)" : list.length < min ? "Đã cắm " + list.length + " bông, thêm " + (min - list.length) + " bông nữa là đẹp" : "Đã cắm " + list.length + "/" + MAX + " bông. Đẹp rồi đó!";
-    opt.onChange && opt.onChange(list.slice());
+  var actors = [], queue = [], nextMan = 0, side = 1, reduce = window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches, pendingCount = 0;
+  function draw() { g.clearRect(0, 0, CW, CH); w20DrawBouquet(g, CX, CY, SR, list); }
+  function text() {
+    var n = list.length + pendingCount;
+    info.textContent = !n ? "Chạm vào loại hoa để các anh chạy ra cắm giúp nha (tối đa " + MAX + " bông)" : n < min ? "Đã có " + n + " bông, cần thêm " + (min - n) + " bông nữa là đẹp" : "Đã có " + n + "/" + MAX + " bông. Đẹp rồi đó!";
   }
-  pal.addEventListener("click", function (e) { var b = e.target.closest(".fl"); if (!b) return; if (list.length >= MAX) list.shift(); list.push(+b.getAttribute("data-i")); upd(); });
-  box.querySelector(".bqundo").onclick = function () { list.pop(); upd(); };
+  function upd() { cancelAnimationFrame(raf); raf = requestAnimationFrame(draw); text(); opt.onChange && opt.onChange(list.slice()); }
+  function plant(a) { if (list.length >= MAX) list.shift(); list.push(a.f); pendingCount = Math.max(0, pendingCount - 1); upd(); }
+  /* hoạt cảnh một anh ra cắm hoa (ms) */
+  var T_IN = 800, T_THROW = 500, T_WAVE = 650, T_OUT = 650;
+  function spawn(f) {
+    var man = MEN.length ? MEN[nextMan++ % MEN.length] : null, sl = W20SLOT[Math.min(list.length + actors.length, MAX - 1)] || W20SLOT[0], dir = side; side = -side;
+    var a = { f: f, man: man, t0: performance.now(), dir: dir, planted: false, sx: dir > 0 ? -90 : CW + 90, tx: CX + (dir > 0 ? -205 : 205) + (Math.random() - .5) * 30, tgt: [CX + sl[0] * SR, CY + sl[1] * SR], ph: Math.random() * 6 };
+    actors.push(a); pendingCount++; text(); if (reduce) { plant(a); actors.pop(); return; } loopA();
+  }
+  function step(a, now) {
+    var t = now - a.t0, o = { img: man_img(a), shirt: a.man && a.man.shirt, step: now / 70 + a.ph, run: 1, dir: a.dir }, x, lift = 0, up = 0, fl = W20FL[a.f], fx = null, fy = null;
+    if (t < T_IN) { var k = t / T_IN, e = 1 - Math.pow(1 - k, 2); x = a.sx + (a.tx - a.sx) * e; o.dir = a.dir; up = .55; }
+    else if (t < T_IN + T_THROW) { var k2 = (t - T_IN) / T_THROW; x = a.tx; o.dir = a.dir; o.run = 0; up = 1; lift = Math.sin(k2 * Math.PI) * 26; o.step = 1.6;
+      fl = null; var sx = x + a.dir * 56, sy = GY - 250; fx = sx + (a.tgt[0] - sx) * k2; fy = sy + (a.tgt[1] - sy) * k2 - Math.sin(k2 * Math.PI) * 120; }
+    else if (t < T_IN + T_THROW + T_WAVE) { if (!a.planted) { a.planted = true; plant(a); } x = a.tx; o.dir = a.dir; o.run = 0; var k3 = (t - T_IN - T_THROW) / T_WAVE; up = 1; lift = Math.abs(Math.sin(k3 * Math.PI * 3)) * 22; fl = null; o.step = now / 90; }
+    else { var k4 = (t - T_IN - T_THROW - T_WAVE) / T_OUT; x = a.tx + (a.dir > 0 ? -1 : 1) * (CW * .7) * k4 * k4 - 0; o.dir = a.dir > 0 ? -1 : 1; up = 0; fl = null; if (k4 >= 1) return false; }
+    o.flower = fl; o.lift = lift; o.up = up; w20Chibi(ag, x, GY, 1.4, o);
+    if (fx !== null) { ag.drawImage(w20Spr(W20FL[a.f], 128), fx - 28, fy - 28, 56, 56); }
+    return true;
+  }
+  function man_img(a) { return a.man ? w20Img(a.man.img) : null; }
+  function loopA() { if (rafA) return; rafA = requestAnimationFrame(function fr(now) { ag.clearRect(0, 0, CW, CH); actors = actors.filter(function (a) { return step(a, now); }); if (actors.length) rafA = requestAnimationFrame(fr); else { rafA = 0; ag.clearRect(0, 0, CW, CH); text(); } }); }
+  pal.addEventListener("click", function (e) {
+    var b = e.target.closest(".fl"); if (!b) return; var f = +b.getAttribute("data-i");
+    if (actors.length >= 4) { return; } spawn(f);
+  });
+  box.querySelector(".bqundo").onclick = function () { if (actors.length) return; list.pop(); upd(); };
   var give = box.querySelector(".bqgive");
-  give.onclick = function (e) { if (list.length < min) { info.textContent = "Cắm ít nhất " + min + " bông rồi bấm Xong nha 🌷"; info.classList.remove("shake"); void info.offsetWidth; info.classList.add("shake"); return; } opt.onDone && opt.onDone(list.slice(), e); };
-  upd();
-  return { list: function () { return list.slice(); }, give: give, canvas: cv };
+  give.onclick = function (e) {
+    if (actors.length) { info.textContent = "Đợi các anh cắm xong đã nha 😄"; return; }
+    if (list.length < min) { info.textContent = "Cắm ít nhất " + min + " bông rồi bấm Xong nha 🌷"; info.classList.remove("shake"); void info.offsetWidth; info.classList.add("shake"); return; }
+    opt.onDone && opt.onDone(list.slice(), e);
+  };
+  draw(); text();
+  return { list: function () { return list.slice(); }, give: give, canvas: cv, busy: function () { return actors.length > 0; } };
 }
 
 /* Vòng quay quà: vẽ một lần, quay bằng CSS (GPU) nên không giật.
@@ -117,4 +181,27 @@ function w20Wall(el, msgs) {
   el.innerHTML = (msgs || []).map(function (m, i) { return '<div class="note2" style="background:' + C[i % C.length] + ";transform:rotate(" + (((i * 37) % 7) - 3) + 'deg)"><p></p><b></b></div>'; }).join("");
   var ns = el.querySelectorAll(".note2");
   (msgs || []).forEach(function (m, i) { ns[i].querySelector("p").textContent = "“" + m.text + "”"; ns[i].querySelector("b").textContent = "— " + m.from; });
+}
+
+/* ===== Vòng quay 2 lần: mỗi lần ra 1 món khác nhau, đã chia sẵn cho từng người =====
+   opt: {cv, btn, out, prizes, assigned:[a,b]|null, got:[...](đã nhận), onGot(list), onShow(idx,k,fresh), onAll()} */
+function w20Wheel2(o) {
+  var P = o.prizes, got = (o.got || []).slice(), as = o.assigned;
+  var wv = w20Wheel(o.cv, P, function (p, idx) { got.push(idx); o.onGot && o.onGot(got.slice()); render(true); });
+  function render(fresh) {
+    var h = "";
+    got.forEach(function (i, k) { var p = P[i]; h += "<div class='pzrow'><span class='pz'>" + p.icon + "</span><div><small>Quà " + (k + 1) + "/2</small><b>" + String(p.name).replace(/&/g, "&amp;").replace(/</g, "&lt;") + "</b></div></div>"; });
+    o.out.innerHTML = h;
+    if (got.length >= 2) { o.btn.disabled = true; o.btn.textContent = "✔ Đã quay đủ 2 lượt"; }
+    else { o.btn.disabled = false; o.btn.textContent = got.length ? "🎡 QUAY LƯỢT 2/2" : "🎡 QUAY LƯỢT 1/2"; }
+    if (got.length) o.onShow && o.onShow(got[got.length - 1], got.length - 1, !!fresh);
+    if (got.length >= 2) o.onAll && o.onAll(!!fresh);
+  }
+  o.btn.onclick = function () {
+    if (got.length >= 2) return; o.btn.disabled = true; o.btn.textContent = "Đang quay…";
+    var idx = as && as[got.length] !== undefined ? as[got.length] : (function () { var r; do { r = (Math.random() * P.length) | 0; } while (got.indexOf(r) >= 0); return r; })();
+    wv.spin(idx);
+  };
+  if (got.length) { wv.setAt(got[got.length - 1]); }
+  render(false); return { got: function () { return got.slice(); } };
 }
