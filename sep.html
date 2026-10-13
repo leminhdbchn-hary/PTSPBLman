@@ -1,0 +1,232 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>20/10 · Tờ trình kính chúc các Sếp Phòng PTSPBL</title>
+<meta name="description" content="Tờ trình đặc biệt: anh em Phòng PTSPBL kính chúc các Sếp nhân ngày 20/10.">
+<meta property="og:title" content="20/10 · Tờ trình kính chúc Sếp">
+<meta property="og:description" content="Kính trình Sếp xem xét, phê duyệt.">
+<meta name="theme-color" content="#00381f">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E💐%3C/text%3E%3C/svg%3E">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<canvas id="fx" aria-hidden="true"></canvas>
+
+<!-- 0. Tờ trình -->
+<div id="splash">
+  <div class="paper" id="paper">
+    <h3>TỜ TRÌNH</h3>
+    <div class="sm">Số: 20/10/PTSPBL-TT · Mật độ yêu thương: CAO</div>
+    <p><b>V/v:</b> Xin phép được chúc mừng <span id="sTo">các Sếp</span> nhân ngày Phụ nữ Việt Nam 20/10.</p>
+    <p><b>Kính trình:</b> <span id="sTo2">Quý Sếp</span>.</p>
+    <p><b>Căn cứ:</b> sự tận tâm của Sếp và lương tâm (hơi muộn) của anh em.</p>
+    <p><b>Đề xuất:</b> Cho phép anh em được chúc, được tặng hoa, và được… nghỉ chiều nay (đề nghị này có thể bị bác).</p>
+    <div class="sig">Kính trình,<br><b id="sFrom">Anh em Nam Phòng PTSPBL</b></div>
+    <div class="stamp" id="stamp">ĐÃ DUYỆT</div>
+  </div>
+  <div style="position:absolute;left:0;right:0;bottom:calc(24px + env(safe-area-inset-bottom));text-align:center">
+    <button class="btn pink" id="approve" type="button">✍️ Phê duyệt</button>
+  </div>
+</div>
+
+<main id="app">
+  <section id="hero" style="text-align:center;padding-top:44px">
+    <span class="badge">TỜ TRÌNH ĐÃ ĐƯỢC PHÊ DUYỆT ✔</span>
+    <div class="big">KÍNH CHÚC<br>20/10</div>
+    <p class="hello" id="hello"></p>
+    <p class="lead" id="lead"></p>
+    <form class="nameform" id="nameform" autocomplete="off">
+      <select id="xsel" aria-label="Xưng hô"><option>Sếp</option><option>Chị</option><option>Cô</option></select>
+      <input id="nameinp" placeholder="Tên của Sếp (VD: Lan)" maxlength="40" aria-label="Tên Sếp">
+      <button class="btn pink" style="padding:10px 18px;font-size:16px" type="submit">OK</button>
+    </form>
+    <button class="btn" id="boom" type="button">🎉 Có quà!</button>
+    <div class="scrollhint">Vuốt xuống để xem tiếp ↓</div>
+  </section>
+
+  <section class="rv" id="profile">
+    <span class="kicker">Hồ sơ năng lực</span>
+    <h2>Báo cáo năng lực của Sếp</h2>
+    <p class="sub">Do anh em tự đánh giá (chưa có ai kiểm duyệt, kể cả chính Sếp).</p>
+    <div class="profile" id="profList"></div>
+  </section>
+
+  <section class="rv" id="pledge">
+    <span class="kicker">Bản cam kết</span>
+    <h2>Anh em xin cam kết</h2>
+    <p class="sub">Chạm từng mục để “ký” cam kết. Ký đủ cả 6 mục thì có hiệu lực ngay!</p>
+    <div class="pledges" id="pledgeList"></div>
+    <p class="cnt2" id="pledgeMsg"></p>
+  </section>
+
+  <section class="rv" id="chidao">
+    <span class="kicker">Ý kiến chỉ đạo</span>
+    <h2>Sếp có chỉ đạo gì không ạ?</h2>
+    <p class="sub">Bấm để nhận một chỉ đạo của ngày 20/10. Anh em xin nghiêm túc thực hiện (có chọn lọc).</p>
+    <div class="order" id="order"><div><small>Công văn chỉ đạo</small>Chạm “Xin chỉ đạo” bên dưới nhé.</div></div>
+    <p style="text-align:center"><button class="btn" id="ask" type="button">📜 Xin chỉ đạo</button></p>
+  </section>
+
+  <section class="rv" id="bouquet">
+    <span class="kicker">Hoa tặng Sếp</span>
+    <h2>Anh em tự tay cắm một bó hoa</h2>
+    <p class="sub">Chọn từng bông rồi bấm “Tặng bó hoa”. Bó hoa sẽ được in lên giấy khen ở cuối trang.</p>
+    <div id="bqbox"></div>
+  </section>
+
+  <section class="rv" id="wheel">
+    <span class="kicker">Vòng quay quà</span>
+    <h2>Quà bí mật của anh em</h2>
+    <p class="sub">Bấm quay để xem Sếp nhận được món quà nào. Quà thật, nhận ở buổi gặp mặt của Phòng.</p>
+    <div class="wheelbox"><canvas id="wcv" width="640" height="640"></canvas></div>
+    <p style="text-align:center;margin-top:14px"><button class="btn pink" id="spin" type="button">🎡 QUAY</button></p>
+    <div class="prize" id="prize"></div>
+  </section>
+
+  <section class="rv" id="wallsec">
+    <span class="kicker">Tường lời chúc</span>
+    <h2>Anh em nhắn gửi</h2>
+    <div class="wall" id="wall"></div>
+  </section>
+
+  <section class="rv" id="cardsec">
+    <span class="kicker">Giấy khen</span>
+    <h2>Giấy khen của riêng Sếp</h2>
+    <p class="sub">Tải về làm kỷ niệm, hoặc gửi cho Sếp nhé.</p>
+    <div class="cardbox">
+      <canvas id="card" width="1080" height="1350"></canvas>
+      <div class="acts">
+        <button class="btn" id="dl" type="button">⬇️ Tải giấy khen (PNG)</button>
+        <button class="btn pink" id="shr" type="button">📤 Chia sẻ</button>
+        <button class="btn ghost" id="rnd" type="button">🎲 Đổi danh hiệu & lời chúc</button>
+      </div>
+    </div>
+  </section>
+
+  <footer class="rv">
+    <p>Kính chúc các Sếp một ngày 20/10 thật rực rỡ, thật nhiều hoa và thật ít… họp 🌹</p>
+    <p id="from">Anh em Nam Phòng PTSPBL</p>
+    <p style="opacity:.6;font-size:13px">Trang chúc mừng nội bộ, làm vì vui · không liên quan đến sản phẩm thật của ngân hàng.</p>
+  </footer>
+</main>
+<div class="toast" id="toast" role="status"></div>
+
+<script src="assets/config.js"></script>
+<script src="assets/common.js"></script>
+<script src="assets/modules.js"></script>
+<script>
+(function () {
+  var $ = function (s) { return document.querySelector(s); };
+  var P = w20Params();
+  var S = { to: P.to, x: P.x || "Sếp", f: P.f || W20CFG.from, r: P.r, w: P.w, bq: [], pledges: [] };
+  function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); }
+  function toast(t) { var e = $("#toast"); e.textContent = t; e.className = "toast show"; clearTimeout(toast.t); toast.t = setTimeout(function () { e.className = "toast"; }, 2200); }
+  function who() { return S.to ? S.x + " " + S.to : "các Sếp"; }
+  function xw() { return S.to ? S.x : "Sếp"; }
+  function dv() { return w20DeriveSep(S.to || "cac sep"); }
+  function ri() { return S.r !== null ? S.r % W20.sep.roles.length : dv().r; }
+  function wi() { return S.w !== null ? S.w % W20.sep.wishes.length : dv().w; }
+
+  /* tờ trình */
+  function paper() {
+    $("#sTo").textContent = who(); $("#sTo2").textContent = S.to ? who() : "Quý Sếp"; $("#sFrom").textContent = S.f;
+    $("#approve").onclick = function (e) {
+      var st = $("#stamp"); st.classList.add("hit"); $("#paper").classList.add("shake"); if (navigator.vibrate) navigator.vibrate(60);
+      $("#approve").disabled = true;
+      setTimeout(function () { FX.burst(innerWidth / 2, innerHeight / 2, 140); FX.rain(); }, 450);
+      setTimeout(function () { $("#splash").classList.add("off"); window.scrollTo(0, 0); }, 1700);
+    };
+  }
+  /* hero */
+  function hero() {
+    var h = $("#hello"), l = $("#lead");
+    if (S.to) {
+      h.innerHTML = "Kính chúc <em>" + esc(who()) + "</em>!";
+      l.textContent = "Nhân ngày 20/10, anh em Phòng PTSPBL xin gửi " + xw().toLowerCase() + " lời chúc trân trọng nhất: thật khỏe, thật vui, và luôn được thương như cách " + xw().toLowerCase() + " thương anh em.";
+      $("#nameform").style.display = "none";
+    } else {
+      h.innerHTML = "Kính chúc <em>các Sếp</em> của Phòng PTSPBL!";
+      l.textContent = "Anh em xin gửi lời chúc trân trọng nhất đến các Sếp nhân ngày 20/10. Nhập tên để nhận giấy khen riêng nhé!";
+    }
+    $("#from").textContent = S.f;
+    $("#nameform").onsubmit = function (e) {
+      e.preventDefault(); var n = w20Clean($("#nameinp").value, 40); if (!n) { toast("Nhập tên Sếp trước nhé 🙂"); return; }
+      S.to = n; S.x = $("#xsel").value; S.r = null; S.w = null;
+      try { history.replaceState(null, "", w20Link(location.pathname, { to: S.to, x: S.x, f: S.f === W20CFG.from ? "" : S.f })); } catch (er) {}
+      hero(); $("#sTo").textContent = who(); profile(); card(); FX.burst(innerWidth / 2, innerHeight / 3, 90); $("#cardsec").scrollIntoView({ behavior: "smooth" });
+    };
+    $("#boom").onclick = function (e) { FX.burst(e.clientX, e.clientY, 100); FX.rain(); var m = ["Kính chúc Sếp 20/10! 🌷", "Hoa đây, hoa đây! 💐", "Sếp ơi, hôm nay là ngày của Sếp!", "Tạm dừng deadline 1 phút 🕊️"]; toast(m[(Math.random() * m.length) | 0]); };
+  }
+  function profile() {
+    var d = dv();
+    $("#profList").innerHTML = d.t.map(function (i, k) { return '<div class="note"><div class="ic">' + ["⭐", "🏆", "💎", "🎯", "🌟"][k % 5] + '</div><div><span>' + esc(W20.sep.traits[i]) + "</span></div></div>"; }).join("");
+  }
+  /* cam kết */
+  function pledges() {
+    $("#pledgeList").innerHTML = W20.sep.pledges.map(function (t, i) { return '<button type="button" class="pledge" data-i="' + i + '"><span class="box">✔</span><span>' + esc(t) + "</span></button>"; }).join("");
+    $("#pledgeMsg").textContent = "Đã ký 0/" + W20.sep.pledges.length + " cam kết";
+    $("#pledgeList").onclick = function (e) {
+      var b = e.target.closest(".pledge"); if (!b) return; var i = +b.getAttribute("data-i"), k = S.pledges.indexOf(i);
+      if (k >= 0) S.pledges.splice(k, 1); else S.pledges.push(i);
+      b.classList.toggle("on"); var n = S.pledges.length, T = W20.sep.pledges.length;
+      $("#pledgeMsg").textContent = n === T ? "🎉 Bản cam kết có hiệu lực… đến hết ngày 20/10!" : "Đã ký " + n + "/" + T + " cam kết";
+      if (n === T) { FX.burst(innerWidth / 2, innerHeight / 2, 140); FX.rain(); }
+    };
+  }
+  /* chỉ đạo */
+  var obag = [], oc = 0;
+  function ask() {
+    if (!obag.length) { obag = W20.sep.orders.map(function (_, i) { return i; }).sort(function () { return Math.random() - .5; }); }
+    var t = W20.sep.orders[obag.pop()]; oc++;
+    $("#order").innerHTML = "<div><small>Công văn chỉ đạo số " + String(oc).padStart(2, "0") + "/20-10/CĐ</small>" + esc(t) + "</div>"; $("#order").classList.remove("shake"); void $("#order").offsetWidth; $("#order").classList.add("shake");
+    if (oc % 5 === 0) { FX.burst(innerWidth / 2, innerHeight * .5, 100); toast("Sếp chỉ đạo liên tục, anh em xin ghi nhận! 📝"); }
+  }
+  /* hoa, quà, tường */
+  var bq;
+  function flowers() {
+    bq = w20BouquetUI($("#bqbox"), function (l) { S.bq = l; card(); });
+    bq.give.onclick = function (e) { if (!S.bq.length) { toast("Cắm ít nhất 1 bông hoa nhé 🌷"); return; } FX.burst(e.clientX, e.clientY, 140); FX.rain(); toast("Đã tặng Sếp bó hoa 💐"); $("#cardsec").scrollIntoView({ behavior: "smooth" }); };
+  }
+  function wheel() {
+    var wv = w20Wheel($("#wcv"), W20CFG.prizes, function (p) { $("#prize").innerHTML = p[0] + " " + esc(p[1]) + "<br><small style='opacity:.8;font-weight:600'>Anh em xin trao tận tay ở buổi gặp mặt!</small>"; FX.burst(innerWidth / 2, innerHeight * .5, 140); FX.rain(); });
+    $("#spin").onclick = function () { $("#prize").textContent = "…"; wv.spin(); };
+  }
+  /* giấy khen */
+  function card() {
+    var c = $("#card"), g = c.getContext("2d"), W = 1080, H = 1350, i, F = "'Segoe UI','Helvetica Neue',Arial,sans-serif";
+    var bg = g.createLinearGradient(0, 0, W, H); bg.addColorStop(0, "#00381f"); bg.addColorStop(.55, "#0b6a40"); bg.addColorStop(1, "#8a2160"); g.fillStyle = bg; g.fillRect(0, 0, W, H);
+    g.globalAlpha = .12; g.fillStyle = "#fff"; for (i = 0; i < 9; i++) { g.beginPath(); g.arc((i * 211) % W, (i * 389) % H, 60 + (i % 4) * 40, 0, 6.283); g.fill(); } g.globalAlpha = 1;
+    g.strokeStyle = "#ffd76a"; g.lineWidth = 10; g.strokeRect(36, 36, W - 72, H - 72); g.lineWidth = 3; g.strokeRect(58, 58, W - 116, H - 116);
+    g.textAlign = "center"; g.fillStyle = "#ffd76a"; g.font = "800 34px " + F; g.fillText("PHÒNG PTSPBL · GIẤY KHEN 20/10", W / 2, 150);
+    g.fillStyle = "#fff"; g.font = "900 96px " + F; g.fillText("GIẤY KHEN", W / 2, 270);
+    g.font = "700 36px " + F; g.fillStyle = "#ffe9a0"; g.fillText("Trân trọng tặng", W / 2, 335);
+    var nm = who(); if (!S.to) nm = "Các Sếp của Phòng"; g.fillStyle = "#fff"; var fs = 88; g.font = "900 " + fs + "px " + F; while (g.measureText(nm).width > W - 160 && fs > 40) { fs -= 4; g.font = "900 " + fs + "px " + F; } g.fillText(nm, W / 2, 440);
+    var rl = W20.sep.roles[ri()]; g.font = "800 32px " + F; var rw = Math.min(g.measureText(rl).width + 70, W - 120);
+    g.fillStyle = "#ffd76a"; rr(g, (W - rw) / 2, 470, rw, 62, 31); g.fill(); g.fillStyle = "#3d0a24"; var rs = 32; g.font = "800 " + rs + "px " + F; while (g.measureText(rl).width > rw - 40 && rs > 20) { rs--; g.font = "800 " + rs + "px " + F; } g.fillText(rl, W / 2, 512);
+    w20DrawBouquet(g, W / 2, S.bq.length ? 640 : 700, S.bq.length ? 190 : 0, S.bq);
+    g.fillStyle = "rgba(255,247,230,.96)"; rr(g, 100, 940, W - 200, 270, 30); g.fill();
+    g.fillStyle = "#3b0a26"; g.font = "700 36px " + F; var txt = w20SepWish(wi(), xw()), wl = w20Wrap(g, txt, W - 280); if (wl.length > 5) { g.font = "700 31px " + F; wl = w20Wrap(g, txt, W - 280); }
+    var y = 1010; for (i = 0; i < wl.length && i < 6; i++) { g.fillText(wl[i], W / 2, y); y += 50; }
+    g.fillStyle = "#ffd76a"; g.font = "800 30px " + F; g.fillText("Từ: " + S.f, W / 2, 1290);
+  }
+  function rr(g, x, y, w, h, r) { g.beginPath(); g.moveTo(x + r, y); g.arcTo(x + w, y, x + w, y + h, r); g.arcTo(x + w, y + h, x, y + h, r); g.arcTo(x, y + h, x, y, r); g.arcTo(x, y, x + w, y, r); g.closePath(); }
+  $("#dl").onclick = function () { card(); $("#card").toBlob(function (b) { var a = document.createElement("a"); a.href = URL.createObjectURL(b); a.download = "giay-khen-20-10-" + (S.to || "sep").replace(/\s+/g, "-") + ".png"; document.body.appendChild(a); a.click(); setTimeout(function () { URL.revokeObjectURL(a.href); a.remove(); }, 1500); toast("Đã tải giấy khen 🌹"); FX.burst(innerWidth / 2, innerHeight * .6, 80); }, "image/png"); };
+  $("#shr").onclick = function () {
+    var url = w20Link(location.origin + location.pathname, { to: S.to, x: S.to ? S.x : "", f: S.f === W20CFG.from ? "" : S.f, r: S.to ? ri() : null, w: S.to ? wi() : null });
+    var data = { title: "20/10 · Giấy khen của " + who(), text: "Giấy khen 20/10 của " + who() + " 🌹", url: url };
+    if (navigator.share) navigator.share(data).catch(function () {}); else w20Copy(url, function () { toast("Đã sao chép link 📋"); });
+  };
+  $("#rnd").onclick = function (e) { S.r = (Math.random() * W20.sep.roles.length) | 0; S.w = (Math.random() * W20.sep.wishes.length) | 0; card(); FX.burst(e.clientX, e.clientY, 60); toast("Đã đổi danh hiệu & lời chúc 🎲"); };
+  $("#ask").onclick = ask;
+  function reveal() {
+    var els = document.querySelectorAll(".rv"); if (!("IntersectionObserver" in window)) { for (var i = 0; i < els.length; i++) els[i].classList.add("in"); return; }
+    var io = new IntersectionObserver(function (en) { en.forEach(function (x) { if (x.isIntersecting) { x.target.classList.add("in"); io.unobserve(x.target); } }); }, { threshold: .1 });
+    for (var j = 0; j < els.length; j++) io.observe(els[j]);
+  }
+  FX.init(); paper(); hero(); profile(); pledges(); flowers(); wheel(); w20Wall($("#wall"), W20CFG.wallSep); if (!W20CFG.wallSep.length) $("#wallsec").style.display = "none"; card(); reveal();
+})();
+</script>
+</body>
+</html>

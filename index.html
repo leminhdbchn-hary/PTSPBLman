@@ -82,6 +82,31 @@
     <p class="cnt2" id="perkCnt"></p>
   </section>
 
+  <!-- 5b. Cắm hoa -->
+  <section class="rv" id="bouquet">
+    <span class="kicker">Hoa tặng chị em</span>
+    <h2>Cắm một bó hoa 20/10</h2>
+    <p class="sub">Tự tay chọn từng bông, rồi tải về làm hình nền hoặc gửi tặng bạn bè.</p>
+    <div id="bqbox"></div>
+  </section>
+
+  <!-- 5c. Vòng quay quà -->
+  <section class="rv" id="wheel">
+    <span class="kicker">Vòng quay quà</span>
+    <h2>Quà bí mật của anh em</h2>
+    <p class="sub">Bấm quay để xem nhận được món quà nào. Quà thật, nhận ở buổi gặp mặt của Phòng.</p>
+    <div class="wheelbox"><canvas id="wcv" width="640" height="640"></canvas></div>
+    <p style="text-align:center;margin-top:14px"><button class="btn pink" id="spin" type="button">🎡 QUAY</button></p>
+    <div class="prize" id="prize"></div>
+  </section>
+
+  <!-- 5d. Tường lời chúc -->
+  <section class="rv" id="wallsec">
+    <span class="kicker">Tường lời chúc</span>
+    <h2>Anh em nhắn gửi</h2>
+    <div class="wall" id="wall"></div>
+  </section>
+
   <!-- 6. Thiệp riêng -->
   <section class="rv" id="cardsec">
     <span class="kicker">Thiệp riêng</span>
@@ -105,7 +130,9 @@
 </main>
 <div class="toast" id="toast" role="status"></div>
 
+<script src="assets/config.js"></script>
 <script src="assets/common.js"></script>
+<script src="assets/modules.js"></script>
 <script>
 (function () {
   var $ = function (s) { return document.querySelector(s); };
@@ -284,7 +311,22 @@
     for (var j = 0; j < els.length; j++) io.observe(els[j]);
   }
 
-  FX.init(); splash(); hero(); notes(); scratch(); renderPerks(); card(); reveal();
+  function extras() {
+    var bq = w20BouquetUI($("#bqbox"), function () {});
+    bq.give.textContent = "⬇️ Tải bó hoa";
+    bq.give.onclick = function (e) {
+      if (!bq.list().length) { toast("Cắm ít nhất 1 bông hoa nhé 🌷"); return; }
+      var c = document.createElement("canvas"); c.width = 900; c.height = 900; var g = c.getContext("2d");
+      var bgc = g.createLinearGradient(0, 0, 900, 900); bgc.addColorStop(0, "#00381f"); bgc.addColorStop(1, "#8a2160"); g.fillStyle = bgc; g.fillRect(0, 0, 900, 900);
+      w20DrawBouquet(g, 450, 300, 360, bq.list()); g.fillStyle = "#ffd76a"; g.textAlign = "center"; g.font = "800 44px 'Segoe UI',Arial,sans-serif"; g.fillText("Chúc mừng 20/10 🌹", 450, 840);
+      c.toBlob(function (b) { var a = document.createElement("a"); a.href = URL.createObjectURL(b); a.download = "bo-hoa-20-10.png"; document.body.appendChild(a); a.click(); setTimeout(function () { URL.revokeObjectURL(a.href); a.remove(); }, 1500); toast("Đã tải bó hoa 💐"); FX.burst(e.clientX, e.clientY, 100); }, "image/png");
+    };
+    var wv = w20Wheel($("#wcv"), W20CFG.prizes, function (p) { $("#prize").innerHTML = p[0] + " " + esc(p[1]) + "<br><small style='opacity:.8;font-weight:600'>Anh em xin trao tận tay ở buổi gặp mặt!</small>"; FX.burst(innerWidth / 2, innerHeight * .5, 140); FX.rain(); });
+    $("#spin").onclick = function () { $("#prize").textContent = "…"; wv.spin(); };
+    w20Wall($("#wall"), W20CFG.wallChiEm); if (!W20CFG.wallChiEm.length) $("#wallsec").style.display = "none";
+  }
+
+  FX.init(); splash(); hero(); notes(); scratch(); renderPerks(); extras(); card(); reveal();
 })();
 </script>
 </body>

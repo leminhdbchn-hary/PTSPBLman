@@ -158,3 +158,75 @@ function w20Copy(text, done) {
   function fb() { var t = document.createElement("textarea"); t.value = text; t.style.position = "fixed"; t.style.opacity = "0"; document.body.appendChild(t); t.select(); try { document.execCommand("copy"); } catch (e) {} t.remove(); done && done(); }
   if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(text).then(function () { done && done(); }, fb); else fb();
 }
+
+/* ===== Dữ liệu bản dành cho các Sếp (anh em Nam chúc Sếp) ===== */
+W20.sep = {
+  wishes: [
+    "Anh em chúc {x} 20/10 thật rực rỡ, và hứa hôm nay không gửi email nào có chữ “gấp”.",
+    "Chúc {x} mọi tờ trình đều được duyệt ngay lần đầu, ở cả hai chiều.",
+    "Cảm ơn {x} đã kiên nhẫn với những lần anh em xin thêm 5 phút nữa.",
+    "Chúc {x} nụ cười luôn tươi hơn mọi chỉ tiêu và vững hơn mọi kế hoạch.",
+    "Chúc {x} một ngày không họp, nhiều hoa, và có anh em pha sẵn cà phê.",
+    "Anh em xin gửi {x} lời chúc chân thành nhất, kèm cam kết nghiêm túc nhất: hôm nay sẽ tử tế hơn mọi ngày.",
+    "Chúc {x} luôn được quý trọng như sản phẩm chủ lực của cả khối.",
+    "Có {x}, cả phòng có phương hướng. Hôm nay anh em xin có hoa.",
+    "Chúc {x} sức khỏe dồi dào để tiếp tục “góp ý” cho anh em, chúng em sẽ cố tiếp thu.",
+    "Chúc {x} mọi quyết định đều đúng, mọi cuộc họp đều ngắn, mọi nụ cười đều thật.",
+    "Cảm ơn {x} đã là chỗ dựa vững chắc, dù đôi khi anh em làm {x} đau đầu.",
+    "Chúc {x} 20/10 này thật nhiều niềm vui, và thật ít… email “chị xem giúp em”."
+  ],
+  roles: [
+    "Thuyền trưởng Kiên Nhẫn của Con Tàu PTSPBL",
+    "Tổng chỉ huy Mọi Cuộc Họp (luôn đúng giờ)",
+    "Người Thắp Lửa Của Cả Phòng",
+    "Chủ tịch Danh dự Hội đồng Duyệt Tờ Trình Nhanh",
+    "Nữ Hoàng Của Những Lời Góp Ý Chuẩn Xác",
+    "Bộ Não Chiến Lược kiêm Trưởng Ban Tinh Thần",
+    "Sếp 5 Sao Không Cần Đánh Giá"
+  ],
+  traits: [
+    "Tốc độ duyệt tờ trình: nhanh như chớp (khi anh em gửi đủ hồ sơ)",
+    "Khả năng phát hiện lỗi chính tả: không cần kính lúp",
+    "Độ kiên nhẫn: vô hạn (đã được kiểm chứng nhiều lần)",
+    "Kỹ năng họp: luôn biết lúc nào nên kết thúc cuộc họp",
+    "Khả năng đoán anh em đang nghĩ gì: chính xác 100%",
+    "Nụ cười: không cần giải trình",
+    "Gu cà phê: khó, nhưng anh em đang học",
+    "Tầm nhìn chiến lược: xa hơn deadline anh em tự đặt",
+    "Độ tin cậy: cao hơn mọi mức xếp hạng tín nhiệm",
+    "Sức lan tỏa: cả phòng đều bị lây tinh thần",
+    "Hạn mức quan tâm dành cho anh em: không giới hạn",
+    "Khả năng nhìn ra giải pháp: nhanh hơn khả năng anh em tìm ra vấn đề"
+  ],
+  pledges: [
+    "Anh em cam kết gửi báo cáo trước deadline… ít nhất một lần trong năm.",
+    "Anh em cam kết không nhắn “Sếp ơi gấp ạ” vào cuối giờ.",
+    "Anh em cam kết nhớ món cà phê của Sếp, kể cả khi Sếp đổi ý.",
+    "Anh em cam kết luôn nói “cảm ơn” khi được góp ý (nói thật lòng).",
+    "Anh em cam kết tặng hoa đúng ngày, không để Sếp phải nhắc.",
+    "Anh em cam kết đọc kỹ tờ trình trước khi trình (nỗ lực tối đa)."
+  ],
+  orders: [
+    "Hôm nay mọi việc đều có thể chờ đến mai, trừ việc cười.",
+    "Giao anh em pha cà phê đến hết ngày. Chất lượng: theo cảm xúc.",
+    "Mỗi người khen Sếp ít nhất 3 câu, có minh chứng cụ thể.",
+    "Cấm họp “sync nhanh”. Thay bằng “ăn nhanh”.",
+    "Cuối giờ anh em tự dọn phòng họp. Sếp ở lại ngắm hoa.",
+    "Mọi email hôm nay phải bắt đầu bằng hai chữ “Chúc mừng”.",
+    "Tạm dừng toàn bộ deadline đến 17h30, nếu không ai phát hiện.",
+    "Hôm nay Sếp luôn đúng. Ngày mai sẽ xem xét lại.",
+    "Quà tặng Sếp phải là hoa tươi, không được là tờ trình.",
+    "Anh em xếp hàng chúc mừng theo thứ tự ai nhanh chân nhất.",
+    "Chủ đề cuộc họp ngày mai: “Cách để Sếp được thương nhiều hơn”.",
+    "Ai quên ngày 20/10 phải làm 10 chiếc bánh… tưởng tượng."
+  ]
+};
+function w20DeriveSep(name) {
+  var k = name.toLowerCase(), h = w20Hash(k), t = [], i = 0;
+  while (t.length < 5) { var v = w20Hash(k + "#" + i++) % W20.sep.traits.length; if (t.indexOf(v) < 0) t.push(v); }
+  return { r: h % W20.sep.roles.length, w: (h >>> 8) % W20.sep.wishes.length, t: t };
+}
+function w20SepWish(i, x) {
+  var w = W20.sep.wishes[i % W20.sep.wishes.length], xl = (x || "Sếp").toLowerCase();
+  return w.replace(/\{x\}/g, xl).replace(/\{X\}/g, xl.charAt(0).toUpperCase() + xl.slice(1));
+}

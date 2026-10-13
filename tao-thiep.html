@@ -17,7 +17,10 @@
   <p class="sub">Dán danh sách tên (mỗi dòng một người). Trang sẽ tạo link riêng, mỗi người mở link là thấy tên, chức danh hài hước, lời chúc và đặc quyền của chính mình.</p>
 
   <div class="f">
-    <label>Danh sách chị em
+    <label>Loại thiệp
+      <select id="kind"><option value="chi">Thiệp cho chị em (index.html)</option><option value="sep">Thiệp kính chúc các Sếp (sep.html)</option></select>
+    </label>
+    <label><span id="lbl">Danh sách chị em</span>
       <textarea id="names" placeholder="Lan Anh&#10;Em Thu Hà&#10;Cô Mai | Giám đốc Điều hành Nụ Cười&#10;Hương"></textarea>
     </label>
     <div class="help">
@@ -27,7 +30,7 @@
       • <code>Tên | Chức danh tự đặt</code> → dùng chức danh của bạn thay vì chức danh ngẫu nhiên.
     </div>
     <label>Ký tên người gửi (hiện cuối thiệp)
-      <input id="from" placeholder="VD: Phòng PTSPBL" maxlength="60">
+      <input id="from" placeholder="VD: Anh em Nam Phòng PTSPBL" maxlength="60">
     </label>
     <button class="btn pink" id="make" type="button">✨ Tạo link</button>
   </div>
@@ -42,6 +45,7 @@
   </div>
 </section>
 <div class="toast" id="toast" role="status"></div>
+<script src="assets/config.js"></script>
 <script src="assets/common.js"></script>
 <script>
 (function () {
@@ -52,24 +56,25 @@
   function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); }
   try { $("#names").value = localStorage.getItem("w20names") || ""; $("#from").value = localStorage.getItem("w20from") || ""; } catch (e) {}
 
+  function isSep() { return $("#kind").value === "sep"; }
   function parse() {
-    var from = w20Clean($("#from").value, 60), out = [];
+    var from = w20Clean($("#from").value, 60), out = [], sep = isSep();
     $("#names").value.split(/\r?\n/).forEach(function (line) {
       line = line.trim(); if (!line) return;
-      var parts = line.split("|"), nm = w20Clean(parts[0], 40), custom = parts[1] ? w20Clean(parts[1], 60) : "", x = "Chị";
-      var m = nm.match(/^(Chị|Em|Cô|Bạn)\s+(.+)$/i);
+      var parts = line.split("|"), nm = w20Clean(parts[0], 40), custom = parts[1] ? w20Clean(parts[1], 60) : "", x = sep ? "Sếp" : "Chị";
+      var m = nm.match(sep ? /^(Sếp|Chị|Cô)\s+(.+)$/i : /^(Chị|Em|Cô|Bạn)\s+(.+)$/i);
       if (m) { x = m[1].charAt(0).toUpperCase() + m[1].slice(1).toLowerCase(); nm = m[2]; }
       if (!nm) return;
-      var d = w20Derive(nm);
-      out.push({ to: nm, x: x, f: from, r: d.r, w: d.w, p: d.p, custom: custom });
+      var d = sep ? w20DeriveSep(nm) : w20Derive(nm);
+      out.push({ to: nm, x: x, f: from, r: d.r, w: d.w, p: sep ? null : d.p, custom: custom });
     });
     return out;
   }
-  function linkOf(it) { return w20Link(base + "index.html", { to: it.to, x: it.x, f: it.f, r: it.r, w: it.w, p: it.p }); }
+  function linkOf(it) { return w20Link(base + (isSep() ? "sep.html" : "index.html"), { to: it.to, x: it.x, f: it.f, r: it.r, w: it.w, p: it.p }); }
   function render() {
     $("#out").hidden = !items.length;
     $("#rows").innerHTML = items.map(function (it, i) {
-      return '<tr><td><b>' + esc(it.x + " " + it.to) + '</b><br><span style="opacity:.8;font-size:13px">' + esc(it.custom || W20.roles[it.r]) + '</span></td>'
+      return '<tr><td><b>' + esc(it.x + " " + it.to) + '</b><br><span style="opacity:.8;font-size:13px">' + esc(it.custom || (isSep() ? W20.sep.roles : W20.roles)[it.r]) + '</span></td>'
         + '<td class="l">' + esc(linkOf(it)) + '</td>'
         + '<td class="acts2"><button class="btn" data-a="c" data-i="' + i + '" type="button">Sao chép</button> <button class="btn ghost" data-a="o" data-i="' + i + '" type="button" style="box-shadow:inset 0 0 0 2px rgba(255,255,255,.4)">Mở</button> <button class="btn ghost" data-a="r" data-i="' + i + '" type="button" title="Đổi chức danh & lời chúc" style="box-shadow:inset 0 0 0 2px rgba(255,255,255,.4)">🎲</button></td></tr>';
     }).join("");
@@ -83,10 +88,15 @@
     var b = e.target.closest("button"); if (!b) return; var it = items[+b.getAttribute("data-i")], a = b.getAttribute("data-a");
     if (a === "c") w20Copy(linkOf(it), function () { toast("Đã sao chép link của " + it.to + " 📋"); });
     else if (a === "o") window.open(linkOf(it), "_blank");
-    else if (a === "r") { it.r = (Math.random() * W20.roles.length) | 0; it.w = (Math.random() * W20.wishes.length) | 0; render(); }
+    else if (a === "r") { it.r = (Math.random() * (isSep() ? W20.sep.roles : W20.roles).length) | 0; it.w = (Math.random() * (isSep() ? W20.sep.wishes : W20.wishes).length) | 0; render(); }
   });
   $("#copyAll").onclick = function () { w20Copy(items.map(function (it) { return it.x + " " + it.to + ": " + linkOf(it); }).join("\n"), function () { toast("Đã sao chép " + items.length + " link 📋"); }); };
-  $("#copyGen").onclick = function () { w20Copy(w20Link(base + "index.html", { f: w20Clean($("#from").value, 60) }), function () { toast("Đã sao chép link chung 📋"); }); };
+  $("#copyGen").onclick = function () { w20Copy(w20Link(base + (isSep() ? "sep.html" : "index.html"), { f: w20Clean($("#from").value, 60) }), function () { toast("Đã sao chép link chung 📋"); }); };
+  $("#kind").onchange = function () {
+    $("#lbl").textContent = isSep() ? "Danh sách các Sếp" : "Danh sách chị em";
+    $("#names").placeholder = isSep() ? "Lan\nSếp Hoa\nChị Mai | Thuyền trưởng Kiên Nhẫn" : "Lan Anh\nEm Thu Hà\nCô Mai | Giám đốc Điều hành Nụ Cười\nHương";
+    if ($("#from").value === "" ) $("#from").value = isSep() ? W20CFG.from : ""; items = []; render();
+  };
   FX.init();
 })();
 </script>

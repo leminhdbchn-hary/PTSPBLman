@@ -6,7 +6,10 @@ Trang web tĩnh (không cần cài đặt, không cần máy chủ) chúc mừng
 | File | Dùng để |
 | --- | --- |
 | `index.html` | Trang người nhận: màn "GO-LIVE", lời chúc chung, Release Notes, máy rút lời chúc, thẻ cào, chọn đặc quyền, **thiệp riêng** (tải PNG / chia sẻ) |
-| `tao-thiep.html` | Trang cho người gửi: dán danh sách tên → tạo **link riêng** cho từng người |
+| `sep.html` | **Bản kính chúc các Sếp** (anh em Nam chúc): tờ trình “Phê duyệt”, hồ sơ năng lực, bản cam kết, xin chỉ đạo, cắm hoa tặng, vòng quay quà, tường lời chúc, giấy khen |
+| `tao-thiep.html` | Trang cho người gửi: chọn loại thiệp (chị em / Sếp), dán danh sách tên → tạo **link riêng** cho từng người |
+| `assets/config.js` | **Chỗ bạn chỉnh:** tên người gửi, danh sách quà vòng quay, lời chúc trên tường |
+| `assets/modules.js` | Cắm hoa, vòng quay quà, tường lời chúc |
 | `assets/common.js` | Nội dung (lời chúc, chức danh, đặc quyền...) + hiệu ứng |
 | `assets/style.css` | Giao diện |
 
@@ -17,6 +20,11 @@ Trang web tĩnh (không cần cài đặt, không cần máy chủ) chúc mừng
 4. Gửi **link chung** (không tên) cho nhóm chung: ai mở cũng có thể tự nhập tên để nhận thiệp.
 
 Link riêng có dạng: `index.html?to=Lan%20Anh&x=Chị&f=Phòng%20PTSPBL`. Không có dữ liệu nào được lưu trên máy chủ.
+
+## Chỉnh quà và lời chúc của anh em (`assets/config.js`)
+- `prizes`: các món quà ở **Vòng quay** (tối đa 8). Chỉ ghi những món bạn thật sự chuẩn bị.
+- `wallSep`, `wallChiEm`: lời chúc thật của anh em hiện trên **Tường lời chúc** (thay các câu mẫu).
+- `from`: dòng ký tên ở cuối thiệp.
 
 ## Chỉnh nội dung
 Tất cả lời chúc, chức danh, đặc quyền, ưu đãi thẻ cào nằm ở đầu file `assets/common.js` (mảng `wishes`, `roles`, `perks`, `notes`, `coupons`). Trong lời chúc dùng `{x}` cho xưng hô (chị/em/cô/bạn).
