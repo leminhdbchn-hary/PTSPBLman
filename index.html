@@ -157,7 +157,7 @@
   if (me && me.lead) { location.replace("sep.html?u=" + me.id); return; } /* lãnh đạo chỉ dùng trang riêng của Sếp */
   var S = { to: me ? w20Short(me.n) : P.to, full: me ? me.n : P.to, title: me ? me.t : "", bd: me && me.bd, x: P.x || (me && me.x) || "Chị", f: P.f || W20CFG.from, r: P.r, w: P.w, n: 0, bag: [] };
   var TEST = !!(me && me.test); /* link thử: không lưu, mở đi mở lại thoải mái */
-  var KEY = "w20v3:" + (me ? me.id : "guest:" + w20Fold(S.to || ""));
+  var KEY = "w20v4:" + (me ? me.id : "guest:" + w20Fold(S.to || ""));
   var loading = true; var ST = load(); /* tiến độ đã lưu: step, notes[], pulls, scratched, perks[], bq[], prize, req, wall */
   function load() { if (TEST) return {}; try { return JSON.parse(localStorage.getItem(KEY) || "{}"); } catch (e) { return {}; } }
   function save() { if (TEST) return; try { localStorage.setItem(KEY, JSON.stringify(ST)); } catch (e) {} try { W20DB.progress(KEY, ST); } catch (e) {} }

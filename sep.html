@@ -203,7 +203,7 @@
     bq.give.textContent = "🎁 Tặng Sếp bó hoa";
   }
   function wheel() {
-    var K = "w20sep2:" + (me ? me.id : "guest"), had = [], TEST = !!(me && me.test); try { if (!TEST) had = JSON.parse(localStorage.getItem(K) || "[]"); } catch (e) {}
+    var K = "w20sep3:" + (me ? me.id : "guest"), had = [], TEST = !!(me && me.test); try { if (!TEST) had = JSON.parse(localStorage.getItem(K) || "[]"); } catch (e) {}
     var as = me ? w20Assign()[me.id] : null;
     w20Wheel2({ cv: $("#wcv"), btn: $("#spin"), out: $("#prize"), prizes: W20CFG.prizes, assigned: as, got: had,
       onGot: function (l) { if (!TEST) { try { localStorage.setItem(K, JSON.stringify(l)); } catch (e) {} try { W20DB.progress(K, { prizes: l, step: l.length }); } catch (e) {} } else window.W20TESTGOT = l; setTimeout(card, 50); },
@@ -212,7 +212,7 @@
   /* giấy khen */
   function card() {
     var c = $("#card"), g = c.getContext("2d");
-    var got = []; try { got = (me && me.test) ? (window.W20TESTGOT || []) : JSON.parse(localStorage.getItem("w20sep2:" + (me ? me.id : "guest")) || "[]"); } catch (e) {}
+    var got = []; try { got = (me && me.test) ? (window.W20TESTGOT || []) : JSON.parse(localStorage.getItem("w20sep3:" + (me ? me.id : "guest")) || "[]"); } catch (e) {}
     w20DrawCard(g, { mode: "sep", greet: "Thân gửi:", name: S.to ? "Chị " + S.to : "Các chị lãnh đạo của Phòng", sub: me ? me.t : "", role: W20.sep.roles[ri()], wish: CW ? CW : w20SepWish(wi(), "chị"), prizes: got.map(function (i) { return W20CFG.prizes[i]; }).filter(Boolean), from: S.f, bq: S.bq });
   }
   var bgImg = w20Img("assets/card-bg.webp"); if (!bgImg.complete) bgImg.onload = function () { card(); };
