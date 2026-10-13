@@ -170,10 +170,12 @@ function w20BouquetUI(box, opt) {
     var men = crew.length ? crew : MEN.slice(0, 6); if (reduce || !men.length) { go(); return; }
     finaleOn = true; give.disabled = true; var T0 = performance.now(), n = men.length, T_RUN = 1300, T_CLAP = 3000;
     info.textContent = "Cả nhà vỗ tay chúc mừng chị nào! 👏👏👏";
-    /* xếp vòng cung quanh bó hoa: người ở phía sau đứng cao hơn và nhỏ hơn, người phía trước đứng thấp và to hơn */
-    var ppl = men.map(function (m, i) {
-      var u = n > 1 ? i / (n - 1) : .5, th = Math.PI * (.8 + 1.4 * u), sn = Math.sin(th), f = 1.12 + .2 * (sn + 1) / 2;
-      return { m: m, i: i, x: CX + 275 * Math.cos(th), y: 482 + 100 * sn, f: f, back: sn < -.05, sx: Math.cos(th) < 0 ? -110 : CW + 110 };
+    /* xếp 2 hàng cong quanh bó hoa, so le để không ai che mặt ai: hàng sau (nhỏ, đứng cao) dàn ngang, hàng trước (to) đứng hai bên */
+    var nf = Math.floor(n * .4), nb = n - nf, ppl = men.map(function (m, i) {
+      var front = i < nf, x, y, f;
+      if (front) { var j = Math.floor(i / 2), lf = i % 2 === 0; x = lf ? 95 + 118 * j : CW - 95 - 118 * j; y = 585; f = 1.12; }
+      else { var q = i - nf; x = nb > 1 ? 70 + q * (CW - 140) / (nb - 1) : CX; y = 350; f = .84; }
+      return { m: m, i: i, x: x, y: y, f: f, back: !front, sx: x < CX ? -110 : CW + 110 };
     }).sort(function (p, q) { return p.y - q.y; });
     (function fr(now) {
       var t = now - T0; ag.clearRect(0, 0, CW, CH); var k = Math.min(1, t / T_RUN), e2 = 1 - Math.pow(1 - k, 2), bq = false;
