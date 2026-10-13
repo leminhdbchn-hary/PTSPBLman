@@ -28,23 +28,24 @@ function w20BouquetUI(box, cb) {
   return { list: function () { return list.slice(); }, give: box.querySelector(".bqgive") };
 }
 
-/* Vòng quay quà */
+/* Vòng quay quà: vẽ một lần, quay bằng CSS (GPU) nên không giật */
 function w20Wheel(cv, prizes, onWin) {
   var g = cv.getContext("2d"), n = prizes.length, seg = 6.283185 / n, rot = 0, busy = false, COL = ["#ff4f9a", "#ffd76a", "#12a05f", "#a78bfa", "#ff9f43", "#4fc3f7", "#ef5350", "#9ccc65"];
   function draw() {
     var W = cv.width, R = W / 2 - 8, i;
-    g.clearRect(0, 0, W, W); g.save(); g.translate(W / 2, W / 2); g.rotate(rot);
+    g.clearRect(0, 0, W, W); g.save(); g.translate(W / 2, W / 2);
     for (i = 0; i < n; i++) {
       g.beginPath(); g.moveTo(0, 0); g.arc(0, 0, R, -1.5708 + i * seg, -1.5708 + (i + 1) * seg); g.closePath(); g.fillStyle = COL[i % COL.length]; g.fill(); g.strokeStyle = "#fff"; g.lineWidth = 4; g.stroke();
-      g.save(); g.rotate(-1.5708 + (i + .5) * seg + 1.5708); g.textAlign = "center"; g.font = Math.round(R * .26) + "px serif"; g.fillText(prizes[i][0], 0, -R * .66); g.restore();
+      g.save(); g.rotate((i + .5) * seg); g.textAlign = "center"; g.font = Math.round(R * .26) + "px serif"; g.fillText(prizes[i][0], 0, -R * .66); g.restore();
     }
-    g.restore(); g.beginPath(); g.arc(W / 2, W / 2, 26, 0, 6.283); g.fillStyle = "#fff7e6"; g.fill(); g.strokeStyle = "#b98d1a"; g.lineWidth = 6; g.stroke();
+    g.restore();
   }
   function ease(t) { return 1 - Math.pow(1 - t, 3.2); }
   function spin() {
     if (busy) return; busy = true; var idx = (Math.random() * n) | 0, start = rot, a = (idx + .5) * seg;
     var finalRot = Math.ceil((start + 6.283 * 5) / 6.283) * 6.283 - a, t0 = performance.now(), D = 4300;
-    (function step(now) { var t = Math.min(1, (now - t0) / D); rot = start + (finalRot - start) * ease(t); draw(); if (t < 1) requestAnimationFrame(step); else { busy = false; onWin && onWin(prizes[idx], idx); } })(t0);
+    cv.style.willChange = "transform";
+    (function step(now) { var t = Math.min(1, (now - t0) / D); rot = start + (finalRot - start) * ease(t); cv.style.transform = "rotate(" + rot + "rad)"; if (t < 1) requestAnimationFrame(step); else { busy = false; cv.style.willChange = "auto"; onWin && onWin(prizes[idx], idx); } })(t0);
   }
   draw(); return { spin: spin };
 }

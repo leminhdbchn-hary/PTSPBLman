@@ -186,7 +186,7 @@
   /* hoa, quà, tường */
   var bq;
   function flowers() {
-    bq = w20BouquetUI($("#bqbox"), function (l) { S.bq = l; card(); });
+    bq = w20BouquetUI($("#bqbox"), function (l) { S.bq = l; cardSoon(); });
     bq.give.onclick = function (e) { if (!S.bq.length) { toast("Cắm ít nhất 1 bông hoa nhé 🌷"); return; } FX.burst(e.clientX, e.clientY, 140); FX.rain(); toast("Đã tặng Sếp bó hoa 💐"); $("#cardsec").scrollIntoView({ behavior: "smooth" }); };
   }
   function wheel() {
@@ -211,6 +211,7 @@
     var y = 1010; for (i = 0; i < wl.length && i < 6; i++) { g.fillText(wl[i], W / 2, y); y += 50; }
     g.fillStyle = "#ffd76a"; g.font = "800 30px " + F; g.fillText("Từ: " + S.f, W / 2, 1290);
   }
+  var cardT = 0; function cardSoon() { cancelAnimationFrame(cardT); cardT = requestAnimationFrame(card); }
   function rr(g, x, y, w, h, r) { g.beginPath(); g.moveTo(x + r, y); g.arcTo(x + w, y, x + w, y + h, r); g.arcTo(x + w, y + h, x, y + h, r); g.arcTo(x, y + h, x, y, r); g.arcTo(x, y, x + w, y, r); g.closePath(); }
   $("#dl").onclick = function () { card(); $("#card").toBlob(function (b) { var a = document.createElement("a"); a.href = URL.createObjectURL(b); a.download = "giay-khen-20-10-" + (S.to || "sep").replace(/\s+/g, "-") + ".png"; document.body.appendChild(a); a.click(); setTimeout(function () { URL.revokeObjectURL(a.href); a.remove(); }, 1500); toast("Đã tải giấy khen 🌹"); FX.burst(innerWidth / 2, innerHeight * .6, 80); }, "image/png"); };
   $("#shr").onclick = function () {

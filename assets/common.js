@@ -110,42 +110,69 @@ function w20Link(base, o) {
   return base + (q.length ? "?" + q.join("&") : "");
 }
 
-/* ===== Hiệu ứng: cánh hoa rơi + pháo giấy ===== */
+/* ===== Hiệu ứng: cánh hoa rơi + pháo giấy =====
+   Tối ưu cho máy yếu: emoji vẽ sẵn thành hình nhỏ (sprite) một lần, không vẽ chữ mỗi khung hình;
+   tự giảm chất lượng nếu thấy giật; có nút "Chế độ nhẹ" (hoặc ?lite=1). */
 var FX = (function () {
-  var cv, ctx, W, H, parts = [], petals = [], raf = 0, reduce = window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var cv, ctx, W, H, parts = [], petals = [], raf = 0, tick = 0, last = 0, slow = 0, SP = {}, lite = false, btn;
+  var reduce = window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches;
   var EM = ["🌸", "🌷", "🌹", "💐", "🌺"], COL = ["#ffd76a", "#ff4f9a", "#ffffff", "#7cf0b0", "#ffa94d", "#a78bfa"];
-  function size() { var d = Math.min(window.devicePixelRatio || 1, 2); W = innerWidth; H = innerHeight; cv.width = W * d; cv.height = H * d; cv.style.width = W + "px"; cv.style.height = H + "px"; ctx.setTransform(d, 0, 0, d, 0, 0); }
-  function mkPetal(top) { return { x: Math.random() * W, y: top ? -20 : Math.random() * H, s: 14 + Math.random() * 16, vy: .5 + Math.random() * 1.1, vx: (Math.random() - .5) * .6, ph: Math.random() * 6, e: EM[(Math.random() * EM.length) | 0], r: Math.random() * 6 }; }
-  function init() {
-    cv = document.getElementById("fx"); if (!cv) return; ctx = cv.getContext("2d"); size(); addEventListener("resize", size);
-    var n = reduce ? 6 : Math.min(18, Math.round(W / 22)); for (var i = 0; i < n; i++) petals.push(mkPetal(false));
-    loop();
+  function store(v) { try { if (v === undefined) return localStorage.getItem("w20lite"); localStorage.setItem("w20lite", v ? "1" : "0"); } catch (e) {} }
+  function weak() { return (navigator.hardwareConcurrency && navigator.hardwareConcurrency <= 4) || (navigator.deviceMemory && navigator.deviceMemory <= 4); }
+  function sprites() {
+    EM.forEach(function (e) { var c = document.createElement("canvas"); c.width = c.height = 64; var g = c.getContext("2d"); g.font = "48px serif"; g.textAlign = "center"; g.textBaseline = "middle"; g.fillText(e, 32, 36); SP[e] = c; });
   }
-  function loop() {
-    ctx.clearRect(0, 0, W, H);
-    var i, p;
-    for (i = 0; i < petals.length; i++) {
-      p = petals[i]; p.y += p.vy; p.ph += .02; p.x += p.vx + Math.sin(p.ph) * .5; p.r += .01;
-      if (p.y > H + 30) petals[i] = mkPetal(true);
-      ctx.save(); ctx.translate(p.x, p.y); ctx.rotate(Math.sin(p.r) * .6); ctx.globalAlpha = .55; ctx.font = p.s + "px serif"; ctx.fillText(p.e, 0, 0); ctx.restore();
-    }
-    for (i = parts.length - 1; i >= 0; i--) {
-      p = parts[i]; p.vy += .12; p.x += p.vx; p.y += p.vy; p.vx *= .99; p.l -= 1; p.a += p.va;
-      if (p.l <= 0 || p.y > H + 20) { parts.splice(i, 1); continue; }
-      ctx.save(); ctx.translate(p.x, p.y); ctx.rotate(p.a); ctx.globalAlpha = Math.min(1, p.l / 30); ctx.fillStyle = p.c;
-      if (p.t) { ctx.font = p.s + "px serif"; ctx.fillText(p.t, 0, 0); } else ctx.fillRect(-p.s / 2, -p.s / 4, p.s, p.s / 2);
-      ctx.restore();
-    }
+  function size() { var d = lite ? 1 : Math.min(window.devicePixelRatio || 1, 1.5); W = innerWidth; H = innerHeight; cv.width = W * d; cv.height = H * d; cv.style.width = W + "px"; cv.style.height = H + "px"; ctx.setTransform(d, 0, 0, d, 0, 0); }
+  function mkPetal(top) { return { x: Math.random() * W, y: top ? -20 : Math.random() * H, s: 16 + Math.random() * 14, vy: .5 + Math.random() * 1.1, vx: (Math.random() - .5) * .6, ph: Math.random() * 6, e: EM[(Math.random() * EM.length) | 0] }; }
+  function fill() { petals = []; var n = reduce ? 4 : lite ? 5 : Math.min(14, Math.round(W / 40)); for (var i = 0; i < n; i++) petals.push(mkPetal(false)); }
+  function setLite(v, save) {
+    lite = !!v; document.documentElement.classList.toggle("lite", lite); if (save !== false) store(lite);
+    if (cv) { size(); fill(); parts.length = Math.min(parts.length, 30); }
+    if (btn) btn.textContent = lite ? "⚡ Chế độ nhẹ: BẬT" : "⚡ Chế độ nhẹ";
+  }
+  function init() {
+    cv = document.getElementById("fx"); if (!cv) return; ctx = cv.getContext("2d", { alpha: true }); sprites();
+    var q = /[?&]lite=1/.test(location.search), st = store();
+    lite = q || st === "1" || (st === null && weak());
+    document.documentElement.classList.toggle("lite", lite);
+    size(); fill(); addEventListener("resize", function () { size(); });
+    btn = document.createElement("button"); btn.type = "button"; btn.className = "litebtn"; btn.setAttribute("aria-label", "Bật tắt chế độ nhẹ cho máy yếu");
+    btn.textContent = lite ? "⚡ Chế độ nhẹ: BẬT" : "⚡ Chế độ nhẹ"; btn.onclick = function () { setLite(!lite); };
+    document.body.appendChild(btn);
+    document.addEventListener("visibilitychange", function () { if (document.hidden) { cancelAnimationFrame(raf); raf = 0; } else if (!raf) { last = 0; raf = requestAnimationFrame(loop); } });
     raf = requestAnimationFrame(loop);
   }
+  function loop(now) {
+    raf = requestAnimationFrame(loop);
+    tick++; if (lite && (tick & 1)) return; /* chế độ nhẹ: chạy 30 khung/giây */
+    var dt = last ? now - last : 16; last = now;
+    if (!lite && dt > 40) { slow++; if (slow > 40) { setLite(true); slow = 0; } } else if (slow > 0) slow -= .5; /* tự giảm chất lượng nếu giật liên tục */
+    ctx.clearRect(0, 0, W, H);
+    var i, p, k = lite ? 2 : 1;
+    ctx.globalAlpha = .55;
+    for (i = 0; i < petals.length; i++) {
+      p = petals[i]; p.y += p.vy * k; p.ph += .02 * k; p.x += (p.vx + Math.sin(p.ph) * .5) * k;
+      if (p.y > H + 30) petals[i] = mkPetal(true);
+      ctx.drawImage(SP[p.e], p.x, p.y, p.s, p.s);
+    }
+    for (i = parts.length - 1; i >= 0; i--) {
+      p = parts[i]; p.vy += .12 * k; p.x += p.vx * k; p.y += p.vy * k; p.vx *= .99; p.l -= k;
+      if (p.l <= 0 || p.y > H + 20) { parts.splice(i, 1); continue; }
+      ctx.globalAlpha = Math.min(1, p.l / 30);
+      if (p.t) ctx.drawImage(SP[p.t], p.x, p.y, p.s, p.s);
+      else { ctx.fillStyle = p.c; ctx.fillRect(p.x, p.y, p.s, p.s * .5); }
+    }
+    ctx.globalAlpha = 1;
+  }
   function burst(x, y, n) {
-    if (!cv) return; n = reduce ? Math.min(n || 40, 14) : (n || 60);
+    if (!cv) return; n = n || 60; n = reduce ? Math.min(n, 14) : lite ? Math.min(n, 26) : Math.min(n, 90);
+    if (parts.length > 160) return;
     for (var i = 0; i < n; i++) {
       var a = Math.random() * 6.283, v = 3 + Math.random() * 7, fl = Math.random() < .18;
-      parts.push({ x: x, y: y, vx: Math.cos(a) * v, vy: Math.sin(a) * v - 4, s: fl ? 20 : 7 + Math.random() * 7, c: COL[(Math.random() * COL.length) | 0], t: fl ? EM[(Math.random() * EM.length) | 0] : null, l: 90 + Math.random() * 60, a: Math.random() * 6, va: (Math.random() - .5) * .3 });
+      parts.push({ x: x, y: y, vx: Math.cos(a) * v, vy: Math.sin(a) * v - 4, s: fl ? 22 : 7 + Math.random() * 7, c: COL[(Math.random() * COL.length) | 0], t: fl ? EM[(Math.random() * EM.length) | 0] : null, l: 80 + Math.random() * 50 });
     }
   }
-  function rain() { for (var i = 0; i < 5; i++) setTimeout(function () { burst(Math.random() * W, H * (.2 + Math.random() * .3), 50); }, i * 260); }
+  function rain() { var m = lite ? 2 : 4; for (var i = 0; i < m; i++) setTimeout(function () { burst(Math.random() * W, H * (.2 + Math.random() * .3), 40); }, i * 300); }
   return { init: init, burst: burst, rain: rain };
 })();
 

@@ -32,3 +32,6 @@ Tất cả lời chúc, chức danh, đặc quyền, ưu đãi thẻ cào nằm 
 Trang chỉ mang tính giải trí nội bộ, không sử dụng logo hay nhận diện thương hiệu của ngân hàng.
 
 Link trang: https://leminhdbchn-hary.github.io/PTSPBLman/
+
+## Máy yếu bị giật?
+Trang tự bật **chế độ nhẹ** trên máy yếu (hoặc khi thấy giật liên tục). Cũng có thể bấm nút **⚡ Chế độ nhẹ** ở góc dưới bên trái, hoặc thêm `?lite=1` vào cuối link. Chế độ nhẹ giảm số hoa rơi, giảm pháo giấy, bỏ hiệu ứng chuyển động nặng.
