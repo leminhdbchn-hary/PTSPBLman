@@ -1,7 +1,7 @@
 /* ====== CẤU HÌNH DO NGƯỜI TỔ CHỨC CHỈNH (sửa file này là đủ) ====== */
 var W20CFG = {
   /* Dòng ký tên cuối thiệp */
-  from: "Anh em Nam Phòng PTSPBL",
+  from: "Anh em Phòng PTSPBL",
 
   /* Mã PIN để mở trang quản lý (admin.html): danh sách link + thống kê quà */
   adminPin: "2010",
@@ -40,15 +40,14 @@ var W20CFG = {
 
   /* Lời nhắn của anh em trên "Tường lời chúc". Thay các câu mẫu bằng lời thật nhé. */
   wallSep: [
-    { from: "Một đồng nghiệp nam", text: "Cảm ơn Sếp đã kiên nhẫn với những lần anh em xin thêm 5 phút nữa." },
-    { from: "Một đồng nghiệp nam", text: "Chúc Sếp thật nhiều sức khỏe để còn “góp ý” cho anh em, tụi em sẽ cố tiếp thu ạ." },
-    { from: "Một đồng nghiệp nam", text: "Có Sếp là cả Phòng có phương hướng. Hôm nay anh em xin phép có hoa." },
+    { from: "Một đồng nghiệp nam", text: "Cảm ơn Sếp đã kiên nhẫn với những lần anh em xin thêm 15 phút nữa Ạ." },
+    { from: "Một đồng nghiệp nam", text: "Chúc Sếp thật nhiều sức khỏe để còn “góp ý” cho anh em" },
     { from: "Một đồng nghiệp nam", text: "Chúc Sếp tờ trình nào cũng duyệt ngay vòng đầu, cả chiều đi lẫn chiều về." }
   ],
   wallChiEm: [
-    { from: "Một đồng nghiệp nam", text: "Chúc các chị em 20/10 không có việc gì gấp, trừ việc ăn bánh." },
-    { from: "Một đồng nghiệp nam", text: "Cảm ơn các chị em đã làm Phòng mình vui hơn nhiều lắm luôn." },
-    { from: "Một đồng nghiệp nam", text: "Anh em hứa hôm nay không hỏi “file này để đâu” nữa. Mai hỏi tiếp." },
-    { from: "Một đồng nghiệp nam", text: "Không có chị em chắc Phòng mình toàn mùi cà phê với tiếng gõ phím." }
+    { from: "Một đồng nghiệp nam", text: "Chúc các chị em 20/10 không có việc gì gấp, trừ việc ăn bánh, uống trà và nhận quà." },
+    { from: "Một đồng nghiệp nam", text: "Hôm nay anh em xin nhận KPI đặc biệt: chủ động pha trà, mua bánh, tặng hoa và tuyệt đối không giao thêm việc." },
+    { from: "Một đồng nghiệp nam", text: "Anh em cam kết hôm nay không hỏi “việc này làm thế nào?”, không nhờ “Sửa giúp anh/em tí”." },
+    { from: "Một đồng nghiệp nam", text: "Chúc các chị em trình phương án nào cũng thuận lợi, chính sách nào cũng thông suốt, góp ý nào cũng dễ tiếp thu và việc nào cũng về đích đúng hạn!" }
   ]
 };
