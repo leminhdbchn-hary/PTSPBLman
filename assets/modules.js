@@ -176,7 +176,7 @@ function w20BouquetUI(box, opt) {
     var nf = Math.floor(n * .4), nb = n - nf, ppl = men.map(function (m, i) {
       var front = i < nf, x, y, f;
       if (front) { var j = Math.floor(i / 2), lf = i % 2 === 0; x = lf ? 95 + 118 * j : CW - 95 - 118 * j; y = 585; f = 1.12; }
-      else { var q = i - nf; x = nb > 1 ? 70 + q * (CW - 140) / (nb - 1) : CX; y = 350; f = .84; }
+      else { var q = i - nf, th = Math.PI * (nb > 1 ? 1.2 + .6 * q / (nb - 1) : 1.5); x = CX + 285 * Math.cos(th); y = 470 + 205 * Math.sin(th); f = .78; } /* hàng sau xếp vòng cung phía trên bó hoa */
       return { m: m, i: i, x: x, y: y, f: f, back: !front, sx: x < CX ? -110 : CW + 110 };
     }).sort(function (p, q) { return p.y - q.y; });
     (function fr(now) {
