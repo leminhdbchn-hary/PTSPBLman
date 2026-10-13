@@ -124,7 +124,7 @@ code{background:rgba(0,0,0,.25);border-radius:6px;padding:1px 6px;font-size:.92e
   var $ = function (s) { return document.querySelector(s); };
   var base = new URL("index.html", location.href).href, baseSep = new URL("sep.html", location.href).href;
   (function () { var h = "<p style='margin:0 0 6px'><b>🧪 Link thử</b> (mở đi mở lại thoải mái, không lưu tiến độ, không tính vào quà)</p>"; W20TEST.forEach(function (t) { var a = (t.lead ? baseSep : base) + "?u=" + t.id; h += "<p style='margin:4px 0;word-break:break-all'>" + t.n + " · " + t.t + ":<br><a href='" + a + "' target='_blank' style='color:inherit'>" + a + "</a></p>"; }); document.getElementById("testlinks").innerHTML = h; })();
-  var PR = W20CFG.prizes, N = W20P.length, NEED = N * 2, REC = [34, 34, 18, 18];
+  var PR = W20CFG.prizes, N = W20P.length, NEED = N, REC = [22, 20, 10];
   var draft = { qty: W20STOCK.qty.slice(), seed: String(W20STOCK.seed) }, A = w20Assign(draft);
   var REPO = "leminhdbchn-hary/PTSPBLman", BRANCH = "main", FILE = "assets/stock.js";
   function toast(t) { var e = $("#toast"); e.textContent = t; e.className = "toast show"; clearTimeout(toast.t); toast.t = setTimeout(function () { e.className = "toast"; }, 2000); }
@@ -170,7 +170,7 @@ code{background:rgba(0,0,0,.25);border-radius:6px;padding:1px 6px;font-size:.92e
   function valid() { return total() === NEED && draft.qty.every(function (q) { return q >= 0 && q <= N; }); }
   function dirty() { return draft.seed !== String(W20STOCK.seed) || draft.qty.join() !== W20STOCK.qty.join(); }
   function renderStock() {
-    $("#need").innerHTML = "Có <b>" + N + "</b> người, mỗi người nhận <b>2 món khác nhau</b> → cần đúng <b>" + NEED + "</b> suất quà. Mỗi món tối đa " + N + " suất (mỗi người chỉ nhận mỗi món 1 lần).";
+    $("#need").innerHTML = "Có <b>" + N + "</b> người, mỗi người quay <b>1 lần, nhận 1 món</b> → cần đúng <b>" + NEED + "</b> suất quà. Mỗi món tối đa " + N + " suất.";
     $("#prows").innerHTML = PR.map(function (p, i) {
       return '<div class="prow"><div class="ic">' + p.icon + '</div><div class="nm"><b>' + esc(p.name) + '</b><div class="bar2"><i style="width:' + Math.min(100, draft.qty[i] / N * 100) + '%"></i></div></div>'
         + '<div class="step2"><button type="button" data-i="' + i + '" data-d="-1" aria-label="Giảm">−</button><input type="number" min="0" max="' + N + '" inputmode="numeric" data-i="' + i + '" value="' + draft.qty[i] + '" aria-label="Số lượng"><button type="button" data-i="' + i + '" data-d="1" aria-label="Tăng">+</button></div></div>';
@@ -199,7 +199,7 @@ code{background:rgba(0,0,0,.25);border-radius:6px;padding:1px 6px;font-size:.92e
     fetch(api + "?ref=" + BRANCH, { headers: H }).then(function (r) { if (!r.ok) throw new Error(r.status === 401 || r.status === 403 ? "Token chưa đúng hoặc chưa có quyền ghi (Contents: Read and write)." : "Không đọc được file trên GitHub (" + r.status + ")."); return r.json(); })
       .then(function (j) { return fetch(api, { method: "PUT", headers: H, body: JSON.stringify({ message: "Chia lại số lượng quà 20/10 (admin)", content: b64(cfgText()), sha: j.sha, branch: BRANCH }) }); })
       .then(function (r) { if (!r.ok) throw new Error(r.status === 403 || r.status === 404 ? "Token không có quyền ghi vào repo này." : "Lưu không được (" + r.status + ")."); return r.json(); })
-      .then(function () { W20STOCK.qty = draft.qty.slice(); W20STOCK.seed = draft.seed; say("✔ Đã lưu! Web cập nhật sau khoảng 1–3 phút. Chị em đã quay trước đó vẫn giữ 2 món cũ trên máy của họ, nên chỉ chia lại khi chưa gửi link hoặc chưa ai quay.", "ok"); renderStock(); })
+      .then(function () { W20STOCK.qty = draft.qty.slice(); W20STOCK.seed = draft.seed; say("✔ Đã lưu! Web cập nhật sau khoảng 1–3 phút. Chị em đã quay trước đó vẫn giữ món cũ trên máy của họ, nên chỉ chia lại khi chưa gửi link hoặc chưa ai quay.", "ok"); renderStock(); })
       .catch(function (e) { say("⚠ " + (e.message || "Không lưu được. Thử “Sao chép cấu hình”."), "err"); });
   };
 
@@ -207,12 +207,12 @@ code{background:rgba(0,0,0,.25);border-radius:6px;padding:1px 6px;font-size:.92e
   function renderDetail() {
     if ($("#detail").hidden) return;
     var q = $("#q2").value, L = W20P.filter(function (p) { return match(p, q); });
-    $("#plist").innerHTML = L.map(function (p, k) { var z = A[p.id]; return '<div class="row"><div class="who"><b>' + (k + 1) + ". " + esc(p.n) + '</b><small>' + esc(p.t) + '</small></div><div class="who" style="flex:1 1 300px"><b>' + PR[z[0]].icon + " " + esc(PR[z[0]].name) + '</b><br><b>' + PR[z[1]].icon + " " + esc(PR[z[1]].name) + "</b></div></div>"; }).join("");
+    $("#plist").innerHTML = L.map(function (p, k) { var z = A[p.id]; return '<div class="row"><div class="who"><b>' + (k + 1) + ". " + esc(p.n) + '</b><small>' + esc(p.t) + '</small></div><div class="who" style="flex:1 1 300px"><b>' + PR[z[0]].icon + " " + esc(PR[z[0]].name) + "</b></div></div>"; }).join("");
   }
   $("#peek").onclick = function () { if ($("#detail").hidden && !confirm("Danh sách này tiết lộ ai nhận món gì. Chỉ nên xem khi phát quà. Mở chứ?")) return; $("#detail").hidden = !$("#detail").hidden; $("#peek").textContent = $("#detail").hidden ? "👁 Mở danh sách chi tiết" : "🙈 Ẩn danh sách"; renderDetail(); };
   $("#q2").oninput = renderDetail;
   $("#csv").onclick = function () {
-    var rows = [["STT", "Họ tên", "Chức vụ", "Quà 1", "Quà 2", "Link"]]; W20P.forEach(function (p, i) { rows.push([i + 1, p.n, p.t, PR[A[p.id][0]].name, PR[A[p.id][1]].name, link(p)]); });
+    var rows = [["STT", "Họ tên", "Chức vụ", "Quà", "Link"]]; W20P.forEach(function (p, i) { rows.push([i + 1, p.n, p.t, PR[A[p.id][0]].name, link(p)]); });
     var csv = "﻿" + rows.map(function (r) { return r.map(function (v) { return '"' + String(v).replace(/"/g, '""') + '"'; }).join(","); }).join("\r\n");
     var a = document.createElement("a"); a.href = URL.createObjectURL(new Blob([csv], { type: "text/csv;charset=utf-8" })); a.download = "qua-20-10-ptspbl.csv"; document.body.appendChild(a); a.click(); setTimeout(function () { URL.revokeObjectURL(a.href); a.remove(); }, 1500);
   };

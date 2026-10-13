@@ -87,10 +87,10 @@
   <!-- 6. Vòng quay -->
   <section class="step" id="s4">
     <span class="kicker">Phần 5/7 · Vòng quay quà</span>
-    <h2>Quay 2 lượt, nhận 2 món quà</h2>
-    <p class="sub">Mỗi người quay 2 lượt, ra 2 món quà khác nhau. Quà anh em chuẩn bị thật và trao tận tay ở buổi gặp mặt.</p>
+    <h2>Quay 1 lần, nhận 1 món quà</h2>
+    <p class="sub">Mỗi người quay 1 lần duy nhất. Quà anh em chuẩn bị thật và trao tận tay ở buổi gặp mặt.</p>
     <div class="wheelbox"><canvas id="wcv" width="640" height="640"></canvas></div>
-    <p style="text-align:center;margin-top:14px"><button class="btn pink" id="spin" type="button">🎡 QUAY LƯỢT 1/2</button></p>
+    <p style="text-align:center;margin-top:14px"><button class="btn pink" id="spin" type="button">🎡 QUAY NGAY</button></p>
     <div id="prize"></div>
     <div class="reqbox" id="reqbox">
       <b>🙋 Chị muốn nhờ anh em việc gì?</b>
@@ -173,7 +173,7 @@
   function wishIdx() { return S.w !== null && S.w !== undefined ? S.w : dv().w; }
 
   /* ---------- Mở khóa từng phần ---------- */
-  var N = 7, HINT = ["Đọc hết 6 dòng Release Notes", "Rút đủ 3 lời chúc ở máy", "Cào lộ thẻ ưu đãi", "Cắm xong bó hoa", "Quay đủ 2 lượt vòng quay quà", "Đọc lời nhắn của anh em"];
+  var N = 7, HINT = ["Đọc hết 6 dòng Release Notes", "Rút đủ 3 lời chúc ở máy", "Cào lộ thẻ ưu đãi", "Cắm xong bó hoa", "Quay vòng quay quà", "Đọc lời nhắn của anh em"];
   var NAMES = ["Release Notes", "Máy rút lời chúc", "Thẻ cào", "Cắm hoa", "Vòng quay quà", "Lời nhắn anh em", "Thiệp riêng"];
   function prog() {
     var cur = Math.min(ST.step, N - 1);
@@ -301,15 +301,15 @@
     if (ST.bqDone) done(3, 0, true); else gate(3, "Cắm ít nhất 5 bông rồi bấm “Xong bó hoa”");
   }
 
-  /* ---------- 5. Vòng quay 2 lượt, quà đã chia sẵn ---------- */
+  /* ---------- 5. Vòng quay 1 lượt, quà đã chia sẵn ---------- */
   function wheel() {
     var prizes = W20CFG.prizes, assigned = me ? w20Assign()[me.id] : null;
     function showReq() { var has = ST.prizes.some(function (i) { return prizes[i] && prizes[i].key === "nho"; }); if (has) { $("#reqbox").classList.add("show"); if (ST.req) $("#reqtxt").value = ST.req; } }
     w20Wheel2({ cv: $("#wcv"), btn: $("#spin"), out: $("#prize"), prizes: prizes, assigned: assigned, got: ST.prizes,
       onGot: function (l) { ST.prizes = l; save(); },
-      onShow: function (idx, k, fresh) { showReq(); if (fresh) { FX.burst(innerWidth / 2, innerHeight * .5, 130); FX.rain(); } if (ST.prizes.length < 2) gate(4, "Còn 1 lượt quay nữa nha"); },
+      onShow: function (idx, k, fresh) { showReq(); if (fresh) { FX.burst(innerWidth / 2, innerHeight * .5, 130); FX.rain(); } },
       onAll: function (fresh) { card(); done(4, 3800, !fresh); } });
-    if (ST.prizes.length < 2 && !ST.prizes.length) gate(4, "Bấm QUAY để nhận món quà đầu tiên");
+    if (!ST.prizes.length) gate(4, "Bấm QUAY để nhận món quà của chị");
     $("#reqtxt").oninput = function () { ST.req = $("#reqtxt").value; save(); };
     $("#reqsend").onclick = function () {
       var t = w20Clean($("#reqtxt").value, 300).trim(); if (!t) { toast("Chị ghi việc cần nhờ trước nha ✍️"); return; }

@@ -256,26 +256,21 @@ function w20SepWish(i, x) {
 function w20Person(id) { if (!id || typeof W20P === "undefined") return null; var i; for (i = 0; i < W20P.length; i++) if (W20P[i].id === id) return W20P[i]; if (typeof W20TEST !== "undefined") for (i = 0; i < W20TEST.length; i++) if (W20TEST[i].id === id) return W20TEST[i]; return null; }
 function w20Short(n) { var a = String(n || "").trim().split(/\s+/); return a[a.length - 1] || ""; }
 function w20Fold(s) { return String(s || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/đ/g, "d").replace(/Đ/g, "D").toLowerCase(); }
-/* Chia quà ngẫu nhiên nhưng cố định: mỗi người 2 món KHÁC NHAU, theo số lượng ở assets/stock.js (tổng = 2 × số người).
-   Không ai chọn sẵn: thứ tự do "seed" xáo trộn. Cùng dữ liệu luôn cho cùng kết quả, nên quay ở máy nào cũng ra đúng 2 món đã chia.
-   stock (không bắt buộc) = { qty: [...], seed } để thử số lượng khác ở trang admin. Trả về { id: [món1, món2] }. */
+/* Chia quà ngẫu nhiên nhưng cố định: mỗi người 1 món, theo số lượng ở assets/stock.js (tổng = số người).
+   Không ai chọn sẵn: thứ tự do "seed" xáo trộn. Cùng dữ liệu luôn cho cùng kết quả, nên quay ở máy nào cũng ra đúng món đã chia.
+   stock (không bắt buộc) = { qty: [...], seed } để thử số lượng khác ở trang admin. Trả về { id: [món] }. */
 function w20Assign(stock) {
   stock = stock || (typeof W20STOCK !== "undefined" ? W20STOCK : {});
   var P = W20CFG.prizes, ppl = (typeof W20P === "undefined" ? [] : W20P).slice(), n = ppl.length, seed = String(stock.seed || "2010"), i, j, k;
   ppl.sort(function (a, b) { return w20Hash(a.id + "|" + seed) - w20Hash(b.id + "|" + seed); });
-  var q = P.map(function (p, x) { return Math.max(0, Math.min(n, parseInt((stock.qty || [])[x], 10) || 0)); }), tot = q.reduce(function (a, b) { return a + b; }, 0), need = 2 * n;
+  var q = P.map(function (p, x) { return Math.max(0, Math.min(n, parseInt((stock.qty || [])[x], 10) || 0)); }), tot = q.reduce(function (a, b) { return a + b; }, 0), need = n;
   if (tot < need) { var rest = need - tot, guard = 0; for (k = 0; rest > 0 && guard < 5000; k = (k + 1) % P.length, guard++) if (q[k] < n) { q[k]++; rest--; } }
   var slots = [], used = P.map(function () { return 0; });
   while (slots.length < need) { var moved = false; for (i = 0; i < P.length && slots.length < need; i++) if (used[i] < q[i]) { used[i]++; slots.push(i); moved = true; } if (!moved) break; }
   while (slots.length < need) slots.push(slots.length % P.length);
-  /* xáo các suất theo seed rồi chia cặp, đảm bảo 2 món của mỗi người khác nhau */
-  slots.sort(function (a, b) { return 0; });
   var pool = slots.slice(), rnd = function (x) { return w20Hash(seed + "#" + x); };
   for (i = pool.length - 1; i > 0; i--) { j = rnd(i) % (i + 1); var t0 = pool[i]; pool[i] = pool[j]; pool[j] = t0; }
-  var A = pool.slice(0, n), B = pool.slice(n, 2 * n);
-  for (i = 0; i < n; i++) if (A[i] === B[i]) {
-    for (j = 0; j < n; j++) { var jj = (i + 1 + j) % n; if (B[jj] !== A[i] && B[i] !== A[jj]) { var t = B[i]; B[i] = B[jj]; B[jj] = t; break; } } }
-  var out = {}; for (i = 0; i < n; i++) out[ppl[i].id] = [A[i], B[i]];
+  var out = {}; for (i = 0; i < n; i++) out[ppl[i].id] = [pool[i]];
   return out;
 }
 

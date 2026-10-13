@@ -238,15 +238,15 @@ function w20Wheel2(o) {
   var wv = w20Wheel(o.cv, P, function (p, idx) { got.push(idx); o.onGot && o.onGot(got.slice()); render(true); });
   function render(fresh) {
     var h = "";
-    got.forEach(function (i, k) { var p = P[i]; h += "<div class='pzrow'><span class='pz'>" + p.icon + "</span><div><small>Quà " + (k + 1) + "/2</small><b>" + String(p.name).replace(/&/g, "&amp;").replace(/</g, "&lt;") + "</b></div></div>"; });
+    got.forEach(function (i, k) { var p = P[i]; h += "<div class='pzrow'><span class='pz'>" + p.icon + "</span><div><small>Quà của bạn</small><b>" + String(p.name).replace(/&/g, "&amp;").replace(/</g, "&lt;") + "</b></div></div>"; });
     o.out.innerHTML = h;
-    if (got.length >= 2) { o.btn.disabled = true; o.btn.textContent = "✔ Đã quay đủ 2 lượt"; }
-    else { o.btn.disabled = false; o.btn.textContent = got.length ? "🎡 QUAY LƯỢT 2/2" : "🎡 QUAY LƯỢT 1/2"; }
+    if (got.length >= 1) { o.btn.disabled = true; o.btn.textContent = "✔ Đã quay rồi"; }
+    else { o.btn.disabled = false; o.btn.textContent = "🎡 QUAY NGAY"; }
     if (got.length) o.onShow && o.onShow(got[got.length - 1], got.length - 1, !!fresh);
-    if (got.length >= 2) o.onAll && o.onAll(!!fresh);
+    if (got.length >= 1) o.onAll && o.onAll(!!fresh);
   }
   o.btn.onclick = function () {
-    if (got.length >= 2) return; o.btn.disabled = true; o.btn.textContent = "Đang quay…";
+    if (got.length >= 1) return; o.btn.disabled = true; o.btn.textContent = "Đang quay…";
     var idx = as && as[got.length] !== undefined ? as[got.length] : (function () { var r; do { r = (Math.random() * P.length) | 0; } while (got.indexOf(r) >= 0); return r; })();
     wv.spin(idx);
   };

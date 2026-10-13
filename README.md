@@ -22,10 +22,10 @@ Link trang: https://leminhdbchn-hary.github.io/PTSPBLman/
 | `assets/common.js` | Lời chúc, chức danh vui, đặc quyền, thẻ cào… |
 
 ## Quà và vòng quay
-- Mỗi chị em quay **2 lượt, nhận 2 món KHÁC NHAU**, chia **ngẫu nhiên** (không ai chọn sẵn) theo số lượng trong `assets/stock.js`. Quay ở máy nào cũng ra đúng 2 món đó.
-- **Gợi ý số lượng (52 người → 104 suất):** KitKat 34 · cà phê/trà sữa 34 · giúp việc vặt 18 · quà nhỏ 18.
+- Mỗi chị em quay **1 lần, nhận 1 món**, chia **ngẫu nhiên** (không ai chọn sẵn) theo số lượng trong `assets/stock.js`. Quay ở máy nào cũng ra đúng 2 món đó.
+- **Gợi ý số lượng (52 người → 52 suất):** KitKat 22 · cà phê/trà sữa 20 · giúp việc vặt 10 (52 suất, mỗi người quay 1 lần).
 - **Chia lại số lượng:** vào `admin.html` → tab **Chia quà & thống kê** → chỉnh số (tổng phải đúng 104) → **Lưu lên GitHub**. Nút Lưu cần một token GitHub (hướng dẫn ngay trong trang). Không muốn dùng token thì bấm **Sao chép cấu hình** rồi dán vào `assets/stock.js` trên GitHub. Nút **Xáo lại** đổi ai nhận món nào.
-- Chỉ chia lại **trước khi gửi link** (hoặc khi chưa ai quay): ai đã quay rồi vẫn giữ 2 món cũ trên máy của họ.
+- Chỉ chia lại **trước khi gửi link** (hoặc khi chưa ai quay): ai đã quay rồi vẫn giữ món cũ trên máy của họ.
 - Danh sách chi tiết ai nhận món gì ẩn mặc định, chỉ mở khi cần phát quà (có tải Excel, in).
 - **Thẻ nhờ anh em 1 việc bất kỳ**: chị em ghi việc muốn nhờ rồi bấm Gửi. Mặc định nút này sao chép lời nhờ để dán vào nhóm chat. Muốn gom tập trung thì tạo Google Form và điền vào `requestForm` trong `config.js`.
 - Xưng hô: mặc định "Chị"; sinh từ 1995 trở đi là "Em" (trường `x` trong `assets/people.js`). Lãnh đạo (6 người) dùng trang Sếp.
