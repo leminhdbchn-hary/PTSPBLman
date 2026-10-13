@@ -15,7 +15,10 @@ var W20CFG = {
     { img: "assets/men/h4.webp", shirt: "#ffffff" },
     { img: "assets/men/h5.webp", shirt: "#ffffff" },
     { img: "assets/men/h6.webp", shirt: "#ffffff" },
-    { img: "assets/men/h7.webp", shirt: "#ffffff" }
+    { img: "assets/men/h7.webp", shirt: "#ffffff" },
+    { img: "assets/men/h8.webp", shirt: "#ffffff" },
+    { img: "assets/men/h9.webp", shirt: "#ffffff" },
+    { img: "assets/men/h10.webp", shirt: "#ffffff" }
   ],
 
   /* Quà ở Vòng quay. qty = số lượng món đó. Mỗi chị em quay 2 lần và nhận 2 món KHÁC NHAU, chia sẵn theo số lượng này

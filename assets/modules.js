@@ -133,15 +133,15 @@ function w20BouquetUI(box, opt) {
     return true;
   }
   function man_img(a) { return a.man ? w20Img(a.man.img) : null; }
-  function loopA() { if (rafA) return; rafA = requestAnimationFrame(function fr(now) { ag.clearRect(0, 0, CW, CH); actors = actors.filter(function (a) { return step(a, now); }); if (actors.length) rafA = requestAnimationFrame(fr); else { rafA = 0; ag.clearRect(0, 0, CW, CH); text(); } }); }
+  function loopA() { if (rafA) return; rafA = requestAnimationFrame(function fr(now) { ag.clearRect(0, 0, CW, CH); actors = actors.filter(function (a) { return step(a, now); }); while (queue.length && actors.length < 4) { pendingCount--; spawn(queue.shift()); } if (actors.length) rafA = requestAnimationFrame(fr); else { rafA = 0; ag.clearRect(0, 0, CW, CH); text(); } }); }
   pal.addEventListener("click", function (e) {
     var b = e.target.closest(".fl"); if (!b) return; var f = +b.getAttribute("data-i");
-    if (actors.length >= 4) { return; } spawn(f);
+    if (actors.length >= 4) { queue.push(f); pendingCount++; text(); return; } spawn(f);
   });
   box.querySelector(".bqundo").onclick = function () { if (actors.length) return; list.pop(); upd(); };
   var give = box.querySelector(".bqgive");
   give.onclick = function (e) {
-    if (actors.length) { info.textContent = "Đợi các anh cắm xong đã nha 😄"; return; }
+    if (actors.length || queue.length) { info.textContent = "Đợi các anh cắm xong đã nha 😄"; return; }
     if (list.length < min) { info.textContent = "Cắm ít nhất " + min + " bông rồi bấm Xong nha 🌷"; info.classList.remove("shake"); void info.offsetWidth; info.classList.add("shake"); return; }
     opt.onDone && opt.onDone(list.slice(), e);
   };
