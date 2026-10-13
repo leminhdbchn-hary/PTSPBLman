@@ -66,7 +66,7 @@ function w20DrawBouquet(g, cx, cy, S, list) {
 }
 /* ===== Chibi: đầu là ảnh thật (assets/men), thân vẽ bằng canvas ===== */
 var W20IMG = {};
-function w20Img(src) { if (!W20IMG[src]) { var im = new Image(); im.src = src; W20IMG[src] = im; } return W20IMG[src]; }
+function w20Img(src) { if (!W20IMG[src]) { var im = new Image(); im.src = /^assets\//.test(src) ? src + "?v=20261013" : src; W20IMG[src] = im; } return W20IMG[src]; }
 function w20Rr(g, x, y, w, h, r) { g.beginPath(); g.moveTo(x + r, y); g.arcTo(x + w, y, x + w, y + h, r); g.arcTo(x + w, y + h, x, y + h, r); g.arcTo(x, y + h, x, y, r); g.arcTo(x, y, x + w, y, r); g.closePath(); }
 /* o: {img, shirt, step (pha chạy), up (0..1 giơ tay), lift (nhảy, px), flower (emoji hoặc null), dir (+1 nhìn phải, -1 nhìn trái)} */
 function w20Chibi(g, cx, gy, sc, o) {
