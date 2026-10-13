@@ -22,3 +22,5 @@ Link riêng có dạng: `index.html?to=Lan%20Anh&x=Chị&f=Phòng%20PTSPBL`. Kh�
 Tất cả lời chúc, chức danh, đặc quyền, ưu đãi thẻ cào nằm ở đầu file `assets/common.js` (mảng `wishes`, `roles`, `perks`, `notes`, `coupons`). Trong lời chúc dùng `{x}` cho xưng hô (chị/em/cô/bạn).
 
 Trang chỉ mang tính giải trí nội bộ, không sử dụng logo hay nhận diện thương hiệu của ngân hàng.
+
+Link trang: https://leminhdbchn-hary.github.io/PTSPBLman/
