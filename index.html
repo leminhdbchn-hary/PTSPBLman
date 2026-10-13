@@ -327,7 +327,7 @@
   function card() {
     var c = $("#card"), g = c.getContext("2d");
     var pk = ST.prizes.map(function (i) { return W20CFG.prizes[i]; }).filter(Boolean);
-    w20DrawCard(g, { mode: "chi", greet: S.full ? "Gửi " + S.x.toLowerCase() + " thương mến" : "Gửi các chị em thương mến", name: S.full || "Chị em Phòng PTSPBL", sub: S.title || "", role: role(),
+    w20DrawCard(g, { mode: "chi", greet: "Thân gửi:", name: S.full ? S.x + " " + S.full : "Các chị em Phòng PTSPBL", sub: S.title || "", role: role(),
       wish: w20Wish(wishIdx(), S.full ? S.x.toLowerCase() : "chị em"), bd: S.bd, prizes: pk, from: S.f, bq: ST.bq });
   }
   var bgImg = w20Img("assets/card-bg.webp"); if (!bgImg.complete) bgImg.onload = function () { card(); };
