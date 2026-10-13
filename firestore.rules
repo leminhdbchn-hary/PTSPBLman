@@ -1,0 +1,20 @@
+rules_version = '2';
+// Quy tắc Firestore cho web 20/10 – Phòng PTSPBL.
+// Chị em (không đăng nhập) chỉ được GHI tiến độ và lời nhờ việc; trang quản lý cần ĐỌC để theo dõi trực tiếp.
+// Lưu ý: trang quản lý bảo vệ bằng mã PIN phía trình duyệt, nên "cho đọc" nghĩa là ai biết cấu hình Firebase cũng đọc được
+// tên + tiến độ + lời nhờ. Dữ liệu không có thông tin nhạy cảm. Xong chương trình hãy đổi "allow read" thành "if false".
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /progress/{id} {
+      allow read: if true;
+      allow create, update: if request.resource.size() < 8000;
+      allow delete: if false;
+    }
+    match /requests/{id} {
+      allow read: if true;
+      allow create: if request.resource.data.keys().hasOnly(['id', 'who', 'text', 'at']) && request.resource.size() < 2000;
+      allow update, delete: if false;
+    }
+    match /{document=**} { allow read, write: if false; }
+  }
+}

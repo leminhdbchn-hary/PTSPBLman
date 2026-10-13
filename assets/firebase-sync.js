@@ -53,6 +53,13 @@ var W20DB = (function () {
         });
       }, 1500);
     },
+    /* Theo dõi trực tiếp một collection (cho trang quản lý): cb(rows) mỗi khi có thay đổi, err(lỗi) nếu bị chặn */
+    watch: function (col, cb, err) {
+      ready(function () {
+        try { db.collection(col).onSnapshot(function (snap) { var rows = []; snap.forEach(function (d) { var v = d.data() || {}; v.__id = d.id; rows.push(v); }); cb(rows); }, function (e) { err && err(e); }); }
+        catch (e) { err && err(e); }
+      });
+    },
     /* Lưu “Thẻ nhờ việc” để anh em xem tập trung */
     request: function (id, who, text) {
       ready(function () { db.collection("requests").add({ id: key(id), who: String(who).slice(0, 100), text: String(text).slice(0, 300), at: firebase.firestore.FieldValue.serverTimestamp() }).catch(function () {}); });
