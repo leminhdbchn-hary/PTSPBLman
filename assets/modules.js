@@ -1,5 +1,5 @@
 /* Các mô-đun dùng chung: cắm hoa, vòng quay quà, tường lời chúc */
-var W20FL = ["🌹", "🌷", "🌸", "🌺", "🌻", "💐", "🌼", "🪻"];
+var W20FL = (typeof W20FN !== "undefined" ? W20FN : ["a", "b", "c", "d", "e", "f", "g", "h"]); /* 8 loại hoa vẽ trong flowers.js */
 /* vị trí từng bông trong bó (x, y theo nửa chiều rộng; s = độ to). Bông đặt trước nằm giữa. */
 var W20SLOT = [[0, -.3, 1.2], [-.38, -.22, 1.04], [.38, -.2, 1.04], [-.2, -.6, 1.06], [.22, -.58, 1.06], [-.6, -.5, .92], [.6, -.48, .92],
   [0, -.9, .96], [-.4, -.86, .86], [.42, -.84, .86], [-.74, -.2, .84], [.74, -.18, .84]];
@@ -40,7 +40,7 @@ function w20DrawBouquet(g, cx, cy, S, list) {
   idx.sort(function (p, q) { return W20SLOT[p][1] - W20SLOT[q][1]; });
   g.shadowColor = "rgba(0,0,0,.28)"; g.shadowBlur = S * .06; g.shadowOffsetY = S * .02;
   for (i = 0; i < idx.length; i++) {
-    var sl = W20SLOT[idx[i]], sz = S * .6 * sl[2], spr = w20Spr(W20FL[list[idx[i]]], 128);
+    var sl = W20SLOT[idx[i]], sz = S * .6 * sl[2], spr = w20FlowerSprite(list[idx[i]]); sz *= 1.08;
     g.save(); g.translate(cx + sl[0] * S, cy + sl[1] * S); g.rotate(sl[0] * .35); g.drawImage(spr, -sz / 2, -sz / 2, sz, sz); g.restore();
   }
   g.shadowColor = "transparent"; g.shadowBlur = 0; g.shadowOffsetY = 0;
@@ -85,9 +85,21 @@ function w20Chibi(g, cx, gy, sc, o) {
   /* tay trái (vẫy theo nhịp chạy) */
   g.lineCap = "round"; g.strokeStyle = shirt; g.lineWidth = 13;
   g.beginPath(); g.moveTo(-26, top + 10); g.lineTo(-34 - swing * .3, top + 36 + swing * .5); g.stroke(); g.fillStyle = skin; g.beginPath(); g.arc(-34 - swing * .3, top + 40 + swing * .5, 7, 0, 6.283); g.fill();
-  /* tay phải giơ hoa */
-  var hx = 26 + 16 * up, hy = top + 12 + 30 * (1 - up) - 40 * up; g.strokeStyle = shirt; g.beginPath(); g.moveTo(26, top + 10); g.lineTo(hx, hy); g.stroke(); g.fillStyle = skin; g.beginPath(); g.arc(hx, hy, 7, 0, 6.283); g.fill();
-  if (o.flower) { var fs = 54; g.save(); g.translate(hx, hy - 16); g.rotate(-.1 + Math.sin(step) * .08); g.drawImage(w20Spr(o.flower, 128), -fs / 2, -fs / 2 - 6, fs, fs); g.restore(); }
+  /* tay phải: có o.reach=[x,y] (toạ độ canvas) thì duỗi tay 2 khúc tới đó, không thì giơ theo "up" */
+  var sx0 = 26, sy0 = top + 12, hx, hy, ex = null, ey = 0, L = 44;
+  if (o.reach) {
+    var tx = (o.reach[0] - cx) / (sc * dir), ty = (o.reach[1] - gy) / sc + lift, dx = tx - sx0, dy = ty - sy0, d = Math.sqrt(dx * dx + dy * dy) || 1, mx = 2 * L * 1.2;
+    if (d > mx) { dx *= mx / d; dy *= mx / d; d = mx; }
+    hx = sx0 + dx; hy = sy0 + dy; var Ls = Math.max(L, d / 2 + 1), h2 = Math.sqrt(Math.max(0, Ls * Ls - d * d / 4)), ux = dx / d, uy = dy / d, mxp = sx0 + ux * d / 2, myp = sy0 + uy * d / 2;
+    var e1x = mxp - uy * h2, e1y = myp + ux * h2, e2x = mxp + uy * h2, e2y = myp - ux * h2; if (e1y > e2y) { ex = e1x; ey = e1y; } else { ex = e2x; ey = e2y; }
+  } else { hx = 26 + 16 * up; hy = top + 12 + 30 * (1 - up) - 40 * up; }
+  if (o.flower) { /* cuống hoa nắm trong tay */
+    g.strokeStyle = "#2f8a4f"; g.lineWidth = 4; g.beginPath(); g.moveTo(hx, hy - 20); g.lineTo(hx + 2, hy + 36); g.stroke();
+    g.fillStyle = "#3e9a5f"; g.beginPath(); g.ellipse(hx + 9, hy + 20, 9, 4, -.6, 0, 6.283); g.fill();
+  }
+  g.strokeStyle = shirt; g.lineWidth = 13; g.beginPath(); g.moveTo(sx0, sy0); if (ex !== null) g.lineTo(ex, ey); g.lineTo(hx, hy); g.stroke();
+  g.fillStyle = skin; g.beginPath(); g.arc(hx, hy, 7.5, 0, 6.283); g.fill();
+  if (o.flower) { var fs = 50; g.save(); g.translate(hx, hy - 26); g.rotate(Math.sin(step) * .06); g.drawImage(o.flower, -fs / 2, -fs / 2, fs, fs); g.restore(); }
   /* đầu to */
   var img = o.img, hw = 112, hh = 126; if (img && img.naturalWidth) { hh = hw * img.naturalHeight / img.naturalWidth; }
   g.save(); g.translate(0, top - hh * .36); g.rotate(Math.sin(step) * .07 * (o.run ? 1 : .3));
@@ -100,12 +112,12 @@ function w20Chibi(g, cx, gy, sc, o) {
    opt: { min, start, onChange(list), onDone(list, e) } */
 function w20BouquetUI(box, opt) {
   opt = typeof opt === "function" ? { onChange: opt } : (opt || {}); var list = (opt.start || []).slice(), MAX = W20SLOT.length, min = opt.min || 1;
-  var MEN = (typeof W20CFG !== "undefined" && W20CFG.men) || [], CW = 640, CH = 620, CX = 320, CY = 300, SR = 230, GY = 598;
+  var MEN = (typeof W20CFG !== "undefined" && W20CFG.men) || [], CW = 680, CH = 610, CX = 340, CY = 409, SR = 135, GY = 590, SC = 1.8;
   box.innerHTML = '<div class="bqpal"></div><div class="bqstage"><canvas class="bqcv" width="' + CW + '" height="' + CH + '"></canvas><canvas class="bqan" width="' + CW + '" height="' + CH + '"></canvas></div><div class="bqinfo"></div>'
     + '<div class="acts"><button type="button" class="btn ghost bqundo" style="font-size:15px;padding:10px 18px">↩️ Bỏ bông vừa cắm</button><button type="button" class="btn pink bqgive" style="font-size:16px;padding:12px 22px">💐 Xong bó hoa</button></div>';
   var pal = box.querySelector(".bqpal"), cv = box.querySelector(".bqcv"), g = cv.getContext("2d"), an = box.querySelector(".bqan"), ag = an.getContext("2d"), info = box.querySelector(".bqinfo"), raf = 0, rafA = 0;
   MEN.forEach(function (m) { w20Img(m.img); });
-  pal.innerHTML = W20FL.map(function (f, i) { return '<button type="button" class="fl" data-i="' + i + '" aria-label="Thêm hoa">' + f + "</button>"; }).join("");
+  pal.innerHTML = W20FL.map(function (f, i) { return '<button type="button" class="fl" data-i="' + i + '" aria-label="Thêm hoa ' + f + '"><img alt="" src="' + w20FlowerSprite(i).toDataURL() + '"><span>' + f + "</span></button>"; }).join("");
   var actors = [], queue = [], nextMan = 0, side = 1, reduce = window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches, pendingCount = 0;
   function draw() { g.clearRect(0, 0, CW, CH); w20DrawBouquet(g, CX, CY, SR, list); }
   function text() {
@@ -114,22 +126,30 @@ function w20BouquetUI(box, opt) {
   }
   function upd() { cancelAnimationFrame(raf); raf = requestAnimationFrame(draw); text(); opt.onChange && opt.onChange(list.slice()); }
   function plant(a) { if (list.length >= MAX) list.shift(); list.push(a.f); pendingCount = Math.max(0, pendingCount - 1); upd(); }
-  /* hoạt cảnh một anh ra cắm hoa (ms) */
-  var T_IN = 800, T_THROW = 500, T_WAVE = 650, T_OUT = 650;
+  /* hoạt cảnh: anh chạy ra, đứng cạnh bó, giơ tay cắm bông hoa vào đúng chỗ rồi vẫy (ms) */
+  var T_IN = 900, T_REACH = 500, T_INS = 550, T_WAVE = 600, T_OUT = 700;
   function spawn(f) {
-    var man = MEN.length ? MEN[nextMan++ % MEN.length] : null, sl = W20SLOT[Math.min(list.length + actors.length, MAX - 1)] || W20SLOT[0], dir = side; side = -side;
-    var a = { f: f, man: man, t0: performance.now(), dir: dir, planted: false, sx: dir > 0 ? -90 : CW + 90, tx: CX + (dir > 0 ? -205 : 205) + (Math.random() - .5) * 30, tgt: [CX + sl[0] * SR, CY + sl[1] * SR], ph: Math.random() * 6 };
+    var man = MEN.length ? MEN[nextMan++ % MEN.length] : null, sl = W20SLOT[Math.min(list.length + actors.length, MAX - 1)] || W20SLOT[0], dir;
+    if (sl[0] < -.05) dir = 1; else if (sl[0] > .05) dir = -1; else { dir = side; side = -side; }
+    var gx = CX + sl[0] * SR, gy = CY + sl[1] * SR, tx = Math.max(118, Math.min(CW - 118, gx - dir * 165));
+    var a = { f: f, man: man, t0: performance.now(), dir: dir, planted: false, sx: dir > 0 ? -120 : CW + 120, tx: tx, slot: [gx, gy + 26 * SC], ph: Math.random() * 6 };
     actors.push(a); pendingCount++; text(); if (reduce) { plant(a); actors.pop(); return; } loopA();
   }
+  function ease(k) { return k < .5 ? 2 * k * k : 1 - Math.pow(-2 * k + 2, 2) / 2; }
+  function lerp2(p, q, k) { return [p[0] + (q[0] - p[0]) * k, p[1] + (q[1] - p[1]) * k]; }
   function step(a, now) {
-    var t = now - a.t0, o = { img: man_img(a), shirt: a.man && a.man.shirt, step: now / 70 + a.ph, run: 1, dir: a.dir }, x, lift = 0, up = 0, fl = W20FL[a.f], fx = null, fy = null;
-    if (t < T_IN) { var k = t / T_IN, e = 1 - Math.pow(1 - k, 2); x = a.sx + (a.tx - a.sx) * e; o.dir = a.dir; up = .55; }
-    else if (t < T_IN + T_THROW) { var k2 = (t - T_IN) / T_THROW; x = a.tx; o.dir = a.dir; o.run = 0; up = 1; lift = Math.sin(k2 * Math.PI) * 26; o.step = 1.6;
-      fl = null; var sx = x + a.dir * 56, sy = GY - 250; fx = sx + (a.tgt[0] - sx) * k2; fy = sy + (a.tgt[1] - sy) * k2 - Math.sin(k2 * Math.PI) * 120; }
-    else if (t < T_IN + T_THROW + T_WAVE) { if (!a.planted) { a.planted = true; plant(a); } x = a.tx; o.dir = a.dir; o.run = 0; var k3 = (t - T_IN - T_THROW) / T_WAVE; up = 1; lift = Math.abs(Math.sin(k3 * Math.PI * 3)) * 22; fl = null; o.step = now / 90; }
-    else { var k4 = (t - T_IN - T_THROW - T_WAVE) / T_OUT; x = a.tx + (a.dir > 0 ? -1 : 1) * (CW * .7) * k4 * k4 - 0; o.dir = a.dir > 0 ? -1 : 1; up = 0; fl = null; if (k4 >= 1) return false; }
-    o.flower = fl; o.lift = lift; o.up = up; w20Chibi(ag, x, GY, 1.4, o);
-    if (fx !== null) { ag.drawImage(w20Spr(W20FL[a.f], 128), fx - 28, fy - 28, 56, 56); }
+    var t = now - a.t0, d = a.dir, o = { img: man_img(a), shirt: a.man && a.man.shirt, step: now / 70 + a.ph, run: 1, dir: d, flower: w20FlowerSprite(a.f) }, x = a.tx, lift = 0;
+    var carry = function (xx) { return [xx + d * 34 * SC, GY - 76 * SC]; }, appr = [a.slot[0] - d * 55, a.slot[1] - 70];
+    if (t < T_IN) { var e = 1 - Math.pow(1 - t / T_IN, 2); x = a.sx + (a.tx - a.sx) * e; o.reach = carry(x); lift = Math.abs(Math.sin(now / 80 + a.ph)) * 6; }
+    else if (t < T_IN + T_REACH) { var k = ease((t - T_IN) / T_REACH); o.run = 0; o.step = 1.6; lift = 30 * k; o.reach = lerp2(carry(x), appr, k); }
+    else if (t < T_IN + T_REACH + T_INS) { var k2 = ease((t - T_IN - T_REACH) / T_INS); o.run = 0; o.step = 1.6; lift = 30 + Math.sin(k2 * Math.PI) * 4; o.reach = lerp2(appr, a.slot, k2); }
+    else if (t < T_IN + T_REACH + T_INS + T_WAVE) {
+      if (!a.planted) { a.planted = true; plant(a); }
+      var k3 = (t - T_IN - T_REACH - T_INS) / T_WAVE; o.run = 0; o.flower = null; o.step = now / 90; lift = Math.abs(Math.sin(k3 * Math.PI * 2)) * 24 + 12 * (1 - k3);
+      o.reach = lerp2(a.slot, [x + d * 70 * SC / 1.8, GY - 215 * SC / 1.8 + Math.sin(now / 60) * 14], Math.min(1, k3 * 2.5));
+    }
+    else { var k4 = (t - T_IN - T_REACH - T_INS - T_WAVE) / T_OUT; if (k4 >= 1) return false; x = a.tx - d * (CW * .75) * k4 * k4; o.dir = -d; o.flower = null; o.reach = null; o.up = 0; }
+    o.lift = lift; w20Chibi(ag, x, GY, SC, o);
     return true;
   }
   function man_img(a) { return a.man ? w20Img(a.man.img) : null; }
@@ -265,3 +285,9 @@ function w20DrawCard(g, o) {
   if (o.bq && o.bq.length) { var S = 160, cy = Math.max(1395, y + 0.95 * S + 12); if (cy + S * 1.25 > H - 14) cy = H - 14 - S * 1.25; w20DrawBouquet(g, 215, cy, S, o.bq); }
   g.restore();
 }
+
+/* Bấm vào khung ảnh tập thể để xem to */
+document.addEventListener("click", function (e) {
+  var f = e.target.closest && e.target.closest(".frame"); if (!f) return;
+  var d = document.createElement("div"); d.className = "lbx"; d.innerHTML = '<img src="' + f.querySelector("img").src + '" alt="">'; d.onclick = function () { d.remove(); }; document.body.appendChild(d);
+});
