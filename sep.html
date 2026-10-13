@@ -72,7 +72,7 @@
   <section class="rv" id="bouquet">
     <span class="kicker">Hoa tặng Sếp</span>
     <h2>Anh em tự tay cắm một bó hoa</h2>
-    <p class="sub">Chọn từng bông rồi bấm “Tặng bó hoa”. Bó hoa sẽ được in lên giấy khen ở cuối trang.</p>
+    <p class="sub">Chọn từng bông rồi bấm “Tặng bó hoa”. Bó hoa sẽ được in lên thiệp ở cuối trang.</p>
     <div id="bqbox"></div>
   </section>
 
@@ -92,13 +92,13 @@
   </section>
 
   <section class="rv" id="cardsec">
-    <span class="kicker">Giấy khen</span>
-    <h2>Giấy khen của riêng Sếp</h2>
+    <span class="kicker">Thiệp riêng</span>
+    <h2>Thiệp 20/10 của riêng chị</h2>
     <p class="sub">Tải về làm kỷ niệm, hoặc gửi cho Sếp nhé.</p>
     <div class="cardbox">
       <canvas id="card" width="1080" height="1620"></canvas>
       <div class="acts">
-        <button class="btn" id="dl" type="button">⬇️ Tải giấy khen (PNG)</button>
+        <button class="btn" id="dl" type="button">⬇️ Tải thiệp về máy</button>
         <button class="btn pink" id="shr" type="button">📤 Chia sẻ</button>
         <button class="btn ghost" id="rnd" type="button">🎲 Đổi danh hiệu & lời chúc</button>
       </div>
@@ -151,7 +151,7 @@
       $("#nameform").style.display = "none";
     } else {
       h.innerHTML = "Kính chúc <em>các Sếp</em> của Phòng PTSPBL!";
-      l.textContent = "Anh em xin gửi lời chúc trân trọng nhất đến các Sếp nhân ngày 20/10. Nhập tên để nhận giấy khen riêng nhé!";
+      l.textContent = "Anh em xin gửi lời chúc trân trọng nhất đến các Sếp nhân ngày 20/10. Nhập tên để nhận thiệp riêng nhé!";
     }
     $("#from").textContent = S.f;
     $("#nameform").onsubmit = function (e) {
@@ -203,15 +203,15 @@
   function card() {
     var c = $("#card"), g = c.getContext("2d");
     var got = []; try { got = JSON.parse(localStorage.getItem("w20sep2:" + (me ? me.id : "guest")) || "[]"); } catch (e) {}
-    w20DrawCard(g, { mode: "sep", name: S.to ? who() : "Các Sếp của Phòng", sub: me ? me.t : "", role: W20.sep.roles[ri()], wish: w20SepWish(wi(), xw()), prizes: got.map(function (i) { return W20CFG.prizes[i]; }).filter(Boolean), from: S.f, bq: S.bq });
+    w20DrawCard(g, { mode: "sep", greet: S.to ? "Gửi chị thương mến" : "Gửi các chị thương mến", name: S.to ? "Chị " + S.to : "Các chị lãnh đạo của Phòng", sub: me ? me.t : "", role: W20.sep.roles[ri()], wish: w20SepWish(wi(), "chị"), prizes: got.map(function (i) { return W20CFG.prizes[i]; }).filter(Boolean), from: S.f, bq: S.bq });
   }
   var bgImg = w20Img("assets/card-bg.webp"); if (!bgImg.complete) bgImg.onload = function () { card(); };
   var cardT = 0; function cardSoon() { cancelAnimationFrame(cardT); cardT = requestAnimationFrame(card); }
   function rr(g, x, y, w, h, r) { g.beginPath(); g.moveTo(x + r, y); g.arcTo(x + w, y, x + w, y + h, r); g.arcTo(x + w, y + h, x, y + h, r); g.arcTo(x, y + h, x, y, r); g.arcTo(x, y, x + w, y, r); g.closePath(); }
-  $("#dl").onclick = function () { card(); $("#card").toBlob(function (b) { var a = document.createElement("a"); a.href = URL.createObjectURL(b); a.download = "giay-khen-20-10-" + (S.to || "sep").replace(/\s+/g, "-") + ".png"; document.body.appendChild(a); a.click(); setTimeout(function () { URL.revokeObjectURL(a.href); a.remove(); }, 1500); toast("Đã tải giấy khen 🌹"); FX.burst(innerWidth / 2, innerHeight * .6, 80); }, "image/png"); };
+  $("#dl").onclick = function () { card(); $("#card").toBlob(function (b) { var a = document.createElement("a"); a.href = URL.createObjectURL(b); a.download = "thiep-20-10-" + (S.to || "chi").replace(/\s+/g, "-") + ".png"; document.body.appendChild(a); a.click(); setTimeout(function () { URL.revokeObjectURL(a.href); a.remove(); }, 1500); toast("Đã tải thiệp về máy 🌹"); FX.burst(innerWidth / 2, innerHeight * .6, 80); }, "image/png"); };
   $("#shr").onclick = function () {
     var url = w20Link(location.origin + location.pathname, { to: S.to, x: S.to ? S.x : "", f: S.f === W20CFG.from ? "" : S.f, r: S.to ? ri() : null, w: S.to ? wi() : null });
-    var data = { title: "20/10 · Giấy khen của " + who(), text: "Giấy khen 20/10 của " + who() + " 🌹", url: url };
+    var data = { title: "20/10 · Thiệp của chị " + (S.to || ""), text: "Thiệp 20/10 của chị " + (S.to || "") + " 🌹", url: url };
     if (navigator.share) navigator.share(data).catch(function () {}); else w20Copy(url, function () { toast("Đã sao chép link 📋"); });
   };
   $("#rnd").onclick = function (e) { S.r = (Math.random() * W20.sep.roles.length) | 0; S.w = (Math.random() * W20.sep.wishes.length) | 0; card(); FX.burst(e.clientX, e.clientY, 60); toast("Đã đổi danh hiệu & lời chúc 🎲"); };

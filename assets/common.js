@@ -207,7 +207,7 @@ W20.sep = {
     "Chủ tịch Danh dự Hội đồng Duyệt Tờ Trình Nhanh",
     "Nữ Hoàng Của Những Lời Góp Ý Chuẩn Xác",
     "Bộ Não Chiến Lược kiêm Trưởng Ban Tinh Thần",
-    "Sếp 5 Sao Không Cần Đánh Giá"
+    "Chị Cả 5 Sao Không Cần Đánh Giá"
   ],
   traits: [
     "Tốc độ duyệt tờ trình: nhanh như chớp (khi anh em gửi đủ hồ sơ)",
