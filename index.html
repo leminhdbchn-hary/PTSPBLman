@@ -2,7 +2,7 @@
 <html lang="vi">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, viewport-fit=cover">
 <title>20/10 · Bản phát hành đặc biệt dành cho chị em Phòng PTSPBL</title>
 <meta name="description" content="Bản cập nhật v20.10: lời chúc, quà và thiệp riêng cho từng chị em Phòng PTSPBL.">
 <meta property="og:title" content="20/10 · Bản phát hành đặc biệt v20.10">
@@ -153,11 +153,13 @@
   var P = w20Params(), me = w20Person(P.u);
   if (me && me.lead) { location.replace("sep.html?u=" + me.id); return; } /* lãnh đạo chỉ dùng trang riêng của Sếp */
   var S = { to: me ? w20Short(me.n) : P.to, full: me ? me.n : P.to, title: me ? me.t : "", bd: me && me.bd, x: P.x || (me && me.x) || "Chị", f: P.f || W20CFG.from, r: P.r, w: P.w, n: 0, bag: [] };
+  var TEST = !!(me && me.test); /* link thử: không lưu, mở đi mở lại thoải mái */
   var KEY = "w20v3:" + (me ? me.id : "guest:" + w20Fold(S.to || ""));
   var loading = true; var ST = load(); /* tiến độ đã lưu: step, notes[], pulls, scratched, perks[], bq[], prize, req, wall */
-  function load() { try { return JSON.parse(localStorage.getItem(KEY) || "{}"); } catch (e) { return {}; } }
-  function save() { try { localStorage.setItem(KEY, JSON.stringify(ST)); } catch (e) {} try { W20DB.progress(KEY, ST); } catch (e) {} }
-  ST.step = ST.step || 0; ST.notes = ST.notes || []; ST.bq = ST.bq || []; ST.prizes = ST.prizes || [];
+  function load() { if (TEST) return {}; try { return JSON.parse(localStorage.getItem(KEY) || "{}"); } catch (e) { return {}; } }
+  function save() { if (TEST) return; try { localStorage.setItem(KEY, JSON.stringify(ST)); } catch (e) {} try { W20DB.progress(KEY, ST); } catch (e) {} }
+  function norm() { ST.step = ST.step || 0; ST.notes = ST.notes || []; ST.bq = ST.bq || []; ST.prizes = ST.prizes || []; }
+  norm();
 
   function toast(t) { var e = $("#toast"); e.textContent = t; e.className = "toast show"; clearTimeout(toast.t); toast.t = setTimeout(function () { e.className = "toast"; }, 2400); }
   function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); }
@@ -239,6 +241,8 @@
   /* ---------- 2. Máy rút lời chúc ---------- */
   function bag() { var a = W20.wishes.map(function (_, i) { return i; }), i, j, t; for (i = a.length - 1; i > 0; i--) { j = (Math.random() * (i + 1)) | 0; t = a[i]; a[i] = a[j]; a[j] = t; } return a; }
   function atm() {
+    /* thiết bị/người nhận chỉ rút đúng 3 lời chúc, rút đủ là khóa (link thử thì rút thoải mái) */
+    function lockPull() { if (!TEST && (ST.pulls || 0) >= 3) { var b = $("#pull"); b.disabled = true; b.textContent = "✔ Đã rút đủ 3 lời chúc"; } }
     function upd() { var c = ST.pulls || 0; if (c >= 3) done(1, 2200, loading); else gate(1, c ? "Rút thêm " + (3 - c) + " lần nữa nha" : "Bấm RÚT để nhận lời chúc đầu tiên"); }
     $("#pull").onclick = function () {
       var b = $("#pull"), scr = $("#scr"), slip = $("#slip"); b.disabled = true; slip.classList.remove("out"); scr.className = "scr"; scr.textContent = "Đang xử lý giao dịch… 💳";
@@ -252,11 +256,11 @@
         else scr.textContent = "Giao dịch thành công ✔ Chị nhận phiếu bên dưới nha.";
         if (!S.bag.length) S.bag = bag();
         slip.innerHTML = esc(w20Wish(S.bag.pop(), xw())) + "<small>Phiếu #" + String(S.n).padStart(4, "0") + " · Số dư niềm vui: không giới hạn</small>";
-        void slip.offsetWidth; slip.classList.add("out"); b.disabled = false;
+        void slip.offsetWidth; slip.classList.add("out"); b.disabled = false; lockPull();
         ST.pulls = Math.max(ST.pulls || 0, S.n); save(); upd();
       }, 1000);
     };
-    upd();
+    upd(); lockPull(); if (!TEST && (ST.pulls || 0) >= 3) $("#scr").textContent = "Chị đã rút đủ 3 lời chúc rồi nha 💐";
   }
 
   /* ---------- 3. Thẻ cào ---------- */
@@ -346,12 +350,17 @@
       w20Copy(location.href, function () { toast("Đã sao chép link 📋"); });
     }, "image/png");
   };
+  if (!TEST) $("#rnd").style.display = "none"; /* lời chúc trên thiệp cố định, không đổi được */
   $("#rnd").onclick = function (e) { S.w = (wishIdx() + 1 + ((Math.random() * (W20.wishes.length - 1)) | 0)) % W20.wishes.length; card(); FX.burst(e.clientX, e.clientY, 50); toast("Đổi lời chúc rồi nè 🎲"); };
 
   /* ---------- khởi động ---------- */
+  function boot() {
   FX.init(); splash(); hero(); showSteps();
   notes(); atm(); scratch(); flowers(); wheel(); wall(); card();
   loading = false; showSteps();
+  }
+  /* Lấy tiến độ đã lưu trên Firebase trước khi mở: máy nào mở link này cũng thấy đúng phần đã mở/quà đã quay, không bốc lại */
+  if (TEST) boot(); else W20DB.load(KEY, function (rv) { if (rv) { ST = W20DB.merge(ST, rv); norm(); try { localStorage.setItem(KEY, JSON.stringify(ST)); } catch (e) {} } boot(); });
   if (document.fonts && document.fonts.load) Promise.all(FONTS.map(function (f) { return document.fonts.load(f, "Chị Hạnh ơi 20.10"); })).then(card, card);
   /* vẽ lại lớp bạc khi phần thẻ cào vừa mở (lúc trước đang ẩn nên chưa có kích thước) */
   new MutationObserver(function () { if ($("#s2").classList.contains("open") && !cleared && window.w20PaintScratch) window.w20PaintScratch(); }).observe($("#s2"), { attributes: true, attributeFilter: ["class"] });

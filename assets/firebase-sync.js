@@ -23,12 +23,33 @@ var W20DB = (function () {
   }
   function clean(o) { try { return JSON.parse(JSON.stringify(o)); } catch (e) { return {}; } }
   function key(k) { return String(k).replace(/[^\w\-:]/g, "_").slice(0, 100); }
+  /* Gộp 2 bản tiến độ: bản nào đi xa hơn thì thắng, không bao giờ lùi lại (không cho mở lại / quay lại quà) */
+  function merge(a, b) {
+    a = a || {}; b = b || {};
+    var hi = (b.step || 0) > (a.step || 0) ? b : a, lo = hi === a ? b : a, o = {}, k;
+    for (k in lo) o[k] = lo[k];
+    for (k in hi) o[k] = hi[k];
+    ["prizes", "notes", "bq"].forEach(function (f) { var x = a[f] || [], y = b[f] || []; if (x.length || y.length) o[f] = y.length > x.length ? y : x; });
+    o.step = Math.max(a.step || 0, b.step || 0); o.pulls = Math.max(a.pulls || 0, b.pulls || 0); if (a.scratched || b.scratched) o.scratched = 1;
+    return o;
+  }
   return {
+    merge: merge,
+    /* Đọc tiến độ đã lưu trên server (tối đa 4 giây; lỗi/chặn mạng thì gọi cb(null) để trang vẫn chạy) */
+    load: function (id, cb) {
+      var fin = false, t = setTimeout(function () { end(null); }, 4000);
+      function end(v) { if (fin) return; fin = true; clearTimeout(t); try { cb(v); } catch (e) {} }
+      ready(function () { db.collection("progress").doc(key(id)).get().then(function (d) { end(d.exists ? (d.data() || {}).data || null : null); }, function () { end(null); }); });
+    },
     /* Lưu tiến độ của từng người (gộp, ghi trễ 1,5 giây để đỡ ghi nhiều) */
     progress: function (id, data) {
       clearTimeout(timers[id]);
       timers[id] = setTimeout(function () {
-        ready(function () { db.collection("progress").doc(key(id)).set({ data: clean(data), updated: firebase.firestore.FieldValue.serverTimestamp() }, { merge: true }).catch(function () {}); });
+        ready(function () {
+          var ref = db.collection("progress").doc(key(id));
+          /* đọc bản trên server rồi gộp, tránh máy mới/ngoại tuyến ghi đè mất tiến độ cũ */
+          ref.get().then(function (d) { var rv = d.exists ? (d.data() || {}).data : null; return ref.set({ data: clean(merge(rv, clean(data))), updated: firebase.firestore.FieldValue.serverTimestamp() }); }, function () { return ref.set({ data: clean(data), updated: firebase.firestore.FieldValue.serverTimestamp() }); }).catch(function () {});
+        });
       }, 1500);
     },
     /* Lưu “Thẻ nhờ việc” để anh em xem tập trung */

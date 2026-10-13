@@ -247,3 +247,5 @@ html,body{overflow-x:hidden}
 .frame .c3{bottom:5px;left:5px;border-right:0;border-top:0;border-radius:0 0 0 8px}.frame .c4{bottom:5px;right:5px;border-left:0;border-top:0;border-radius:0 0 8px 0}
 .frame figcaption{margin-top:14px;font-family:"Dancing Script",cursive;font-size:22px;font-weight:700;color:#ffe9a8;text-shadow:0 2px 6px rgba(0,0,0,.4)}
 .lbx{position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.88);display:flex;align-items:center;justify-content:center;padding:14px;cursor:zoom-out}.lbx img{max-width:100%;max-height:100%;border:8px solid #fff8ec;border-radius:4px;box-shadow:0 0 40px rgba(0,0,0,.6)}
+
+html,body{touch-action:pan-x pan-y;-webkit-text-size-adjust:100%;text-size-adjust:100%}

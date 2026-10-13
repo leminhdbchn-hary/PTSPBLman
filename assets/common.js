@@ -253,7 +253,7 @@ function w20SepWish(i, x) {
 }
 
 /* ===== Danh sách người nhận (assets/people.js) và chia quà ===== */
-function w20Person(id) { if (!id || typeof W20P === "undefined") return null; for (var i = 0; i < W20P.length; i++) if (W20P[i].id === id) return W20P[i]; return null; }
+function w20Person(id) { if (!id || typeof W20P === "undefined") return null; var i; for (i = 0; i < W20P.length; i++) if (W20P[i].id === id) return W20P[i]; if (typeof W20TEST !== "undefined") for (i = 0; i < W20TEST.length; i++) if (W20TEST[i].id === id) return W20TEST[i]; return null; }
 function w20Short(n) { var a = String(n || "").trim().split(/\s+/); return a[a.length - 1] || ""; }
 function w20Fold(s) { return String(s || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/đ/g, "d").replace(/Đ/g, "D").toLowerCase(); }
 /* Chia quà ngẫu nhiên nhưng cố định: mỗi người 2 món KHÁC NHAU, theo số lượng ở assets/stock.js (tổng = 2 × số người).
@@ -278,3 +278,12 @@ function w20Assign(stock) {
   var out = {}; for (i = 0; i < n; i++) out[ppl[i].id] = [A[i], B[i]];
   return out;
 }
+
+/* Cố định màn hình trên điện thoại: không thu phóng bằng 2 ngón hay chạm đúp */
+(function () {
+  var stop = function (e) { e.preventDefault(); };
+  ["gesturestart", "gesturechange", "gestureend"].forEach(function (t) { document.addEventListener(t, stop, { passive: false }); });
+  document.addEventListener("touchmove", function (e) { if (e.touches && e.touches.length > 1) e.preventDefault(); }, { passive: false });
+  var last = 0; document.addEventListener("touchend", function (e) { var n = Date.now(); if (n - last < 350) e.preventDefault(); last = n; }, { passive: false });
+  document.addEventListener("wheel", function (e) { if (e.ctrlKey) e.preventDefault(); }, { passive: false });
+})();

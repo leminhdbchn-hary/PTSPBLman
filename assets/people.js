@@ -55,3 +55,10 @@ var W20P = [
   {"id": "bae0d6", "n": "Nguyễn Thị Thu Trang", "t": "Chuyên viên Phòng PTSPBL"},
   {"id": "15c819", "n": "Nguyễn Thị Ngân Giang", "t": "Chuyên viên Phòng PTSPBL", "x": "Em"}
 ];
+
+/* 2 link thử cho anh em Nam: mở đi mở lại được, KHÔNG lưu tiến độ, KHÔNG tính vào chia quà/thống kê.
+   Link: index.html?u=test01 và index.html?u=test02 (trang Sếp: sep.html?u=test01 ...) */
+var W20TEST = [
+  {"id": "test01", "n": "Nguyễn Test An", "t": "Link thử 1 (anh em Nam)", "x": "Anh", "test": 1},
+  {"id": "test02", "n": "Trần Test Bình", "t": "Link thử 2 (anh em Nam)", "x": "Anh", "test": 1}
+];
