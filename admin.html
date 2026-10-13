@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex">
+<title>Quản lý 20/10 · Link chị em & thống kê quà</title>
+<meta name="theme-color" content="#00381f">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E🗂️%3C/text%3E%3C/svg%3E">
+<link rel="stylesheet" href="assets/style.css">
+<style>
+section{max-width:980px}
+.pin{max-width:360px;margin:12vh auto 0;text-align:center}
+.pin input{font:inherit;font-size:24px;letter-spacing:.3em;text-align:center;width:100%;border-radius:16px;border:2px solid rgba(255,255,255,.4);background:rgba(255,255,255,.12);color:#fff;padding:12px;margin:14px 0}
+.tabs{display:flex;gap:8px;margin:6px 0 16px;flex-wrap:wrap}
+.tab{appearance:none;font:inherit;font-weight:800;border-radius:99px;padding:10px 18px;border:2px solid rgba(255,255,255,.35);background:rgba(255,255,255,.08);color:#fff;cursor:pointer}
+.tab.on{background:var(--gold);color:#3d0a24;border-color:var(--gold)}
+.search{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+.search input{flex:1 1 240px;font:inherit;font-size:17px;border-radius:14px;border:2px solid rgba(255,255,255,.35);background:rgba(255,255,255,.12);color:#fff;padding:12px 14px}
+.list{display:grid;gap:8px}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);border-radius:16px;padding:10px 12px}
+.row .who{flex:1 1 220px;min-width:0}
+.row .who b{display:block;font-size:17px}.row .who small{opacity:.75}
+.row .lk{flex:2 1 260px;min-width:0;font-size:12px;opacity:.7;word-break:break-all}
+.row .bt{display:flex;gap:6px;flex-wrap:wrap}
+.row .btn{font-size:14px;padding:8px 14px;box-shadow:0 3px 0 #b98d1a}
+.row .btn.ghost{box-shadow:inset 0 0 0 2px rgba(255,255,255,.4)}
+.tag{display:inline-block;font-size:11px;font-weight:800;border-radius:99px;padding:2px 8px;margin-left:6px;vertical-align:middle;background:rgba(255,215,106,.25);color:var(--gold)}
+.stats{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px;margin-bottom:18px}
+.stat{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);border-radius:18px;padding:14px;cursor:pointer}
+.stat.on{border-color:var(--gold);background:rgba(255,215,106,.15)}
+.stat .ic{font-size:34px}.stat .num{font-size:34px;font-weight:800;color:var(--gold);line-height:1}.stat .nm{font-size:14px;font-weight:600;margin-top:6px}
+.muted{opacity:.75;font-size:14px}
+@media print{body:before,#fx,.litebtn,.tabs,.search,.noprint{display:none!important}body{color:#000;background:#fff}.row,.stat{border-color:#999;background:#fff}.stat .num{color:#000}}
+@media (max-width:640px){.row .lk{display:none}}
+</style>
+</head>
+<body>
+<canvas id="fx" aria-hidden="true"></canvas>
+<section id="lockscr">
+  <div class="pin">
+    <div style="font-size:52px">🔐</div>
+    <h2>Trang quản lý</h2>
+    <p class="sub">Dành cho anh em tổ chức. Nhập mã PIN để mở.</p>
+    <input id="pin" type="password" inputmode="numeric" maxlength="12" autocomplete="off" aria-label="Mã PIN">
+    <button class="btn pink" id="unlock" type="button" style="width:100%">Mở</button>
+    <p class="muted" id="pinmsg" style="margin-top:10px"></p>
+  </div>
+</section>
+
+<section id="main" hidden>
+  <span class="kicker">Anh em tổ chức</span>
+  <h2>Quản lý quà 20/10</h2>
+  <div class="tabs"><button class="tab on" data-t="links" type="button">🔗 Link từng chị em</button><button class="tab" data-t="stats" type="button">🎁 Thống kê quà</button></div>
+
+  <div id="tlinks">
+    <div class="search">
+      <input id="q" placeholder="🔍 Tìm theo tên (gõ không dấu cũng được)" aria-label="Tìm theo tên">
+      <button class="btn" id="copyAll" type="button" style="font-size:15px;padding:10px 18px">📋 Sao chép tất cả</button>
+    </div>
+    <p class="muted" id="cnt"></p>
+    <div class="list" id="list"></div>
+  </div>
+
+  <div id="tstats" hidden>
+    <p class="muted">Quà được chia sẵn cố định cho từng người theo số lượng trong <code>assets/config.js</code>. Mỗi chị em quay ở máy nào, quay lúc nào cũng ra đúng món dưới đây, và chỉ quay được 1 lần.</p>
+    <div class="stats" id="stats"></div>
+    <div class="search noprint">
+      <input id="q2" placeholder="🔍 Tìm theo tên" aria-label="Tìm theo tên">
+      <button class="btn" id="csv" type="button" style="font-size:15px;padding:10px 18px">⬇️ Tải Excel (CSV)</button>
+      <button class="btn ghost" id="print" type="button" style="font-size:15px;padding:10px 18px">🖨️ In danh sách</button>
+    </div>
+    <div class="list" id="plist"></div>
+  </div>
+</section>
+<div class="toast" id="toast" role="status"></div>
+
+<script src="assets/config.js"></script>
+<script src="assets/people.js"></script>
+<script src="assets/common.js"></script>
+<script>
+(function () {
+  var $ = function (s) { return document.querySelector(s); };
+  var base = new URL("index.html", location.href).href, baseSep = new URL("sep.html", location.href).href;
+  var A = w20Assign(), PR = W20CFG.prizes, filt = null;
+  function toast(t) { var e = $("#toast"); e.textContent = t; e.className = "toast show"; clearTimeout(toast.t); toast.t = setTimeout(function () { e.className = "toast"; }, 1800); }
+  function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); }
+  function link(p) { return base + "?u=" + p.id; }
+  function linkSep(p) { return baseSep + "?u=" + p.id; }
+  function match(p, q) { return !q || w20Fold(p.n).indexOf(w20Fold(q)) >= 0; }
+
+  function open() { $("#lockscr").hidden = true; $("#main").hidden = false; renderLinks(); renderStats(); }
+  $("#unlock").onclick = function () {
+    if ($("#pin").value === String(W20CFG.adminPin)) { try { sessionStorage.setItem("w20admin", "1"); } catch (e) {} open(); }
+    else { $("#pinmsg").textContent = "Sai mã rồi, thử lại nha."; $("#pin").value = ""; }
+  };
+  $("#pin").onkeydown = function (e) { if (e.key === "Enter") $("#unlock").click(); };
+  try { if (sessionStorage.getItem("w20admin") === "1") open(); } catch (e) {}
+
+  document.querySelector(".tabs").onclick = function (e) {
+    var b = e.target.closest(".tab"); if (!b) return; [].forEach.call(document.querySelectorAll(".tab"), function (x) { x.classList.toggle("on", x === b); });
+    $("#tlinks").hidden = b.getAttribute("data-t") !== "links"; $("#tstats").hidden = b.getAttribute("data-t") !== "stats";
+  };
+
+  function shown() { var q = $("#q").value; return W20P.filter(function (p) { return match(p, q); }); }
+  function renderLinks() {
+    var L = shown();
+    $("#cnt").textContent = "Đang hiện " + L.length + "/" + W20P.length + " người. Bấm “Sao chép” rồi dán vào Zalo/Teams gửi riêng từng chị.";
+    $("#list").innerHTML = L.map(function (p) {
+      return '<div class="row"><div class="who"><b>' + esc(p.n) + (p.lead ? '<span class="tag">Lãnh đạo</span>' : "") + (p.bd ? '<span class="tag">🎂 SN tháng 10</span>' : "") + '</b><small>' + esc(p.t) + '</small></div>'
+        + '<div class="lk">' + esc(link(p)) + '</div><div class="bt">'
+        + '<button class="btn" data-a="c" data-id="' + p.id + '" type="button">Sao chép link</button>'
+        + (p.lead ? '<button class="btn pink" data-a="s" data-id="' + p.id + '" type="button" style="box-shadow:0 3px 0 #b0245f">Link bản Sếp</button>' : "")
+        + '<button class="btn ghost" data-a="o" data-id="' + p.id + '" type="button">Mở</button></div></div>';
+    }).join("") || '<p class="muted">Không tìm thấy ai tên như vậy.</p>';
+  }
+  $("#q").oninput = renderLinks;
+  function msgFor(p, sep) { return "🌹 Chúc mừng 20/10! Anh em Phòng PTSPBL có món quà nhỏ gửi " + (sep ? "Sếp " : "chị ") + w20Short(p.n) + ", " + (sep ? "Sếp" : "chị") + " bấm vào đây mở nha: " + (sep ? linkSep(p) : link(p)); }
+  $("#list").onclick = function (e) {
+    var b = e.target.closest("button"); if (!b) return; var p = w20Person(b.getAttribute("data-id")), a = b.getAttribute("data-a"); if (!p) return;
+    if (a === "c") w20Copy(msgFor(p, false), function () { toast("Đã sao chép link của " + p.n + " 📋"); });
+    else if (a === "s") w20Copy(msgFor(p, true), function () { toast("Đã sao chép link bản Sếp của " + p.n + " 📋"); });
+    else window.open(link(p), "_blank");
+  };
+  $("#copyAll").onclick = function () { var L = shown(); w20Copy(L.map(function (p) { return p.n + ": " + link(p); }).join("\n"), function () { toast("Đã sao chép " + L.length + " link 📋"); }); };
+
+  function renderStats() {
+    var cnt = PR.map(function () { return 0; }); W20P.forEach(function (p) { cnt[A[p.id]]++; });
+    $("#stats").innerHTML = PR.map(function (p, i) { return '<div class="stat' + (filt === i ? " on" : "") + '" data-i="' + i + '"><div class="ic">' + p.icon + '</div><div class="num">' + cnt[i] + '</div><div class="nm">' + esc(p.name) + '</div></div>'; }).join("")
+      + '<div class="stat' + (filt === null ? " on" : "") + '" data-i="all"><div class="ic">👩‍💼</div><div class="num">' + W20P.length + '</div><div class="nm">Tổng số chị em (bấm để xem tất cả)</div></div>';
+    var q = $("#q2").value, L = W20P.filter(function (p) { return match(p, q) && (filt === null || A[p.id] === filt); });
+    $("#plist").innerHTML = L.map(function (p, k) { var z = PR[A[p.id]]; return '<div class="row"><div class="who"><b>' + (k + 1) + ". " + esc(p.n) + '</b><small>' + esc(p.t) + '</small></div><div class="who" style="flex:1 1 260px"><b>' + z.icon + " " + esc(z.name) + "</b></div></div>"; }).join("");
+  }
+  $("#stats").onclick = function (e) { var b = e.target.closest(".stat"); if (!b) return; var v = b.getAttribute("data-i"); filt = v === "all" ? null : +v; renderStats(); };
+  $("#q2").oninput = renderStats;
+  $("#csv").onclick = function () {
+    var rows = [["STT", "Họ tên", "Chức vụ", "Quà", "Link"]]; W20P.forEach(function (p, i) { rows.push([i + 1, p.n, p.t, PR[A[p.id]].name, link(p)]); });
+    var csv = "﻿" + rows.map(function (r) { return r.map(function (v) { return '"' + String(v).replace(/"/g, '""') + '"'; }).join(","); }).join("\r\n");
+    var a = document.createElement("a"); a.href = URL.createObjectURL(new Blob([csv], { type: "text/csv;charset=utf-8" })); a.download = "qua-20-10-ptspbl.csv"; document.body.appendChild(a); a.click(); setTimeout(function () { URL.revokeObjectURL(a.href); a.remove(); }, 1500);
+  };
+  $("#print").onclick = function () { window.print(); };
+  FX.init();
+})();
+</script>
+</body>
+</html>

@@ -3,10 +3,10 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>20/10 · Phiên bản đặc biệt dành cho chị em Phòng PTSPBL</title>
-<meta name="description" content="Bản phát hành v20.10: lời chúc 20/10 hài hước, có thiệp riêng cho từng chị em Phòng PTSPBL.">
+<title>20/10 · Bản phát hành đặc biệt dành cho chị em Phòng PTSPBL</title>
+<meta name="description" content="Bản cập nhật v20.10: lời chúc, quà và thiệp riêng cho từng chị em Phòng PTSPBL.">
 <meta property="og:title" content="20/10 · Bản phát hành đặc biệt v20.10">
-<meta property="og:description" content="Bấm GO-LIVE để nhận thiệp riêng của bạn!">
+<meta property="og:description" content="Bấm GO-LIVE để nhận quà nha chị!">
 <meta name="theme-color" content="#00381f">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E🌹%3C/text%3E%3C/svg%3E">
 <link rel="stylesheet" href="assets/style.css">
@@ -14,7 +14,7 @@
 <body>
 <canvas id="fx" aria-hidden="true"></canvas>
 
-<!-- 0. Màn khởi động -->
+<!-- Màn GO-LIVE -->
 <div id="splash">
   <div class="term" role="status" aria-live="polite">
     <div class="dots"><i></i><i></i><i></i></div>
@@ -25,308 +25,385 @@
 </div>
 
 <main id="app">
-  <!-- 1. Hero + lời chúc chung -->
   <section id="hero">
     <span class="badge">v20.10 · BẢN PHÁT HÀNH ĐẶC BIỆT</span>
     <div class="big">CHÚC MỪNG<br>20/10</div>
     <p class="hello" id="hello"></p>
+    <div id="bday"></div>
     <p class="lead" id="lead"></p>
     <form class="nameform" id="nameform" autocomplete="off">
       <select id="xsel" aria-label="Xưng hô"><option>Chị</option><option>Em</option><option>Cô</option><option>Bạn</option></select>
       <input id="nameinp" placeholder="Nhập tên để nhận thiệp riêng" maxlength="40" aria-label="Tên của bạn">
       <button class="btn pink" style="padding:10px 18px;font-size:16px" type="submit">OK</button>
     </form>
-    <button class="btn" id="boom" type="button">🎉 Bất ngờ chưa?</button>
-    <div class="scrollhint">Vuốt xuống để xem bản cập nhật ↓</div>
+    <p class="sub" style="max-width:520px;margin:6px auto 18px">Trang này có <b>8 phần quà</b>, mở lần lượt từng phần một. Xong phần trên thì phần dưới mới hiện ra nha 🎁</p>
+    <button class="btn" id="start" type="button">Mở quà thôi ↓</button>
   </section>
 
-  <!-- 2. Release notes -->
-  <section class="rv" id="notes">
-    <span class="kicker">Release Notes</span>
-    <h2>Có gì mới trong bản v20.10?</h2>
-    <div class="ver">$ git log --oneline --since="20/10"</div>
+  <!-- 1. Release notes -->
+  <section class="step" id="s0">
+    <span class="kicker">Phần 1/8 · Release Notes</span>
+    <h2>Bản v20.10 có gì mới?</h2>
+    <p class="sub">Chạm vào từng dòng để đọc. Đọc hết 6 dòng là mở được phần tiếp theo.</p>
     <div class="notes" id="noteList"></div>
+    <div class="gate" id="g0"></div>
   </section>
 
-  <!-- 3. Máy rút lời chúc -->
-  <section class="rv" id="atm">
-    <span class="kicker">Pilot · Giao dịch thử nghiệm</span>
-    <h2>Máy rút lời chúc tự động</h2>
-    <p class="sub">Bấm “Rút” để nhận một lời chúc. Rút càng nhiều, càng có cơ hội trúng giải bất ngờ.</p>
+  <!-- 2. Máy rút lời chúc -->
+  <section class="step" id="s1">
+    <span class="kicker">Phần 2/8 · Máy rút lời chúc</span>
+    <h2>Rút lời chúc, không cần thẻ</h2>
+    <p class="sub">Bấm “Rút” 3 lần để nhận 3 lời chúc. Lần thứ 3 có bất ngờ đó.</p>
     <div class="atm">
-      <div class="scr" id="scr">Mời chị em bấm nút để bắt đầu giao dịch 💳</div>
+      <div class="scr" id="scr">Mời chị bấm nút để bắt đầu giao dịch 💳</div>
       <div class="row"><span class="cnt" id="cnt">Giao dịch: 0</span><button class="btn pink" id="pull" type="button">RÚT 💸</button></div>
       <div class="slot"></div>
       <div class="slipwrap"><div class="slip" id="slip"></div></div>
     </div>
+    <div class="gate" id="g1"></div>
   </section>
 
-  <!-- 4. Thẻ cào -->
-  <section class="rv" id="scratch">
-    <span class="kicker">Thẻ ưu đãi nội bộ</span>
-    <h2>Cào thẻ, nhận quà (quà thật… trong tưởng tượng)</h2>
-    <p class="sub">Dùng ngón tay cào lớp bạc. Cào hết một nửa là lộ ưu đãi.</p>
-    <div class="scwrap" id="scwrap">
-      <div class="under" id="under"></div>
-      <canvas id="scv"></canvas>
-    </div>
-    <p style="text-align:center;margin-top:14px"><button class="btn ghost" id="again" type="button" style="font-size:15px;padding:10px 18px">🔄 Cào thẻ khác</button></p>
+  <!-- 3. Thẻ cào -->
+  <section class="step" id="s2">
+    <span class="kicker">Phần 3/8 · Thẻ cào</span>
+    <h2>Cào nhẹ tay thôi, quà không chạy đâu</h2>
+    <p class="sub">Dùng ngón tay (hoặc chuột) cào lớp bạc cho tới khi lộ ưu đãi.</p>
+    <div class="scwrap" id="scwrap"><div class="under" id="under"></div><canvas id="scv"></canvas></div>
+    <div class="gate" id="g2"></div>
   </section>
 
-  <!-- 5. Chọn đặc quyền -->
-  <section class="rv" id="perksec">
-    <span class="kicker">Nâng cấp tính năng</span>
-    <h2>Chọn 3 đặc quyền cho riêng mình</h2>
-    <p class="sub">Chạm để chọn. Những đặc quyền này sẽ in lên thiệp riêng ở bên dưới.</p>
+  <!-- 4. Đặc quyền -->
+  <section class="step" id="s3">
+    <span class="kicker">Phần 4/8 · Đặc quyền</span>
+    <h2>Chọn 3 đặc quyền cho riêng chị</h2>
+    <p class="sub">Chọn đủ 3 cái nha. 3 đặc quyền này sẽ được in lên thiệp ở cuối trang.</p>
     <div class="perks" id="perkList"></div>
-    <p class="cnt2" id="perkCnt"></p>
+    <div class="gate" id="g3"></div>
   </section>
 
-  <!-- 5b. Cắm hoa -->
-  <section class="rv" id="bouquet">
-    <span class="kicker">Hoa tặng chị em</span>
-    <h2>Cắm một bó hoa 20/10</h2>
-    <p class="sub">Tự tay chọn từng bông, rồi tải về làm hình nền hoặc gửi tặng bạn bè.</p>
+  <!-- 5. Cắm hoa -->
+  <section class="step" id="s4">
+    <span class="kicker">Phần 5/8 · Cắm hoa</span>
+    <h2>Tự cắm một bó hoa thật xinh</h2>
+    <p class="sub">Chạm vào từng loại hoa để cắm vào bó (ít nhất 5 bông), xong thì bấm “Xong bó hoa”. Bó hoa sẽ nằm trên thiệp của chị.</p>
     <div id="bqbox"></div>
+    <div class="gate" id="g4"></div>
   </section>
 
-  <!-- 5c. Vòng quay quà -->
-  <section class="rv" id="wheel">
-    <span class="kicker">Vòng quay quà</span>
-    <h2>Quà bí mật của anh em</h2>
-    <p class="sub">Bấm quay để xem nhận được món quà nào. Quà thật, nhận ở buổi gặp mặt của Phòng.</p>
+  <!-- 6. Vòng quay -->
+  <section class="step" id="s5">
+    <span class="kicker">Phần 6/8 · Vòng quay quà</span>
+    <h2>Quay một lần, quà thật nha</h2>
+    <p class="sub">Mỗi người được quay đúng 1 lần. Quà anh em chuẩn bị thật và trao tận tay ở buổi gặp mặt.</p>
     <div class="wheelbox"><canvas id="wcv" width="640" height="640"></canvas></div>
     <p style="text-align:center;margin-top:14px"><button class="btn pink" id="spin" type="button">🎡 QUAY</button></p>
     <div class="prize" id="prize"></div>
+    <div class="reqbox" id="reqbox">
+      <b>🙋 Chị muốn nhờ anh em việc gì?</b>
+      <textarea id="reqtxt" maxlength="300" placeholder="VD: Bê giúp em thùng nước lên tầng, sửa giúp em cái máy in…"></textarea>
+      <button class="btn pink" id="reqsend" type="button" style="width:100%">📨 Gửi cho anh em</button>
+      <div class="spun" id="reqmsg"></div>
+    </div>
+    <div class="gate" id="g5"></div>
   </section>
 
-  <!-- 5d. Tường lời chúc -->
-  <section class="rv" id="wallsec">
-    <span class="kicker">Tường lời chúc</span>
-    <h2>Anh em nhắn gửi</h2>
+  <!-- 7. Tường lời chúc -->
+  <section class="step" id="s6">
+    <span class="kicker">Phần 7/8 · Anh em nhắn gửi</span>
+    <h2>Mấy lời anh em muốn nói</h2>
     <div class="wall" id="wall"></div>
+    <p style="text-align:center;margin-top:18px"><button class="btn" id="readwall" type="button">Đọc hết rồi 💌</button></p>
+    <div class="gate" id="g6"></div>
   </section>
 
-  <!-- 6. Thiệp riêng -->
-  <section class="rv" id="cardsec">
-    <span class="kicker">Thiệp riêng</span>
-    <h2>Thiệp 20/10 của riêng bạn</h2>
-    <p class="sub">Tải về làm hình nền điện thoại, hoặc gửi cho đồng nghiệp nhé.</p>
+  <!-- 8. Thiệp riêng -->
+  <section class="step" id="s7">
+    <span class="kicker">Phần 8/8 · Thiệp riêng</span>
+    <h2>Thiệp 20/10 của riêng chị</h2>
+    <p class="sub">Tải về đăng Facebook, Zalo hay làm hình nền đều xinh. Khung 4:5 vừa đẹp để đăng mạng xã hội.</p>
     <div class="cardbox">
       <canvas id="card" width="1080" height="1350"></canvas>
       <div class="acts">
-        <button class="btn" id="dl" type="button">⬇️ Tải thiệp (PNG)</button>
+        <button class="btn" id="dl" type="button">⬇️ Tải thiệp về máy</button>
         <button class="btn pink" id="shr" type="button">📤 Chia sẻ</button>
-        <button class="btn ghost" id="rnd" type="button">🎲 Đổi chức danh & lời chúc</button>
+        <button class="btn ghost" id="rnd" type="button">🎲 Đổi lời chúc khác</button>
       </div>
     </div>
   </section>
 
-  <footer class="rv">
+  <div class="lockbox" id="lock"></div>
+
+  <footer>
     <p>Chúc chị em Phòng PTSPBL một ngày 20/10 thật rực rỡ 🌹</p>
-    <p id="from">Từ cả “team còn lại” của Phòng, với tất cả sự trân trọng (và một chút lười cà phê).</p>
-    <p style="opacity:.6;font-size:13px">Trang chúc mừng nội bộ, làm vì vui · không liên quan đến sản phẩm thật của ngân hàng.</p>
+    <p id="from"></p>
+    <p style="opacity:.6;font-size:13px">Trang chúc mừng nội bộ, làm cho vui · không liên quan đến sản phẩm thật của ngân hàng.</p>
   </footer>
 </main>
 <div class="toast" id="toast" role="status"></div>
 
 <script src="assets/config.js"></script>
+<script src="assets/people.js"></script>
 <script src="assets/common.js"></script>
 <script src="assets/modules.js"></script>
 <script>
 (function () {
   var $ = function (s) { return document.querySelector(s); };
-  var P = w20Params();
-  var S = { to: P.to, x: P.x || "Chị", f: P.f, r: P.r, w: P.w, p: P.p, n: 0, bag: [] };
-  var sel = []; /* các đặc quyền đã chọn (nếu có) */
+  var P = w20Params(), me = w20Person(P.u);
+  var S = { to: me ? w20Short(me.n) : P.to, full: me ? me.n : P.to, title: me ? me.t : "", bd: me && me.bd, x: P.x || "Chị", f: P.f || W20CFG.from, r: P.r, w: P.w, n: 0, bag: [] };
+  var KEY = "w20v2:" + (me ? me.id : "guest:" + w20Fold(S.to || ""));
+  var ST = load(); /* tiến độ đã lưu: step, notes[], pulls, scratched, perks[], bq[], prize, req, wall */
+  function load() { try { return JSON.parse(localStorage.getItem(KEY) || "{}"); } catch (e) { return {}; } }
+  function save() { try { localStorage.setItem(KEY, JSON.stringify(ST)); } catch (e) {} }
+  ST.step = ST.step || 0; ST.notes = ST.notes || []; ST.perks = ST.perks || []; ST.bq = ST.bq || [];
 
-  function toast(t) { var e = $("#toast"); e.textContent = t; e.className = "toast show"; clearTimeout(toast.t); toast.t = setTimeout(function () { e.className = "toast"; }, 2200); }
+  function toast(t) { var e = $("#toast"); e.textContent = t; e.className = "toast show"; clearTimeout(toast.t); toast.t = setTimeout(function () { e.className = "toast"; }, 2400); }
+  function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); }
   function who() { return S.to ? S.x + " " + S.to : "Chị em PTSPBL"; }
-  function xw() { return S.to ? S.x : "chị em"; }
-  function dv() { return w20Derive((S.to || "chi em ptspbl")); }
-  function role() { return W20.roles[S.r !== null ? S.r : dv().r]; }
-  function wishIdx() { return S.w !== null ? S.w : dv().w; }
-  function perks() { return (sel.length === 3 ? sel : (S.p || dv().p)).slice(0, 3); }
+  function xw() { return S.to ? S.x.toLowerCase() : "chị em"; }
+  function dv() { return w20Derive(S.full || S.to || "chi em ptspbl"); }
+  function role() { return W20.roles[S.r !== null && S.r !== undefined ? S.r : dv().r]; }
+  function wishIdx() { return S.w !== null && S.w !== undefined ? S.w : dv().w; }
 
-  /* ---- 0. Màn khởi động ---- */
+  /* ---------- Mở khóa từng phần ---------- */
+  var N = 8, HINT = ["Đọc hết 6 dòng Release Notes", "Rút đủ 3 lời chúc ở máy", "Cào lộ thẻ ưu đãi", "Chọn đủ 3 đặc quyền", "Cắm xong bó hoa", "Quay vòng quay quà", "Đọc lời nhắn của anh em"];
+  function showSteps(scrollTo) {
+    for (var i = 0; i < N; i++) $("#s" + i).classList.toggle("open", i <= ST.step);
+    var lk = $("#lock");
+    if (ST.step >= N - 1) lk.style.display = "none";
+    else { lk.style.display = ""; lk.innerHTML = "<b>🔒 Còn " + (N - 1 - ST.step) + " phần quà đang khóa</b>Mở khóa bằng cách: " + esc(HINT[ST.step]) + " ở phần trên nha."; }
+    if (scrollTo !== undefined) setTimeout(function () { var el = $("#s" + scrollTo); if (el) el.scrollIntoView({ behavior: "smooth", block: "start" }); }, 250);
+  }
+  function done(k) {
+    if (ST.step !== k) return; ST.step = k + 1; save(); showSteps();
+    var g = $("#g" + k); if (g) { g.className = "gate ok"; g.innerHTML = "✔ Xong! Phần tiếp theo đã mở <br><button class='btn nextbtn' type='button'>Sang phần " + (k + 2) + " ↓</button>"; g.querySelector("button").onclick = function () { $("#s" + (k + 1)).scrollIntoView({ behavior: "smooth", block: "start" }); }; }
+    FX.burst(innerWidth / 2, innerHeight * .55, 70);
+  }
+  function gate(k, txt) { var g = $("#g" + k); if (g && ST.step === k) { g.className = "gate"; g.textContent = txt; } }
+
+  /* ---------- GO-LIVE ---------- */
   function splash() {
     var lines = [
-      "$ deploy <b>v20.10</b> --target=chi-em-ptspbl",
-      "▸ UAT ........... ✔ ĐẠT (100% tester đều cười)",
-      "▸ Rủi ro ........ ✔ 0% (đã bảo hiểm bằng chocolate)",
-      "▸ Hài lòng ...... ✔ 120% so với kế hoạch",
-      S.to ? "▸ Phát hiện đối tượng: <b>" + esc(who()) + "</b> 💐" : "▸ Phát hiện đối tượng: <b>Chị em PTSPBL</b> 💐"
+      "$ deploy <b>v20.10</b> --cho=chi-em-ptspbl",
+      "▸ Kiểm thử UAT ..... ✔ Đạt (tester nào cũng cười)",
+      "▸ Rủi ro ........... ✔ 0% (đã bảo hiểm bằng đồ ăn)",
+      "▸ Độ hài lòng ...... ✔ 120% kế hoạch",
+      "▸ Đã phát hiện người dùng xinh đẹp: <b>" + esc(S.to ? who() : "Chị em PTSPBL") + "</b> 💐"
     ];
     var i = 0, bar = $("#bar"), reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
-    function step() {
-      if (i < lines.length) { $("#t" + (i + 1)).innerHTML = lines[i]; bar.style.width = ((i + 1) / lines.length * 100) + "%"; i++; setTimeout(step, reduce ? 120 : 650); }
-      else { $("#go").classList.add("show"); }
-    }
-    step();
-    $("#go").onclick = function (e) {
-      $("#splash").classList.add("off"); FX.burst(e.clientX || innerWidth / 2, e.clientY || innerHeight / 2, 120); FX.rain();
-      setTimeout(function () { window.scrollTo(0, 0); }, 50);
-    };
+    (function step() { if (i < lines.length) { $("#t" + (i + 1)).innerHTML = lines[i]; bar.style.width = ((i + 1) / lines.length * 100) + "%"; i++; setTimeout(step, reduce ? 120 : 650); } else $("#go").classList.add("show"); })();
+    $("#go").onclick = function (e) { $("#splash").classList.add("off"); FX.burst(e.clientX || innerWidth / 2, e.clientY || innerHeight / 2, 110); FX.rain(); setTimeout(function () { scrollTo(0, 0); }, 50); };
   }
-  function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); }
 
-  /* ---- 1. Hero ---- */
+  /* ---------- Lời chào ---------- */
   function hero() {
-    var h = $("#hello"), l = $("#lead");
     if (S.to) {
-      h.innerHTML = "<em>" + esc(who()) + "</em> ơi, hệ thống xác nhận " + esc(xw()) + " là tài sản quý nhất Phòng!";
-      l.textContent = "Không cần thế chấp, không cần bảo lãnh, không giới hạn hạn mức yêu thương. Chúc " + xw() + " một ngày 20/10 thật vui, thật xinh và thật… ít việc!";
+      $("#hello").innerHTML = "<em>" + esc(who()) + "</em> ơi, hệ thống vừa xác nhận " + esc(xw()) + " là<br><span class='line2 nowrap'>Tài sản quý nhất Phòng!</span>";
+      $("#lead").textContent = "Không cần thế chấp, không cần bảo lãnh, mà yêu thương thì không giới hạn hạn mức. 20/10 này chúc " + xw() + " thật vui, thật xinh và thật… ít việc nha!";
       $("#nameform").style.display = "none";
     } else {
-      h.innerHTML = "<em>Chị em Phòng PTSPBL</em> ơi, hệ thống xác nhận các chị em là sản phẩm chủ lực của Phòng!";
-      l.textContent = "Không cần thế chấp, không cần bảo lãnh, không giới hạn hạn mức yêu thương. Nhập tên để nhận thiệp riêng của mình nhé!";
+      $("#hello").innerHTML = "<em>Chị em Phòng PTSPBL</em> ơi, hệ thống vừa xác nhận các chị là<br><span class='line2 nowrap'>Tài sản quý nhất Phòng!</span>";
+      $("#lead").textContent = "Không cần thế chấp, không cần bảo lãnh, mà yêu thương thì không giới hạn hạn mức. Nhập tên để nhận thiệp riêng nha!";
     }
-    var fm = $("#from");
-    if (S.f) fm.textContent = "Từ " + S.f + ", với tất cả sự trân trọng (và một chút lười cà phê).";
+    $("#bday").innerHTML = S.bd ? "<div class='bday'>🎂 Psst… tháng 10 còn là tháng sinh nhật của " + esc(xw()) + " nữa. Chúc mừng sinh nhật " + esc(xw()) + " nha!</div>" : "";
+    $("#from").textContent = "Thương mến, " + S.f;
     $("#nameform").onsubmit = function (e) {
-      e.preventDefault(); var n = w20Clean($("#nameinp").value, 40); if (!n) { toast("Nhập tên trước nhé 😄"); return; }
-      S.to = n; S.x = $("#xsel").value; S.r = null; S.w = null; S.p = null;
-      var u = w20Link(location.pathname, { to: S.to, x: S.x, f: S.f }); try { history.replaceState(null, "", u); } catch (er) {}
-      hero(); $("#nameform").style.display = "none"; renderPerks(); card(); FX.burst(innerWidth / 2, innerHeight / 3, 90);
-      $("#cardsec").scrollIntoView({ behavior: "smooth" });
+      e.preventDefault(); var n = w20Clean($("#nameinp").value, 40); if (!n) { toast("Chị nhập tên trước nha 😄"); return; }
+      S.to = n; S.full = n; S.x = $("#xsel").value; try { history.replaceState(null, "", w20Link(location.pathname, { to: S.to, x: S.x })); } catch (er) {}
+      hero(); card(); FX.burst(innerWidth / 2, innerHeight / 3, 80);
     };
-    $("#boom").onclick = function (e) { FX.burst(e.clientX, e.clientY, 100); FX.rain(); var m = ["Chúc mừng 20/10!", "Hoa đây, hoa đây! 🌷", "Đừng làm việc nữa, hôm nay là ngày của chị em!", "Hệ thống tạm dừng deadline 1 phút 🕊️"]; toast(m[(Math.random() * m.length) | 0]); };
+    $("#start").onclick = function () { $("#s0").scrollIntoView({ behavior: "smooth", block: "start" }); };
   }
 
-  /* ---- 2. Release notes ---- */
+  /* ---------- 1. Release notes ---------- */
   function notes() {
-    $("#noteList").innerHTML = W20.notes.map(function (n) { return '<div class="note"><div class="ic">' + n[0] + '</div><div><b>' + n[1] + '</b><span>' + n[2] + '</span></div></div>'; }).join("");
+    $("#noteList").innerHTML = W20.notes.map(function (n, i) { return '<div class="note tap' + (ST.notes.indexOf(i) >= 0 ? " open" : "") + '" data-i="' + i + '"><div class="ic">' + n[0] + '</div><div><b>' + n[1] + '</b><span>' + n[2] + '</span><div class="more">Chạm để đọc 👆</div></div></div>'; }).join("");
+    function upd() { var c = ST.notes.length; if (c >= W20.notes.length) done(0); else gate(0, "Đã đọc " + c + "/" + W20.notes.length + " dòng"); }
+    $("#noteList").onclick = function (e) { var b = e.target.closest(".note"); if (!b) return; var i = +b.getAttribute("data-i"); b.classList.add("open"); if (ST.notes.indexOf(i) < 0) { ST.notes.push(i); save(); } upd(); };
+    upd();
   }
 
-  /* ---- 3. Máy rút lời chúc ---- */
+  /* ---------- 2. Máy rút lời chúc ---------- */
   function bag() { var a = W20.wishes.map(function (_, i) { return i; }), i, j, t; for (i = a.length - 1; i > 0; i--) { j = (Math.random() * (i + 1)) | 0; t = a[i]; a[i] = a[j]; a[j] = t; } return a; }
-  function pull() {
-    var b = $("#pull"), scr = $("#scr"), slip = $("#slip"); b.disabled = true; slip.classList.remove("out"); scr.className = "scr"; scr.textContent = "Đang xử lý giao dịch… 💳";
-    S.n++; $("#cnt").textContent = "Giao dịch: " + S.n; if (navigator.vibrate) navigator.vibrate(40);
-    setTimeout(function () {
-      var special = null;
-      if (S.n === 5) special = ["🎉 TRÚNG THƯỞNG GIAO DỊCH THỨ 5!", "Phí “chuyển tiền cảm xúc” được miễn 100% cho cả năm."];
-      else if (S.n === 10) special = ["🤗 MÁY HẾT TIỀN MẶT…", "Nhưng còn ôm vô hạn. Mời chị em tự nhận một cái ôm từ đồng nghiệp gần nhất."];
-      else if (S.n === 3) special = ["🔔 THÔNG BÁO", W20.pulls[(Math.random() * W20.pulls.length) | 0]];
-      if (special) { scr.className = "scr win"; scr.innerHTML = "<div>" + special[0] + "<br><small style='font-weight:600'>" + special[1] + "</small></div>"; FX.burst(innerWidth / 2, innerHeight * .5, 150); FX.rain(); }
-      else { scr.textContent = "Giao dịch thành công ✔ Mời nhận phiếu lời chúc bên dưới."; }
-      if (!S.bag.length) S.bag = bag();
-      var wi = S.bag.pop();
-      slip.innerHTML = esc(w20Wish(wi, xw())) + "<small>Phiếu #" + String(S.n).padStart(4, "0") + " · Số dư niềm vui: không giới hạn</small>";
-      void slip.offsetWidth; slip.classList.add("out"); b.disabled = false;
-    }, 1100);
+  function atm() {
+    function upd() { var c = ST.pulls || 0; if (c >= 3) done(1); else gate(1, c ? "Rút thêm " + (3 - c) + " lần nữa nha" : "Bấm RÚT để nhận lời chúc đầu tiên"); }
+    $("#pull").onclick = function () {
+      var b = $("#pull"), scr = $("#scr"), slip = $("#slip"); b.disabled = true; slip.classList.remove("out"); scr.className = "scr"; scr.textContent = "Đang xử lý giao dịch… 💳";
+      S.n++; $("#cnt").textContent = "Giao dịch: " + S.n; if (navigator.vibrate) navigator.vibrate(30);
+      setTimeout(function () {
+        var sp = null;
+        if (S.n === 3) sp = ["🎉 TRÚNG THƯỞNG GIAO DỊCH THỨ 3!", "Phí “chuyển tiền cảm xúc” được miễn 100%, áp dụng trọn đời."];
+        else if (S.n === 7) sp = ["🔔 THÔNG BÁO", W20.pulls[(Math.random() * W20.pulls.length) | 0]];
+        else if (S.n === 10) sp = ["🤗 MÁY HẾT TIỀN MẶT RỒI…", "Nhưng ôm thì còn vô hạn. Mời chị nhận một cái ôm (từ xa) của anh em."];
+        if (sp) { scr.className = "scr win"; scr.innerHTML = "<div>" + sp[0] + "<br><small style='font-weight:600'>" + sp[1] + "</small></div>"; FX.burst(innerWidth / 2, innerHeight * .5, 120); FX.rain(); }
+        else scr.textContent = "Giao dịch thành công ✔ Chị nhận phiếu bên dưới nha.";
+        if (!S.bag.length) S.bag = bag();
+        slip.innerHTML = esc(w20Wish(S.bag.pop(), xw())) + "<small>Phiếu #" + String(S.n).padStart(4, "0") + " · Số dư niềm vui: không giới hạn</small>";
+        void slip.offsetWidth; slip.classList.add("out"); b.disabled = false;
+        ST.pulls = Math.max(ST.pulls || 0, S.n); save(); upd();
+      }, 1000);
+    };
+    upd();
   }
 
-  $("#pull").onclick = pull;
-
-  /* ---- 4. Thẻ cào ---- */
-  var scv, sctx, scratching = false, cleared = false, cop;
-  function newCoupon() {
-    cop = W20.coupons[(Math.random() * W20.coupons.length) | 0];
-    $("#under").innerHTML = '<div class="ic">' + cop[0] + '</div><b>' + esc(cop[1]) + '</b><small>' + esc(cop[2]) + '</small>';
-    cleared = false; paintSilver();
-  }
-  function paintSilver() {
-    var w = $("#scwrap").clientWidth, h = $("#scwrap").clientHeight, d = Math.min(devicePixelRatio || 1, 2);
-    scv.width = w * d; scv.height = h * d; sctx.setTransform(d, 0, 0, d, 0, 0); sctx.globalCompositeOperation = "source-over";
-    var g = sctx.createLinearGradient(0, 0, w, h); g.addColorStop(0, "#d9dde2"); g.addColorStop(.5, "#f4f6f8"); g.addColorStop(1, "#aeb4bb");
-    sctx.fillStyle = g; sctx.fillRect(0, 0, w, h);
-    sctx.fillStyle = "rgba(0,0,0,.18)"; for (var i = 0; i < 160; i++) sctx.fillRect(Math.random() * w, Math.random() * h, 2, 2);
-    sctx.fillStyle = "#6b727a"; sctx.font = "800 22px 'Segoe UI',Arial,sans-serif"; sctx.textAlign = "center"; sctx.fillText("✨ CÀO TẠI ĐÂY ✨", w / 2, h / 2 + 8);
-    sctx.globalCompositeOperation = "destination-out";
-  }
-  function scratchAt(e) {
-    var r = scv.getBoundingClientRect(); sctx.beginPath(); sctx.arc(e.clientX - r.left, e.clientY - r.top, 20, 0, 6.283); sctx.fill();
-  }
-  function checkClear() {
-    if (cleared) return; var d = sctx.getImageData(0, 0, scv.width, scv.height).data, c = 0, n = 0;
-    for (var i = 3; i < d.length; i += 64) { n++; if (d[i] < 20) c++; }
-    if (c / n > .5) { cleared = true; sctx.clearRect(0, 0, scv.width, scv.height); var r = scv.getBoundingClientRect(); FX.burst(r.left + r.width / 2, r.top + r.height / 2, 110); toast("Trúng ưu đãi! 🎉"); }
-  }
+  /* ---------- 3. Thẻ cào ---------- */
+  var scv, sctx, scratching = false, cleared = false;
   function scratch() {
-    scv = $("#scv"); sctx = scv.getContext("2d", { willReadFrequently: true }); newCoupon();
-    scv.addEventListener("pointerdown", function (e) { scratching = true; try { scv.setPointerCapture(e.pointerId); } catch (x) {} scratchAt(e); });
-    scv.addEventListener("pointermove", function (e) { if (scratching) scratchAt(e); });
-    scv.addEventListener("pointerup", function () { scratching = false; checkClear(); });
+    scv = $("#scv"); sctx = scv.getContext("2d", { willReadFrequently: true });
+    var cop = W20.coupons[ST.coupon !== undefined ? ST.coupon : (ST.coupon = (Math.random() * W20.coupons.length) | 0)]; save();
+    $("#under").innerHTML = '<div class="ic">' + cop[0] + '</div><b>' + esc(cop[1]) + '</b><small>' + esc(cop[2]) + '</small>';
+    function paint() {
+      var w = $("#scwrap").clientWidth, h = $("#scwrap").clientHeight, d = Math.min(devicePixelRatio || 1, 2); if (!w) return;
+      scv.width = w * d; scv.height = h * d; sctx.setTransform(d, 0, 0, d, 0, 0); sctx.globalCompositeOperation = "source-over";
+      var g = sctx.createLinearGradient(0, 0, w, h); g.addColorStop(0, "#d9dde2"); g.addColorStop(.5, "#f4f6f8"); g.addColorStop(1, "#aeb4bb"); sctx.fillStyle = g; sctx.fillRect(0, 0, w, h);
+      sctx.fillStyle = "rgba(0,0,0,.16)"; for (var i = 0; i < 140; i++) sctx.fillRect(Math.random() * w, Math.random() * h, 2, 2);
+      sctx.fillStyle = "#6b727a"; sctx.font = "800 22px 'Be Vietnam Pro',Arial,sans-serif"; sctx.textAlign = "center"; sctx.fillText("✨ CÀO Ở ĐÂY ✨", w / 2, h / 2 + 8);
+      sctx.globalCompositeOperation = "destination-out";
+    }
+    if (ST.scratched) { cleared = true; scv.style.display = "none"; done(2); } else { gate(2, "Cào hơn nửa thẻ là lộ quà"); setTimeout(paint, 30); }
+    function at(e) { var r = scv.getBoundingClientRect(); sctx.beginPath(); sctx.arc(e.clientX - r.left, e.clientY - r.top, 22, 0, 6.283); sctx.fill(); }
+    function check() {
+      if (cleared) return; var d = sctx.getImageData(0, 0, scv.width, scv.height).data, c = 0, n = 0;
+      for (var i = 3; i < d.length; i += 64) { n++; if (d[i] < 20) c++; }
+      if (c / n > .5) { cleared = true; sctx.clearRect(0, 0, scv.width, scv.height); ST.scratched = 1; save(); var r = scv.getBoundingClientRect(); FX.burst(r.left + r.width / 2, r.top + r.height / 2, 100); toast("Trúng rồi nè! 🎉"); done(2); }
+    }
+    scv.addEventListener("pointerdown", function (e) { scratching = true; try { scv.setPointerCapture(e.pointerId); } catch (x) {} at(e); });
+    scv.addEventListener("pointermove", function (e) { if (scratching) at(e); });
+    scv.addEventListener("pointerup", function () { scratching = false; check(); });
     scv.addEventListener("pointercancel", function () { scratching = false; });
-    $("#again").onclick = newCoupon;
-    addEventListener("resize", function () { if (!cleared) paintSilver(); });
+    window.w20PaintScratch = paint;
   }
 
-  /* ---- 5. Đặc quyền ---- */
-  function renderPerks() {
-    var cur = perks();
-    $("#perkList").innerHTML = W20.perks.map(function (p, i) { return '<button type="button" class="perk' + (cur.indexOf(i) >= 0 ? " on" : "") + '" data-i="' + i + '"><div class="ic">' + p[0] + '</div><span>' + p[1] + '</span></button>'; }).join("");
-    $("#perkCnt").textContent = "Đã chọn " + cur.length + "/3 đặc quyền" + (sel.length ? "" : " (gợi ý theo tên của bạn)");
+  /* ---------- 4. Đặc quyền ---------- */
+  function perks() {
+    function render() {
+      $("#perkList").innerHTML = W20.perks.map(function (p, i) { return '<button type="button" class="perk' + (ST.perks.indexOf(i) >= 0 ? " on" : "") + '" data-i="' + i + '"><div class="ic">' + p[0] + '</div><span>' + p[1] + '</span></button>'; }).join("");
+      if (ST.perks.length === 3) done(3); else gate(3, "Đã chọn " + ST.perks.length + "/3 đặc quyền");
+    }
+    $("#perkList").onclick = function (e) {
+      var b = e.target.closest(".perk"); if (!b) return; var i = +b.getAttribute("data-i"), k = ST.perks.indexOf(i);
+      if (k >= 0) ST.perks.splice(k, 1); else { if (ST.perks.length >= 3) ST.perks.shift(); ST.perks.push(i); }
+      save(); render(); card();
+    };
+    render();
   }
-  $("#perkList").addEventListener("click", function (e) {
-    var b = e.target.closest(".perk"); if (!b) return; var i = +b.getAttribute("data-i");
-    if (!sel.length) sel = perks().slice();
-    var k = sel.indexOf(i);
-    if (k >= 0) sel.splice(k, 1); else { if (sel.length >= 3) sel.shift(); sel.push(i); }
-    renderPerks(); card();
-  });
 
-  /* ---- 6. Thiệp ---- */
+  /* ---------- 5. Cắm hoa ---------- */
+  function flowers() {
+    var ui = w20BouquetUI($("#bqbox"), { min: 5, start: ST.bq, onChange: function (l) { ST.bq = l; save(); cardSoon(); },
+      onDone: function (l, e) { ST.bq = l; ST.bqDone = 1; save(); card(); FX.burst(e.clientX, e.clientY, 120); toast("Bó hoa xinh quá trời 💐"); done(4); } });
+    if (ST.bqDone) done(4); else gate(4, "Cắm ít nhất 5 bông rồi bấm “Xong bó hoa”");
+  }
+
+  /* ---------- 6. Vòng quay (mỗi người 1 lần, quà đã chia sẵn) ---------- */
+  function wheel() {
+    var prizes = W20CFG.prizes, assigned = me ? w20Assign()[me.id] : null;
+    var wv = w20Wheel($("#wcv"), prizes, function (p, idx) { show(idx, true); });
+    function show(idx, fresh) {
+      var p = prizes[idx]; ST.prize = idx; save();
+      $("#prize").innerHTML = "<span class='pz'>" + p.icon + "</span>" + esc(p.name) + "<br><small style='opacity:.85;font-weight:600'>" + (p.key === "nho" ? "Anh em sẵn sàng rồi, chị cứ nhờ thoải mái!" : "Anh em sẽ trao tận tay chị ở buổi gặp mặt nha!") + "</small>";
+      $("#spin").disabled = true; $("#spin").textContent = "✔ Chị đã quay rồi";
+      if (p.key === "nho") { $("#reqbox").classList.add("show"); if (ST.req) $("#reqtxt").value = ST.req; }
+      if (fresh) { FX.burst(innerWidth / 2, innerHeight * .5, 140); FX.rain(); }
+      done(5);
+    }
+    if (ST.prize !== undefined && ST.prize !== null && prizes[ST.prize]) { wv.setAt(ST.prize); show(ST.prize, false); }
+    else gate(5, "Bấm QUAY để nhận quà");
+    $("#spin").onclick = function () { if (ST.prize !== undefined && ST.prize !== null) return; $("#spin").disabled = true; $("#prize").textContent = "Đang quay…"; wv.spin(assigned !== null && assigned !== undefined ? assigned : (Math.random() * prizes.length) | 0); };
+    $("#reqtxt").oninput = function () { ST.req = $("#reqtxt").value; save(); };
+    $("#reqsend").onclick = function () {
+      var t = w20Clean($("#reqtxt").value, 300).trim(); if (!t) { toast("Chị ghi việc cần nhờ trước nha ✍️"); return; }
+      ST.req = t; save();
+      var msg = "🙋 " + (S.full ? S.x + " " + S.full : "Một chị em") + " dùng “Thẻ nhờ anh em 1 việc”: " + t;
+      var F = W20CFG.requestForm || {};
+      if (F.url && F.field) { window.open(F.url + "?usp=pp_url&" + F.field + "=" + encodeURIComponent(msg), "_blank"); $("#reqmsg").textContent = "Đã mở form gửi anh em. Chị bấm Gửi trong form là xong nha."; return; }
+      if (navigator.share) navigator.share({ text: msg }).catch(function () {});
+      else w20Copy(msg, function () { $("#reqmsg").textContent = "Đã sao chép lời nhờ. Chị dán vào nhóm chat của Phòng là anh em thấy liền!"; });
+    };
+  }
+
+  /* ---------- 7. Tường lời chúc ---------- */
+  function wall() {
+    w20Wall($("#wall"), W20CFG.wallChiEm);
+    $("#readwall").onclick = function () { ST.wall = 1; save(); done(6); };
+    if (ST.wall) done(6); else gate(6, "Đọc xong thì bấm “Đọc hết rồi” nha");
+  }
+
+  /* ---------- 8. Thiệp ---------- */
+  var cardT = 0; function cardSoon() { cancelAnimationFrame(cardT); cardT = requestAnimationFrame(card); }
+  var FONTS = ["700 80px 'Playfair Display'", "italic 700 80px 'Playfair Display'", "italic 500 40px 'Playfair Display'", "700 60px 'Dancing Script'", "600 28px 'Be Vietnam Pro'", "800 28px 'Be Vietnam Pro'", "400 28px 'Be Vietnam Pro'"];
   function card() {
-    var c = $("#card"), g = c.getContext("2d"), W = 1080, H = 1350, i;
-    var bg = g.createLinearGradient(0, 0, W, H); bg.addColorStop(0, "#00381f"); bg.addColorStop(.55, "#0b6a40"); bg.addColorStop(1, "#8a2160"); g.fillStyle = bg; g.fillRect(0, 0, W, H);
-    g.globalAlpha = .12; g.fillStyle = "#fff"; for (i = 0; i < 9; i++) { g.beginPath(); g.arc((i * 211) % W, (i * 389) % H, 60 + (i % 4) * 40, 0, 6.283); g.fill(); } g.globalAlpha = 1;
-    g.strokeStyle = "#ffd76a"; g.lineWidth = 10; g.strokeRect(36, 36, W - 72, H - 72); g.lineWidth = 3; g.strokeRect(58, 58, W - 116, H - 116);
-    g.textAlign = "center"; g.font = "90px serif"; g.fillText("🌷", 150, 190); g.fillText("🌹", W / 2, 150); g.fillText("🌸", W - 150, 190);
-    var F = "'Segoe UI','Helvetica Neue',Arial,sans-serif";
-    g.fillStyle = "#ffd76a"; g.font = "800 34px " + F; g.fillText("PHÒNG PTSPBL · BẢN PHÁT HÀNH v20.10", W / 2, 270);
-    g.fillStyle = "#fff"; g.font = "900 128px " + F; g.fillText("20/10", W / 2, 410);
-    g.font = "800 40px " + F; g.fillStyle = "#ffe9a0"; g.fillText("CHÚC MỪNG NGÀY PHỤ NỮ VIỆT NAM", W / 2, 470);
-    var nm = who(); g.fillStyle = "#fff"; var fs = 84; g.font = "900 " + fs + "px " + F; while (g.measureText(nm).width > W - 160 && fs > 40) { fs -= 4; g.font = "900 " + fs + "px " + F; } g.fillText(nm, W / 2, 590);
-    var rl = role(); g.font = "800 34px " + F; var rw = Math.min(g.measureText(rl).width + 60, W - 120);
-    g.fillStyle = "#ffd76a"; rr(g, (W - rw) / 2, 620, rw, 62, 31); g.fill(); g.fillStyle = "#3d0a24"; g.font = "800 32px " + F;
-    var rs = 32; while (g.measureText(rl).width > rw - 40 && rs > 20) { rs--; g.font = "800 " + rs + "px " + F; } g.fillText(rl, W / 2, 662);
-    g.fillStyle = "rgba(255,247,230,.96)"; rr(g, 100, 720, W - 200, 290, 30); g.fill();
-    g.fillStyle = "#3b0a26"; g.font = "700 38px " + F; var wl = w20Wrap(g, w20Wish(wishIdx(), xw()), W - 280), y = 790;
-    if (wl.length > 5) { g.font = "700 32px " + F; wl = w20Wrap(g, w20Wish(wishIdx(), xw()), W - 280); }
-    for (i = 0; i < wl.length && i < 6; i++) { g.fillText(wl[i], W / 2, y); y += 52; }
-    g.textAlign = "left"; g.fillStyle = "#fff"; g.font = "800 30px " + F; g.fillText("Đặc quyền kích hoạt:", 110, 1070);
-    g.font = "600 29px " + F; var pk = perks(); for (i = 0; i < pk.length; i++) { var p = W20.perks[pk[i]]; var t = p[0] + " " + p[1]; var ps = 29; g.font = "600 " + ps + "px " + F; while (g.measureText(t).width > W - 220 && ps > 18) { ps--; g.font = "600 " + ps + "px " + F; } g.fillText(t, 110, 1120 + i * 46); }
-    g.textAlign = "center"; g.fillStyle = "#ffd76a"; g.font = "800 30px " + F; g.fillText(S.f ? "Từ " + S.f : "Từ team Phòng PTSPBL, với trọn niềm quý mến", W / 2, 1290);
+    var c = $("#card"), g = c.getContext("2d"), W = 1080, H = 1350, i, rnd = function (k) { return ((Math.sin(k * 127.1 + 3) * 43758.5) % 1 + 1) % 1; };
+    var PF = "'Playfair Display',Georgia,serif", DS = "'Dancing Script','Brush Script MT',cursive", BV = "'Be Vietnam Pro','Segoe UI',Arial,sans-serif";
+    g.save(); g.textBaseline = "alphabetic";
+    /* nền */
+    var bg = g.createLinearGradient(0, 0, W * .6, H); bg.addColorStop(0, "#01331e"); bg.addColorStop(.5, "#0a5737"); bg.addColorStop(1, "#6e1744"); g.fillStyle = bg; g.fillRect(0, 0, W, H);
+    for (i = 0; i < 22; i++) { var bx = rnd(i) * W, by = rnd(i + 50) * H, br = 40 + rnd(i + 9) * 140, rg = g.createRadialGradient(bx, by, 0, bx, by, br); rg.addColorStop(0, i % 3 ? "rgba(255,215,106,.13)" : "rgba(255,120,170,.16)"); rg.addColorStop(1, "rgba(255,215,106,0)"); g.fillStyle = rg; g.fillRect(bx - br, by - br, br * 2, br * 2); }
+    g.fillStyle = "#ffe7a3"; for (i = 0; i < 40; i++) { var sx = rnd(i + 100) * W, sy = rnd(i + 200) * H, ss = 2 + rnd(i + 300) * 5; g.globalAlpha = .35 + rnd(i + 400) * .5; g.beginPath(); g.moveTo(sx, sy - ss * 2); g.lineTo(sx + ss * .5, sy - ss * .5); g.lineTo(sx + ss * 2, sy); g.lineTo(sx + ss * .5, sy + ss * .5); g.lineTo(sx, sy + ss * 2); g.lineTo(sx - ss * .5, sy + ss * .5); g.lineTo(sx - ss * 2, sy); g.lineTo(sx - ss * .5, sy - ss * .5); g.closePath(); g.fill(); } g.globalAlpha = 1;
+    /* khung vàng */
+    var gold = g.createLinearGradient(0, 0, W, H); gold.addColorStop(0, "#fff1b8"); gold.addColorStop(.35, "#e8b84a"); gold.addColorStop(.6, "#fff4c8"); gold.addColorStop(1, "#c8922e");
+    g.strokeStyle = gold; g.lineWidth = 5; rr(g, 34, 34, W - 68, H - 68, 36); g.stroke(); g.lineWidth = 1.5; g.globalAlpha = .7; rr(g, 52, 52, W - 104, H - 104, 26); g.stroke(); g.globalAlpha = 1;
+    /* chùm hoa góc */
+    function cluster(x, y, flip) { var fl = ["🌹", "🌸", "🌷", "🌺", "🌸"]; for (var k = 0; k < 7; k++) w20Leaf(g, x, y, 110 + rnd(k + 60) * 60, 26, (flip ? Math.PI : 0) + (k / 6) * 1.5 + (flip ? 0 : 0) + (flip ? -.1 : .05), "#2f7d4f", "#9fd8ac"); g.shadowColor = "rgba(0,0,0,.3)"; g.shadowBlur = 8; for (k = 0; k < 5; k++) { var a = (flip ? Math.PI : 0) + .15 + k * .32, d = 30 + (k % 2) * 46, sz = 92 - k * 8; g.drawImage(w20Spr(fl[k], 128), x + Math.cos(a) * d - sz / 2, y + Math.sin(a) * d - sz / 2, sz, sz); } g.shadowColor = "transparent"; g.shadowBlur = 0; }
+    cluster(70, 70, false);
+    /* tiêu đề */
+    g.textAlign = "center";
+    g.fillStyle = "#ffe7a3"; g.font = "600 25px " + BV; if ("letterSpacing" in g) g.letterSpacing = "6px"; g.fillText("PHÒNG PTSPBL  ·  20.10." + new Date().getFullYear(), W / 2 + 3, 128); if ("letterSpacing" in g) g.letterSpacing = "0px";
+    g.fillStyle = gold; g.font = "700 76px " + DS; g.fillText("Happy Women's Day", W / 2, 222);
+    g.shadowColor = "rgba(0,0,0,.35)"; g.shadowBlur = 18; g.shadowOffsetY = 6; g.font = "700 220px " + PF; g.fillText("20.10", W / 2, 432); g.shadowColor = "transparent"; g.shadowBlur = 0; g.shadowOffsetY = 0;
+    /* tên */
+    g.fillStyle = "#fff7e6"; g.font = "600 28px " + BV; g.fillText(S.full ? "Gửi " + S.x.toLowerCase() + " thương mến" : "Gửi các chị em thương mến", W / 2, 498);
+    var nm = S.full || "Chị em Phòng PTSPBL", fs = 86; g.fillStyle = "#fff"; g.font = "italic 700 " + fs + "px " + PF; while (g.measureText(nm).width > W - 200 && fs > 44) { fs -= 3; g.font = "italic 700 " + fs + "px " + PF; } g.fillText(nm, W / 2, 590);
+    var y0 = 590;
+    if (S.title) { g.fillStyle = "rgba(255,247,230,.8)"; g.font = "400 27px " + BV; g.fillText(S.title, W / 2, 636); y0 = 636; }
+    var rl = role(); g.font = "800 27px " + BV; var rw = Math.min(g.measureText(rl).width + 64, W - 160), ry = y0 + 26;
+    g.fillStyle = gold; rr(g, (W - rw) / 2, ry, rw, 56, 28); g.fill(); g.fillStyle = "#4a0d2a"; var rs = 27; while (g.measureText(rl).width > rw - 40 && rs > 18) { rs--; g.font = "800 " + rs + "px " + BV; } g.fillText(rl, W / 2, ry + 38);
+    /* lời chúc */
+    var wy = ry + 130;
+    g.fillStyle = "#fff4dc"; var wsz = 40; g.font = "italic 500 " + wsz + "px " + PF; var txt = w20Wish(wishIdx(), S.full ? S.x.toLowerCase() : "chị em"), wl = w20Wrap(g, txt, W - 300);
+    while (wl.length > 4 && wsz > 30) { wsz -= 2; g.font = "italic 500 " + wsz + "px " + PF; wl = w20Wrap(g, txt, W - 300); }
+    for (i = 0; i < wl.length && i < 5; i++) g.fillText(wl[i], W / 2, wy + i * (wsz * 1.42));
+    /* dấu ngoặc kép trang trí ở hai đầu đoạn chúc */
+    var fw = g.measureText(wl[0]).width, lw = g.measureText(wl[Math.min(wl.length, 5) - 1]).width, ly = wy + (Math.min(wl.length, 5) - 1) * (wsz * 1.42);
+    g.fillStyle = gold; g.font = "700 96px " + PF; g.textAlign = "right"; g.fillText("“", W / 2 - fw / 2 - 10, wy + 34); g.textAlign = "left"; g.fillText("”", W / 2 + lw / 2 + 10, ly + 56); g.textAlign = "center";
+    var by0 = wy + Math.min(wl.length, 5) * (wsz * 1.42) + 20;
+    /* đặc quyền + bó hoa */
+    var hasBq = ST.bq && ST.bq.length, pk = ST.perks.length ? ST.perks : dv().p, leftW = hasBq ? 600 : W - 200, lx = hasBq ? 100 : (W - leftW) / 2, py = Math.min(Math.max(by0 + 10, 1000), 1040);
+    g.textAlign = "left";
+    if (S.bd) { g.fillStyle = "#ffe7a3"; g.font = "700 28px " + BV; g.fillText("🎂 Và chúc mừng sinh nhật tháng 10 nữa nha!", lx, py - 14); py += 26; }
+    g.fillStyle = "#ffe7a3"; g.font = "800 22px " + BV; if ("letterSpacing" in g) g.letterSpacing = "3px"; g.fillText("ĐẶC QUYỀN ĐÃ KÍCH HOẠT", lx, py + 18); if ("letterSpacing" in g) g.letterSpacing = "0px";
+    for (i = 0; i < pk.length && i < 3; i++) {
+      var p = W20.perks[pk[i]], t = p[0] + "  " + p[1], ps = 25; g.font = "600 " + ps + "px " + BV; while (g.measureText(t).width > leftW - 40 && ps > 16) { ps--; g.font = "600 " + ps + "px " + BV; }
+      var tw = g.measureText(t).width + 36, yy = py + 36 + i * 56; g.fillStyle = "rgba(255,255,255,.12)"; rr(g, lx, yy, tw, 48, 24); g.fill(); g.strokeStyle = "rgba(255,231,163,.45)"; g.lineWidth = 1.5; g.stroke(); g.fillStyle = "#fff"; g.fillText(t, lx + 18, yy + 32);
+    }
+    if (hasBq) w20DrawBouquet(g, 868, 1030, 124, ST.bq);
+    else cluster(W - 70, H - 70, true);
+    /* ký tên */
+    g.textAlign = "center"; g.fillStyle = gold; var sg = "Thương mến, " + S.f, sgs = 44; g.font = "700 " + sgs + "px " + DS; while (g.measureText(sg).width > W - 360 && sgs > 30) { sgs -= 2; g.font = "700 " + sgs + "px " + DS; } g.fillText(sg, W / 2 - (hasBq ? 0 : 50), H - 80);
+    g.restore();
   }
   function rr(g, x, y, w, h, r) { g.beginPath(); g.moveTo(x + r, y); g.arcTo(x + w, y, x + w, y + h, r); g.arcTo(x + w, y + h, x, y + h, r); g.arcTo(x, y + h, x, y, r); g.arcTo(x, y, x + w, y, r); g.closePath(); }
+  function fname() { return "thiep-20-10-" + w20Fold(S.full || "ptspbl").replace(/[^a-z0-9]+/g, "-") + ".png"; }
   $("#dl").onclick = function () {
-    card(); $("#card").toBlob(function (b) { var a = document.createElement("a"); a.href = URL.createObjectURL(b); a.download = "thiep-20-10-" + (S.to || "ptspbl").replace(/\s+/g, "-") + ".png"; document.body.appendChild(a); a.click(); setTimeout(function () { URL.revokeObjectURL(a.href); a.remove(); }, 1500); toast("Đã tải thiệp 🌹"); FX.burst(innerWidth / 2, innerHeight * .6, 80); }, "image/png");
+    card(); $("#card").toBlob(function (b) { var a = document.createElement("a"); a.href = URL.createObjectURL(b); a.download = fname(); document.body.appendChild(a); a.click(); setTimeout(function () { URL.revokeObjectURL(a.href); a.remove(); }, 1500); toast("Đã tải thiệp về máy 🌹"); FX.burst(innerWidth / 2, innerHeight * .6, 70); }, "image/png");
   };
   $("#shr").onclick = function () {
-    var url = w20Link(location.origin + location.pathname, { to: S.to, x: S.to ? S.x : "", f: S.f, r: S.r !== null ? S.r : (S.to ? dv().r : null), w: S.w !== null ? S.w : (S.to ? dv().w : null), p: sel.length === 3 ? sel : null });
-    var data = { title: "20/10 · Thiệp của " + who(), text: "Mở thiệp 20/10 của " + who() + " nè 🌹", url: url };
-    if (navigator.share) navigator.share(data).catch(function () {}); else w20Copy(url, function () { toast("Đã sao chép link thiệp 📋"); });
+    card();
+    $("#card").toBlob(function (b) {
+      var file = null; try { file = new File([b], fname(), { type: "image/png" }); } catch (e) {}
+      if (file && navigator.canShare && navigator.canShare({ files: [file] })) { navigator.share({ files: [file], title: "Thiệp 20/10", text: "Thiệp 20/10 của Phòng PTSPBL 🌹" }).catch(function () {}); return; }
+      if (navigator.share) { navigator.share({ title: "Thiệp 20/10", url: location.href }).catch(function () {}); return; }
+      w20Copy(location.href, function () { toast("Đã sao chép link 📋"); });
+    }, "image/png");
   };
-  $("#rnd").onclick = function (e) {
-    S.r = (Math.random() * W20.roles.length) | 0; S.w = (Math.random() * W20.wishes.length) | 0; card(); FX.burst(e.clientX, e.clientY, 60); toast("Đã đổi chức danh & lời chúc 🎲");
-  };
+  $("#rnd").onclick = function (e) { S.w = (wishIdx() + 1 + ((Math.random() * (W20.wishes.length - 1)) | 0)) % W20.wishes.length; card(); FX.burst(e.clientX, e.clientY, 50); toast("Đổi lời chúc rồi nè 🎲"); };
 
-  /* ---- hiện dần khi cuộn ---- */
-  function reveal() {
-    var els = document.querySelectorAll(".rv");
-    if (!("IntersectionObserver" in window)) { for (var i = 0; i < els.length; i++) els[i].classList.add("in"); return; }
-    var io = new IntersectionObserver(function (en) { en.forEach(function (x) { if (x.isIntersecting) { x.target.classList.add("in"); io.unobserve(x.target); } }); }, { threshold: .12 });
-    for (var j = 0; j < els.length; j++) io.observe(els[j]);
-  }
-
-  function extras() {
-    var bq = w20BouquetUI($("#bqbox"), function () {});
-    bq.give.textContent = "⬇️ Tải bó hoa";
-    bq.give.onclick = function (e) {
-      if (!bq.list().length) { toast("Cắm ít nhất 1 bông hoa nhé 🌷"); return; }
-      var c = document.createElement("canvas"); c.width = 900; c.height = 900; var g = c.getContext("2d");
-      var bgc = g.createLinearGradient(0, 0, 900, 900); bgc.addColorStop(0, "#00381f"); bgc.addColorStop(1, "#8a2160"); g.fillStyle = bgc; g.fillRect(0, 0, 900, 900);
-      w20DrawBouquet(g, 450, 300, 360, bq.list()); g.fillStyle = "#ffd76a"; g.textAlign = "center"; g.font = "800 44px 'Segoe UI',Arial,sans-serif"; g.fillText("Chúc mừng 20/10 🌹", 450, 840);
-      c.toBlob(function (b) { var a = document.createElement("a"); a.href = URL.createObjectURL(b); a.download = "bo-hoa-20-10.png"; document.body.appendChild(a); a.click(); setTimeout(function () { URL.revokeObjectURL(a.href); a.remove(); }, 1500); toast("Đã tải bó hoa 💐"); FX.burst(e.clientX, e.clientY, 100); }, "image/png");
-    };
-    var wv = w20Wheel($("#wcv"), W20CFG.prizes, function (p) { $("#prize").innerHTML = p[0] + " " + esc(p[1]) + "<br><small style='opacity:.8;font-weight:600'>Anh em xin trao tận tay ở buổi gặp mặt!</small>"; FX.burst(innerWidth / 2, innerHeight * .5, 140); FX.rain(); });
-    $("#spin").onclick = function () { $("#prize").textContent = "…"; wv.spin(); };
-    w20Wall($("#wall"), W20CFG.wallChiEm); if (!W20CFG.wallChiEm.length) $("#wallsec").style.display = "none";
-  }
-
-  FX.init(); splash(); hero(); notes(); scratch(); renderPerks(); extras(); card(); reveal();
+  /* ---------- khởi động ---------- */
+  FX.init(); splash(); hero(); showSteps();
+  notes(); atm(); scratch(); perks(); flowers(); wheel(); wall(); card();
+  showSteps();
+  if (document.fonts && document.fonts.load) Promise.all(FONTS.map(function (f) { return document.fonts.load(f, "Chị Hạnh ơi 20.10"); })).then(card, card);
+  /* vẽ lại lớp bạc khi phần thẻ cào vừa mở (lúc trước đang ẩn nên chưa có kích thước) */
+  new MutationObserver(function () { if ($("#s2").classList.contains("open") && !cleared && window.w20PaintScratch) window.w20PaintScratch(); }).observe($("#s2"), { attributes: true, attributeFilter: ["class"] });
 })();
 </script>
 </body>

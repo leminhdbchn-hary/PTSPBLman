@@ -1,37 +1,30 @@
 # PTSPBLman · Trang chúc mừng 20/10
 
-Trang web tĩnh (không cần cài đặt, không cần máy chủ) chúc mừng 20/10 dành cho chị em Phòng PTSPBL, phong cách hài hước, mở được tốt trên điện thoại.
-
-## Cấu trúc
-| File | Dùng để |
-| --- | --- |
-| `index.html` | Trang người nhận: màn "GO-LIVE", lời chúc chung, Release Notes, máy rút lời chúc, thẻ cào, chọn đặc quyền, **thiệp riêng** (tải PNG / chia sẻ) |
-| `sep.html` | **Bản kính chúc các Sếp** (anh em Nam chúc): tờ trình “Phê duyệt”, hồ sơ năng lực, bản cam kết, xin chỉ đạo, cắm hoa tặng, vòng quay quà, tường lời chúc, giấy khen |
-| `tao-thiep.html` | Trang cho người gửi: chọn loại thiệp (chị em / Sếp), dán danh sách tên → tạo **link riêng** cho từng người |
-| `assets/config.js` | **Chỗ bạn chỉnh:** tên người gửi, danh sách quà vòng quay, lời chúc trên tường |
-| `assets/modules.js` | Cắm hoa, vòng quay quà, tường lời chúc |
-| `assets/common.js` | Nội dung (lời chúc, chức danh, đặc quyền...) + hiệu ứng |
-| `assets/style.css` | Giao diện |
-
-## Cách dùng thực tế
-1. Bật GitHub Pages: **Settings → Pages → Deploy from a branch → `main` / `(root)`**. Sau 1–2 phút có địa chỉ `https://<tên-tài-khoản>.github.io/PTSPBLman/`.
-2. Mở `…/tao-thiep.html`, dán danh sách tên, bấm **Tạo link**.
-3. Gửi từng link riêng qua Zalo/Teams. Mỗi người mở link sẽ thấy tên mình, chức danh vui, lời chúc và đặc quyền riêng; có thể tải thiệp PNG.
-4. Gửi **link chung** (không tên) cho nhóm chung: ai mở cũng có thể tự nhập tên để nhận thiệp.
-
-Link riêng có dạng: `index.html?to=Lan%20Anh&x=Chị&f=Phòng%20PTSPBL`. Không có dữ liệu nào được lưu trên máy chủ.
-
-## Chỉnh quà và lời chúc của anh em (`assets/config.js`)
-- `prizes`: các món quà ở **Vòng quay** (tối đa 8). Chỉ ghi những món bạn thật sự chuẩn bị.
-- `wallSep`, `wallChiEm`: lời chúc thật của anh em hiện trên **Tường lời chúc** (thay các câu mẫu).
-- `from`: dòng ký tên ở cuối thiệp.
-
-## Chỉnh nội dung
-Tất cả lời chúc, chức danh, đặc quyền, ưu đãi thẻ cào nằm ở đầu file `assets/common.js` (mảng `wishes`, `roles`, `perks`, `notes`, `coupons`). Trong lời chúc dùng `{x}` cho xưng hô (chị/em/cô/bạn).
-
-Trang chỉ mang tính giải trí nội bộ, không sử dụng logo hay nhận diện thương hiệu của ngân hàng.
-
+Trang web tĩnh chúc mừng 20/10 cho chị em Phòng PTSPBL: hài hước, nhiều hiệu ứng, chạy tốt trên điện thoại và laptop.
 Link trang: https://leminhdbchn-hary.github.io/PTSPBLman/
 
+## Các trang
+| Trang | Dùng để |
+| --- | --- |
+| `index.html?u=<mã>` | **Trang của từng chị em**: 8 phần quà mở lần lượt (Release Notes → máy rút lời chúc → thẻ cào → chọn đặc quyền → cắm hoa → vòng quay quà → lời nhắn anh em → thiệp riêng tải về) |
+| `admin.html` | **Trang quản lý (cần PIN)**: tìm theo tên, sao chép link từng người, thống kê quà, tải Excel |
+| `sep.html?u=<mã>` | Bản kính chúc các Sếp (tờ trình “Phê duyệt”, cam kết, xin chỉ đạo, giấy khen) |
+| `tao-thiep.html` | Tạo link thủ công cho người không có trong danh sách |
+
+## Dữ liệu và cấu hình
+| File | Nội dung |
+| --- | --- |
+| `assets/people.js` | Danh sách chị em (chỉ **tên + chức vụ**; không có ngày sinh, email). `bd: 1` = sinh nhật tháng 10 để chúc thêm |
+| `assets/config.js` | **Chỗ anh em chỉnh**: PIN trang quản lý, danh sách quà + số lượng, form nhận “thẻ nhờ việc”, lời nhắn trên tường |
+| `assets/common.js` | Lời chúc, chức danh vui, đặc quyền, thẻ cào… |
+
+## Quà và vòng quay
+- Mỗi chị em được **chia sẵn 1 món** theo số lượng `qty` trong `config.js` (để trống thì chia đều). Quay ở máy nào cũng ra đúng món đó, mỗi người chỉ quay 1 lần.
+- Xem ai nhận gì ở `admin.html` → tab **Thống kê quà** (có tải Excel). Chỉ đổi `qty` hoặc `seed` **trước khi gửi link**.
+- **Thẻ nhờ anh em 1 việc**: chị em ghi việc muốn nhờ rồi bấm Gửi. Mặc định nút này sao chép lời nhờ để dán vào nhóm chat. Muốn gom tập trung thì tạo Google Form và điền vào `requestForm` trong `config.js`.
+
 ## Máy yếu bị giật?
-Trang tự bật **chế độ nhẹ** trên máy yếu (hoặc khi thấy giật liên tục). Cũng có thể bấm nút **⚡ Chế độ nhẹ** ở góc dưới bên trái, hoặc thêm `?lite=1` vào cuối link. Chế độ nhẹ giảm số hoa rơi, giảm pháo giấy, bỏ hiệu ứng chuyển động nặng.
+Trang tự bật **chế độ nhẹ** trên máy yếu. Có thể bấm nút **⚡ Chế độ nhẹ** ở góc dưới bên trái, hoặc thêm `&lite=1` vào cuối link.
+
+Phông chữ Be Vietnam Pro, Playfair Display, Dancing Script (giấy phép SIL Open Font License) được đặt sẵn trong `assets/fonts`.
+Trang chỉ mang tính giải trí nội bộ, không dùng logo hay nhận diện thương hiệu của ngân hàng.

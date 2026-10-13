@@ -2,74 +2,71 @@
 var W20 = {
   /* {x} = xưng hô viết thường (chị), {X} = viết hoa (Chị) */
   wishes: [
-    "Chúc {x} luôn có số dư nụ cười dương, không bao giờ bị thấu chi hạnh phúc.",
-    "Chúc {x} mỗi ngày đi làm là một lần go-live thành công, không cần rollback.",
-    "Chúc {x} gửi file một lần là được duyệt, không có câu “{x} xem lại giúp em phần này”.",
-    "Chúc {x} lãi suất niềm vui cao hơn mọi kỳ hạn, không cần tất toán trước hạn.",
-    "Chúc {x} ít họp, nhiều cà phê, và luôn có chỗ ngồi gần cửa sổ.",
-    "Chúc {x} KPI hoàn thành, tâm trạng tăng trưởng, ví tiền cũng tăng trưởng.",
-    "Chúc {x} được thương như sản phẩm chủ lực: luôn ưu tiên số một trong mọi roadmap.",
-    "Chúc {x} sống chậm như UAT, nhưng thành công như bản chạy chính thức.",
-    "Chúc {x} được yêu thương không cần OTP, không hết hạn, không giới hạn hạn mức.",
-    "Chúc {x} mỗi sáng thức dậy thấy lịch họp trống và hộp thư đã được ai đó dọn giúp.",
-    "Chúc {x} chuyển đổi số mọi thứ, trừ nụ cười: nụ cười cứ để nguyên bản analog.",
-    "Chúc {x} hôm nay không phải sửa “lỗi nhỏ thôi” của bất kỳ ai.",
-    "Chúc {x} đẹp không cần filter, giỏi không cần “làm nốt tối nay”.",
-    "Chúc {x} luôn là phiên bản hạnh phúc nhất: bản cập nhật tự động, không cần cài đặt.",
-    "Chúc {x} như Wi-Fi văn phòng: mạnh mẽ, ổn định và ai cũng muốn kết nối.",
-    "Chúc {x} mọi tờ trình đều được phê duyệt ngay lần trình đầu tiên.",
-    "Chúc {x} nhận thật nhiều lời khen thật lòng, kể cả khi chưa ai cần xin duyệt.",
-    "Chúc {x} có nhiều khoảnh khắc “đúng ý” hơn số lần phải “làm lại từ đầu”.",
-    "Chúc {x} tin nhắn nào cũng là “ok {x}” và không có chữ “mà…” ở phía sau.",
-    "Chúc {x} 20/10 này cười thật tươi, tươi đến mức cả tòa nhà nghe thấy.",
-    "Chúc {x} luôn là người ra quyết định cuối cùng… về việc hôm nay ăn gì.",
-    "Chúc {x} bug nào cũng tự biến mất trước khi kịp báo cáo.",
-    "Chúc {x} năm nào cũng như bản beta: luôn có tính năng mới và vẫn đáng yêu."
+    "Chúc {x} 20/10 được tặng hoa nhiều tới mức phải nhờ anh em bê hộ về nhà.",
+    "Chúc {x} lúc nào cũng xinh, cười thật nhiều, còn deadline thì cứ từ từ hẵng tới.",
+    "Chúc {x} gửi file một lần là sếp duyệt luôn, không có vòng hai vòng ba gì hết.",
+    "Chúc {x} sáng nào đi làm cũng có chỗ đỗ xe, trưa nào cũng có món ngon, chiều nào cũng về đúng giờ.",
+    "Chúc {x} hôm nay khỏi phải làm gì, chỉ cần ngồi xinh cho anh em ngắm thôi.",
+    "Chúc {x} lúc nào cũng vui như ngày nhận lương, và bình tĩnh như hôm hệ thống chạy ngon lành.",
+    "Chúc {x} ăn hoài không béo, tiêu hoài không hết, còn họp hoài thì… thôi khỏi họp.",
+    "Chúc {x} mọi việc trôi chảy như chuyển khoản nội bộ: nhanh, gọn, không mất phí.",
+    "Chúc {x} 20/10 nhận được thật nhiều lời khen thật lòng, kèm một cốc trà sữa full topping.",
+    "Chúc {x} nụ cười lúc nào cũng tươi, dù cuối tháng có phải chạy số tới đâu.",
+    "Chúc {x} thật khỏe, thật vui, và thật ít tin nhắn mở đầu bằng “chị ơi gấp”.",
+    "Chúc {x} luôn được thương như ngày đầu về Phòng, và được chiều như ngày 20/10.",
+    "Chúc sản phẩm nào {x} làm ra cũng được khách khen, còn {x} thì được cả Phòng khen.",
+    "Chúc {x} ngày nào cũng đẹp trời, kể cả hôm phải làm báo cáo quý.",
+    "Chúc {x} lúc nào cũng có người pha cà phê, có người đặt cơm, có người làm hộ slide.",
+    "Chúc {x} xinh vừa đủ để cả Phòng mê, giỏi vừa đủ để sếp tin, vui thật nhiều để anh em đỡ sợ.",
+    "Chúc {x} 20/10 thật ngọt ngào, ngọt hơn cả miếng bánh anh em mang tới.",
+    "Chúc {x} cứ thong thả mà xinh, việc khó đã có anh em lo (lo được tới đâu hay tới đó).",
+    "Chúc {x} tờ trình nào cũng qua, ý tưởng nào cũng được khen, và lương thì cứ đều đều mà tăng.",
+    "Chúc {x} một ngày 20/10 rộn ràng: sáng nhận hoa, trưa nhận quà, chiều nhận… lời khen của anh em."
   ],
   roles: [
+    "Hoa khôi Phòng PTSPBL (do anh em tự bầu)",
     "Giám đốc Điều hành Nụ Cười",
-    "Trưởng nhóm Sản phẩm Xinh Đẹp",
-    "Chuyên gia Phát triển Hạnh Phúc Bán Lẻ",
-    "Kiến trúc sư Trưởng của Mọi Deadline",
-    "Chủ tịch Hội đồng Trà Chiều",
-    "Chuyên viên Cao cấp Giải Cứu Báo Cáo",
-    "Trưởng phòng Chăm Sóc Đồng Nghiệp",
-    "Quản lý Rủi ro Hết Hạnh Phúc (luôn bằng 0)",
-    "Product Owner của Mọi Cuộc Vui",
-    "Nhà sáng lập Quỹ Ăn Vặt Của Phòng",
-    "Giám đốc Trải nghiệm Khách hàng (kể cả đồng nghiệp)",
-    "Cố vấn Cấp cao về Cà Phê"
+    "Chuyên gia Gỡ Rối Mọi Báo Cáo",
+    "Nữ hoàng Deadline",
+    "Chủ tịch Hội Trà Chiều",
+    "Người giữ lửa của Phòng",
+    "Trưởng ban Ăn Vặt",
+    "Phù thủy Excel",
+    "Đệ nhất Pha Trò Lúc Mệt",
+    "Bộ não của mọi ý tưởng sản phẩm",
+    "Đại sứ Thân thiện của Phòng",
+    "Cố vấn Cấp cao về Trà Sữa"
   ],
   perks: [
-    ["☕", "Ly cà phê có người pha sẵn"],
-    ["😴", "Thêm 1 giờ ngủ (áp dụng cuối tuần, tự nguyện)"],
-    ["🛍️", "Quyền mua sắm không cần giải trình"],
-    ["🙅", "Thẻ miễn 1 cuộc họp “sync nhanh 15 phút”"],
-    ["🎶", "Playlist chill tự bật khi deadline đến gần"],
-    ["🍰", "Chiếc bánh không tính calo (hiệu lực đến hết hôm nay)"],
-    ["🚀", "Tăng tốc duyệt tờ trình ×10 (trong giấc mơ)"],
-    ["💐", "Bó hoa miễn phí, giao tận tay, không cần OTP"]
+    ["☕", "Cốc cà phê có người pha sẵn"],
+    ["😴", "Thêm 1 tiếng ngủ nướng cuối tuần"],
+    ["🛍️", "Quyền mua sắm không phải giải trình"],
+    ["🙅", "Thẻ miễn 1 cuộc họp"],
+    ["🎶", "Playlist chill tự bật mỗi khi gần deadline"],
+    ["🍰", "Bánh ngọt không tính calo (hiệu lực đến hết 20/10)"],
+    ["🚀", "Tờ trình nào cũng được duyệt ngay lần đầu"],
+    ["💐", "Hoa tươi giao tận bàn, không cần đặt trước"]
   ],
   notes: [
-    ["✨", "Tính năng mới", "Nụ cười tự động gia hạn, không cần OTP, không giới hạn hạn mức."],
-    ["🐞", "Đã sửa lỗi", "Lỗi “chị ơi file này đâu” đã được vá (tạm thời, trong 24 giờ)."],
-    ["⚡", "Hiệu năng", "Tốc độ xử lý deadline tăng 200%. Riêng việc pha cà phê được cố tình chậm lại để thưởng thức."],
-    ["🔒", "Bảo mật", "Mật khẩu hạnh phúc đã được nâng cấp. Tuyệt đối không chia sẻ cho sếp."],
-    ["📈", "Tăng trưởng", "Thị phần trong lòng đồng nghiệp đạt 100%, vượt kế hoạch 20,10%."],
-    ["⚠️", "Lưu ý khi cập nhật", "Phiên bản này không hỗ trợ quay về chế độ “ngày thường”."]
+    ["✨", "Tính năng mới", "Nụ cười của chị em giờ tự gia hạn, không cần OTP, không giới hạn hạn mức."],
+    ["🐞", "Đã sửa lỗi", "Lỗi “chị ơi file này để đâu” đã được vá. Hiệu lực trong 24 giờ, sau đó… tính tiếp."],
+    ["⚡", "Tăng tốc", "Xử lý deadline nhanh gấp đôi. Riêng khoản pha cà phê được cố ý làm chậm để còn thưởng thức."],
+    ["🔒", "Bảo mật", "Bí kíp giữ dáng, giữ lương, giữ bình tĩnh của chị em được mã hóa tuyệt đối. Sếp cũng không xem được."],
+    ["📈", "Tăng trưởng", "Thị phần trong lòng anh em: 100%, vượt kế hoạch 20,10%."],
+    ["⚠️", "Lưu ý", "Bản này không quay về chế độ “ngày thường” được. Hôm nay cứ được chiều thôi."]
   ],
   coupons: [
-    ["🎟️", "Miễn 1 cuộc họp “sync nhanh 15 phút”", "(thực tế 45 phút)"],
-    ["☕", "Tặng 1 ly cà phê do đồng nghiệp nam trả", "Hạn dùng: hôm nay, tại căng tin gần nhất"],
-    ["🧾", "Miễn 1 lần ký “đã xem, đã duyệt” cho tờ trình của người khác", "Áp dụng trong tưởng tượng"],
-    ["🕊️", "Được về đúng giờ 1 ngày, không ai nhắn “chị ơi em hỏi chút”", "Không áp dụng cuối quý"],
-    ["🍰", "Một miếng bánh ngọt, 0 calo", "Hiệu lực đến hết 20/10"],
-    ["👑", "Danh hiệu “Nữ hoàng Của Mọi Báo Cáo” cho cả ngày hôm nay", "Không cần nộp hồ sơ"]
+    ["🎟️", "Miễn 1 cuộc họp", "Dùng lúc nào tùy chị"],
+    ["☕", "1 cốc cà phê, anh em trả tiền", "Hạn dùng: hôm nay"],
+    ["🕊️", "1 buổi về đúng giờ, không ai nhắn “chị ơi em hỏi chút”", "Không áp dụng cuối quý"],
+    ["🍰", "1 miếng bánh ngọt 0 calo", "Hiệu lực đến hết 20/10"],
+    ["👑", "Danh hiệu “Nữ hoàng của Phòng” cả ngày hôm nay", "Không cần nộp hồ sơ"],
+    ["🤝", "Anh em làm hộ 1 việc vặt", "Trong giờ hành chính nha"]
   ],
   pulls: [
-    "Máy đang phân tích hồ sơ… kết quả: chị em PTSPBL đạt chuẩn “xuất sắc” ở mọi tiêu chí.",
-    "Hệ thống xác nhận: nụ cười của chị em là sản phẩm chưa từng có đối thủ cạnh tranh.",
-    "Cảnh báo: phát hiện mức độ đáng yêu vượt ngưỡng cho phép."
+    "Máy vừa soi hồ sơ: chị em PTSPBL đạt loại “xuất sắc” ở mọi tiêu chí, kể cả tiêu chí xinh.",
+    "Cảnh báo nhẹ: mức độ đáng yêu đang vượt ngưỡng cho phép. Anh em xin phép không xử lý.",
+    "Hệ thống xác nhận: nụ cười của chị em là sản phẩm chưa có đối thủ cạnh tranh."
   ]
 };
 
@@ -93,6 +90,7 @@ function w20Derive(name) {
 }
 function w20Params() {
   var q = new URLSearchParams(location.search), o = {};
+  o.u = w20Clean(q.get("u"), 12);
   o.to = w20Clean(q.get("to"), 40);
   o.x = w20Clean(q.get("x"), 8);
   o.f = w20Clean(q.get("f"), 60);
@@ -256,4 +254,21 @@ function w20DeriveSep(name) {
 function w20SepWish(i, x) {
   var w = W20.sep.wishes[i % W20.sep.wishes.length], xl = (x || "Sếp").toLowerCase();
   return w.replace(/\{x\}/g, xl).replace(/\{X\}/g, xl.charAt(0).toUpperCase() + xl.slice(1));
+}
+
+/* ===== Danh sách người nhận (assets/people.js) và chia quà ===== */
+function w20Person(id) { if (!id || typeof W20P === "undefined") return null; for (var i = 0; i < W20P.length; i++) if (W20P[i].id === id) return W20P[i]; return null; }
+function w20Short(n) { var a = String(n || "").trim().split(/\s+/); return a[a.length - 1] || ""; }
+function w20Fold(s) { return String(s || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/đ/g, "d").replace(/Đ/g, "D").toLowerCase(); }
+/* Chia quà cố định cho từng người theo số lượng ở config (qty). Cùng một danh sách luôn cho cùng kết quả,
+   nên quay ở máy nào, quay mấy lần cũng ra đúng món đã chia. Trả về { id: chỉ số quà } */
+function w20Assign() {
+  var P = W20CFG.prizes, ppl = (typeof W20P === "undefined" ? [] : W20P).slice(), n = ppl.length, seed = String(W20CFG.seed || "2010"), i, k;
+  ppl.sort(function (a, b) { return w20Hash(a.id + "|" + seed) - w20Hash(b.id + "|" + seed); });
+  var q = P.map(function (p) { return Math.max(0, parseInt(p.qty, 10) || 0); }), tot = q.reduce(function (a, b) { return a + b; }, 0), slots = [];
+  if (tot < n) { /* chưa ghi đủ số lượng: chia đều phần còn thiếu cho các món */ var rest = n - tot; for (k = 0; rest > 0; k = (k + 1) % P.length, rest--) q[k]++; }
+  var used = P.map(function () { return 0; });
+  while (slots.length < n) { var moved = false; for (i = 0; i < P.length && slots.length < n; i++) if (used[i] < q[i]) { used[i]++; slots.push(i); moved = true; } if (!moved) break; }
+  var out = {}; for (i = 0; i < n; i++) out[ppl[i].id] = slots[i] !== undefined ? slots[i] : i % P.length;
+  return out;
 }

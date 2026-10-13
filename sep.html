@@ -114,13 +114,15 @@
 <div class="toast" id="toast" role="status"></div>
 
 <script src="assets/config.js"></script>
+<script src="assets/people.js"></script>
 <script src="assets/common.js"></script>
 <script src="assets/modules.js"></script>
 <script>
 (function () {
   var $ = function (s) { return document.querySelector(s); };
   var P = w20Params();
-  var S = { to: P.to, x: P.x || "Sếp", f: P.f || W20CFG.from, r: P.r, w: P.w, bq: [], pledges: [] };
+  var me = w20Person(P.u);
+  var S = { to: me ? w20Short(me.n) : P.to, x: P.x || "Sếp", f: P.f || W20CFG.from, r: P.r, w: P.w, bq: [], pledges: [] };
   function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); }
   function toast(t) { var e = $("#toast"); e.textContent = t; e.className = "toast show"; clearTimeout(toast.t); toast.t = setTimeout(function () { e.className = "toast"; }, 2200); }
   function who() { return S.to ? S.x + " " + S.to : "các Sếp"; }
@@ -186,12 +188,15 @@
   /* hoa, quà, tường */
   var bq;
   function flowers() {
-    bq = w20BouquetUI($("#bqbox"), function (l) { S.bq = l; cardSoon(); });
-    bq.give.onclick = function (e) { if (!S.bq.length) { toast("Cắm ít nhất 1 bông hoa nhé 🌷"); return; } FX.burst(e.clientX, e.clientY, 140); FX.rain(); toast("Đã tặng Sếp bó hoa 💐"); $("#cardsec").scrollIntoView({ behavior: "smooth" }); };
+    bq = w20BouquetUI($("#bqbox"), { min: 3, onChange: function (l) { S.bq = l; cardSoon(); }, onDone: function (l, e) { FX.burst(e.clientX, e.clientY, 140); FX.rain(); toast("Đã tặng Sếp bó hoa 💐"); $("#cardsec").scrollIntoView({ behavior: "smooth" }); } });
+    bq.give.textContent = "🎁 Tặng Sếp bó hoa";
   }
   function wheel() {
-    var wv = w20Wheel($("#wcv"), W20CFG.prizes, function (p) { $("#prize").innerHTML = p[0] + " " + esc(p[1]) + "<br><small style='opacity:.8;font-weight:600'>Anh em xin trao tận tay ở buổi gặp mặt!</small>"; FX.burst(innerWidth / 2, innerHeight * .5, 140); FX.rain(); });
-    $("#spin").onclick = function () { $("#prize").textContent = "…"; wv.spin(); };
+    var K = "w20sep:" + (me ? me.id : "guest"), had = null; try { had = localStorage.getItem(K); } catch (e) {}
+    function show(i) { var p = W20CFG.prizes[i]; $("#prize").innerHTML = p.icon + " " + esc(p.name) + "<br><small style='opacity:.8;font-weight:600'>Anh em xin trao tận tay Sếp ở buổi gặp mặt ạ!</small>"; $("#spin").disabled = true; $("#spin").textContent = "✔ Sếp đã quay rồi"; }
+    var wv = w20Wheel($("#wcv"), W20CFG.prizes, function (p, i) { try { localStorage.setItem(K, String(i)); } catch (e) {} show(i); FX.burst(innerWidth / 2, innerHeight * .5, 140); FX.rain(); });
+    if (had !== null && W20CFG.prizes[+had]) { wv.setAt(+had); show(+had); }
+    $("#spin").onclick = function () { $("#prize").textContent = "Đang quay…"; $("#spin").disabled = true; var a = me ? w20Assign()[me.id] : null; wv.spin(a !== null && a !== undefined ? a : null); };
   }
   /* giấy khen */
   function card() {
@@ -205,7 +210,7 @@
     var nm = who(); if (!S.to) nm = "Các Sếp của Phòng"; g.fillStyle = "#fff"; var fs = 88; g.font = "900 " + fs + "px " + F; while (g.measureText(nm).width > W - 160 && fs > 40) { fs -= 4; g.font = "900 " + fs + "px " + F; } g.fillText(nm, W / 2, 440);
     var rl = W20.sep.roles[ri()]; g.font = "800 32px " + F; var rw = Math.min(g.measureText(rl).width + 70, W - 120);
     g.fillStyle = "#ffd76a"; rr(g, (W - rw) / 2, 470, rw, 62, 31); g.fill(); g.fillStyle = "#3d0a24"; var rs = 32; g.font = "800 " + rs + "px " + F; while (g.measureText(rl).width > rw - 40 && rs > 20) { rs--; g.font = "800 " + rs + "px " + F; } g.fillText(rl, W / 2, 512);
-    w20DrawBouquet(g, W / 2, S.bq.length ? 640 : 700, S.bq.length ? 190 : 0, S.bq);
+    w20DrawBouquet(g, W / 2, 680, S.bq.length ? 150 : 0, S.bq);
     g.fillStyle = "rgba(255,247,230,.96)"; rr(g, 100, 940, W - 200, 270, 30); g.fill();
     g.fillStyle = "#3b0a26"; g.font = "700 36px " + F; var txt = w20SepWish(wi(), xw()), wl = w20Wrap(g, txt, W - 280); if (wl.length > 5) { g.font = "700 31px " + F; wl = w20Wrap(g, txt, W - 280); }
     var y = 1010; for (i = 0; i < wl.length && i < 6; i++) { g.fillText(wl[i], W / 2, y); y += 50; }
