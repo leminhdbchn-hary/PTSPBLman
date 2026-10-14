@@ -10,7 +10,7 @@
 <meta name="theme-color" content="#00381f">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E💐%3C/text%3E%3C/svg%3E">
 <link rel="stylesheet" href="assets/style.css?v=20261013">
-<link rel="stylesheet" href="assets/box.css?v=20261018">
+<link rel="stylesheet" href="assets/box.css?v=20261020">
 </head>
 <body class="bx">
 <canvas id="fx" aria-hidden="true"></canvas>
@@ -114,7 +114,9 @@
       <h2 class="hw">Thiệp của riêng chị</h2>
       <p class="sub">Tải về làm kỷ niệm, hoặc gửi cho Sếp nhé.</p>
       <div class="cardbox">
+        <div class="sidetabs"><button class="stab on" id="face0" type="button">Mặt trước</button><button class="stab" id="face1" type="button">Mặt sau · Thư tay</button></div>
         <canvas id="card" width="1080" height="1620"></canvas>
+        <canvas id="card2" width="1080" height="1620" hidden></canvas>
         <div class="side">
           <div class="acts">
             <button class="btn" id="dl" type="button">⬇️ Tải thiệp về máy</button>
@@ -142,7 +144,7 @@
 <script src="assets/people.js?v=20261013"></script>
 <script src="assets/common.js?v=20261013"></script>
 <script src="assets/flowers.js?v=20261013"></script>
-<script src="assets/modules.js?v=20261016"></script>
+<script src="assets/modules.js?v=20261019"></script>
 <script src="assets/boxflow.js?v=20261016"></script>
 <script src="assets/firebase-sync.js?v=20261013"></script>
 <script>
@@ -240,10 +242,17 @@
     var c = $("#card"), g = c.getContext("2d");
     var got = []; try { got = (me && me.test) ? (window.W20TESTGOT || []) : JSON.parse(localStorage.getItem("w20sep3:" + (me ? me.id : "guest")) || "[]"); } catch (e) {}
     w20DrawCard(g, { mode: "sep", greet: "Thân gửi:", name: S.to ? "Chị " + S.to : "Các chị lãnh đạo của Phòng", sub: me ? me.t : "", role: W20.sep.roles[ri()], wish: CW ? CW : w20SepWish(wi(), "chị"), prizes: got.map(function (i) { return W20CFG.prizes[i]; }).filter(Boolean), from: S.f, bq: S.bq });
+    var gk = got.map(function (i) { return W20CFG.prizes[i]; }).filter(Boolean);
+    w20DrawBack($("#card2").getContext("2d"), { title: S.to ? "Chị " + S.to : "các chị lãnh đạo", intro: "Anh em xin gửi " + xw().toLowerCase() + " mấy dòng báo cáo năng lực (anh em tự chấm, chưa ai kiểm duyệt):",
+      items: dv().t.map(function (i) { return W20.sep.traits[i]; }), gift: gk[0] || null, closing: "Kính chúc " + xw().toLowerCase() + " 20/10 thật rực rỡ, thật nhiều hoa và thật ít… họp!", from: S.f });
   }
+  var face = 0;
+  function setFace(k) { face = k; $("#card").hidden = !!k; $("#card2").hidden = !k; $("#face0").classList.toggle("on", !k); $("#face1").classList.toggle("on", !!k); card(); }
+  $("#face0").onclick = function () { setFace(0); }; $("#face1").onclick = function () { setFace(1); };
+  function curCard() { return face ? $("#card2") : $("#card"); }
   var bgImg = w20Img("assets/card-bg.webp"); if (!bgImg.complete) bgImg.onload = function () { card(); };
   var cardT = 0; function cardSoon() { cancelAnimationFrame(cardT); cardT = requestAnimationFrame(card); }
-  $("#dl").onclick = function () { card(); $("#card").toBlob(function (b) { var a = document.createElement("a"); a.href = URL.createObjectURL(b); a.download = "thiep-20-10-" + (S.to || "chi").replace(/\s+/g, "-") + ".png"; document.body.appendChild(a); a.click(); setTimeout(function () { URL.revokeObjectURL(a.href); a.remove(); }, 1500); toast("Đã tải thiệp về máy 🌹"); FX.burst(innerWidth / 2, innerHeight * .6, 70); }, "image/png"); };
+  $("#dl").onclick = function () { card(); curCard().toBlob(function (b) { var a = document.createElement("a"); a.href = URL.createObjectURL(b); a.download = "thiep-20-10-" + (S.to || "chi").replace(/\s+/g, "-") + (face ? "-mat-sau" : "") + ".png"; document.body.appendChild(a); a.click(); setTimeout(function () { URL.revokeObjectURL(a.href); a.remove(); }, 1500); toast("Đã tải thiệp về máy 🌹"); FX.burst(innerWidth / 2, innerHeight * .6, 70); }, "image/png"); };
   $("#shr").onclick = function () {
     var url = w20Link(location.origin + location.pathname, { to: S.to, x: S.to ? S.x : "", f: S.f === W20CFG.from ? "" : S.f, r: S.to ? ri() : null, w: S.to ? wi() : null });
     var data = { title: "20/10 · Thiệp của chị " + (S.to || ""), text: "Thiệp 20/10 của chị " + (S.to || "") + " 🌹", url: url };
@@ -264,7 +273,7 @@
   if (W20CFG.wallSep.length) w20Wall($("#wall"), W20CFG.wallSep); else $("#next6").parentNode.insertAdjacentHTML("beforebegin", "<p class='sub'>Chúc các Sếp 20/10 thật vui 🌷</p>");
   card(); loading = false;
   if (PS.opened || PS.step > 0) FL.show(Math.min(PS.step, N - 1), false); /* đã mở trước đó: vào lại đúng lớp đang dở */
-  if (document.fonts && document.fonts.load) Promise.all(["700 80px 'Playfair Display'", "italic 700 80px 'Playfair Display'", "italic 500 40px 'Playfair Display'", "700 60px 'Dancing Script'", "600 28px 'Be Vietnam Pro'", "700 28px 'Be Vietnam Pro'", "500 28px 'Be Vietnam Pro'", "italic 600 26px 'Be Vietnam Pro'"].map(function (f) { return document.fonts.load(f, "Chị Hạnh ơi 20.10"); })).then(card, card);
+  if (document.fonts && document.fonts.load) Promise.all(["700 80px 'Playfair Display'", "italic 700 80px 'Playfair Display'", "italic 500 40px 'Playfair Display'", "700 60px 'Dancing Script'", "58px 'Patrick Hand'", "600 28px 'Be Vietnam Pro'", "700 28px 'Be Vietnam Pro'", "500 28px 'Be Vietnam Pro'", "italic 600 26px 'Be Vietnam Pro'"].map(function (f) { return document.fonts.load(f, "Chị Hạnh ơi 20.10"); })).then(card, card);
 })();
 </script>
 </body>
