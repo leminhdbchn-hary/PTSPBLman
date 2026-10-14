@@ -282,3 +282,6 @@ function w20Assign(stock) {
   var last = 0; document.addEventListener("touchend", function (e) { var n = Date.now(); if (n - last < 350) e.preventDefault(); last = n; }, { passive: false });
   document.addEventListener("wheel", function (e) { if (e.ctrlKey) e.preventDefault(); }, { passive: false });
 })();
+
+/* Chức danh gọn trên thiệp: bỏ "Chuyên viên…", bỏ chữ "PTSPBL" thừa */
+function w20Sub(t) { t = String(t || "").trim(); if (!t || /chuyên viên/i.test(t)) return ""; return t.replace(/\s*Phòng\s+PTSPBL\s*$/i, " Phòng").replace(/\s*PTSPBL\s*$/i, "").trim(); }

@@ -10,7 +10,7 @@
 <meta name="theme-color" content="#00381f">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E💐%3C/text%3E%3C/svg%3E">
 <link rel="stylesheet" href="assets/style.css?v=20261013">
-<link rel="stylesheet" href="assets/box.css?v=20261020">
+<link rel="stylesheet" href="assets/box.css?v=20261022">
 </head>
 <body class="bx">
 <canvas id="fx" aria-hidden="true"></canvas>
@@ -53,7 +53,7 @@
       <h2 class="hw">Báo cáo năng lực của Sếp</h2>
       <p class="sub">Do anh em tự đánh giá (chưa có ai kiểm duyệt, kể cả chính Sếp).</p>
       <div class="profile" id="profList"></div>
-      <p class="pbtn"><button class="btn" id="next1" type="button">Mở hộp tiếp theo 🎁</button></p>
+      <p class="pbtn"><button class="btn" id="next1" type="button">Mở tiếp 🎁</button></p>
     </div></div>
   </section>
 
@@ -74,7 +74,7 @@
       <p class="sub">Bấm để nhận một chỉ đạo của ngày 20/10. Anh em xin nghiêm túc thực hiện (có chọn lọc).</p>
       <div class="order" id="order"><div><small>Công văn chỉ đạo</small>Chạm “Xin chỉ đạo” bên dưới nhé.</div></div>
       <p class="askrow"><button class="btn" id="ask" type="button">📜 Xin chỉ đạo</button></p>
-      <p class="pbtn"><button class="btn pink" id="next3" type="button">Mở hộp tiếp theo 🎁</button></p>
+      <p class="pbtn"><button class="btn pink" id="next3" type="button">Mở tiếp 🎁</button></p>
     </div></div>
   </section>
 
@@ -82,7 +82,7 @@
   <section class="scene" id="p4" aria-label="Cắm hoa">
     <div class="paper2"><div class="pbody">
       <h2 class="hw">Cắm bó hoa tặng Sếp</h2>
-      <p class="sub">Đủ 10 bông là thành một bó hoa, hoặc bấm “Chọn giúp 10 bông”. Bó hoa sẽ in lên thiệp ở lớp cuối.</p>
+      <p class="sub">Đủ 10 bông là thành một bó, sẽ in lên thiệp ở lớp cuối.</p>
       <div id="bqbox"></div>
     </div></div>
   </section>
@@ -91,11 +91,11 @@
   <section class="scene" id="p5" aria-label="Vòng quay quà">
     <div class="paper2"><div class="pbody">
       <h2 class="hw">Quà bí mật của anh em</h2>
-      <p class="sub">Sếp quay 1 lần duy nhất. Quà thật, anh em xin trao tận tay ở buổi gặp mặt của Phòng.</p>
+      <p class="sub">Sếp quay 1 lần duy nhất. Anh em trao quà tận tay ở buổi gặp mặt.</p>
       <div class="wheelbox"><canvas id="wcv" width="640" height="640"></canvas></div>
       <p style="text-align:center;margin-top:12px"><button class="btn pink" id="spin" type="button">🎡 QUAY NGAY</button></p>
       <div id="prize"></div>
-      <p class="pbtn" id="next5box" style="display:none"><button class="btn" id="next5" type="button">Mở hộp tiếp theo 🎁</button></p>
+      <p class="pbtn" id="next5box" style="display:none"><button class="btn" id="next5" type="button">Mở tiếp 🎁</button></p>
     </div></div>
   </section>
 
@@ -104,7 +104,7 @@
     <div class="paper2"><div class="pbody">
       <h2 class="hw">Anh em nhắn gửi</h2>
       <div class="wall" id="wall"></div>
-      <p style="text-align:center;margin-top:14px"><button class="btn" id="next6" type="button">Đọc hết rồi 💌</button></p>
+      <p style="text-align:center;margin-top:14px"><button class="btn" id="next6" type="button">Mở tiếp 🎁</button></p>
     </div></div>
   </section>
 
@@ -139,10 +139,10 @@
 
 <script src="assets/config.js?v=20261013"></script>
 <script src="assets/stock.js?v=20261013"></script>
-<script src="assets/people.js?v=20261013"></script>
-<script src="assets/common.js?v=20261013"></script>
+<script src="assets/people.js?v=20261022"></script>
+<script src="assets/common.js?v=20261022"></script>
 <script src="assets/flowers.js?v=20261013"></script>
-<script src="assets/modules.js?v=20261021"></script>
+<script src="assets/modules.js?v=20261022"></script>
 <script src="assets/boxflow.js?v=20261016"></script>
 <script src="assets/firebase-sync.js?v=20261013"></script>
 <script>
@@ -239,7 +239,7 @@
   function card() {
     var c = $("#card"), g = c.getContext("2d");
     var got = []; try { got = (me && me.test) ? (window.W20TESTGOT || []) : JSON.parse(localStorage.getItem("w20sep3:" + (me ? me.id : "guest")) || "[]"); } catch (e) {}
-    w20DrawCard(g, { mode: "sep", greet: "Thân gửi:", name: S.to ? "Chị " + S.to : "Các chị lãnh đạo của Phòng", sub: me ? me.t : "", role: W20.sep.roles[ri()], wish: CW ? CW : w20SepWish(wi(), "chị"), prizes: got.map(function (i) { return W20CFG.prizes[i]; }).filter(Boolean), from: S.f, bq: S.bq });
+    w20DrawCard(g, { mode: "sep", greet: "Thân gửi:", name: S.to ? "Chị " + S.to : "Các chị lãnh đạo của Phòng", sub: me ? w20Sub(me.t) : "", role: W20.sep.roles[ri()], wish: CW ? CW : w20SepWish(wi(), "chị"), prizes: got.map(function (i) { return W20CFG.prizes[i]; }).filter(Boolean), from: S.f, bq: S.bq });
   }
   var bgImg = w20Img("assets/card-bg.webp"); if (!bgImg.complete) bgImg.onload = function () { card(); };
   var cardT = 0; function cardSoon() { cancelAnimationFrame(cardT); cardT = requestAnimationFrame(card); }

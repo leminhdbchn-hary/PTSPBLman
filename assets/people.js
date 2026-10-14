@@ -59,6 +59,6 @@ var W20P = [
 /* 2 link thử (1 nhân viên nữ, 1 lãnh đạo phòng nữ): mở đi mở lại được, KHÔNG lưu tiến độ, KHÔNG tính vào chia quà/thống kê.
    Link: index.html?u=test01 (nhân viên nữ) và index.html?u=test02 (lãnh đạo phòng nữ) (test02 tự chuyển sang trang Sếp) */
 var W20TEST = [
-  {"id": "test01", "n": "Nguyễn Test An", "t": "Link thử 1: chuyên viên nữ", "x": "Chị", "test": 1},
-  {"id": "test02", "n": "Trần Test Bình", "t": "Link thử 2: Phó trưởng Phòng PTSPBL (lãnh đạo nữ)", "x": "Chị", "test": 1, "lead": 1}
+  {"id": "test01", "n": "Nguyễn Test An", "t": "Chuyên viên Phòng PTSPBL", "x": "Chị", "test": 1},
+  {"id": "test02", "n": "Trần Test Bình", "t": "Phó trưởng Phòng PTSPBL", "x": "Chị", "test": 1, "lead": 1}
 ];

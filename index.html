@@ -10,7 +10,7 @@
 <meta name="theme-color" content="#00381f">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E🌹%3C/text%3E%3C/svg%3E">
 <link rel="stylesheet" href="assets/style.css?v=20261013">
-<link rel="stylesheet" href="assets/box.css?v=20261020">
+<link rel="stylesheet" href="assets/box.css?v=20261022">
 </head>
 <body class="bx">
 <canvas id="fx" aria-hidden="true"></canvas>
@@ -45,10 +45,10 @@
   <section class="scene" id="s1" aria-label="Rút lời chúc">
     <div class="paper2"><div class="pbody">
       <h2 class="hw">Hộp thư lời chúc</h2>
-      <p class="sub">Bấm “Lấy thư” 3 lần để nhận 3 lời chúc. Bức thư thứ 3 có bất ngờ đó.</p>
+      <p class="sub">Lấy 3 bức thư để nhận 3 lời chúc. Bức thứ 3 có bất ngờ!</p>
       <div class="mbx">
         <div class="mbwrap"><div class="mb-flag" id="mflag"></div><div class="mb-box"><div class="mb-door"></div><div class="mb-mail" id="mmail">✉️</div></div><div class="mb-post"></div></div>
-        <div class="scr" id="scr">Chị bấm nút để lấy bức thư đầu tiên nha 💌</div>
+        <div class="scr" id="scr">Bấm “Lấy thư” nào 💌</div>
         <div class="row"><span class="cnt" id="cnt">Thư số: 0</span><button class="btn pink" id="pull" type="button">LẤY THƯ 💌</button></div>
         <div class="slipwrap"><div class="slip" id="slip"></div></div>
       </div>
@@ -60,7 +60,7 @@
   <section class="scene" id="s2" aria-label="Thẻ cào">
     <div class="paper2"><div class="pbody">
       <h2 class="hw">Cào nhẹ tay thôi</h2>
-      <p class="sub">Quà không chạy đâu. Dùng ngón tay cào lớp bạc cho tới khi lộ ưu đãi.</p>
+      <p class="sub">Cào lớp bạc để xem ưu đãi.</p>
       <div class="scwrap" id="scwrap"><div class="under" id="under"></div><canvas id="scv"></canvas></div>
       <div class="gate" id="g2"></div>
     </div></div>
@@ -70,7 +70,7 @@
   <section class="scene" id="s3" aria-label="Cắm hoa">
     <div class="paper2"><div class="pbody">
       <h2 class="hw">Tự cắm bó hoa xinh</h2>
-      <p class="sub">Chạm vào loại hoa chị thích, các anh sẽ chạy ra cắm giúp. Đủ 10 bông là thành một bó hoa, hoặc bấm “Chọn giúp 10 bông” để máy chọn hộ.</p>
+      <p class="sub">Chạm hoa chị thích, các anh chạy ra cắm giúp. Đủ 10 bông là thành một bó.</p>
       <div id="bqbox"></div>
       <div class="gate" id="g3"></div>
     </div></div>
@@ -80,7 +80,7 @@
   <section class="scene" id="s4" aria-label="Vòng quay quà">
     <div class="paper2"><div class="pbody">
       <h2 class="hw">Quay 1 lần, nhận 1 món quà</h2>
-      <p class="sub">Quà anh em chuẩn bị thật và trao tận tay ở buổi gặp mặt.</p>
+      <p class="sub">Anh em trao quà tận tay ở buổi gặp mặt.</p>
       <div class="wheelbox"><canvas id="wcv" width="640" height="640"></canvas></div>
       <p style="text-align:center;margin-top:12px"><button class="btn pink" id="spin" type="button">🎡 QUAY NGAY</button></p>
       <div id="prize"></div>
@@ -99,7 +99,7 @@
     <div class="paper2"><div class="pbody">
       <h2 class="hw">Mấy lời anh em muốn nói</h2>
       <div class="wall" id="wall"></div>
-      <p style="text-align:center;margin-top:14px"><button class="btn" id="readwall" type="button">Đọc hết rồi 💌</button></p>
+      <p style="text-align:center;margin-top:14px"><button class="btn" id="readwall" type="button">Mở tiếp 🎁</button></p>
       <div class="gate" id="g5"></div>
     </div></div>
   </section>
@@ -108,7 +108,7 @@
   <section class="scene" id="s6" aria-label="Thiệp riêng">
     <div class="paper2"><div class="pbody">
       <h2 class="hw">Thiệp của riêng chị</h2>
-      <p class="sub">Tải về đăng Facebook, Zalo hay làm hình nền đều xinh.</p>
+      <p class="sub">Tải về đăng Facebook, Zalo hoặc làm hình nền.</p>
       <div class="cardbox">
         <canvas id="card" width="1080" height="1620"></canvas>
         <div class="side">
@@ -137,10 +137,10 @@
 <script src="assets/config.js?v=20261013"></script>
 <script src="assets/stock.js?v=20261013"></script>
 <script src="assets/firebase-sync.js?v=20261013"></script>
-<script src="assets/people.js?v=20261013"></script>
-<script src="assets/common.js?v=20261013"></script>
+<script src="assets/people.js?v=20261022"></script>
+<script src="assets/common.js?v=20261022"></script>
 <script src="assets/flowers.js?v=20261013"></script>
-<script src="assets/modules.js?v=20261021"></script>
+<script src="assets/modules.js?v=20261022"></script>
 <script src="assets/boxflow.js?v=20261016"></script>
 <script>
 (function () {
@@ -210,7 +210,7 @@
   /* ---------- 1. Release notes ---------- */
   function notes() {
     $("#noteList").innerHTML = W20.notes.map(function (n, i) { return '<div class="note tap' + (ST.notes.indexOf(i) >= 0 ? " open" : "") + '" data-i="' + i + '"><div class="ic">' + n[0] + '</div><div><b>' + n[1] + '</b><span>' + n[2] + '</span><div class="more">Chạm để đọc 👆</div></div></div>'; }).join("");
-    function upd() { var c = ST.notes.length; if (c >= W20.notes.length) done(0, 1300, loading); else gate(0, "Đã đọc " + c + "/" + W20.notes.length + " dòng"); }
+    function upd() { var c = ST.notes.length; if (c >= W20.notes.length) done(0, 1300, loading); else gate(0, "Chạm để đọc: " + c + "/" + W20.notes.length); }
     $("#noteList").onclick = function (e) { var b = e.target.closest(".note"); if (!b) return; var i = +b.getAttribute("data-i"); b.classList.add("open"); if (ST.notes.indexOf(i) < 0) { ST.notes.push(i); save(); } upd(); };
     upd();
   }
@@ -220,7 +220,7 @@
   function atm() {
     /* thiết bị/người nhận chỉ rút đúng 3 lời chúc, rút đủ là khóa (link thử thì rút thoải mái) */
     function lockPull() { if (!TEST && (ST.pulls || 0) >= 3) { var b = $("#pull"); b.disabled = true; b.textContent = "✔ Đã lấy đủ 3 thư"; } }
-    function upd() { var c = ST.pulls || 0; if (c >= 3) done(1, 2200, loading); else gate(1, c ? "Lấy thêm " + (3 - c) + " bức thư nữa nha" : "Bấm “Lấy thư” để nhận lời chúc đầu tiên"); }
+    function upd() { var c = ST.pulls || 0; if (c >= 3) done(1, 2200, loading); else gate(1, c ? "Còn " + (3 - c) + " bức thư nữa" : ""); }
     $("#pull").onclick = function () {
       var b = $("#pull"), scr = $("#scr"), slip = $("#slip"); b.disabled = true; slip.classList.remove("out"); scr.className = "scr"; scr.textContent = "Đang lấy thư trong hộp… 📬"; var ml = $("#mmail"), fl = $("#mflag"); ml.classList.remove("pop"); void ml.offsetWidth; ml.classList.add("pop"); fl.classList.add("up");
       S.n++; $("#cnt").textContent = "Thư số: " + S.n; if (navigator.vibrate) navigator.vibrate(30);
@@ -255,7 +255,7 @@
       sctx.fillStyle = "#6b727a"; sctx.font = "800 22px 'Be Vietnam Pro',Arial,sans-serif"; sctx.textAlign = "center"; sctx.fillText("✨ CÀO Ở ĐÂY ✨", w / 2, h / 2 + 8);
       sctx.globalCompositeOperation = "destination-out";
     }
-    if (ST.scratched) { cleared = true; scv.style.display = "none"; done(2, 0, true); } else { gate(2, "Cào hơn nửa thẻ là lộ quà"); setTimeout(paint, 30); }
+    if (ST.scratched) { cleared = true; scv.style.display = "none"; done(2, 0, true); } else { gate(2, ""); setTimeout(paint, 30); }
     function at(e) { var r = scv.getBoundingClientRect(); sctx.beginPath(); sctx.arc(e.clientX - r.left, e.clientY - r.top, 22, 0, 6.283); sctx.fill(); }
     function check() {
       if (cleared) return; var d = sctx.getImageData(0, 0, scv.width, scv.height).data, c = 0, n = 0;
@@ -273,7 +273,7 @@
   function flowers() {
     w20BouquetUI($("#bqbox"), { min: 10, start: ST.bq, onChange: function (l) { ST.bq = l; save(); cardSoon(); },
       onDone: function (l, e) { ST.bq = l; ST.bqDone = 1; save(); card(); FX.burst(e.clientX, e.clientY, 120); toast("Bó hoa xinh quá trời 💐"); done(3, 1800); } });
-    if (ST.bqDone) done(3, 0, true); else gate(3, "Cắm đủ 10 bông rồi bấm “Xong bó hoa”");
+    if (ST.bqDone) done(3, 0, true); else gate(3, "");
   }
 
   /* ---------- 5. Vòng quay 1 lượt, quà đã chia sẵn ---------- */
@@ -284,7 +284,7 @@
       onGot: function (l) { ST.prizes = l; save(); },
       onShow: function (idx, k, fresh) { showReq(); if (fresh) { FX.burst(innerWidth / 2, innerHeight * .5, 130); FX.rain(); } },
       onAll: function (fresh) { card(); done(4, 3800, !fresh); } });
-    if (!ST.prizes.length) gate(4, "Bấm QUAY để nhận món quà của chị");
+    if (!ST.prizes.length) gate(4, "");
     $("#reqtxt").oninput = function () { ST.req = $("#reqtxt").value; save(); };
     $("#reqsend").onclick = function () {
       var t = w20Clean($("#reqtxt").value, 300).trim(); if (!t) { toast("Chị ghi việc cần nhờ trước nha ✍️"); return; }
@@ -301,7 +301,7 @@
   function wall() {
     w20Wall($("#wall"), W20CFG.wallChiEm);
     $("#readwall").onclick = function () { ST.wall = 1; save(); done(5, 900); };
-    if (ST.wall) done(5, 0, true); else gate(5, "Đọc xong thì bấm “Đọc hết rồi” nha");
+    if (ST.wall) done(5, 0, true); else gate(5, "");
   }
 
   /* ---------- 7. Thiệp ---------- */
@@ -310,7 +310,7 @@
   function card() {
     var c = $("#card"), g = c.getContext("2d");
     var pk = ST.prizes.map(function (i) { return W20CFG.prizes[i]; }).filter(Boolean);
-    w20DrawCard(g, { mode: "chi", greet: "Thân gửi:", name: S.full ? S.x + " " + S.full : "Các chị em Phòng PTSPBL", sub: S.title || "", role: role(),
+    w20DrawCard(g, { mode: "chi", greet: "Thân gửi:", name: S.full ? S.x + " " + S.full : "Các chị em Phòng PTSPBL", sub: w20Sub(S.title), role: role(),
       wish: ST.cw ? ST.cw : w20Wish(wishIdx(), S.full ? S.x.toLowerCase() : "chị em"), bd: S.bd, prizes: pk, from: S.f, bq: ST.bq });
   }
   var bgImg = w20Img("assets/card-bg.webp"); if (!bgImg.complete) bgImg.onload = function () { card(); };

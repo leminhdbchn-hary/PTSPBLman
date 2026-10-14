@@ -230,3 +230,21 @@ body.bx:before{background:radial-gradient(900px 600px at 80% -10%,rgba(255,93,15
   #s6 .frame,#p7 .frame{max-width:230px;margin-top:2px}
   #s6 .side,#p7 .side{gap:10px}
 }
+
+/* ===== chữ nhỏ gọn hơn ===== */
+.hw{font-size:clamp(22px,6vw,27px)}
+.pbody .sub{font-size:14px;line-height:1.5;margin-bottom:10px}
+.gate{font-size:13.5px;margin-top:8px}
+.intro .hw1{font-size:clamp(22px,6vw,30px)}.intro .tapme{font-size:16px}
+.scene .note b{font-size:15px}.scene .note span{font-size:14px}.scene .note.tap .more{font-size:12px}
+.scene .note .ic{font-size:22px}
+.endnote{font-size:17px}
+.mbx .scr{font-size:15.5px}.mbx .slip{font-size:14.5px}.mbx .cnt{font-size:13px}
+.scene .pledge{font-size:13.5px}.scene .cnt2{font-size:15px}.scene .order{font-size:16px}
+.scene .note2{font-size:13px}.scene .cwbox label{font-size:13.5px!important}
+@media (min-width:900px) and (min-height:520px){
+  .hw{font-size:31px}.pbody .sub{font-size:15px}.gate{font-size:14.5px}
+  .intro .hw1{font-size:38px}.intro .tapme{font-size:19px}
+  .scene .note b{font-size:16px}.scene .note span{font-size:14.5px}
+  .mbx .scr{font-size:16px}.endnote{font-size:18px}.scene .note2{font-size:14px}
+}
