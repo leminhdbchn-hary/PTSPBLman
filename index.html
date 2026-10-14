@@ -10,7 +10,7 @@
 <meta name="theme-color" content="#00381f">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E🌹%3C/text%3E%3C/svg%3E">
 <link rel="stylesheet" href="assets/style.css?v=20261013">
-<link rel="stylesheet" href="assets/box.css?v=20261014">
+<link rel="stylesheet" href="assets/box.css?v=20261016">
 </head>
 <body class="bx">
 <canvas id="fx" aria-hidden="true"></canvas>
@@ -44,12 +44,12 @@
   <!-- Lớp 2: máy rút lời chúc -->
   <section class="scene" id="s1" aria-label="Rút lời chúc">
     <div class="paper2"><div class="pbody">
-      <h2 class="hw">Rút lời chúc</h2>
-      <p class="sub">Bấm “Rút” 3 lần để nhận 3 lời chúc. Lần thứ 3 có bất ngờ đó.</p>
-      <div class="atm">
-        <div class="scr" id="scr">Mời chị bấm nút để bắt đầu giao dịch 💳</div>
-        <div class="row"><span class="cnt" id="cnt">Giao dịch: 0</span><button class="btn pink" id="pull" type="button">RÚT 💸</button></div>
-        <div class="slot"></div>
+      <h2 class="hw">Hộp thư lời chúc</h2>
+      <p class="sub">Bấm “Lấy thư” 3 lần để nhận 3 lời chúc. Bức thư thứ 3 có bất ngờ đó.</p>
+      <div class="mbx">
+        <div class="mbwrap"><div class="mb-flag" id="mflag"></div><div class="mb-box"><div class="mb-door"></div><div class="mb-mail" id="mmail">✉️</div></div><div class="mb-post"></div></div>
+        <div class="scr" id="scr">Chị bấm nút để lấy bức thư đầu tiên nha 💌</div>
+        <div class="row"><span class="cnt" id="cnt">Thư số: 0</span><button class="btn pink" id="pull" type="button">LẤY THƯ 💌</button></div>
         <div class="slipwrap"><div class="slip" id="slip"></div></div>
       </div>
       <div class="gate" id="g1"></div>
@@ -225,29 +225,29 @@
     upd();
   }
 
-  /* ---------- 2. Máy rút lời chúc ---------- */
+  /* ---------- 2. Hộp thư lời chúc ---------- */
   function bag() { var a = W20.wishes.map(function (_, i) { return i; }), i, j, t; for (i = a.length - 1; i > 0; i--) { j = (Math.random() * (i + 1)) | 0; t = a[i]; a[i] = a[j]; a[j] = t; } return a; }
   function atm() {
     /* thiết bị/người nhận chỉ rút đúng 3 lời chúc, rút đủ là khóa (link thử thì rút thoải mái) */
-    function lockPull() { if (!TEST && (ST.pulls || 0) >= 3) { var b = $("#pull"); b.disabled = true; b.textContent = "✔ Đã rút đủ 3 lời chúc"; } }
-    function upd() { var c = ST.pulls || 0; if (c >= 3) done(1, 2200, loading); else gate(1, c ? "Rút thêm " + (3 - c) + " lần nữa nha" : "Bấm RÚT để nhận lời chúc đầu tiên"); }
+    function lockPull() { if (!TEST && (ST.pulls || 0) >= 3) { var b = $("#pull"); b.disabled = true; b.textContent = "✔ Đã lấy đủ 3 thư"; } }
+    function upd() { var c = ST.pulls || 0; if (c >= 3) done(1, 2200, loading); else gate(1, c ? "Lấy thêm " + (3 - c) + " bức thư nữa nha" : "Bấm “Lấy thư” để nhận lời chúc đầu tiên"); }
     $("#pull").onclick = function () {
-      var b = $("#pull"), scr = $("#scr"), slip = $("#slip"); b.disabled = true; slip.classList.remove("out"); scr.className = "scr"; scr.textContent = "Đang xử lý giao dịch… 💳";
-      S.n++; $("#cnt").textContent = "Giao dịch: " + S.n; if (navigator.vibrate) navigator.vibrate(30);
+      var b = $("#pull"), scr = $("#scr"), slip = $("#slip"); b.disabled = true; slip.classList.remove("out"); scr.className = "scr"; scr.textContent = "Đang lấy thư trong hộp… 📬"; var ml = $("#mmail"), fl = $("#mflag"); ml.classList.remove("pop"); void ml.offsetWidth; ml.classList.add("pop"); fl.classList.add("up");
+      S.n++; $("#cnt").textContent = "Thư số: " + S.n; if (navigator.vibrate) navigator.vibrate(30);
       setTimeout(function () {
         var sp = null;
-        if (S.n === 3) sp = ["🎉 TRÚNG THƯỞNG GIAO DỊCH THỨ 3!", "Phí “chuyển tiền cảm xúc” được miễn 100%, áp dụng trọn đời."];
-        else if (S.n === 7) sp = ["🔔 THÔNG BÁO", W20.pulls[(Math.random() * W20.pulls.length) | 0]];
-        else if (S.n === 10) sp = ["🤗 MÁY HẾT TIỀN MẶT RỒI…", "Nhưng ôm thì còn vô hạn. Mời chị nhận một cái ôm (từ xa) của anh em."];
+        if (S.n === 3) sp = ["🎉 BỨC THƯ THỨ 3!", "Bức thư này kèm thêm một cái ôm (từ xa) của anh em."];
+        else if (S.n === 7) sp = ["🔔 THƯ MỚI", W20.pulls[(Math.random() * W20.pulls.length) | 0]];
+        else if (S.n === 10) sp = ["🤗 HỘP THƯ HẾT THƯ RỒI…", "Nhưng ôm thì còn vô hạn. Mời chị nhận một cái ôm (từ xa) của anh em."];
         if (sp) { scr.className = "scr win"; scr.innerHTML = "<div>" + sp[0] + "<br><small style='font-weight:600'>" + sp[1] + "</small></div>"; FX.burst(innerWidth / 2, innerHeight * .5, 120); FX.rain(); }
-        else scr.textContent = "Giao dịch thành công ✔ Chị nhận phiếu bên dưới nha.";
+        else scr.textContent = "Có thư mới ✔ Chị đọc bên dưới nha.";
         if (!S.bag.length) S.bag = bag();
-        slip.innerHTML = esc(w20Wish(S.bag.pop(), xw())) + "<small>Phiếu #" + String(S.n).padStart(4, "0") + " · Số dư niềm vui: không giới hạn</small>";
-        void slip.offsetWidth; slip.classList.add("out"); b.disabled = false; lockPull();
-        ST.pulls = Math.max(ST.pulls || 0, S.n); save(); upd();
+        slip.innerHTML = esc(w20Wish(S.bag.pop(), xw())) + "<small>Thư #" + String(S.n).padStart(4, "0") + " · Gửi chị với thật nhiều thương</small>";
+        void slip.offsetWidth; slip.classList.add("out"); b.disabled = false;
+        ST.pulls = Math.max(ST.pulls || 0, S.n); save(); lockPull(); upd();
       }, 1000);
     };
-    upd(); lockPull(); if (!TEST && (ST.pulls || 0) >= 3) $("#scr").textContent = "Chị đã rút đủ 3 lời chúc rồi nha 💐";
+    upd(); lockPull(); if (!TEST && (ST.pulls || 0) >= 3) $("#scr").textContent = "Chị đã lấy đủ 3 bức thư rồi nha 💐";
   }
 
   /* ---------- 3. Thẻ cào ---------- */
