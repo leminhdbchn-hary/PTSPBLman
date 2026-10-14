@@ -119,7 +119,7 @@ function w20BouquetUI(box, opt) {
   opt = typeof opt === "function" ? { onChange: opt } : (opt || {}); var list = (opt.start || []).slice(), MAX = W20SLOT.length, min = opt.min || 1;
   var MEN = (typeof W20CFG !== "undefined" && W20CFG.men) || [], CW = 680, CH = 610, CX = 340, CY = 409, SR = 135, GY = 590, SC = 1.8;
   box.innerHTML = '<div class="bqpal"></div><div class="bqstage"><canvas class="bqcv" width="' + CW + '" height="' + CH + '"></canvas><canvas class="bqan" width="' + CW + '" height="' + CH + '"></canvas></div><div class="bqinfo"></div>'
-    + '<div class="acts"><button type="button" class="btn ghost bqundo" style="font-size:15px;padding:10px 18px">↩️ Bỏ bông vừa cắm</button><button type="button" class="btn pink bqgive" style="font-size:16px;padding:12px 22px">💐 Xong bó hoa</button></div>';
+    + '<div class="acts"><button type="button" class="btn ghost bqauto" style="font-size:15px;padding:10px 18px">🪄 Chọn giúp ' + (opt.min || 1) + ' bông</button><button type="button" class="btn ghost bqundo" style="font-size:15px;padding:10px 18px">↩️ Bỏ bông vừa cắm</button><button type="button" class="btn pink bqgive" style="font-size:16px;padding:12px 22px">💐 Xong bó hoa</button></div>';
   var pal = box.querySelector(".bqpal"), cv = box.querySelector(".bqcv"), g = cv.getContext("2d"), an = box.querySelector(".bqan"), ag = an.getContext("2d"), info = box.querySelector(".bqinfo"), raf = 0, rafA = 0;
   MEN.forEach(function (m) { w20Img(m.img); });
   pal.innerHTML = W20FL.map(function (f, i) { return '<button type="button" class="fl" data-i="' + i + '" aria-label="Thêm hoa ' + f + '"><img alt="" src="' + w20FlowerSprite(i).toDataURL() + '"><span>' + f + "</span></button>"; }).join("");
@@ -163,6 +163,14 @@ function w20BouquetUI(box, opt) {
     var b = e.target.closest(".fl"); if (!b) return; var f = +b.getAttribute("data-i");
     if (actors.length >= 4) { queue.push(f); pendingCount++; text(); return; } spawn(f);
   });
+  /* bấm 1 lần: tự chọn đủ số bông tối thiểu (10) với đủ loại hoa, cắm lần lượt rất nhanh */
+  box.querySelector(".bqauto").onclick = function () {
+    if (actors.length || queue.length || finaleOn) return;
+    var need = min - list.length; if (need <= 0) { info.textContent = "Đủ " + min + " bông rồi, bấm “Xong bó hoa” nha 💐"; return; }
+    var pool = []; while (pool.length < need) pool = pool.concat(W20FL.map(function (_, i) { return i; }).sort(function () { return Math.random() - .5; })); pool.length = need;
+    var k = 0, bt = this; bt.disabled = true;
+    (function add() { if (k >= need) { bt.disabled = false; return; } list.push(pool[k++]); upd(); setTimeout(add, reduce ? 0 : 110); })();
+  };
   box.querySelector(".bqundo").onclick = function () { if (actors.length) return; list.pop(); upd(); };
   var give = box.querySelector(".bqgive");
   give.onclick = function (e) {

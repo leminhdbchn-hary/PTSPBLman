@@ -10,7 +10,7 @@
 <meta name="theme-color" content="#00381f">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E🌹%3C/text%3E%3C/svg%3E">
 <link rel="stylesheet" href="assets/style.css?v=20261013">
-<link rel="stylesheet" href="assets/box.css?v=20261016">
+<link rel="stylesheet" href="assets/box.css?v=20261018">
 </head>
 <body class="bx">
 <canvas id="fx" aria-hidden="true"></canvas>
@@ -70,7 +70,7 @@
   <section class="scene" id="s3" aria-label="Cắm hoa">
     <div class="paper2"><div class="pbody">
       <h2 class="hw">Tự cắm bó hoa xinh</h2>
-      <p class="sub">Chạm vào loại hoa chị thích, các anh sẽ chạy ra cắm giúp. Cắm ít nhất 5 bông rồi bấm “Xong bó hoa”.</p>
+      <p class="sub">Chạm vào loại hoa chị thích, các anh sẽ chạy ra cắm giúp. Đủ 10 bông là thành một bó hoa, hoặc bấm “Chọn giúp 10 bông” để máy chọn hộ.</p>
       <div id="bqbox"></div>
       <div class="gate" id="g3"></div>
     </div></div>
@@ -111,6 +111,7 @@
       <p class="sub">Tải về đăng Facebook, Zalo hay làm hình nền đều xinh.</p>
       <div class="cardbox">
         <canvas id="card" width="1080" height="1620"></canvas>
+        <div class="side">
         <div class="acts">
           <button class="btn" id="dl" type="button">⬇️ Tải thiệp về máy</button>
           <button class="btn pink" id="shr" type="button">📤 Chia sẻ</button>
@@ -119,12 +120,14 @@
         <div class="cwbox" style="margin:6px 0 0;text-align:left;width:100%"><label for="cw" style="font-weight:700">✍️ Sửa lời chúc trên thiệp</label>
           <textarea id="cw" maxlength="220" rows="3" placeholder="Gõ lời chúc của riêng mình vào đây, thiệp cập nhật ngay" style="width:100%;margin-top:6px;font:inherit;font-size:16px;border-radius:14px;padding:10px 12px;resize:vertical;box-sizing:border-box"></textarea>
           <button class="btn ghost" id="cwreset" type="button" style="margin-top:8px;font-size:14px;padding:8px 14px">↩️ Về lời chúc gốc</button></div>
-      </div>
-      <figure class="frame" id="teamframe" tabindex="0" role="button" aria-label="Phóng to ảnh tập thể">
+        <figure class="frame" id="teamframe" tabindex="0" role="button" aria-label="Phóng to ảnh tập thể">
         <span class="nail"></span>
         <div class="fr-in"><img src="assets/team.webp" alt="Ảnh tập thể Phòng PTSPBL" loading="lazy"><i class="co c1"></i><i class="co c2"></i><i class="co c3"></i><i class="co c4"></i></div>
         <figcaption>PTSPBL family</figcaption>
       </figure>
+        </div>
+      </div>
+      
       <p class="endnote">Chúc chị em Phòng PTSPBL một ngày 20/10 thật rực rỡ 🌹<small id="from"></small></p>
     </div></div>
   </section>
@@ -137,7 +140,8 @@
 <script src="assets/people.js?v=20261013"></script>
 <script src="assets/common.js?v=20261013"></script>
 <script src="assets/flowers.js?v=20261013"></script>
-<script src="assets/modules.js?v=20261013"></script>
+<script src="assets/modules.js?v=20261016"></script>
+<script src="assets/boxflow.js?v=20261016"></script>
 <script>
 (function () {
   var $ = function (s) { return document.querySelector(s); };
@@ -161,29 +165,15 @@
   function wishIdx() { return S.w !== null && S.w !== undefined ? S.w : dv().w; }
 
   /* ---------- Các lớp hộp quà: lớn → bé dần, mỗi bước là một lớp mở ra ---------- */
-  var N = 7, cur = -1, reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
-  var LAY = [["#c2185b", "#8e0f45", "#e8458a"], ["#c9971c", "#8a6410", "#f0c75a"], ["#2f8f5b", "#1b5e3a", "#58c28a"], ["#d46a92", "#9c3a60", "#f09ab9"], ["#a8742a", "#6f4a14", "#d9a850"], ["#b3265f", "#7a1440", "#dc5a8a"], ["#e08aa8", "#a85575", "#f6b6cb"]];
-  function boxW(i) { return Math.round(Math.min(280 - i * 24, innerWidth * .7)); } /* 280 → 136px: hộp càng về sau càng nhỏ */
-  function boxHTML(i) { var c = LAY[Math.max(0, Math.min(i, N - 1))]; return '<div class="gb" style="--w:' + boxW(i) + 'px;--c:' + c[0] + ";--c2:" + c[1] + ";--c3:" + c[2] + '"><div class="gb-body"></div><div class="gb-lid"><span class="gb-bow">🎀</span></div></div>'; }
+  var N = 7, scratchOK = function () { return typeof cleared !== "undefined" && cleared; };
   function scene(i) { return i < 0 ? $("#sc-intro") : $("#s" + i); }
-  function frame(i) { var c = LAY[i], el = scene(i); el.style.setProperty("--c", c[0]); el.style.setProperty("--c3", c[2]); el.style.setProperty("--m", (8 + i * 5) + "px"); }
-  function reveal(i) {
-    [].forEach.call(document.querySelectorAll(".scene"), function (x) { x.classList.remove("on", "leave"); });
-    if (i >= 0) frame(i); var el = scene(i); el.classList.add("on"); cur = i;
-    var pb = el.querySelector(".pbody"); if (pb) pb.scrollTop = 0;
-    if (i === 2 && !cleared && window.w20PaintScratch) setTimeout(window.w20PaintScratch, 40);
+  var FL = W20Flow.make({ N: N, stage: "#stage", scene: scene, onReveal: function (i) {
+    if (i === 2 && !scratchOK() && window.w20PaintScratch) setTimeout(window.w20PaintScratch, 40);
     if (i === 6) card();
-  }
-  /* mở hộp: hộp rơi xuống, nắp bật ra, phóng to rồi lộ lớp bên trong */
-  function unbox(i, cb) {
-    var ub = document.createElement("div"); ub.className = "ub"; ub.innerHTML = boxHTML(i); $("#stage").appendChild(ub);
-    var prev = scene(cur); if (prev) prev.classList.add("leave");
-    requestAnimationFrame(function () { ub.classList.add("in"); });
-    setTimeout(function () { ub.querySelector(".gb").classList.add("open"); FX.burst(innerWidth / 2, innerHeight * .45, 60); if (navigator.vibrate) navigator.vibrate(25); }, 700);
-    setTimeout(function () { reveal(i); ub.classList.add("out"); }, 1450);
-    setTimeout(function () { ub.remove(); cb && cb(); }, 2050);
-  }
-  function show(i, anim) { if (!anim || reduce) { reveal(i); return; } unbox(i); }
+  } });
+  function boxHTML(i) { return FL.boxHTML(i); }
+  function show(i, anim) { FL.show(i, anim); }
+  function unbox(i) { FL.unbox(i); }
   function gate(k, txt) { var g = $("#g" + k); if (g && ST.step === k) { g.className = "gate"; g.textContent = txt; } }
   function done(k, delay, quiet) {
     if (ST.step !== k) return; ST.step = k + 1; save();
@@ -280,9 +270,9 @@
 
   /* ---------- 4. Cắm hoa ---------- */
   function flowers() {
-    w20BouquetUI($("#bqbox"), { min: 5, start: ST.bq, onChange: function (l) { ST.bq = l; save(); cardSoon(); },
+    w20BouquetUI($("#bqbox"), { min: 10, start: ST.bq, onChange: function (l) { ST.bq = l; save(); cardSoon(); },
       onDone: function (l, e) { ST.bq = l; ST.bqDone = 1; save(); card(); FX.burst(e.clientX, e.clientY, 120); toast("Bó hoa xinh quá trời 💐"); done(3, 1800); } });
-    if (ST.bqDone) done(3, 0, true); else gate(3, "Cắm ít nhất 5 bông rồi bấm “Xong bó hoa”");
+    if (ST.bqDone) done(3, 0, true); else gate(3, "Cắm đủ 10 bông rồi bấm “Xong bó hoa”");
   }
 
   /* ---------- 5. Vòng quay 1 lượt, quà đã chia sẵn ---------- */
