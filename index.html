@@ -6,141 +6,129 @@
 <title>20/10 · Bản phát hành đặc biệt dành cho chị em Phòng PTSPBL</title>
 <meta name="description" content="Bản cập nhật v20.10: lời chúc, quà và thiệp riêng cho từng chị em Phòng PTSPBL.">
 <meta property="og:title" content="20/10 · Bản phát hành đặc biệt v20.10">
-<meta property="og:description" content="Bấm GO-LIVE để nhận quà nha chị!">
+<meta property="og:description" content="Chạm vào hộp quà để mở nha chị!">
 <meta name="theme-color" content="#00381f">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E🌹%3C/text%3E%3C/svg%3E">
 <link rel="stylesheet" href="assets/style.css?v=20261013">
+<link rel="stylesheet" href="assets/box.css?v=20261014">
 </head>
-<body>
+<body class="bx">
 <canvas id="fx" aria-hidden="true"></canvas>
 
-<!-- Màn GO-LIVE -->
-<div id="splash">
-  <div class="term" role="status" aria-live="polite">
-    <div class="dots"><i></i><i></i><i></i></div>
-    <p id="t1"></p><p id="t2"></p><p id="t3"></p><p id="t4"></p><p id="t5"></p>
-    <div class="bar"><i id="bar"></i></div>
-    <button class="btn pink" id="go" type="button">🚀 GO-LIVE!</button>
-  </div>
-</div>
-
-<nav id="prog" aria-label="Tiến độ"><div class="pt"><span id="progT"></span><b id="progN"></b></div><div class="dots" id="progD"></div></nav>
-
-<main id="app">
-  <section id="hero">
-    <span class="badge">v20.10 · BẢN PHÁT HÀNH ĐẶC BIỆT</span>
-    <div class="big">CHÚC MỪNG<br>20/10</div>
-    <div class="orn">✦</div>
-    <p class="hello" id="hello"></p>
-    <div id="bday"></div>
-    <p class="lead" id="lead"></p>
-    <form class="nameform" id="nameform" autocomplete="off">
-      <select id="xsel" aria-label="Xưng hô"><option>Chị</option><option>Em</option><option>Cô</option><option>Bạn</option></select>
-      <input id="nameinp" placeholder="Nhập tên để nhận thiệp riêng" maxlength="40" aria-label="Tên của bạn">
-      <button class="btn pink" style="padding:10px 18px;font-size:16px" type="submit">OK</button>
-    </form>
-    <p class="sub" style="max-width:520px;margin:6px auto 18px">Trang này có <b>7 phần quà</b>, mở lần lượt từng phần một. Xong phần nào là tự động sang phần kế tiếp nha 🎁</p>
-    <button class="btn" id="start" type="button">Mở quà thôi ↓</button>
-  </section>
-
-  <!-- 1. Release notes -->
-  <section class="step" id="s0">
-    <span class="kicker">Phần 1/7 · Release Notes</span>
-    <h2>Bản v20.10 có gì mới?</h2>
-    <p class="sub">Chạm vào từng dòng để đọc. Đọc hết 6 dòng là mở được phần tiếp theo.</p>
-    <div class="notes" id="noteList"></div>
-    <div class="gate" id="g0"></div>
-  </section>
-
-  <!-- 2. Máy rút lời chúc -->
-  <section class="step" id="s1">
-    <span class="kicker">Phần 2/7 · Máy rút lời chúc</span>
-    <h2>Rút lời chúc, không cần thẻ</h2>
-    <p class="sub">Bấm “Rút” 3 lần để nhận 3 lời chúc. Lần thứ 3 có bất ngờ đó.</p>
-    <div class="atm">
-      <div class="scr" id="scr">Mời chị bấm nút để bắt đầu giao dịch 💳</div>
-      <div class="row"><span class="cnt" id="cnt">Giao dịch: 0</span><button class="btn pink" id="pull" type="button">RÚT 💸</button></div>
-      <div class="slot"></div>
-      <div class="slipwrap"><div class="slip" id="slip"></div></div>
+<div id="stage">
+  <!-- Hộp quà to nhất: chạm để mở -->
+  <section class="scene on" id="sc-intro" aria-label="Hộp quà">
+    <div class="intro">
+      <p class="hw1" id="hello"></p>
+      <form class="nameform" id="nameform" autocomplete="off">
+        <select id="xsel" aria-label="Xưng hô"><option>Chị</option><option>Em</option><option>Cô</option><option>Bạn</option></select>
+        <input id="nameinp" placeholder="Nhập tên để nhận quà riêng" maxlength="40" aria-label="Tên của bạn">
+        <button class="btn pink" style="padding:10px 18px;font-size:16px" type="submit">OK</button>
+      </form>
+      <button class="giftbtn" id="openbox" type="button" aria-label="Mở hộp quà"></button>
+      <p class="tapme">Chạm vào hộp quà để mở 🎁</p>
     </div>
-    <div class="gate" id="g1"></div>
   </section>
 
-  <!-- 3. Thẻ cào -->
-  <section class="step" id="s2">
-    <span class="kicker">Phần 3/7 · Thẻ cào</span>
-    <h2>Cào nhẹ tay thôi, quà không chạy đâu</h2>
-    <p class="sub">Dùng ngón tay (hoặc chuột) cào lớp bạc cho tới khi lộ ưu đãi.</p>
-    <div class="scwrap" id="scwrap"><div class="under" id="under"></div><canvas id="scv"></canvas></div>
-    <div class="gate" id="g2"></div>
+  <!-- Lớp 1: thư nhỏ (Release Notes) -->
+  <section class="scene" id="s0" aria-label="Lá thư nhỏ">
+    <div class="paper2"><div class="pbody">
+      <h2 class="hw">Lá thư nhỏ gửi chị</h2>
+      <p class="sub" id="lead"></p>
+      <div id="bday"></div>
+      <div class="notes" id="noteList"></div>
+      <div class="gate" id="g0"></div>
+    </div></div>
   </section>
 
-  <!-- 5. Cắm hoa -->
-  <section class="step" id="s3">
-    <span class="kicker">Phần 4/7 · Cắm hoa</span>
-    <h2>Tự cắm một bó hoa thật xinh</h2>
-    <p class="sub">Chạm vào loại hoa chị thích, các anh sẽ chạy ra, mỗi anh cầm một bông cắm vào bó giúp chị. Cắm ít nhất 5 bông rồi bấm “Xong bó hoa”. Bó hoa sẽ nằm trên thiệp của chị.</p>
-    <div id="bqbox"></div>
-    <div class="gate" id="g3"></div>
-  </section>
-
-  <!-- 6. Vòng quay -->
-  <section class="step" id="s4">
-    <span class="kicker">Phần 5/7 · Vòng quay quà</span>
-    <h2>Quay 1 lần, nhận 1 món quà</h2>
-    <p class="sub">Mỗi người quay 1 lần duy nhất. Quà anh em chuẩn bị thật và trao tận tay ở buổi gặp mặt.</p>
-    <div class="wheelbox"><canvas id="wcv" width="640" height="640"></canvas></div>
-    <p style="text-align:center;margin-top:14px"><button class="btn pink" id="spin" type="button">🎡 QUAY NGAY</button></p>
-    <div id="prize"></div>
-    <div class="reqbox" id="reqbox">
-      <b>🙋 Chị muốn nhờ anh em việc gì?</b>
-      <textarea id="reqtxt" maxlength="300" placeholder="VD: Bê giúp em bình nước, lấy giúp em đồ ship, pha giúp em ly trà…"></textarea>
-      <button class="btn pink" id="reqsend" type="button" style="width:100%">📨 Gửi cho anh em</button>
-      <div class="spun" id="reqmsg"></div>
-    </div>
-    <div class="gate" id="g4"></div>
-  </section>
-
-  <!-- 7. Tường lời chúc -->
-  <section class="step" id="s5">
-    <span class="kicker">Phần 6/7 · Anh em nhắn gửi</span>
-    <h2>Mấy lời anh em muốn nói</h2>
-    <div class="wall" id="wall"></div>
-    <p style="text-align:center;margin-top:18px"><button class="btn" id="readwall" type="button">Đọc hết rồi 💌</button></p>
-    <div class="gate" id="g5"></div>
-  </section>
-
-  <!-- 8. Thiệp riêng -->
-  <section class="step" id="s6">
-    <span class="kicker">Phần 7/7 · Thiệp riêng</span>
-    <h2>Thiệp 20/10 của riêng chị</h2>
-    <p class="sub">Tải về đăng Facebook, Zalo hay làm hình nền đều xinh. Khung đứng 2:3 vừa đẹp để đăng mạng xã hội.</p>
-    <div class="cardbox">
-      <canvas id="card" width="1080" height="1620"></canvas>
-      <div class="acts">
-        <button class="btn" id="dl" type="button">⬇️ Tải thiệp về máy</button>
-        <button class="btn pink" id="shr" type="button">📤 Chia sẻ</button>
-        <button class="btn ghost" id="rnd" type="button">🎲 Đổi lời chúc khác</button>
+  <!-- Lớp 2: máy rút lời chúc -->
+  <section class="scene" id="s1" aria-label="Rút lời chúc">
+    <div class="paper2"><div class="pbody">
+      <h2 class="hw">Rút lời chúc</h2>
+      <p class="sub">Bấm “Rút” 3 lần để nhận 3 lời chúc. Lần thứ 3 có bất ngờ đó.</p>
+      <div class="atm">
+        <div class="scr" id="scr">Mời chị bấm nút để bắt đầu giao dịch 💳</div>
+        <div class="row"><span class="cnt" id="cnt">Giao dịch: 0</span><button class="btn pink" id="pull" type="button">RÚT 💸</button></div>
+        <div class="slot"></div>
+        <div class="slipwrap"><div class="slip" id="slip"></div></div>
       </div>
-      <div class="cwbox" style="margin:14px 0 0;text-align:left"><label for="cw" style="font-weight:700;font-size:15px">✍️ Sửa lời chúc trên thiệp</label>
-        <textarea id="cw" maxlength="220" rows="3" placeholder="Gõ lời chúc của riêng mình vào đây, thiệp cập nhật ngay" style="width:100%;margin-top:6px;font:inherit;font-size:16px;border-radius:14px;border:2px solid rgba(255,255,255,.35);background:rgba(255,255,255,.12);color:#fff;padding:10px 12px;resize:vertical;box-sizing:border-box"></textarea>
-        <button class="btn ghost" id="cwreset" type="button" style="margin-top:8px;font-size:14px;padding:8px 14px">↩️ Về lời chúc gốc</button></div>
-    </div>
-    <figure class="frame" id="teamframe" tabindex="0" role="button" aria-label="Phóng to ảnh tập thể">
-      <span class="nail"></span>
-      <div class="fr-in"><img src="assets/team.webp" alt="Ảnh tập thể Phòng PTSPBL" loading="lazy"><i class="co c1"></i><i class="co c2"></i><i class="co c3"></i><i class="co c4"></i></div>
-      <figcaption>PTSPBL family</figcaption>
-    </figure>
+      <div class="gate" id="g1"></div>
+    </div></div>
   </section>
 
-  <div class="lockbox" id="lock"></div>
+  <!-- Lớp 3: thẻ cào -->
+  <section class="scene" id="s2" aria-label="Thẻ cào">
+    <div class="paper2"><div class="pbody">
+      <h2 class="hw">Cào nhẹ tay thôi</h2>
+      <p class="sub">Quà không chạy đâu. Dùng ngón tay cào lớp bạc cho tới khi lộ ưu đãi.</p>
+      <div class="scwrap" id="scwrap"><div class="under" id="under"></div><canvas id="scv"></canvas></div>
+      <div class="gate" id="g2"></div>
+    </div></div>
+  </section>
 
-  <footer>
-    <p>Chúc chị em Phòng PTSPBL một ngày 20/10 thật rực rỡ 🌹</p>
-    <p id="from"></p>
-    <p style="opacity:.6;font-size:13px">Trang chúc mừng nội bộ, làm cho vui · không liên quan đến sản phẩm thật của ngân hàng.</p>
-  </footer>
-</main>
+  <!-- Lớp 4: cắm hoa -->
+  <section class="scene" id="s3" aria-label="Cắm hoa">
+    <div class="paper2"><div class="pbody">
+      <h2 class="hw">Tự cắm bó hoa xinh</h2>
+      <p class="sub">Chạm vào loại hoa chị thích, các anh sẽ chạy ra cắm giúp. Cắm ít nhất 5 bông rồi bấm “Xong bó hoa”.</p>
+      <div id="bqbox"></div>
+      <div class="gate" id="g3"></div>
+    </div></div>
+  </section>
+
+  <!-- Lớp 5: vòng quay -->
+  <section class="scene" id="s4" aria-label="Vòng quay quà">
+    <div class="paper2"><div class="pbody">
+      <h2 class="hw">Quay 1 lần, nhận 1 món quà</h2>
+      <p class="sub">Quà anh em chuẩn bị thật và trao tận tay ở buổi gặp mặt.</p>
+      <div class="wheelbox"><canvas id="wcv" width="640" height="640"></canvas></div>
+      <p style="text-align:center;margin-top:12px"><button class="btn pink" id="spin" type="button">🎡 QUAY NGAY</button></p>
+      <div id="prize"></div>
+      <div class="reqbox" id="reqbox">
+        <b>🙋 Chị muốn nhờ anh em việc gì?</b>
+        <textarea id="reqtxt" maxlength="300" placeholder="VD: Bê giúp em bình nước, lấy giúp em đồ ship, pha giúp em ly trà…"></textarea>
+        <button class="btn pink" id="reqsend" type="button" style="width:100%">📨 Gửi cho anh em</button>
+        <div class="spun" id="reqmsg"></div>
+      </div>
+      <div class="gate" id="g4"></div>
+    </div></div>
+  </section>
+
+  <!-- Lớp 6: lời nhắn của anh em -->
+  <section class="scene" id="s5" aria-label="Lời nhắn của anh em">
+    <div class="paper2"><div class="pbody">
+      <h2 class="hw">Mấy lời anh em muốn nói</h2>
+      <div class="wall" id="wall"></div>
+      <p style="text-align:center;margin-top:14px"><button class="btn" id="readwall" type="button">Đọc hết rồi 💌</button></p>
+      <div class="gate" id="g5"></div>
+    </div></div>
+  </section>
+
+  <!-- Lớp 7 (hộp nhỏ nhất): thiệp riêng -->
+  <section class="scene" id="s6" aria-label="Thiệp riêng">
+    <div class="paper2"><div class="pbody">
+      <h2 class="hw">Thiệp của riêng chị</h2>
+      <p class="sub">Tải về đăng Facebook, Zalo hay làm hình nền đều xinh.</p>
+      <div class="cardbox">
+        <canvas id="card" width="1080" height="1620"></canvas>
+        <div class="acts">
+          <button class="btn" id="dl" type="button">⬇️ Tải thiệp về máy</button>
+          <button class="btn pink" id="shr" type="button">📤 Chia sẻ</button>
+          <button class="btn ghost" id="rnd" type="button">🎲 Đổi lời chúc khác</button>
+        </div>
+        <div class="cwbox" style="margin:6px 0 0;text-align:left;width:100%"><label for="cw" style="font-weight:700">✍️ Sửa lời chúc trên thiệp</label>
+          <textarea id="cw" maxlength="220" rows="3" placeholder="Gõ lời chúc của riêng mình vào đây, thiệp cập nhật ngay" style="width:100%;margin-top:6px;font:inherit;font-size:16px;border-radius:14px;padding:10px 12px;resize:vertical;box-sizing:border-box"></textarea>
+          <button class="btn ghost" id="cwreset" type="button" style="margin-top:8px;font-size:14px;padding:8px 14px">↩️ Về lời chúc gốc</button></div>
+      </div>
+      <figure class="frame" id="teamframe" tabindex="0" role="button" aria-label="Phóng to ảnh tập thể">
+        <span class="nail"></span>
+        <div class="fr-in"><img src="assets/team.webp" alt="Ảnh tập thể Phòng PTSPBL" loading="lazy"><i class="co c1"></i><i class="co c2"></i><i class="co c3"></i><i class="co c4"></i></div>
+        <figcaption>PTSPBL family</figcaption>
+      </figure>
+      <p class="endnote">Chúc chị em Phòng PTSPBL một ngày 20/10 thật rực rỡ 🌹<small id="from"></small></p>
+    </div></div>
+  </section>
+</div>
 <div class="toast" id="toast" role="status"></div>
 
 <script src="assets/config.js?v=20261013"></script>
@@ -172,56 +160,50 @@
   function role() { return W20.roles[S.r !== null && S.r !== undefined ? S.r : dv().r]; }
   function wishIdx() { return S.w !== null && S.w !== undefined ? S.w : dv().w; }
 
-  /* ---------- Mở khóa từng phần ---------- */
-  var N = 7, HINT = ["Đọc hết 6 dòng Release Notes", "Rút đủ 3 lời chúc ở máy", "Cào lộ thẻ ưu đãi", "Cắm xong bó hoa", "Quay vòng quay quà", "Đọc lời nhắn của anh em"];
-  var NAMES = ["Release Notes", "Máy rút lời chúc", "Thẻ cào", "Cắm hoa", "Vòng quay quà", "Lời nhắn anh em", "Thiệp riêng"];
-  function prog() {
-    var cur = Math.min(ST.step, N - 1);
-    $("#progT").textContent = "Phần " + (cur + 1) + "/" + N + " · " + NAMES[cur]; $("#progN").textContent = Math.round(Math.min(ST.step, N) / N * 100) + "%";
-    $("#progD").innerHTML = NAMES.map(function (n, i) { return '<button type="button" data-i="' + i + '" aria-label="' + n + '" class="' + (i < ST.step ? "done" : i === ST.step ? "cur" : "") + '"></button>'; }).join("");
+  /* ---------- Các lớp hộp quà: lớn → bé dần, mỗi bước là một lớp mở ra ---------- */
+  var N = 7, cur = -1, reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var LAY = [["#c2185b", "#8e0f45", "#e8458a"], ["#c9971c", "#8a6410", "#f0c75a"], ["#2f8f5b", "#1b5e3a", "#58c28a"], ["#d46a92", "#9c3a60", "#f09ab9"], ["#a8742a", "#6f4a14", "#d9a850"], ["#b3265f", "#7a1440", "#dc5a8a"], ["#e08aa8", "#a85575", "#f6b6cb"]];
+  function boxW(i) { return Math.round(Math.min(280 - i * 24, innerWidth * .7)); } /* 280 → 136px: hộp càng về sau càng nhỏ */
+  function boxHTML(i) { var c = LAY[Math.max(0, Math.min(i, N - 1))]; return '<div class="gb" style="--w:' + boxW(i) + 'px;--c:' + c[0] + ";--c2:" + c[1] + ";--c3:" + c[2] + '"><div class="gb-body"></div><div class="gb-lid"><span class="gb-bow">🎀</span></div></div>'; }
+  function scene(i) { return i < 0 ? $("#sc-intro") : $("#s" + i); }
+  function frame(i) { var c = LAY[i], el = scene(i); el.style.setProperty("--c", c[0]); el.style.setProperty("--c3", c[2]); el.style.setProperty("--m", (8 + i * 5) + "px"); }
+  function reveal(i) {
+    [].forEach.call(document.querySelectorAll(".scene"), function (x) { x.classList.remove("on", "leave"); });
+    if (i >= 0) frame(i); var el = scene(i); el.classList.add("on"); cur = i;
+    var pb = el.querySelector(".pbody"); if (pb) pb.scrollTop = 0;
+    if (i === 2 && !cleared && window.w20PaintScratch) setTimeout(window.w20PaintScratch, 40);
+    if (i === 6) card();
   }
-  $("#progD").onclick = function (e) { var b = e.target.closest("button"); if (!b) return; var i = +b.getAttribute("data-i"); if (i <= ST.step) $("#s" + i).scrollIntoView({ behavior: "smooth", block: "start" }); };
-  function showSteps(scrollTo) {
-    prog();
-    for (var i = 0; i < N; i++) $("#s" + i).classList.toggle("open", i <= ST.step);
-    var lk = $("#lock");
-    if (ST.step >= N - 1) lk.style.display = "none";
-    else { lk.style.display = ""; lk.innerHTML = "<b>🔒 Còn " + (N - 1 - ST.step) + " phần quà đang khóa</b>Mở khóa bằng cách: " + esc(HINT[ST.step]) + " ở phần trên nha."; }
-    if (scrollTo !== undefined) setTimeout(function () { var el = $("#s" + scrollTo); if (el) el.scrollIntoView({ behavior: "smooth", block: "start" }); }, 250);
+  /* mở hộp: hộp rơi xuống, nắp bật ra, phóng to rồi lộ lớp bên trong */
+  function unbox(i, cb) {
+    var ub = document.createElement("div"); ub.className = "ub"; ub.innerHTML = boxHTML(i); $("#stage").appendChild(ub);
+    var prev = scene(cur); if (prev) prev.classList.add("leave");
+    requestAnimationFrame(function () { ub.classList.add("in"); });
+    setTimeout(function () { ub.querySelector(".gb").classList.add("open"); FX.burst(innerWidth / 2, innerHeight * .45, 60); if (navigator.vibrate) navigator.vibrate(25); }, 700);
+    setTimeout(function () { reveal(i); ub.classList.add("out"); }, 1450);
+    setTimeout(function () { ub.remove(); cb && cb(); }, 2050);
   }
-  var advT = 0;
-  function done(k, delay, quiet) {
-    if (ST.step !== k) return; ST.step = k + 1; save(); showSteps();
-    var g = $("#g" + k); if (g) { g.className = "gate ok"; g.textContent = quiet ? "✔ Xong rồi!" : "✔ Xong! Đang sang phần tiếp theo…"; }
-    FX.burst(innerWidth / 2, innerHeight * .55, 70);
-    if (quiet) return; /* mở lại trang: giữ nguyên chỗ cũ, không tự cuộn */
-    clearTimeout(advT); advT = setTimeout(function () { var el = $("#s" + (k + 1)); if (el) el.scrollIntoView({ behavior: "smooth", block: "start" }); }, delay === undefined ? 1500 : delay);
-  }
+  function show(i, anim) { if (!anim || reduce) { reveal(i); return; } unbox(i); }
   function gate(k, txt) { var g = $("#g" + k); if (g && ST.step === k) { g.className = "gate"; g.textContent = txt; } }
-
-  /* ---------- GO-LIVE ---------- */
-  function splash() {
-    var lines = [
-      "$ deploy <b>v20.10</b> --cho=chi-em-ptspbl",
-      "▸ Kiểm thử UAT ..... ✔ Đạt (tester nào cũng cười)",
-      "▸ Rủi ro ........... ✔ 0% (đã bảo hiểm bằng đồ ăn)",
-      "▸ Độ hài lòng ...... ✔ 120% kế hoạch",
-      "▸ Đã phát hiện người dùng xinh đẹp: <b>" + esc(S.to ? who() : "Chị em PTSPBL") + "</b> 💐"
-    ];
-    var i = 0, bar = $("#bar"), reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
-    (function step() { if (i < lines.length) { $("#t" + (i + 1)).innerHTML = lines[i]; bar.style.width = ((i + 1) / lines.length * 100) + "%"; i++; setTimeout(step, reduce ? 120 : 650); } else $("#go").classList.add("show"); })();
-    $("#go").onclick = function (e) { $("#splash").classList.add("off"); $("#prog").classList.add("on"); FX.burst(e.clientX || innerWidth / 2, e.clientY || innerHeight / 2, 110); FX.rain(); setTimeout(function () { scrollTo(0, 0); }, 50); };
+  function done(k, delay, quiet) {
+    if (ST.step !== k) return; ST.step = k + 1; save();
+    var g = $("#g" + k); if (g) { g.className = "gate ok"; g.textContent = "✔ Xong rồi!"; }
+    FX.burst(innerWidth / 2, innerHeight * .55, 70);
+    if (quiet || loading) return; /* mở lại trang: vào thẳng lớp đang dở, không chạy hiệu ứng */
+    setTimeout(function () { show(k + 1, true); }, delay === undefined ? 1500 : delay);
   }
 
-  /* ---------- Lời chào ---------- */
+  /* ---------- Màn mở đầu + lời chào ---------- */
   function hero() {
+    var ob = $("#openbox"); if (!ob.firstChild) ob.innerHTML = boxHTML(0);
     if (S.to) {
-      $("#hello").innerHTML = "<em>" + esc(who()) + "</em> ơi, hệ thống vừa xác nhận " + esc(xw()) + " là<br><span class='line2 nowrap'>Tài sản quý nhất Phòng!</span>";
-      $("#lead").textContent = "Không cần thế chấp, không cần bảo lãnh, mà yêu thương thì không giới hạn hạn mức. 20/10 này chúc " + xw() + " thật vui, thật xinh và thật… ít việc nha!";
+      $("#hello").textContent = "Gửi " + who() + ", có quà cho " + xw() + " nè!";
+      $("#lead").textContent = who() + " ơi, hệ thống vừa xác nhận " + xw() + " là “Tài sản quý nhất Phòng!”. 20/10 này chúc " + xw() + " thật vui, thật xinh và thật… ít việc nha!";
       $("#nameform").style.display = "none";
     } else {
-      $("#hello").innerHTML = "<em>Chị em Phòng PTSPBL</em> ơi, hệ thống vừa xác nhận các chị là<br><span class='line2 nowrap'>Tài sản quý nhất Phòng!</span>";
-      $("#lead").textContent = "Không cần thế chấp, không cần bảo lãnh, mà yêu thương thì không giới hạn hạn mức. Nhập tên để nhận thiệp riêng nha!";
+      $("#hello").textContent = "Gửi các chị em Phòng PTSPBL";
+      $("#lead").textContent = "Hệ thống vừa xác nhận các chị là “Tài sản quý nhất Phòng!”. Nhập tên để nhận quà và thiệp riêng nha!";
+      $("#nameform").style.display = "";
     }
     $("#bday").innerHTML = S.bd ? "<div class='bday'>🎂 Psst… tháng 10 còn là tháng sinh nhật của " + esc(xw()) + " nữa. Chúc mừng sinh nhật " + esc(xw()) + " nha!</div>" : "";
     $("#from").textContent = "Thương mến, " + S.f;
@@ -230,7 +212,9 @@
       S.to = n; S.full = n; S.x = $("#xsel").value; try { history.replaceState(null, "", w20Link(location.pathname, { to: S.to, x: S.x })); } catch (er) {}
       hero(); card(); FX.burst(innerWidth / 2, innerHeight / 3, 80);
     };
-    $("#start").onclick = function () { $("#s0").scrollIntoView({ behavior: "smooth", block: "start" }); };
+    $("#openbox").onclick = function () {
+      ST.opened = 1; save(); unbox(0);
+    };
   }
 
   /* ---------- 1. Release notes ---------- */
@@ -362,16 +346,10 @@
   $("#rnd").onclick = function (e) { S.w = (wishIdx() + 1 + ((Math.random() * (W20.wishes.length - 1)) | 0)) % W20.wishes.length; ST.w = S.w; delete ST.cw; save(); cwEl.value = curWish(); card(); FX.burst(e.clientX, e.clientY, 50); toast("Đổi lời chúc rồi nè 🎲"); };
 
   /* ---------- khởi động ---------- */
-  function boot() {
-  FX.init(); splash(); hero(); showSteps();
-  notes(); atm(); scratch(); flowers(); wheel(); wall(); card();
-  loading = false; showSteps();
-  }
-  /* Dữ liệu lưu theo từng điện thoại (localStorage): máy nào mở lần đầu thì mở bình thường, máy đó mở lại chỉ thấy đúng dữ liệu cũ của nó */
-  boot();
+  FX.init(); hero(); notes(); atm(); scratch(); flowers(); wheel(); wall(); card();
+  loading = false;
+  if (ST.opened || ST.step > 0) show(Math.min(ST.step, N - 1), false); /* đã mở trước đó: vào lại đúng lớp đang dở */
   if (document.fonts && document.fonts.load) Promise.all(FONTS.map(function (f) { return document.fonts.load(f, "Chị Hạnh ơi 20.10"); })).then(card, card);
-  /* vẽ lại lớp bạc khi phần thẻ cào vừa mở (lúc trước đang ẩn nên chưa có kích thước) */
-  new MutationObserver(function () { if ($("#s2").classList.contains("open") && !cleared && window.w20PaintScratch) window.w20PaintScratch(); }).observe($("#s2"), { attributes: true, attributeFilter: ["class"] });
 })();
 </script>
 </body>
