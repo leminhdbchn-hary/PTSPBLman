@@ -110,9 +110,7 @@
       <h2 class="hw">Thiệp của riêng chị</h2>
       <p class="sub">Tải về đăng Facebook, Zalo hay làm hình nền đều xinh.</p>
       <div class="cardbox">
-        <div class="sidetabs"><button class="stab on" id="face0" type="button">Mặt trước</button><button class="stab" id="face1" type="button">Mặt sau · Thư tay</button></div>
         <canvas id="card" width="1080" height="1620"></canvas>
-        <canvas id="card2" width="1080" height="1620" hidden></canvas>
         <div class="side">
         <div class="acts">
           <button class="btn" id="dl" type="button">⬇️ Tải thiệp về máy</button>
@@ -142,7 +140,7 @@
 <script src="assets/people.js?v=20261013"></script>
 <script src="assets/common.js?v=20261013"></script>
 <script src="assets/flowers.js?v=20261013"></script>
-<script src="assets/modules.js?v=20261019"></script>
+<script src="assets/modules.js?v=20261021"></script>
 <script src="assets/boxflow.js?v=20261016"></script>
 <script>
 (function () {
@@ -314,24 +312,16 @@
     var pk = ST.prizes.map(function (i) { return W20CFG.prizes[i]; }).filter(Boolean);
     w20DrawCard(g, { mode: "chi", greet: "Thân gửi:", name: S.full ? S.x + " " + S.full : "Các chị em Phòng PTSPBL", sub: S.title || "", role: role(),
       wish: ST.cw ? ST.cw : w20Wish(wishIdx(), S.full ? S.x.toLowerCase() : "chị em"), bd: S.bd, prizes: pk, from: S.f, bq: ST.bq });
-    /* mặt sau: thư tay gom 3 lời chúc đã rút ở hộp thư + quà + chữ ký các anh */
-    var slips = (ST.slips || []).map(function (k) { return w20Wish(k, xw()); }); if (!slips.length) slips = [ST.cw ? ST.cw : w20Wish(wishIdx(), xw())];
-    w20DrawBack($("#card2").getContext("2d"), { title: S.full ? S.x + " " + S.full : "các chị em Phòng PTSPBL", intro: "Anh em gom lại mấy lời chúc riêng cho " + xw() + " nhân ngày 20/10:", items: slips,
-      gift: pk[0] || null, closing: "Thương " + xw() + " nhiều lắm, chúc " + xw() + " luôn xinh đẹp, khỏe mạnh và thật nhiều niềm vui nha!", from: S.f });
   }
-  var face = 0;
-  function setFace(k) { face = k; $("#card").hidden = !!k; $("#card2").hidden = !k; $("#face0").classList.toggle("on", !k); $("#face1").classList.toggle("on", !!k); card(); }
-  $("#face0").onclick = function () { setFace(0); }; $("#face1").onclick = function () { setFace(1); };
-  function curCard() { return face ? $("#card2") : $("#card"); }
   var bgImg = w20Img("assets/card-bg.webp"); if (!bgImg.complete) bgImg.onload = function () { card(); };
   function rr(g, x, y, w, h, r) { g.beginPath(); g.moveTo(x + r, y); g.arcTo(x + w, y, x + w, y + h, r); g.arcTo(x + w, y + h, x, y + h, r); g.arcTo(x, y + h, x, y, r); g.arcTo(x, y, x + w, y, r); g.closePath(); }
   function fname() { return "thiep-20-10-" + w20Fold(S.full || "ptspbl").replace(/[^a-z0-9]+/g, "-") + ".png"; }
   $("#dl").onclick = function () {
-    card(); curCard().toBlob(function (b) { var a = document.createElement("a"); a.href = URL.createObjectURL(b); a.download = fname().replace(".png", face ? "-mat-sau.png" : ".png"); document.body.appendChild(a); a.click(); setTimeout(function () { URL.revokeObjectURL(a.href); a.remove(); }, 1500); toast("Đã tải thiệp về máy 🌹"); FX.burst(innerWidth / 2, innerHeight * .6, 70); }, "image/png");
+    card(); $("#card").toBlob(function (b) { var a = document.createElement("a"); a.href = URL.createObjectURL(b); a.download = fname(); document.body.appendChild(a); a.click(); setTimeout(function () { URL.revokeObjectURL(a.href); a.remove(); }, 1500); toast("Đã tải thiệp về máy 🌹"); FX.burst(innerWidth / 2, innerHeight * .6, 70); }, "image/png");
   };
   $("#shr").onclick = function () {
     card();
-    curCard().toBlob(function (b) {
+    $("#card").toBlob(function (b) {
       var file = null; try { file = new File([b], fname(), { type: "image/png" }); } catch (e) {}
       if (file && navigator.canShare && navigator.canShare({ files: [file] })) { navigator.share({ files: [file], title: "Thiệp 20/10", text: "Thiệp 20/10 của Phòng PTSPBL 🌹" }).catch(function () {}); return; }
       if (navigator.share) { navigator.share({ title: "Thiệp 20/10", url: location.href }).catch(function () {}); return; }
