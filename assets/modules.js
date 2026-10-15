@@ -298,40 +298,40 @@ function w20DrawCard(g, o) {
   var hs = 116, hw = 700; g.font = "700 " + hs + "px " + DS; while (g.measureText("Happy Women's Day").width > hw && hs > 70) { hs -= 4; g.font = "700 " + hs + "px " + DS; }
   g.fillStyle = ROSE2; g.shadowColor = "rgba(200,80,111,.25)"; g.shadowBlur = 10; g.shadowOffsetY = 3; g.fillText("Happy Women's Day", hx, 262); g.shadowColor = "transparent"; g.shadowBlur = 0; g.shadowOffsetY = 0;
   var gr = g.createLinearGradient(0, 290, 0, 470); gr.addColorStop(0, "#d9728b"); gr.addColorStop(1, "#9c2d4b");
-  g.shadowColor = "rgba(168,50,79,.25)"; g.shadowBlur = 22; g.shadowOffsetY = 8; g.fillStyle = gr; g.font = "700 200px " + PF; g.fillText("20.10", 600, 456); g.shadowColor = "transparent"; g.shadowBlur = 0; g.shadowOffsetY = 0;
-  w20Ink(g, o.greet || "Gửi chị em thương mến", 560, 528, 38, 0); var y = 528;
+  g.shadowColor = "rgba(168,50,79,.25)"; g.shadowBlur = 22; g.shadowOffsetY = 8; g.fillStyle = gr; g.font = "700 184px " + PF; g.fillText("20.10", 600, 440); g.shadowColor = "transparent"; g.shadowBlur = 0; g.shadowOffsetY = 0;
+  w20Ink(g, o.greet || "Gửi chị em thương mến", 560, 508, 36, 0); var y = 508;
   /* ---- tên ---- */
   var nm = o.name || "Chị em Phòng PTSPBL", fs = 104; g.font = fs + "px " + W20HW;
   while (g.measureText(nm).width > 780 && fs > 50) { fs -= 4; g.font = fs + "px " + W20HW; }
-  y += fs * .82 + 6; w20Ink(g, nm, 560, y, fs, 1);
-  if (o.sub) { y += 40; var ss = 30; g.font = ss + "px " + W20HW; while (g.measureText(o.sub).width > 800 && ss > 22) { ss--; g.font = ss + "px " + W20HW; } w20Ink(g, o.sub, 560, y, ss, 0); }
+  y += fs * .82 + 22; w20Ink(g, nm, 560, y, fs, 1);
+  if (o.sub) { y += 50; var ss = 30; g.font = ss + "px " + W20HW; while (g.measureText(o.sub).width > 800 && ss > 22) { ss--; g.font = ss + "px " + W20HW; } w20Ink(g, o.sub, 560, y, ss, 0); }
   /* ---- danh hiệu vui: chữ viết tay + nét lượn gạch chân ---- */
-  var rl = o.role || "", rs = 40;
+  var rl = o.role || "", rs = 38;
   if (rl) {
     g.font = rs + "px " + W20HW; while (g.measureText(rl).width > 800 && rs > 28) { rs--; g.font = rs + "px " + W20HW; }
-    y += 56; var rw = g.measureText(rl).width; w20Ink(g, rl, 560, y, rs, 0); w20Wavy(g, 560 - rw / 2 - 6, 560 + rw / 2 + 6, y + 14, ROSE2); y += 14;
+    y += 78; var rw = g.measureText(rl).width; w20Ink(g, rl, 560, y, rs, 0); w20Wavy(g, 560 - rw / 2 - 6, 560 + rw / 2 + 6, y + 18, ROSE2); y += 18;
   }
-  if (o.bd) { y += 50; w20Ink(g, "🎂 Chúc mừng sinh nhật tháng 10 nha!", 560, y, 32, 0); }
+  if (o.bd) { y += 58; w20Ink(g, "🎂 Chúc mừng sinh nhật tháng 10 nha!", 560, y, 32, 0); }
   /* ---- lời chúc ---- */
-  y += 80; var wsz = 46, WX = 470, WW = 640; g.font = wsz + "px " + W20HW; var txt = o.wish || "", wl = w20WrapBal(g, txt, WW);
+  y += 112; var wsz = 46, WX = 470, WW = 640; g.font = wsz + "px " + W20HW; var txt = o.wish || "", wl = w20WrapBal(g, txt, WW);
   while (wl.length > 5 && wsz > 32) { wsz -= 2; g.font = wsz + "px " + W20HW; wl = w20WrapBal(g, txt, WW); }
-  var lh = wsz * 1.3, ny = Math.min(wl.length, 8), mw = 0;
+  var lh = wsz * 1.5, ny = Math.min(wl.length, 8), mw = 0;
   g.font = wsz + "px " + W20HW; for (i = 0; i < ny; i++) mw = Math.max(mw, g.measureText(wl[i]).width);
   var lw = ny ? g.measureText(wl[ny - 1]).width : 0;
   g.fillStyle = "rgba(200,80,111,.6)"; g.font = "700 110px " + PF; g.textAlign = "right"; g.fillText("“", WX - mw / 2 - 6, y + 24); g.textAlign = "center";
   for (i = 0; i < ny; i++) { g.save(); g.translate(WX, y + i * lh); g.rotate((((i * 7) % 5) - 2) * .0045); w20Ink(g, wl[i], 0, 0, wsz, 0); g.restore(); } /* mỗi dòng nghiêng nhẹ cho giống tay viết */
   var wend = y + (ny - 1) * lh; g.fillStyle = "rgba(200,80,111,.6)"; g.font = "700 110px " + PF; g.textAlign = "left"; g.fillText("”", Math.min(WX + WW / 2 + 8, WX + lw / 2 + 6), wend + 54); g.textAlign = "center";
   /* ---- ký tên ---- */
-  y = wend + 84; var sg = "Thương mến, " + (o.from || ""), sgs = 44; g.font = sgs + "px " + W20HW; while (g.measureText(sg).width > WW - 40 && sgs > 28) { sgs -= 2; g.font = sgs + "px " + W20HW; }
+  y = wend + 104; var sg = "Thương mến, " + (o.from || ""), sgs = 44; g.font = sgs + "px " + W20HW; while (g.measureText(sg).width > WW - 40 && sgs > 28) { sgs -= 2; g.font = sgs + "px " + W20HW; }
   w20Ink(g, sg, WX, y, sgs, 1); var sgw = g.measureText(sg).width; g.fillStyle = ROSE; g.font = sgs + "px " + W20HW; g.textAlign = "left"; g.fillText("♥", WX + sgw / 2 + 12, y); g.textAlign = "center";
   /* ---- quà đã nhận ---- */
   var pz = (o.prizes || []).slice(0, 2);
   if (pz.length) {
-    y += 34; var px = 130, py2 = y, ph = 48; g.textAlign = "left";
+    y += 44; var px = 130, py2 = y, ph = 48; g.textAlign = "left";
     pz.forEach(function (p) {
       var isImg = /^assets\//.test(p.icon), t = isImg ? p.name : p.icon + "  " + p.name, ps = 28; g.font = ps + "px " + W20HW; while (g.measureText(t).width > 520 && ps > 20) { ps--; g.font = ps + "px " + W20HW; }
       var im = isImg ? w20Img(p.icon) : null, ih = isImg ? 84 : 0, iw = isImg && im.naturalWidth ? ih * im.naturalWidth / im.naturalHeight : 0, ext = iw ? iw + 10 : 0;
-      var tw = g.measureText(t).width + 44 + ext, rowH = isImg ? 94 : ph; if (px + tw > 780 && px > 130) { px = 130; py2 += ph + 10; }
+      var tw = g.measureText(t).width + 44 + ext, rowH = isImg ? 94 : ph; if (pz.length === 1) px = 540 - tw / 2; else if (px + tw > 780 && px > 130) { px = 130; py2 += ph + 10; }
       g.fillStyle = "rgba(255,255,255,.82)"; g.strokeStyle = "rgba(179,38,95,.6)"; g.lineWidth = 1.8; w20Rr(g, px, py2, tw, rowH, rowH / 2); g.fill(); g.stroke();
       if (iw) g.drawImage(im, px + 18, py2 + (rowH - ih) / 2, iw, ih);
       w20Ink(g, t, px + 22 + ext, py2 + rowH / 2 + 10, ps, 0); px += tw + 12; if (isImg) ph = Math.max(ph, rowH);
