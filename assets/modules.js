@@ -69,7 +69,7 @@ function w20DrawBouquet(g, cx, cy, S, list) {
 }
 /* ===== Chibi: đầu là ảnh thật (assets/men), thân vẽ bằng canvas ===== */
 var W20IMG = {};
-function w20Img(src) { if (!W20IMG[src]) { var im = new Image(); im.src = /^assets\//.test(src) ? src + "?v=20261013" : src; W20IMG[src] = im; } return W20IMG[src]; }
+function w20Img(src) { if (!W20IMG[src]) { var im = new Image(); im.src = /^assets\//.test(src) ? src + "?v=20261052" : src; W20IMG[src] = im; } return W20IMG[src]; }
 function w20Rr(g, x, y, w, h, r) { g.beginPath(); g.moveTo(x + r, y); g.arcTo(x + w, y, x + w, y + h, r); g.arcTo(x + w, y + h, x, y + h, r); g.arcTo(x, y + h, x, y, r); g.arcTo(x, y, x + w, y, r); g.closePath(); }
 /* o: {img, shirt, step (pha chạy), up (0..1 giơ tay), lift (nhảy, px), flower (emoji hoặc null), dir (+1 nhìn phải, -1 nhìn trái)} */
 function w20Chibi(g, cx, gy, sc, o) {
@@ -301,364 +301,56 @@ function w20Ink(g, txt, x, y, px, bold) { /* chữ viết tay đen; bold = đè 
 }
 function w20Wavy(g, x1, x2, y, col) { g.save(); g.strokeStyle = col; g.lineWidth = 4; g.lineCap = "round"; g.beginPath(); g.moveTo(x1, y); for (var x = x1, k = 0; x < x2; x += 18, k++) g.quadraticCurveTo(x + 9, y + (k % 2 ? 7 : -7), Math.min(x + 18, x2), y); g.stroke(); g.restore(); }
 /* ===== 10 mẫu thiệp: nền, khung, hoa màu nước thật (tách từ ảnh gốc) đổi tông/đổi chỗ, hạt lấp lánh, ren, bướm… Mẫu 0 = hoa hồng gốc (mặc định) ===== */
+/* ===== 6 mẫu thiệp: nền là ảnh thiệp (assets/cards), đã xoá lời chúc gốc; chữ riêng từng người được vẽ lên khung "blk" ===== */
 var W20THEMES = [
-  { name: "Hoa hồng", bg: "flower", ink: "#b3265f", acc: "#a8324f", acc2: "#c8506f", g1: "#d9728b", g2: "#9c2d4b", chip: "rgba(255,255,255,.84)", pv: "linear-gradient(135deg,#fde3ea,#e58aa2)", em: "🌹" },
-  { name: "Họa tiết vàng kim", bg: "lineart", wrap: ["#fff0e4","#f2c9a4","#fffaf0","#f5e3cc","#f0c99a","#d9a066","#a8761f","#e8c46a","#8e6012"], ink: "#c23a6c", acc: "#c23a6c", acc2: "#d9487f", g1: "#e0568a", g2: "#b02a5c", chip: "rgba(255,255,255,.88)", chipLine: "rgba(201,154,46,.8)", pv: "linear-gradient(135deg,#fff,#f6cdb8)", em: "🌼" },
-  { name: "Hồng đào nhẹ nhàng", bg: "peach", wrap: ["#ffe9e6","#f2b6b2","#ffffff","#f8e0dc","#f4b8b4","#d98a8c","#b84a58","#e0788a","#9a3646"], ink: "#c94a6e", acc: "#c94a6e", acc2: "#d85d82", g1: "#e27696", g2: "#b23a5e", chip: "rgba(255,255,255,.9)", pv: "linear-gradient(135deg,#fff,#f5c6c0)", em: "🌷" },
-  { name: "Tulip xanh lá", bg: "tulip", wrap: ["#eef6dc","#b9d88a","#fbfff2","#e3efcf","#a9cf78","#78a84a","#5f8a34","#8fbf5a","#4a6f28"], ink: "#4f7a2e", acc: "#4f7a2e", acc2: "#6a9a3e", g1: "#86b04e", g2: "#42692a", chip: "rgba(255,255,255,.9)", chipLine: "rgba(106,154,62,.7)", pv: "linear-gradient(135deg,#fff,#f7c0d0)", em: "🍀" },
-  { name: "Ly trắng vòm vàng", bg: "lily", wrap: ["#fff8e4","#e9d9a2","#fffdf5","#f3ead0","#e8d28f","#c9a24a","#a8761f","#e8c46a","#8e6012"], ink: "#8a6a2a", acc: "#8a6a2a", acc2: "#a07f35", g1: "#c9a24a", g2: "#7e5d1c", chip: "rgba(255,255,255,.9)", chipLine: "rgba(201,162,74,.8)", pv: "linear-gradient(135deg,#fffdf4,#e3d9a8)", em: "🤍" },
-  { name: "Hoa hồng màu nước", bg: "watercolor", wrap: ["#fde6e4","#eaa6a4","#fff8f6","#f6dbd7","#e9a09e","#c2605f","#a8393f","#d0646a","#8e2c33"], ink: "#a8393f", acc: "#a8393f", acc2: "#b84a50", g1: "#c0585c", g2: "#8e2c33", chip: "rgba(255,255,255,.9)", chipLine: "rgba(168,57,63,.5)", pv: "linear-gradient(135deg,#fff,#f6c4c0)", em: "🌹" },
-  { name: "Mẫu đơn tím", bg: "peony", wrap: ["#efe8fb","#c3aee6","#fbf9ff","#e6def5","#bba3e3","#8e6cc8","#5b34a0","#8a62d0","#44238a"], ink: "#4b2a82", acc: "#4b2a82", acc2: "#6b3fa8", g1: "#7d52bf", g2: "#3f2174", chip: "rgba(255,255,255,.9)", chipLine: "rgba(107,63,168,.5)", pv: "linear-gradient(135deg,#fff,#d3c3ee)", em: "💜" }
+  { name: "Bó hồng trên bàn", file: "t1", w: 1536, h: 1024, blk: { x: 215, y: 516, w: 485, h: 214 }, bq: { x: 108, y: 640, s: 52 }, ink: "#4a3036", acc: "#d81b60", em: "🌹" },
+  { name: "Hoa hồng nắng sớm", file: "t2", w: 1530, h: 1070, blk: { x: 200, y: 646, w: 555, h: 232 }, bq: { x: 98, y: 800, s: 58 }, ink: "#4a3036", acc: "#d81b60", em: "🌸" },
+  { name: "Trời xanh mây hồng", file: "t3", w: 1528, h: 1070, blk: { x: 205, y: 732, w: 565, h: 268 }, bq: { x: 100, y: 850, s: 52 }, ink: "#274a43", acc: "#b8305c", em: "🌷" },
+  { name: "Tulip trên giấy", file: "t4", w: 1016, h: 964, blk: { x: 410, y: 474, w: 400, h: 296 }, bq: { x: 100, y: 128, s: 44 }, ink: "#4a3a3a", acc: "#c43563", em: "💌" },
+  { name: "Cúc hoạ mi và sách", file: "t5", w: 1024, h: 964, blk: { x: 122, y: 428, w: 464, h: 216 }, bq: { x: 96, y: 800, s: 56 }, ink: "#37483f", acc: "#e0245e", em: "📚" },
+  { name: "Quý cô và hoa", file: "t6", w: 1008, h: 964, blk: { x: 116, y: 528, w: 456, h: 284 }, bq: { x: 88, y: 868, s: 52 }, ink: "#6a1f3a", acc: "#b02a58", em: "👒" }
 ];
+W20THEMES.forEach(function (t) { t.pv = "url(assets/cards/" + t.file + ".webp) center/cover"; });
 function w20Hex2rgba(h, a) { var n = parseInt(h.slice(1), 16); return "rgba(" + (n >> 16) + "," + ((n >> 8) & 255) + "," + (n & 255) + "," + a + ")"; }
 function w20Rnd(k) { var x = Math.sin(k * 127.1 + 311.7) * 43758.5453; return x - Math.floor(x); }
-/* hoa màu nước thật: cắt từ ảnh gốc (toạ độ ảnh 1024×1536), đổi tông bằng ma trận xoay màu */
-var W20CROP = { A: [0, 0, 330, 340], B: [400, 980, 624, 556], C: [730, 640, 294, 360] }, W20CROPC = {};
-function w20Crop(key, hue, sat, bri, glow) {
-  var k = key + "|" + hue + "|" + sat + "|" + bri + "|" + (glow ? 1 : 0); if (W20CROPC[k]) return W20CROPC[k];
-  var img = w20Img("assets/card-bg.webp"); if (!img.complete || !img.naturalWidth) return null;
-  var r = W20CROP[key], c = document.createElement("canvas"); c.width = r[2]; c.height = r[3]; var g = c.getContext("2d"); g.drawImage(img, r[0], r[1], r[2], r[3], 0, 0, r[2], r[3]);
-  {
-    try {
-      var d = g.getImageData(0, 0, r[2], r[3]), p = d.data, cs = Math.cos(hue * Math.PI / 180), sn = Math.sin(hue * Math.PI / 180), i, R, G, B, nr, ng, nb, L, a;
-      var m0 = [.213 + cs * .787 - sn * .213, .715 - cs * .715 - sn * .715, .072 - cs * .072 + sn * .928, .213 - cs * .213 + sn * .143, .715 + cs * .285 + sn * .14, .072 - cs * .072 - sn * .283, .213 - cs * .213 - sn * .787, .715 - cs * .715 + sn * .715, .072 + cs * .928 + sn * .072];
-      for (i = 0; i < p.length; i += 4) {
-        R = p[i]; G = p[i + 1]; B = p[i + 2];
-        nr = m0[0] * R + m0[1] * G + m0[2] * B; ng = m0[3] * R + m0[4] * G + m0[5] * B; nb = m0[6] * R + m0[7] * G + m0[8] * B;
-        L = .3 * nr + .59 * ng + .11 * nb; var s = sat || 1; nr = L + (nr - L) * s; ng = L + (ng - L) * s; nb = L + (nb - L) * s;
-        var bb = bri || 1; nr *= bb; ng *= bb; nb *= bb;
-        if (glow) { a = Math.max(0, Math.min(1, (255 - Math.min(R, G, B) - 16) / 50)); p[i + 3] = a * 255; nr = Math.min(255, nr * 1.05 + 20); ng = Math.min(255, ng * 1.05 + 10); } /* nền sáng → trong suốt, hoa phát sáng trên nền tối */
-        else { a = Math.max(0, Math.min(1, (255 - Math.min(R, G, B) - 9) / 20)); p[i + 3] = a * 255; } /* nền trắng của ảnh → trong suốt, hết viền khung chữ nhật */
-        p[i] = nr < 0 ? 0 : nr > 255 ? 255 : nr; p[i + 1] = ng < 0 ? 0 : ng > 255 ? 255 : ng; p[i + 2] = nb < 0 ? 0 : nb > 255 ? 255 : nb;
-      }
-      g.putImageData(d, 0, 0);
-    } catch (e) {}
-  }
-  return (W20CROPC[k] = c);
-}
-function w20Sparkle(g, x, y, r, col, al) { g.save(); g.translate(x, y); g.globalAlpha = al == null ? 1 : al; g.fillStyle = col; g.beginPath(); for (var k = 0; k < 8; k++) { var a = k * .7854, rr = k % 2 ? r * .22 : r; g.lineTo(Math.cos(a) * rr, Math.sin(a) * rr); } g.closePath(); g.fill(); g.restore(); }
-function w20Sparkles(g, W, H, col, n, seed) { for (var i = 0; i < n; i++) w20Sparkle(g, 60 + w20Rnd(seed + i) * (W - 120), 60 + w20Rnd(seed + i + 70) * (H - 120), 6 + w20Rnd(seed + i + 9) * 16, col, .35 + w20Rnd(seed + i + 3) * .55); }
-function w20Bokeh(g, W, H, cols, n, seed) { for (var i = 0; i < n; i++) { var x = w20Rnd(seed + i) * W, y = w20Rnd(seed + i + 40) * H, r = 18 + w20Rnd(seed + i + 80) * 70, gr = g.createRadialGradient(x, y, 0, x, y, r); gr.addColorStop(0, w20Hex2rgba(cols[i % cols.length], .32)); gr.addColorStop(1, w20Hex2rgba(cols[i % cols.length], 0)); g.fillStyle = gr; g.beginPath(); g.arc(x, y, r, 0, 6.283); g.fill(); } }
-function w20Grain(g, W, H, n, col, seed) { for (var i = 0; i < n; i++) { g.fillStyle = col + (0.03 + w20Rnd(seed + i + 3) * .06) + ")"; g.fillRect(w20Rnd(seed + i) * W, w20Rnd(seed + i + 900) * H, 1.5 + w20Rnd(seed + i + 7) * 2.5, 1.5 + w20Rnd(seed + i + 11) * 2.5); } }
-function w20Vignette(g, W, H, a) { var v = g.createRadialGradient(W / 2, H / 2, H * .35, W / 2, H / 2, H * .75); v.addColorStop(0, "rgba(0,0,0,0)"); v.addColorStop(1, "rgba(60,30,20," + a + ")"); g.fillStyle = v; g.fillRect(0, 0, W, H); }
-function w20GoldFrame(g, W, H) {
-  var gd = g.createLinearGradient(0, 0, W, H); gd.addColorStop(0, "#a8751d"); gd.addColorStop(.3, "#f7e29a"); gd.addColorStop(.55, "#d9a93d"); gd.addColorStop(.8, "#f3d680"); gd.addColorStop(1, "#8e6a1b");
-  g.save(); g.strokeStyle = gd; g.lineWidth = 6; w20Rr(g, 38, 38, W - 76, H - 76, 28); g.stroke(); g.lineWidth = 2; w20Rr(g, 56, 56, W - 112, H - 112, 18); g.stroke();
-  [[56, 56, 1, 1], [W - 56, 56, -1, 1], [56, H - 56, 1, -1], [W - 56, H - 56, -1, -1]].forEach(function (c) { /* hoa văn góc */
-    g.save(); g.translate(c[0], c[1]); g.scale(c[2], c[3]); g.strokeStyle = gd; g.fillStyle = gd; g.lineWidth = 3;
-    g.beginPath(); g.moveTo(14, 70); g.bezierCurveTo(14, 30, 30, 14, 70, 14); g.stroke(); g.beginPath(); g.moveTo(26, 70); g.bezierCurveTo(26, 40, 40, 26, 70, 26); g.stroke();
-    g.beginPath(); g.arc(14, 14, 7, 0, 6.283); g.fill(); g.beginPath(); g.moveTo(80, 14); g.lineTo(88, 20); g.lineTo(80, 26); g.lineTo(72, 20); g.closePath(); g.fill(); g.beginPath(); g.moveTo(14, 80); g.lineTo(20, 88); g.lineTo(26, 80); g.lineTo(20, 72); g.closePath(); g.fill(); g.restore();
-  });
-  g.restore();
-}
-function w20LaceFrame(g, W, H, col, dot) {
-  g.save(); g.fillStyle = col; g.strokeStyle = "rgba(0,0,0,.08)"; g.lineWidth = 1.5; var r = 24, n;
-  for (n = r; n < W; n += r * 2) { g.beginPath(); g.arc(n, 0, r, 0, 3.1416); g.fill(); g.stroke(); g.beginPath(); g.arc(n, H, r, 3.1416, 6.2832); g.fill(); g.stroke(); }
-  for (n = r; n < H; n += r * 2) { g.beginPath(); g.arc(0, n, r, -1.5708, 1.5708); g.fill(); g.stroke(); g.beginPath(); g.arc(W, n, r, 1.5708, 4.7124); g.fill(); g.stroke(); }
-  g.strokeStyle = dot; g.lineWidth = 2; g.setLineDash([2, 12]); g.lineCap = "round"; w20Rr(g, 52, 52, W - 104, H - 104, 22); g.stroke(); g.restore();
-}
-function w20Butterfly(g, x, y, sc, c1, c2, rot) {
-  g.save(); g.translate(x, y); g.rotate(rot); g.scale(sc, sc);
-  [[-1, 1], [1, 1]].forEach(function (s) { var gr = g.createLinearGradient(0, 0, s[0] * 60, -30); gr.addColorStop(0, c1); gr.addColorStop(1, c2); g.fillStyle = gr; g.beginPath(); g.moveTo(0, 0); g.bezierCurveTo(s[0] * 30, -64, s[0] * 78, -50, s[0] * 64, -4); g.bezierCurveTo(s[0] * 56, 10, s[0] * 20, 6, 0, 0); g.fill(); g.beginPath(); g.moveTo(0, 2); g.bezierCurveTo(s[0] * 40, 6, s[0] * 54, 40, s[0] * 30, 52); g.bezierCurveTo(s[0] * 12, 56, s[0] * 4, 24, 0, 2); g.fill(); g.strokeStyle = "rgba(255,255,255,.55)"; g.lineWidth = 2; g.beginPath(); g.moveTo(0, 0); g.quadraticCurveTo(s[0] * 40, -30, s[0] * 60, -22); g.stroke(); });
-  g.fillStyle = "#3a2a3a"; g.beginPath(); g.ellipse(0, 6, 4, 26, 0, 0, 6.283); g.fill(); g.strokeStyle = "#3a2a3a"; g.lineWidth = 2; g.beginPath(); g.moveTo(0, -18); g.quadraticCurveTo(-10, -36, -18, -40); g.moveTo(0, -18); g.quadraticCurveTo(10, -36, 18, -40); g.stroke(); g.restore();
-}
-function w20Heart(g, x, y, s, col) { g.save(); g.translate(x, y); g.fillStyle = col; g.beginPath(); g.moveTo(0, s * .3); g.bezierCurveTo(-s, -s * .5, -s * .4, -s, 0, -s * .4); g.bezierCurveTo(s * .4, -s, s, -s * .5, 0, s * .3); g.fill(); g.restore(); }
-function w20Cloud(g, x, y, s) { var gr = g.createRadialGradient(x, y, 0, x, y, s); gr.addColorStop(0, "rgba(255,255,255,.95)"); gr.addColorStop(1, "rgba(255,255,255,0)"); g.fillStyle = gr; [[0, 0, 1], [.7, .15, .8], [-.7, .2, .75], [.2, -.3, .7]].forEach(function (p) { g.beginPath(); g.arc(x + p[0] * s, y + p[1] * s, s * p[2] * .8, 0, 6.283); g.fill(); }); }
-function w20Mix(a, b, t) { var x = parseInt(a.slice(1), 16), y = parseInt(b.slice(1), 16); function c(s) { return Math.round(((x >> s) & 255) * (1 - t) + ((y >> s) & 255) * t); } return "#" + ((1 << 24) | (c(16) << 16) | (c(8) << 8) | c(0)).toString(16).slice(1); }
-function w20Wash(g, x, y, r, col, a) { var q = g.createRadialGradient(x, y, 0, x, y, r); q.addColorStop(0, w20Hex2rgba(col, a)); q.addColorStop(.6, w20Hex2rgba(col, a * .55)); q.addColorStop(1, w20Hex2rgba(col, 0)); g.fillStyle = q; g.beginPath(); g.arc(x, y, r, 0, 6.2832); g.fill(); }
-function w20Leaf(g, x, y, len, wid, ang, c1, c2) { g.save(); g.translate(x, y); g.rotate(ang); var q = g.createLinearGradient(0, 0, len, 0); q.addColorStop(0, c1); q.addColorStop(1, c2); g.fillStyle = q; g.beginPath(); g.moveTo(0, 0); g.quadraticCurveTo(len * .5, -wid, len, 0); g.quadraticCurveTo(len * .5, wid * .9, 0, 0); g.fill(); g.strokeStyle = "rgba(255,255,255,.4)"; g.lineWidth = 2; g.beginPath(); g.moveTo(len * .06, 0); g.lineTo(len * .92, 0); g.stroke(); g.restore(); }
-function w20Stem(g, pts, col, lw) { g.save(); g.strokeStyle = col; g.lineWidth = lw; g.lineCap = "round"; g.beginPath(); g.moveTo(pts[0], pts[1]); g.bezierCurveTo(pts[2], pts[3], pts[4], pts[5], pts[6], pts[7]); g.stroke(); g.restore(); }
-function w20Rose(g, x, y, r, p) {
-  var L = p.L || 5, N = p.N || 5, k, j; g.save();
-  if (p.shadow) { g.shadowColor = "rgba(110,40,60,.3)"; g.shadowBlur = r * .3; g.shadowOffsetY = r * .1; }
-  g.fillStyle = p.o; g.beginPath(); g.arc(x, y, r * .98, 0, 6.2832); g.fill(); g.shadowColor = "transparent";
-  for (k = 0; k < L; k++) {
-    var t = k / (L - 1), rad = r * (1 - t * .78), col = t < .5 ? w20Mix(p.o, p.m, t * 2) : w20Mix(p.m, p.c, (t - .5) * 2);
-    for (j = 0; j < N; j++) {
-      var a = k * .7 + j * 6.2832 / N, px = x + Math.cos(a) * rad * .4, py = y + Math.sin(a) * rad * .4, pr = rad * .62;
-      var q = g.createRadialGradient(px + Math.cos(a) * pr * .3, py + Math.sin(a) * pr * .3, pr * .1, px, py, pr); q.addColorStop(0, w20Mix(col, "#ffffff", .35)); q.addColorStop(1, col);
-      g.fillStyle = q; g.beginPath(); g.ellipse(px, py, pr, pr * .86, a, 0, 6.2832); g.fill(); g.strokeStyle = w20Hex2rgba(p.line || "#8a3a4a", .11); g.lineWidth = Math.max(1, r * .012); g.stroke();
-    }
-  }
-  g.fillStyle = p.c; g.beginPath(); g.arc(x, y, r * .08, 0, 6.2832); g.fill(); g.restore();
-}
-function w20Anem(g, x, y, r, col, cen) {
-  g.save(); g.translate(x, y); g.shadowColor = "rgba(90,60,70,.25)"; g.shadowBlur = r * .2; g.shadowOffsetY = r * .06;
-  for (var j = 0; j < 6; j++) { g.save(); g.rotate(j * 1.0472 + .3); var q = g.createLinearGradient(0, 0, r, 0); q.addColorStop(0, "#e6dcdc"); q.addColorStop(.45, col); q.addColorStop(1, "#ffffff"); g.fillStyle = q; g.beginPath(); g.moveTo(0, 0); g.bezierCurveTo(r * .3, -r * .62, r * .95, -r * .5, r, 0); g.bezierCurveTo(r * .95, r * .5, r * .3, r * .62, 0, 0); g.fill(); g.restore(); }
-  g.shadowColor = "transparent"; g.fillStyle = cen; g.beginPath(); g.arc(0, 0, r * .14, 0, 6.2832); g.fill(); g.fillStyle = "#c98a2a"; for (var k = 0; k < 14; k++) { g.beginPath(); g.arc(Math.cos(k * 2.4) * r * .2, Math.sin(k * 2.4) * r * .2, r * .025, 0, 6.2832); g.fill(); } g.restore();
-}
-function w20Lily(g, x, y, r, rot, tone) {
-  g.save(); g.translate(x, y); g.rotate(rot); g.shadowColor = "rgba(120,110,70,.22)"; g.shadowBlur = r * .15;
-  for (var j = 0; j < 6; j++) { g.save(); g.rotate(j * 1.0472); var q = g.createLinearGradient(0, 0, r, 0); q.addColorStop(0, tone || "#d6cf9f"); q.addColorStop(.5, "#f6f1df"); q.addColorStop(1, "#fffdf6"); g.fillStyle = q; g.strokeStyle = "rgba(150,140,90,.35)"; g.lineWidth = 2; g.beginPath(); g.moveTo(0, 0); g.bezierCurveTo(r * .25, -r * .3, r * .75, -r * .28, r, 0); g.bezierCurveTo(r * .75, r * .28, r * .25, r * .3, 0, 0); g.fill(); g.stroke(); g.strokeStyle = "rgba(170,150,90,.3)"; g.lineWidth = 1.5; g.beginPath(); g.moveTo(r * .1, 0); g.lineTo(r * .8, 0); g.stroke(); g.restore(); }
-  g.shadowColor = "transparent"; g.strokeStyle = "#9a7a3a"; g.fillStyle = "#9a6a2a"; g.lineWidth = 3;
-  for (var k = 0; k < 6; k++) { var a = k * 1.0472 + .5, ex = Math.cos(a) * r * .55, ey = Math.sin(a) * r * .55; g.beginPath(); g.moveTo(0, 0); g.lineTo(ex, ey); g.stroke(); g.beginPath(); g.ellipse(ex, ey, r * .06, r * .03, a, 0, 6.2832); g.fill(); } g.restore();
-}
-function w20LineFlower(g, x, y, r, rot, col) {
-  var j; g.save(); g.translate(x, y); g.rotate(rot); g.strokeStyle = col; g.lineJoin = "round";
-  for (j = 0; j < 5; j++) { g.save(); g.rotate(j * 1.2566); g.lineWidth = 3; g.beginPath(); g.moveTo(0, 0); g.bezierCurveTo(-r * .55, -r * .35, -r * .6, -r * .95, -r * .12, -r * .9); g.bezierCurveTo(-r * .05, -r * 1.02, r * .05, -r * 1.02, r * .12, -r * .9); g.bezierCurveTo(r * .6, -r * .95, r * .55, -r * .35, 0, 0); g.stroke(); g.lineWidth = 1.6; g.beginPath(); g.moveTo(0, -r * .2); g.lineTo(0, -r * .7); g.stroke(); g.restore(); }
-  g.fillStyle = col; g.lineWidth = 1.5; for (j = 0; j < 12; j++) { var a = j * .5236; g.beginPath(); g.moveTo(0, 0); g.lineTo(Math.cos(a) * r * .22, Math.sin(a) * r * .22); g.stroke(); g.beginPath(); g.arc(Math.cos(a) * r * .25, Math.sin(a) * r * .25, r * .02, 0, 6.2832); g.fill(); } g.restore();
-}
-function w20LineSprig(g, x, y, ang, len, col) {
-  g.save(); g.translate(x, y); g.rotate(ang); g.strokeStyle = col; g.lineWidth = 3; g.lineCap = "round"; g.beginPath(); g.moveTo(0, 0); g.quadraticCurveTo(len * .5, -len * .12, len, 0); g.stroke();
-  for (var i = 1; i < 7; i++) { var t = i / 7, s = i % 2 ? -1 : 1, L = len * .2 * (1 - t * .4); g.save(); g.translate(len * t, -len * .06 * Math.sin(t * 3.14)); g.rotate(s * .9); g.lineWidth = 3; g.beginPath(); g.moveTo(0, 0); g.quadraticCurveTo(L * .5, -L * .4, L, 0); g.quadraticCurveTo(L * .5, L * .4, 0, 0); g.stroke(); g.lineWidth = 1.4; g.beginPath(); g.moveTo(0, 0); g.lineTo(L * .9, 0); g.stroke(); g.restore(); } g.restore();
-}
-function w20GoldDots(g, W, H, n, seed, col) { for (var i = 0; i < n; i++) { g.fillStyle = col; g.globalAlpha = .45 + w20Rnd(seed + i + 4) * .5; g.beginPath(); g.arc(30 + w20Rnd(seed + i) * (W - 60), 30 + w20Rnd(seed + i + 300) * (H - 60), 2.5 + w20Rnd(seed + i + 9) * 6, 0, 6.2832); g.fill(); } g.globalAlpha = 1; }
-function w20Tulip(g, x, y, s, rot, c1, c2) {
-  g.save(); g.translate(x, y); g.rotate(rot); w20Stem(g, [0, 0, s * .1, s * .5, -s * .1, s * .9, s * .05, s * 1.5], "#8fb85a", s * .07); w20Leaf(g, s * .02, s * 1.0, s * .6, s * .14, 2.3, "#a6cb6a", "#7ea646");
-  [[-s * .12, -.25, .88], [s * .12, .3, .88], [0, 0, .95]].forEach(function (p) { g.save(); g.translate(p[0], 0); g.rotate(p[1]); var q = g.createLinearGradient(0, -s * .9, 0, 0); q.addColorStop(0, c1); q.addColorStop(1, c2); g.fillStyle = q; g.globalAlpha = p[2]; g.beginPath(); g.moveTo(0, 0); g.bezierCurveTo(-s * .5, -s * .1, -s * .55, -s * .7, -s * .15, -s * .95); g.bezierCurveTo(s * .1, -s * .75, s * .35, -s * .3, 0, 0); g.fill(); g.restore(); });
-  g.restore();
-}
-function w20HeartStripe(g, x, y, s, col, a) { g.save(); g.translate(x, y); g.beginPath(); g.moveTo(0, s * .3); g.bezierCurveTo(-s, -s * .5, -s * .4, -s, 0, -s * .4); g.bezierCurveTo(s * .4, -s, s, -s * .5, 0, s * .3); g.closePath(); g.clip(); for (var i = -6; i < 6; i++) { g.fillStyle = w20Hex2rgba(col, a * (i % 2 ? 1 : .6)); g.fillRect(i * s * .18, -s, s * .18, s * 1.5); } g.restore(); }
-function w20Magnolia(g, x, y, r, rot) { /* hoa trắng ngà kiểu mộc lan */
-  g.save(); g.translate(x, y); g.rotate(rot); g.shadowColor = "rgba(90,70,70,.22)"; g.shadowBlur = r * .2; g.shadowOffsetY = r * .06;
-  [[-.5, 1], [.5, 1], [0, .9], [-.25, .72], [.25, .72]].forEach(function (p, i) { g.save(); g.rotate(p[0]); var q = g.createRadialGradient(0, -r * .4, r * .1, 0, -r * .3, r * .9); q.addColorStop(0, "#ffffff"); q.addColorStop(.7, "#f6eeea"); q.addColorStop(1, "#dccfcc"); g.fillStyle = q; g.strokeStyle = "rgba(150,120,120,.3)"; g.lineWidth = 1.5; g.beginPath(); g.moveTo(0, 0); g.bezierCurveTo(-r * .75 * p[1], -r * .2, -r * .7 * p[1], -r * .95, 0, -r * p[1]); g.bezierCurveTo(r * .7 * p[1], -r * .95, r * .75 * p[1], -r * .2, 0, 0); g.fill(); g.stroke(); g.restore(); });
-  g.restore();
-}
-function w20Bud(g, x, y, r, rot) { g.save(); g.translate(x, y); g.rotate(rot); var q = g.createLinearGradient(-r * .4, 0, r * .4, 0); q.addColorStop(0, "#e6d9d6"); q.addColorStop(.5, "#ffffff"); q.addColorStop(1, "#e3d4d1"); g.fillStyle = q; g.strokeStyle = "rgba(150,120,120,.3)"; g.lineWidth = 1.5; g.beginPath(); g.moveTo(0, 0); g.bezierCurveTo(-r * .5, -r * .3, -r * .35, -r * .9, 0, -r); g.bezierCurveTo(r * .35, -r * .9, r * .5, -r * .3, 0, 0); g.fill(); g.stroke(); g.restore(); }
-function w20Rib(g, pts, c1, c2) { [[96, c1], [72, c2], [10, "rgba(255,255,255,.6)"]].forEach(function (s) { g.save(); g.strokeStyle = s[1]; g.lineWidth = s[0]; g.lineCap = "round"; g.beginPath(); g.moveTo(pts[0], pts[1]); g.bezierCurveTo(pts[2], pts[3], pts[4], pts[5], pts[6], pts[7]); g.stroke(); g.restore(); }); }
-var W20BGP = {
-  lineart: function (g, T, W, H) {
-    g.fillStyle = "#fffdfb"; g.fillRect(0, 0, W, H);
-    w20Wash(g, 160, 170, 460, "#f4c2ae", .55); w20Wash(g, 960, 1480, 560, "#f4c2ae", .6); w20Wash(g, 960, 120, 330, "#f6d2c0", .45); w20Wash(g, 540, 900, 520, "#fdeae2", .5); w20Wash(g, 80, 1000, 300, "#f9dccd", .4);
-    var gd = g.createLinearGradient(0, 0, W, H); gd.addColorStop(0, "#b8862a"); gd.addColorStop(.35, "#e8c46a"); gd.addColorStop(.6, "#c99a3c"); gd.addColorStop(1, "#a8761f");
-    g.save(); g.lineCap = "round"; w20LineFlower(g, 90, 80, 120, .3, gd); w20LineFlower(g, 60, 360, 90, -.4, gd); w20LineFlower(g, 1050, 20, 140, .6, gd);
-    w20LineSprig(g, 10, 1000, -1.15, 320, gd); w20LineSprig(g, 1075, 640, -2.0, 300, gd); w20LineFlower(g, 930, 1390, 190, .2, gd); w20LineFlower(g, 760, 1560, 110, -.3, gd); w20LineSprig(g, 1070, 1300, -2.5, 280, gd); g.restore();
-    w20GoldDots(g, W, H, 70, 17, "#d3a53c");
-  },
-  papercut: function (g, T, W, H) {
-    g.fillStyle = "#fde6ee"; g.fillRect(0, 0, W, H);
-    var q = g.createLinearGradient(0, 80, W, H); q.addColorStop(0, "#ea5a85"); q.addColorStop(1, "#d63e6c");
-    g.save(); g.shadowColor = "rgba(150,30,70,.3)"; g.shadowBlur = 30; g.shadowOffsetY = 10; g.fillStyle = q; w20Rr(g, 90, 70, 880, 1470, 360); g.fill(); g.restore();
-    g.save(); g.fillStyle = "rgba(255,255,255,.1)"; g.beginPath(); g.moveTo(90, 1200); g.bezierCurveTo(300, 1050, 600, 1400, 970, 1150); g.lineTo(970, 1400); g.bezierCurveTo(950, 1540, 800, 1540, 700, 1540); g.lineTo(450, 1540); g.bezierCurveTo(200, 1540, 90, 1450, 90, 1300); g.fill(); g.restore();
-    g.fillStyle = "rgba(255,255,255,.85)"; g.beginPath(); g.moveTo(0, 1500); g.bezierCurveTo(260, 1420, 520, 1560, 1080, 1440); g.lineTo(1080, 1620); g.lineTo(0, 1620); g.fill();
-    var P = { o: "#fbd0dc", m: "#f3a0b8", c: "#e0668a", line: "#b8446a", shadow: 1, L: 5, N: 5 };
-    w20Rose(g, 130, 130, 118, P); w20Rose(g, 60, 290, 70, P); w20Rose(g, 930, 1400, 150, P); w20Rose(g, 800, 1530, 90, P); w20Rose(g, 1040, 1250, 70, P);
-    w20Leaf(g, 190, 200, 100, 26, .7, "#f5b8ca", "#ee8fae"); w20Butterfly(g, 960, 300, .7, "#fbd0dc", "#f08aa8", .5);
-  },
-  hearts2: function (g, T, W, H) {
-    g.fillStyle = "#fffafc"; g.fillRect(0, 0, W, H);
-    w20Wash(g, 540, 900, 560, "#fbd3e4", .45); w20Wash(g, 300, 700, 300, "#f9c6dc", .3);
-    g.save(); g.strokeStyle = "#f08cb0"; g.lineWidth = 5; w20Rr(g, 78, 120, 924, 1300, 26); g.stroke(); g.restore();
-    w20HeartStripe(g, 160, 190, 60, "#f08cb0", .55); w20HeartStripe(g, 880, 260, 130, "#f4b6cc", .4); w20HeartStripe(g, 130, 520, 55, "#f4a2bf", .5); w20HeartStripe(g, 940, 860, 60, "#f4a2bf", .5); w20HeartStripe(g, 200, 1180, 120, "#f4a2bf", .55); w20HeartStripe(g, 980, 1130, 45, "#f8c8d9", .6);
-    var pk = { o: "#f7a8c4", m: "#e86a9c", c: "#c83a76", line: "#a02a5a", shadow: 1, L: 5, N: 6 }, pu = { o: "#c8a4d8", m: "#a276bc", c: "#7a4c98", line: "#5a3478", shadow: 1, L: 5, N: 6 };
-    [[90, 1560, 170, pk], [330, 1590, 150, pu], [560, 1560, 160, pk], [800, 1590, 150, pu], [1010, 1550, 150, pk], [200, 1620, 110, pu]].forEach(function (r) { w20Rose(g, r[0], r[1], r[2], r[3]); });
-  },
-  peach: function (g, T, W, H) {
-    g.fillStyle = "#fffdfc"; g.fillRect(0, 0, W, H);
-    w20Wash(g, 400, 300, 520, "#f9dfe0", .6); w20Wash(g, 800, 1000, 520, "#f9dfe0", .6); w20Wash(g, 200, 1300, 380, "#fbe7e2", .5);
-    var pe = { o: "#fbd9d6", m: "#f2aaa6", c: "#d9706f", line: "#b45a5c", shadow: 1, L: 5, N: 5 }, dk = { o: "#e6a6a4", m: "#cf7a7c", c: "#a64a52", line: "#7e3640", shadow: 1, L: 5, N: 5 };
-    w20Leaf(g, 60, 480, 140, 30, -.9, "#fff", "#e4dad8"); w20Leaf(g, 20, 300, 150, 30, -.6, "#fff", "#e4dad8"); w20Leaf(g, 20, 40, 130, 26, .5, "#fff", "#e4dad8");
-    w20Rose(g, 40, 390, 105, pe); w20Rose(g, 55, 190, 80, pe); w20Lily(g, 40, 560, 50, .5, "#f3e4e2");
-    w20Leaf(g, 720, 1480, 190, 34, -2.5, "#fff", "#e4dad8"); w20Leaf(g, 640, 1400, 170, 30, -2.2, "#fff", "#e4dad8");
-    w20Rose(g, 880, 1350, 105, pe); w20Rose(g, 1010, 1470, 130, dk); w20Rose(g, 860, 1560, 100, pe); w20Rose(g, 1050, 1230, 70, pe); w20Anem(g, 740, 1500, 55, "#fff", "#e8d9a0");
-  },
-  tulip: function (g, T, W, H) {
-    g.fillStyle = "#fffefd"; g.fillRect(0, 0, W, H);
-    w20Rib(g, [760, -60, 880, 60, 1000, 10, 1110, 150], "#f7b3c8", "#fbd0de"); w20Rib(g, [1000, 120, 1080, 260, 1130, 240, 1180, 320], "#f7b3c8", "#fbd0de");
-    w20Rib(g, [-60, 1300, 90, 1440, 180, 1290, 330, 1420], "#f7b3c8", "#fbd0de");
-    [[130, 450, 50], [980, 410, 36], [900, 700, 26], [80, 760, 24], [900, 1090, 50], [1000, 1180, 40]].forEach(function (c) { g.fillStyle = "rgba(248,196,214,.75)"; g.beginPath(); g.arc(c[0], c[1], c[2], 0, 6.2832); g.fill(); });
-    g.save(); g.globalAlpha = .9; w20Tulip(g, 90, 140, 260, .5, "#f9c4d4", "#f09ab6"); g.restore();
-    w20Tulip(g, 900, 1290, 300, -.1, "#f9bfd1", "#ee93b2"); w20Tulip(g, 620, 1420, 190, .4, "#fad0dc", "#f4a4be");
-  },
-  lily: function (g, T, W, H) {
-    g.fillStyle = "#fffefb"; g.fillRect(0, 0, W, H); w20Wash(g, 540, 800, 600, "#f6f2de", .5);
-    var gd = g.createLinearGradient(0, 0, W, H); gd.addColorStop(0, "#c9a24a"); gd.addColorStop(.5, "#f1dc9a"); gd.addColorStop(1, "#a8812f");
-    w20Leaf(g, 20, 330, 260, 44, -.6, "#efe9d0", "#d9d3b0"); w20Leaf(g, 760, 60, 240, 40, .6, "#efe9d0", "#d9d3b0");
-    w20Lily(g, 60, 70, 150, .4); w20Lily(g, 1050, 40, 110, -.3, "#cfc89a"); w20Lily(g, 40, 1130, 170, 1.0); w20Lily(g, 930, 1420, 230, -.5); w20Lily(g, 780, 1580, 110, .8, "#cfc89a"); w20Lily(g, 1050, 640, 120, 2.2, "#e8e2c6");
-    g.save(); g.strokeStyle = gd; g.lineWidth = 5; g.beginPath(); g.moveTo(110, 1330); g.lineTo(110, 180); g.arcTo(110, 70, 220, 70, 110); g.lineTo(860, 70); g.arcTo(970, 70, 970, 180, 110); g.lineTo(970, 1330); g.stroke(); g.restore();
-    w20GoldDots(g, W, H, 10, 5, "#b8862a");
-  },
-  nude: function (g, T, W, H) {
-    g.fillStyle = "#fffdfc"; g.fillRect(0, 0, W, H);
-    g.fillStyle = "#e6cbc1"; g.beginPath(); g.arc(560, 820, 440, 0, 6.2832); g.fill(); g.strokeStyle = "#ffffff"; g.lineWidth = 3; g.beginPath(); g.arc(560, 820, 418, 0, 6.2832); g.stroke();
-    w20Stem(g, [60, 640, 140, 420, 250, 300, 350, 170], "#7fa384", 6); w20Leaf(g, 100, 520, 150, 30, -.5, "#9bbf9f", "#5f8a66"); w20Leaf(g, 160, 400, 120, 24, 3.6, "#9bbf9f", "#5f8a66"); w20Leaf(g, 260, 280, 120, 26, -.4, "#9bbf9f", "#5f8a66");
-    w20Magnolia(g, 170, 470, 82, -.5); w20Magnolia(g, 270, 255, 95, .3); w20Bud(g, 360, 190, 90, .7); w20Bud(g, 120, 360, 60, -.4);
-    w20Stem(g, [1010, 1450, 960, 1520, 880, 1600, 800, 1640], "#7fa384", 5); w20Leaf(g, 940, 1500, 110, 24, -2.5, "#9bbf9f", "#5f8a66"); w20Magnolia(g, 1000, 1380, 70, .6);
-  },
-  watercolor: function (g, T, W, H) {
-    g.fillStyle = "#fffdfc"; g.fillRect(0, 0, W, H);
-    w20Wash(g, 880, 160, 420, "#f8d4d4", .6); w20Wash(g, 960, 420, 280, "#f8d4d4", .45); w20Wash(g, 130, 1500, 330, "#fbe2e0", .5);
-    var pk = { o: "#f6c8c4", m: "#f4a9a4", c: "#ee7e7a", line: "#c46a6a", shadow: 1, L: 6, N: 5 };
-    w20Leaf(g, 40, 330, 150, 30, 1.0, "#e6dcea", "#c9bcd8"); w20Leaf(g, 970, 1300, 200, 36, -2.2, "#e6dcea", "#c9bcd8");
-    w20Rose(g, 110, 130, 130, pk); w20Anem(g, 280, 150, 70, "#fff", "#f4d57a"); w20Rose(g, 100, 420, 90, pk); w20Anem(g, 140, 300, 90, "#fbf7f6", "#f1b8a0");
-    w20Rose(g, 990, 1380, 140, pk); w20Anem(g, 880, 1250, 100, "#fbf7f6", "#f1b8a0"); w20Rose(g, 920, 1560, 130, pk); w20Anem(g, 790, 1520, 75, "#fff", "#f4d57a"); w20Anem(g, 1040, 1120, 60, "#fff", "#f4d57a");
-    w20GoldDots(g, W, H, 22, 23, "#d3a53c");
-  },
-  peony: function (g, T, W, H) {
-    g.fillStyle = "#fffefe"; g.fillRect(0, 0, W, H);
-    for (var i = 0; i < 160; i++) { var a = w20Rnd(i) * 6.28, d = Math.sqrt(w20Rnd(i + 40)) * 330; g.fillStyle = "rgba(190,165,225," + (.12 + w20Rnd(i + 9) * .3) + ")"; g.beginPath(); g.arc(860 + Math.cos(a) * d, 1400 + Math.sin(a) * d * .8, 2 + w20Rnd(i + 3) * 7, 0, 6.2832); g.fill(); }
-    g.save(); g.strokeStyle = "#8a5fc0"; g.lineWidth = 3; g.beginPath(); g.moveTo(70, 220); g.arcTo(70, 70, 220, 70, 150); g.lineTo(1010, 70); g.lineTo(1010, 1400); g.arcTo(1010, 1550, 860, 1550, 150); g.lineTo(70, 1550); g.closePath(); g.stroke(); g.restore();
-    w20Stem(g, [870, 1480, 820, 1540, 760, 1590, 700, 1630], "#6aa05a", 9); w20Leaf(g, 790, 1560, 190, 38, 2.9, "#7ab568", "#4e8a40"); w20Leaf(g, 900, 1500, 180, 38, -.3, "#7ab568", "#4e8a40");
-    var py = { o: "#d6c8ee", m: "#efe8d2", c: "#fbf5d6", line: "#8a74b8", shadow: 1, L: 7, N: 7 };
-    w20Rose(g, 880, 1420, 150, py); w20Rose(g, 860, 1470, 45, { o: "#c9b8e8", m: "#d9cdf0", c: "#efe8ff", line: "#8a74b8", L: 3, N: 6 });
-    g.save(); g.translate(830, 1520); g.rotate(-.35); g.fillStyle = "rgba(205,190,235,.92)"; g.fillRect(-90, -26, 180, 52); g.restore();
-  }
-};
-var W20BGL = {
-  lineart: function (g, T, W, H) {
-    g.fillStyle = "#fffdfb"; g.fillRect(0, 0, W, H);
-    w20Wash(g, 180, 140, 520, "#f4c2ae", .55); w20Wash(g, 1500, 950, 620, "#f4c2ae", .6); w20Wash(g, 800, 540, 620, "#fdeae2", .5); w20Wash(g, 1500, 120, 380, "#f6d2c0", .45);
-    var gd = g.createLinearGradient(0, 0, W, H); gd.addColorStop(0, "#b8862a"); gd.addColorStop(.35, "#e8c46a"); gd.addColorStop(.6, "#c99a3c"); gd.addColorStop(1, "#a8761f");
-    g.save(); g.lineCap = "round"; w20LineFlower(g, 100, 90, 125, .3, gd); w20LineFlower(g, 1560, 70, 170, .6, gd); w20LineFlower(g, 60, 1010, 140, -.3, gd); w20LineFlower(g, 1500, 1040, 190, .2, gd);
-    w20LineSprig(g, 10, 600, -1.15, 280, gd); w20LineSprig(g, 1612, 330, -2.0, 260, gd); w20LineSprig(g, 1000, 1075, -2.7, 220, gd); g.restore();
-    w20GoldDots(g, W, H, 80, 17, "#d3a53c");
-  },
-  peach: function (g, T, W, H) {
-    g.fillStyle = "#fffdfc"; g.fillRect(0, 0, W, H);
-    w20Wash(g, 500, 250, 560, "#f9dfe0", .55); w20Wash(g, 1250, 800, 600, "#f9dfe0", .6); w20Wash(g, 150, 950, 420, "#fbe7e2", .5);
-    var pe = { o: "#fbd9d6", m: "#f2aaa6", c: "#d9706f", line: "#b45a5c", shadow: 1, L: 5, N: 5 }, dk = { o: "#e6a6a4", m: "#cf7a7c", c: "#a64a52", line: "#7e3640", shadow: 1, L: 5, N: 5 };
-    w20Leaf(g, 40, 200, 150, 30, -.5, "#fff", "#e4dad8"); w20Leaf(g, 30, 90, 130, 26, .5, "#fff", "#e4dad8"); w20Leaf(g, 1480, 160, 170, 30, 2.4, "#fff", "#e4dad8");
-    w20Rose(g, 50, 70, 100, pe); w20Rose(g, 60, 330, 80, pe); w20Anem(g, 40, 520, 55, "#fff", "#e8d9a0");
-    w20Rose(g, 1560, 60, 120, dk); w20Rose(g, 1430, 40, 80, pe); w20Rose(g, 1600, 280, 70, pe);
-    w20Rose(g, 70, 1000, 125, pe); w20Rose(g, 240, 1070, 90, dk); w20Anem(g, 190, 930, 50, "#fff", "#e8d9a0"); w20Rose(g, 1560, 1010, 130, pe); w20Rose(g, 1400, 1070, 80, dk);
-  },
-  tulip: function (g, T, W, H) {
-    g.fillStyle = "#fffefd"; g.fillRect(0, 0, W, H);
-    w20Rib(g, [1180, -60, 1330, 60, 1450, 10, 1560, 150], "#f7b3c8", "#fbd0de"); w20Rib(g, [1450, 120, 1550, 260, 1600, 240, 1670, 320], "#f7b3c8", "#fbd0de");
-    w20Rib(g, [-60, 960, 90, 1100, 180, 950, 340, 1090], "#f7b3c8", "#fbd0de");
-    [[170, 330, 36], [1100, 200, 30], [1090, 900, 40], [90, 780, 24], [1000, 70, 22]].forEach(function (c) { g.fillStyle = "rgba(248,196,214,.75)"; g.beginPath(); g.arc(c[0], c[1], c[2], 0, 6.2832); g.fill(); });
-    w20Tulip(g, 70, 100, 220, .5, "#f9c4d4", "#f09ab6"); w20Tulip(g, 1540, 520, 250, -.1, "#f9bfd1", "#ee93b2"); w20Tulip(g, 90, 800, 130, .3, "#fad0dc", "#f4a4be");
-  },
-  lily: function (g, T, W, H) {
-    g.fillStyle = "#fffefb"; g.fillRect(0, 0, W, H); w20Wash(g, 800, 540, 700, "#f6f2de", .5);
-    var gd = g.createLinearGradient(0, 0, W, H); gd.addColorStop(0, "#c9a24a"); gd.addColorStop(.5, "#f1dc9a"); gd.addColorStop(1, "#a8812f");
-    g.save(); g.strokeStyle = gd; g.lineWidth = 5; w20Rr(g, 46, 46, W - 92, H - 92, 80); g.stroke(); g.lineWidth = 2; w20Rr(g, 64, 64, W - 128, H - 128, 64); g.stroke(); g.restore();
-    w20Leaf(g, 20, 230, 230, 40, -.5, "#efe9d0", "#d9d3b0"); w20Leaf(g, 1380, 60, 220, 38, 2.5, "#efe9d0", "#d9d3b0");
-    w20Lily(g, 70, 80, 140, .4); w20Lily(g, 1560, 70, 130, -.3, "#cfc89a"); w20Lily(g, 50, 1020, 160, 1.0); w20Lily(g, 1550, 1030, 180, -.5); w20Lily(g, 880, 1050, 80, .8, "#cfc89a"); w20Lily(g, 1590, 430, 90, 2.2, "#e8e2c6");
-    w20GoldDots(g, W, H, 12, 5, "#b8862a");
-  },
-  watercolor: function (g, T, W, H) {
-    g.fillStyle = "#fffdfc"; g.fillRect(0, 0, W, H);
-    w20Wash(g, 1400, 130, 460, "#f8d4d4", .6); w20Wash(g, 200, 980, 420, "#fbe2e0", .55); w20Wash(g, 800, 540, 560, "#fdeeee", .45);
-    var pk = { o: "#f6c8c4", m: "#f4a9a4", c: "#ee7e7a", line: "#c46a6a", shadow: 1, L: 6, N: 5 };
-    w20Leaf(g, 40, 330, 150, 30, 1.0, "#e6dcea", "#c9bcd8"); w20Leaf(g, 1500, 1000, 200, 36, -2.4, "#e6dcea", "#c9bcd8");
-    w20Rose(g, 80, 80, 125, pk); w20Anem(g, 250, 70, 68, "#fff", "#f4d57a"); w20Rose(g, 60, 300, 80, pk); w20Anem(g, 160, 200, 80, "#fbf7f6", "#f1b8a0");
-    w20Rose(g, 1560, 1000, 135, pk); w20Anem(g, 1420, 1040, 85, "#fbf7f6", "#f1b8a0"); w20Rose(g, 1590, 790, 70, pk);
-    w20Rose(g, 60, 1010, 95, pk); w20Anem(g, 190, 1050, 60, "#fff", "#f4d57a");
-    w20GoldDots(g, W, H, 26, 23, "#d3a53c");
-  },
-  peony: function (g, T, W, H) {
-    g.fillStyle = "#fffefe"; g.fillRect(0, 0, W, H);
-    for (var i = 0; i < 170; i++) { var a = w20Rnd(i) * 6.28, d = Math.sqrt(w20Rnd(i + 40)) * 300; g.fillStyle = "rgba(190,165,225," + (.12 + w20Rnd(i + 9) * .3) + ")"; g.beginPath(); g.arc(170 + Math.cos(a) * d, 930 + Math.sin(a) * d * .7, 2 + w20Rnd(i + 3) * 7, 0, 6.2832); g.fill(); }
-    g.save(); g.strokeStyle = "#8a5fc0"; g.lineWidth = 3; g.beginPath(); g.moveTo(40, 160); g.arcTo(40, 40, 160, 40, 120); g.lineTo(W - 40, 40); g.lineTo(W - 40, H - 160); g.arcTo(W - 40, H - 40, W - 160, H - 40, 120); g.lineTo(40, H - 40); g.closePath(); g.stroke(); g.restore();
-    w20Stem(g, [170, 990, 130, 1040, 90, 1060, 50, 1090], "#6aa05a", 9); w20Leaf(g, 100, 1030, 190, 38, -2.9, "#7ab568", "#4e8a40"); w20Leaf(g, 230, 990, 180, 38, -.2, "#7ab568", "#4e8a40");
-    var py = { o: "#d6c8ee", m: "#efe8d2", c: "#fbf5d6", line: "#8a74b8", shadow: 1, L: 7, N: 7 };
-    w20Rose(g, 160, 930, 140, py); w20Rose(g, 150, 975, 42, { o: "#c9b8e8", m: "#d9cdf0", c: "#efe8ff", line: "#8a74b8", L: 3, N: 6 });
-    g.save(); g.translate(120, 1030); g.rotate(-.35); g.fillStyle = "rgba(205,190,235,.92)"; g.fillRect(-80, -24, 160, 48); g.restore();
-    w20Rose(g, 1570, 90, 90, py); w20Leaf(g, 1500, 170, 140, 30, 2.4, "#7ab568", "#4e8a40"); w20Leaf(g, 1570, 190, 120, 26, 1.7, "#7ab568", "#4e8a40");
-  }
-};
-function w20ThemeBg(g, T, W, H, land) {
-  if (land) {
-    if (W20BGL[T.bg]) { W20BGL[T.bg](g, T, W, H); return; }
-    /* mẫu mặc định (ngang): hoa hồng màu nước gốc, cụm góc trái-trên và cụm lớn góc phải-dưới trên nền hồng phấn */
-    var bgr = g.createLinearGradient(0, 0, W, H); bgr.addColorStop(0, "#fffaf8"); bgr.addColorStop(1, "#fdeef0"); g.fillStyle = bgr; g.fillRect(0, 0, W, H);
-    w20Wash(g, 1250, 800, 700, "#f9d5dc", .5); w20Wash(g, 250, 200, 450, "#fbe0e4", .5);
-    var A = w20Crop("A", 0, 1, 1, false), B = w20Crop("B", 0, 1, 1, false), C = w20Crop("C", 0, 1, 1, false);
-    g.save(); g.globalCompositeOperation = "multiply";
-    if (A) g.drawImage(A, 0, 0, A.width * .9, A.height * .9);
-    if (B) g.drawImage(B, W - B.width * .5, H - B.height * .5, B.width * .5, B.height * .5);
-    if (C) { g.save(); g.translate(W + 4, 120); g.scale(-1, 1); g.globalAlpha = .9; g.drawImage(C, 0, 0, C.width * .62, C.height * .62); g.restore(); }
-    g.restore(); return;
-  }
-  if (W20BGP[T.bg]) { W20BGP[T.bg](g, T, W, H); return; }
-  var bg = w20Img("assets/card-bg.webp");
-  if (bg.complete && bg.naturalWidth) g.drawImage(bg, 0, 0, W, H); else { g.fillStyle = "#fff8f5"; g.fillRect(0, 0, W, H); }
-}
 /* chọn ngẫu nhiên (cố định theo seed) n anh em trong số các anh */
 function w20PickMen(seed, n) { var a = [], i, j, t, N = (W20CFG.men || []).length; for (i = 0; i < N; i++) a.push(i); for (i = N - 1; i > 0; i--) { j = Math.floor(w20Rnd(seed * 31 + i * 7 + 1) * (i + 1)); t = a[i]; a[i] = a[j]; a[j] = t; } return a.slice(0, n); }
-/* bó hoa + hàng anh em com lê cà vạt đứng cạnh. c: {bx, by, bs, x0, dx, y, sc} */
-function w20Group(g, o, T, c) {
-  var MEN = (typeof W20CFG !== "undefined" && W20CFG.men) || [];
-  if (o.bq && o.bq.length) { W20WRAP = T.wrap || null; w20DrawBouquet(g, c.bx, c.by, c.bs, o.bq); W20WRAP = null; }
-  (o.men || []).forEach(function (id, k) { var m = MEN[id]; if (!m) return; w20Chibi(g, c.x0 + k * c.dx, c.y, c.sc, { img: w20Img(m.img), dir: 1, step: 1.6, up: k % 2 ? 0 : .85, lift: 0 }); });
-}
-function w20DrawCardP(g, o) {
-  var W = 1080, H = 1620, i, DS = "'Dancing Script','Brush Script MT',cursive", PF = "'Playfair Display',Georgia,serif";
-  var T = W20THEMES[o.theme >= 0 && o.theme < W20THEMES.length ? o.theme : 0], ROSE = T.acc, ROSE2 = T.acc2; W20INK = T.ink;
-  g.save(); g.textBaseline = "alphabetic"; g.textAlign = "center";
-  w20ThemeBg(g, T, W, H, false);
-  function ls(px) { if ("letterSpacing" in g) g.letterSpacing = px + "px"; }
-  /* ---- đầu thiệp (lệch phải để tránh hoa góc trái-trên) ---- */
-  var hx = 650; ls(5); w20Ink(g, "PHÒNG PTSPBL  ·  20.10." + new Date().getFullYear(), hx, 128, 30, 1); ls(0);
-  var hs = 116, hw = 700; g.font = "700 " + hs + "px " + DS; while (g.measureText("Happy Women's Day").width > hw && hs > 70) { hs -= 4; g.font = "700 " + hs + "px " + DS; }
-  g.fillStyle = ROSE2; g.shadowColor = w20Hex2rgba(ROSE2, .25); g.shadowBlur = 10; g.shadowOffsetY = 3; g.fillText("Happy Women's Day", hx, 262); g.shadowColor = "transparent"; g.shadowBlur = 0; g.shadowOffsetY = 0;
-  var gr = g.createLinearGradient(0, 290, 0, 470); gr.addColorStop(0, T.g1); gr.addColorStop(1, T.g2);
-  g.shadowColor = w20Hex2rgba(ROSE, .25); g.shadowBlur = 22; g.shadowOffsetY = 8; g.fillStyle = gr; g.font = "700 184px " + PF; g.fillText("20.10", 600, 440); g.shadowColor = "transparent"; g.shadowBlur = 0; g.shadowOffsetY = 0;
-  w20Ink(g, o.greet || "Gửi chị em thương mến", 560, 508, 36, 0); var y = 508;
-  /* ---- tên ---- */
-  var nm = o.name || "Chị em Phòng PTSPBL", fs = 104; g.font = fs + "px " + W20HW;
-  while (g.measureText(nm).width > 780 && fs > 50) { fs -= 4; g.font = fs + "px " + W20HW; }
-  y += fs * .82 + 22; w20Ink(g, nm, 560, y, fs, 1);
-  if (o.sub) { y += 50; var ss = 30; g.font = ss + "px " + W20HW; while (g.measureText(o.sub).width > 800 && ss > 22) { ss--; g.font = ss + "px " + W20HW; } w20Ink(g, o.sub, 560, y, ss, 0); }
-  /* ---- danh hiệu vui: chữ viết tay + nét lượn gạch chân ---- */
-  var rl = o.role || "", rs = 38;
-  if (rl) {
-    g.font = rs + "px " + W20HW; while (g.measureText(rl).width > 800 && rs > 28) { rs--; g.font = rs + "px " + W20HW; }
-    y += 78; var rw = g.measureText(rl).width; w20Ink(g, rl, 560, y, rs, 0); w20Wavy(g, 560 - rw / 2 - 6, 560 + rw / 2 + 6, y + 18, ROSE2); y += 18;
+/* o: {theme, greet, name, sub, role, wish, from, bd, bq:[...], men:[chỉ số các anh] | null} */
+function w20DrawCard(g, o) {
+  var T = W20THEMES[o.theme >= 0 && o.theme < W20THEMES.length ? o.theme : 0], W = T.w, H = T.h, b = T.blk, cx = b.x + b.w / 2, i;
+  W20INK = T.ink; g.save(); g.textBaseline = "alphabetic"; g.textAlign = "center";
+  var bg = w20Img("assets/cards/" + T.file + ".webp");
+  if (bg.complete && bg.naturalWidth) g.drawImage(bg, 0, 0, W, H); else { g.fillStyle = "#fdf0ee"; g.fillRect(0, 0, W, H); }
+  var nm = o.name || "Chị em Phòng PTSPBL", sub = o.sub || "", role = o.role || "", sg = "Thương mến, " + (o.from || ""), wish = o.wish || "", greet = o.greet || "Thân gửi:";
+  function build(s, useSub, useRole) {
+    var F = b.w * .108 * s, fn = F, gap = F * .3, P = [], h = 0, wf = F * .62, lines;
+    g.font = fn + "px " + W20HW; while (g.measureText(nm).width > b.w && fn > 18) { fn -= 2; g.font = fn + "px " + W20HW; }
+    P.push({ t: greet, f: F * .5, y: h + F * .42, col: T.ink }); h += F * .56;
+    P.push({ t: nm, f: fn, y: h + fn * .8, col: T.acc, bold: 1 }); h += fn * 1.08;
+    if (useSub && sub) { P.push({ t: sub, f: F * .44, y: h + F * .4, col: T.ink, fit: 1 }); h += F * .52; }
+    if (useRole && role) { P.push({ t: role, f: F * .5, y: h + F * .5, col: T.ink, wavy: 1, fit: 1 }); h += F * .74; }
+    h += gap * .6; g.font = wf + "px " + W20HW; lines = w20WrapBal(g, wish, b.w * .94); if (lines.length > 6) lines = lines.slice(0, 6);
+    lines.forEach(function (l, k) { P.push({ t: l, f: wf, y: h + wf * .8 + k * wf * 1.3, col: T.ink }); }); h += lines.length * wf * 1.3 + gap * .5;
+    P.push({ t: sg, f: F * .5, y: h + F * .44, col: T.acc, bold: 1, heart: 1, fit: 1 }); h += F * .56;
+    return { P: P, h: h };
   }
-  if (o.bd) { y += 58; w20Ink(g, "🎂 Chúc mừng sinh nhật tháng 10 nha!", 560, y, 32, 0); }
-  /* ---- lời chúc ---- */
-  y += 112; var wsz = 46, WX = 470, WW = 640; g.font = wsz + "px " + W20HW; var txt = o.wish || "", wl = w20WrapBal(g, txt, WW);
-  while (wl.length > 5 && wsz > 32) { wsz -= 2; g.font = wsz + "px " + W20HW; wl = w20WrapBal(g, txt, WW); }
-  var lh = wsz * 1.5, ny = Math.min(wl.length, 8), mw = 0;
-  g.font = wsz + "px " + W20HW; for (i = 0; i < ny; i++) mw = Math.max(mw, g.measureText(wl[i]).width);
-  var lw = ny ? g.measureText(wl[ny - 1]).width : 0, qc = w20Hex2rgba(ROSE2, .6);
-  g.fillStyle = qc; g.font = "700 110px " + PF; g.textAlign = "right"; g.fillText("“", WX - mw / 2 - 6, y + 24); g.textAlign = "center";
-  for (i = 0; i < ny; i++) { g.save(); g.translate(WX, y + i * lh); g.rotate((((i * 7) % 5) - 2) * .0045); w20Ink(g, wl[i], 0, 0, wsz, 0); g.restore(); } /* mỗi dòng nghiêng nhẹ cho giống tay viết */
-  var wend = y + (ny - 1) * lh; g.fillStyle = qc; g.font = "700 110px " + PF; g.textAlign = "left"; g.fillText("”", Math.min(WX + WW / 2 + 8, WX + lw / 2 + 6), wend + 54); g.textAlign = "center";
-  /* ---- ký tên ---- */
-  y = wend + 104; var sg = "Thương mến, " + (o.from || ""), sgs = 44; g.font = sgs + "px " + W20HW; while (g.measureText(sg).width > WW - 40 && sgs > 28) { sgs -= 2; g.font = sgs + "px " + W20HW; }
-  w20Ink(g, sg, WX, y, sgs, 1); var sgw = g.measureText(sg).width; g.fillStyle = ROSE2; g.font = sgs + "px " + W20HW; g.textAlign = "left"; g.fillText("♥", WX + sgw / 2 + 12, y); g.textAlign = "center";
-  /* ---- bó hoa và các anh em xếp hàng cạnh hoa ---- */
-  var hasM = o.men && o.men.length, top = y + 70, S = 185, cy;
-  if (top + 2.35 * S > H - 40) S = (H - 40 - top) / 2.35; cy = top + 1.1 * S;
-  var bx = 50 + S * 1.05, sc = .9, x1 = bx + S * 1.05 + 30, dx = (W - 50 - x1 - sc * 108) / 5; /* bó hoa luôn ở góc trái-dưới; anh em (nếu hiện) xếp hàng bên phải */
-  w20Group(g, o, T, { bx: bx, by: cy, bs: S, x0: x1 + sc * 54, dx: dx, y: cy + 1.25 * S - 8, sc: sc });
+  var L = null, s, tries = [[1, 1], [1, 0], [0, 0]], tk;
+  for (tk = 0; tk < tries.length && !L; tk++) for (s = 1; s >= .5; s -= .05) { var r = build(s, tries[tk][0], tries[tk][1]); if (r.h <= b.h) { L = r; break; } }
+  if (!L) L = build(.5, 0, 0);
+  var y0 = b.y + Math.max(0, (b.h - L.h) * .35);
+  L.P.forEach(function (p) {
+    var f = p.f; if (p.fit) { g.font = f + "px " + W20HW; while (g.measureText(p.t).width > b.w && f > 16) { f -= 2; g.font = f + "px " + W20HW; } }
+    var save = W20INK; W20INK = p.col; w20Ink(g, p.t, cx, y0 + p.y, f, p.bold); W20INK = save;
+    if (p.wavy) { var w = g.measureText(p.t).width; w20Wavy(g, cx - w / 2 - 6, cx + w / 2 + 6, y0 + p.y + f * .38, T.acc); }
+    if (p.heart) { var w2 = g.measureText(p.t).width; g.save(); g.fillStyle = T.acc; g.textAlign = "left"; g.font = f + "px " + W20HW; g.fillText("♥", cx + w2 / 2 + 8, y0 + p.y); g.restore(); }
+  });
+  /* bó hoa các chị cắm: nhỏ ở góc trái */
+  if (o.bq && o.bq.length) w20DrawBouquet(g, T.bq.x, T.bq.y, T.bq.s, o.bq);
+  /* anh em com lê cà vạt xếp hàng dưới thiệp (tuỳ chọn) */
+  var MEN = (typeof W20CFG !== "undefined" && W20CFG.men) || [], sc = Math.max(.42, W * .00036), dx = W * .075, x0 = W * .36;
+  (o.men || []).forEach(function (id, k) { var m = MEN[id]; if (!m) return; w20Chibi(g, x0 + k * dx, H - 12, sc, { img: w20Img(m.img), dir: 1, step: 1.6, up: k % 2 ? 0 : .85, lift: 0 }); });
   g.restore();
 }
-
-function w20DrawCardL(g, o) {
-  var W = 1620, H = 1080, i, DS = "'Dancing Script','Brush Script MT',cursive", PF = "'Playfair Display',Georgia,serif", TX = 1065;
-  var T = W20THEMES[o.theme >= 0 && o.theme < W20THEMES.length ? o.theme : 0], ROSE = T.acc, ROSE2 = T.acc2; W20INK = T.ink;
-  g.save(); g.textBaseline = "alphabetic"; g.textAlign = "center";
-  w20ThemeBg(g, T, W, H, true);
-  function ls(px) { if ("letterSpacing" in g) g.letterSpacing = px + "px"; }
-  /* ---- cột chữ bên trái ---- */
-  ls(5); w20Ink(g, "PHÒNG PTSPBL  ·  20.10." + new Date().getFullYear(), TX, 104, 28, 1); ls(0);
-  var hs = 96, hw = 720; g.font = "700 " + hs + "px " + DS; while (g.measureText("Happy Women's Day").width > hw && hs > 60) { hs -= 4; g.font = "700 " + hs + "px " + DS; }
-  g.fillStyle = ROSE2; g.shadowColor = w20Hex2rgba(ROSE2, .25); g.shadowBlur = 10; g.shadowOffsetY = 3; g.fillText("Happy Women's Day", TX, 208); g.shadowColor = "transparent"; g.shadowBlur = 0; g.shadowOffsetY = 0;
-  var gr = g.createLinearGradient(0, 235, 0, 360); gr.addColorStop(0, T.g1); gr.addColorStop(1, T.g2);
-  g.shadowColor = w20Hex2rgba(ROSE, .25); g.shadowBlur = 20; g.shadowOffsetY = 7; g.fillStyle = gr; g.font = "700 150px " + PF; g.fillText("20.10", TX, 350); g.shadowColor = "transparent"; g.shadowBlur = 0; g.shadowOffsetY = 0;
-  w20Ink(g, o.greet || "Gửi chị em thương mến", TX, 412, 34, 0); var y = 412;
-  var nm = o.name || "Chị em Phòng PTSPBL", fs = 94; g.font = fs + "px " + W20HW;
-  while (g.measureText(nm).width > 860 && fs > 48) { fs -= 4; g.font = fs + "px " + W20HW; }
-  y += fs * .82 + 22; w20Ink(g, nm, TX, y, fs, 1);
-  if (o.sub) { y += 50; var ss = 30; g.font = ss + "px " + W20HW; while (g.measureText(o.sub).width > 860 && ss > 22) { ss--; g.font = ss + "px " + W20HW; } w20Ink(g, o.sub, TX, y, ss, 0); }
-  var rl = o.role || "", rs = 36;
-  if (rl) {
-    g.font = rs + "px " + W20HW; while (g.measureText(rl).width > 860 && rs > 26) { rs--; g.font = rs + "px " + W20HW; }
-    y += 68; var rw = g.measureText(rl).width; w20Ink(g, rl, TX, y, rs, 0); w20Wavy(g, TX - rw / 2 - 6, TX + rw / 2 + 6, y + 16, ROSE2); y += 16;
-  }
-  if (o.bd) { y += 54; w20Ink(g, "🎂 Chúc mừng sinh nhật tháng 10 nha!", TX, y, 30, 0); }
-  /* ---- lời chúc ---- */
-  y += 100; var wsz = 44, WW = 800; g.font = wsz + "px " + W20HW; var txt = o.wish || "", wl = w20WrapBal(g, txt, WW);
-  while (wl.length > 4 && wsz > 30) { wsz -= 2; g.font = wsz + "px " + W20HW; wl = w20WrapBal(g, txt, WW); }
-  var lh = wsz * 1.42, ny = Math.min(wl.length, 7), mw = 0;
-  g.font = wsz + "px " + W20HW; for (i = 0; i < ny; i++) mw = Math.max(mw, g.measureText(wl[i]).width);
-  var lw = ny ? g.measureText(wl[ny - 1]).width : 0, qc = w20Hex2rgba(ROSE2, .6);
-  g.fillStyle = qc; g.font = "700 100px " + PF; g.textAlign = "right"; g.fillText("“", TX - mw / 2 - 6, y + 22); g.textAlign = "center";
-  for (i = 0; i < ny; i++) { g.save(); g.translate(TX, y + i * lh); g.rotate((((i * 7) % 5) - 2) * .0045); w20Ink(g, wl[i], 0, 0, wsz, 0); g.restore(); }
-  var wend = y + (ny - 1) * lh; g.fillStyle = qc; g.font = "700 100px " + PF; g.textAlign = "left"; g.fillText("”", Math.min(TX + WW / 2 + 8, TX + lw / 2 + 6), wend + 50); g.textAlign = "center";
-  y = wend + 88; var sg = "Thương mến, " + (o.from || ""), sgs = 42; g.font = sgs + "px " + W20HW; while (g.measureText(sg).width > WW - 40 && sgs > 28) { sgs -= 2; g.font = sgs + "px " + W20HW; }
-  w20Ink(g, sg, TX, y, sgs, 1); var sgw = g.measureText(sg).width; g.fillStyle = ROSE2; g.font = sgs + "px " + W20HW; g.textAlign = "left"; g.fillText("♥", TX + sgw / 2 + 12, y); g.textAlign = "center";
-  /* ---- bên trái: bó hoa; nếu hiện anh em thì xếp hàng ngang bên dưới bó hoa ---- */
-  var hasM = o.men && o.men.length;
-  w20Group(g, o, T, hasM ? { bx: 375, by: 400, bs: 150, x0: 375 - 2.5 * 84, dx: 84, y: 930, sc: .74 } : { bx: 375, by: 520, bs: 195 });
-  g.restore();
-}
-
-function w20DrawCard(g, o) { if (o.land) w20DrawCardL(g, o); else w20DrawCardP(g, o); }
 
 /* Bấm vào khung ảnh tập thể để xem to */
 document.addEventListener("click", function (e) {

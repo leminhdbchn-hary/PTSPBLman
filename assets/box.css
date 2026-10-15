@@ -297,7 +297,7 @@ body.bx:before{background:radial-gradient(900px 600px at 80% -10%,rgba(255,93,15
 
 /* thiệp ngang (chị em chọn) */
 .scene #card.land{width:100%}
-@media (min-width:900px) and (min-height:520px){#s5 #card.land,#p6 #card.land{width:min(100%,720px)!important;height:auto;aspect-ratio:3/2;margin:0 auto}}
+@media (min-width:900px) and (min-height:520px){#s5 #card.land,#p6 #card.land{width:min(100%,720px,calc((100svh - 190px) * var(--ar,1.5)))!important;height:auto;aspect-ratio:var(--ar,1.5);margin:0 auto}}
 .cardopts{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:2px 0 6px}
 .cardopts .btn{font-size:14px;padding:8px 14px}
 @media (min-width:900px) and (min-height:520px){.cardopts{justify-content:flex-start}}
