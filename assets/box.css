@@ -301,3 +301,16 @@ body.bx:before{background:radial-gradient(900px 600px at 80% -10%,rgba(255,93,15
 .cardopts{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:2px 0 6px}
 .cardopts .btn{font-size:14px;padding:8px 14px}
 @media (min-width:900px) and (min-height:520px){.cardopts{justify-content:flex-start}}
+
+/* ===== Màn thiệp (cuối): không còn hộp quà, nền sáng như bàn làm thiệp ===== */
+body.bx.fin:before{background:radial-gradient(900px 600px at 12% -5%,#ffe0ea,transparent 60%),radial-gradient(800px 600px at 100% 105%,#ffeccf,transparent 55%),linear-gradient(160deg,#fff8f3,#fdeef2 60%,#f6e6f4)}
+body.fin .litebtn{color:#8a4a5e!important;background:rgba(255,255,255,.7)!important}
+body.fin #s5.scene,body.fin #p6.scene{padding-top:calc(env(safe-area-inset-top,0px) + 14px);--m:10px;align-items:flex-start}
+body.fin #s5 .paper2,body.fin #p6 .paper2{border:0;border-radius:0;background:none;box-shadow:none;max-width:1000px}
+body.fin #s5 .paper2:before,body.fin #s5 .paper2:after,body.fin #p6 .paper2:before,body.fin #p6 .paper2:after{display:none}
+body.fin #s5 .pbody,body.fin #p6 .pbody{background:none;padding:4px 6px 22px;align-content:start}
+body.fin #s5 .hw,body.fin #p6 .hw{font-size:clamp(34px,9vw,46px);margin-bottom:12px;text-shadow:none}
+body.fin .scene #card{border:7px solid #fff;border-radius:4px;background:#fff;box-shadow:0 16px 38px rgba(110,30,60,.28),0 2px 6px rgba(110,30,60,.15)}
+body.fin .cardbox .side{margin-top:16px;padding:14px 12px 16px;border-radius:22px;background:rgba(255,255,255,.78);box-shadow:0 8px 26px rgba(110,30,60,.12);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
+body.fin .endnote{color:var(--ink)}
+@media (min-width:900px) and (min-height:520px){body.fin .cardbox:not(.land) .side{margin-top:0}}
