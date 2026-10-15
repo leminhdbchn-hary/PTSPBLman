@@ -229,8 +229,8 @@ function w20Wheel(cv, prizes, onWin, slots) {
       g.save(); g.rotate((i + .5) * seg);
       var arc = 6.283185 * R * .66 / n, z = Math.min(R * .3, arc * .92);
       if (k < 0) { /* ô may mắn: trèfle + chữ nhỏ dọc theo bán kính */
-        var sp0 = w20Spr("🍀", 96), z0 = Math.min(R * .2, arc * .8); g.drawImage(sp0, -z0 / 2, -R * .8 - z0 / 2, z0, z0);
-        g.save(); g.translate(0, -R * .45); g.rotate(-1.5708); g.fillStyle = "#8a6a2a"; g.font = "700 " + Math.round(R * .075) + "px 'Be Vietnam Pro',sans-serif"; g.textAlign = "center"; g.textBaseline = "middle"; g.fillText("Chúc bạn may mắn", 0, 0); g.restore();
+        var sp0 = w20Spr("🍀", 96), z0 = Math.min(R * .2, arc * .8); g.drawImage(sp0, -z0 / 2, -R * .84 - z0 / 2, z0, z0);
+        var fz = Math.round(R * .072); g.save(); g.translate(0, -R * .5); g.rotate(-1.5708); g.fillStyle = "#7a5a1a"; g.font = "700 " + fz + "px 'Be Vietnam Pro',sans-serif"; g.textAlign = "center"; g.textBaseline = "middle"; g.fillText("Chúc bạn", 0, -fz * .72); g.fillText("may mắn", 0, fz * .72); g.restore();
       } else { var sp = w20Spr(ic(prizes[k]), 128); g.drawImage(sp, -z / 2, -R * .7 - z / 2, z, z); }
       g.restore();
     }
