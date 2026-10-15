@@ -10,7 +10,7 @@
 <meta name="theme-color" content="#00381f">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E💐%3C/text%3E%3C/svg%3E">
 <link rel="stylesheet" href="assets/style.css?v=20261013">
-<link rel="stylesheet" href="assets/box.css?v=20261027">
+<link rel="stylesheet" href="assets/box.css?v=20261029">
 </head>
 <body class="bx">
 <canvas id="fx" aria-hidden="true"></canvas>
@@ -139,7 +139,7 @@
 <script src="assets/config.js?v=20261024"></script>
 <script src="assets/stock.js?v=20261024"></script>
 <script src="assets/people.js?v=20261022"></script>
-<script src="assets/common.js?v=20261027"></script>
+<script src="assets/common.js?v=20261029"></script>
 <script src="assets/flowers.js?v=20261013"></script>
 <script src="assets/modules.js?v=20261028"></script>
 <script src="assets/boxflow.js?v=20261016"></script>
@@ -160,6 +160,9 @@
 
   /* ---------- các lớp hộp quà (lớn → bé dần), tiến độ lưu trên máy ---------- */
   var N = 8, PK = "w20sepst3:" + (me ? me.id : "guest"), PS = { opened: 0, step: 0 }, loading = true;
+  /* mở từ Zalo/Facebook sang Safari/Chrome: nhận lại tiến độ đã chơi (qua #s=…) nếu máy chưa có */
+  var IMP = w20ImportHash(); if (IMP && !TEST) { try { if (!localStorage.getItem(PK) && IMP.ps) localStorage.setItem(PK, JSON.stringify(IMP.ps)); var K0 = "w20sep3:" + (me ? me.id : "guest"); if (!localStorage.getItem(K0) && IMP.pr) localStorage.setItem(K0, JSON.stringify(IMP.pr)); var C0 = "w20sepcw:" + (me ? me.id : "guest"); if (!localStorage.getItem(C0) && IMP.cw) localStorage.setItem(C0, IMP.cw); } catch (e) {} }
+  window.W20EXPORT = function () { var pr = []; try { pr = JSON.parse(localStorage.getItem("w20sep3:" + (me ? me.id : "guest")) || "[]"); } catch (e) {} return JSON.stringify({ ps: PS, pr: pr, cw: CW }); };
   try { if (!TEST) PS = JSON.parse(localStorage.getItem(PK) || "{}") || {}; } catch (e) { PS = {}; }
   PS.step = PS.step || 0;
   function savePS() { if (TEST) return; try { localStorage.setItem(PK, JSON.stringify(PS)); } catch (e) {} }

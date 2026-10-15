@@ -287,15 +287,38 @@ function w20Sub(t) { t = String(t || "").trim(); if (!t || /chuyên viên/i.test
 /* Biểu tượng quà: emoji hoặc ảnh (đường dẫn assets/…) → HTML */
 function w20IconHTML(icon, size) { icon = String(icon || ""); size = size || 32; return /^assets\//.test(icon) ? '<img src="' + icon + '?v=20261015" alt="" style="height:' + size + 'px;width:auto;vertical-align:middle;display:inline-block">' : icon; }
 
+/* ===== Mở sang trình duyệt ngoài (Safari/Chrome) từ Zalo/Facebook, mang theo tiến độ để không phải chơi lại từ đầu ===== */
+function w20ExternalURL() {
+  var base = location.origin + location.pathname + location.search, st = "";
+  try { st = window.W20EXPORT ? window.W20EXPORT() : ""; } catch (e) {}
+  if (!st) return base;
+  try { return base + "#s=" + encodeURIComponent(btoa(unescape(encodeURIComponent(st)))); } catch (e) { return base; }
+}
+function w20ImportHash() { /* đọc tiến độ từ #s=… (nếu có) rồi xóa khỏi thanh địa chỉ */
+  var m = /[#&]s=([^&]+)/.exec(location.hash || ""); if (!m) return null;
+  try { var o = JSON.parse(decodeURIComponent(escape(atob(decodeURIComponent(m[1]))))); try { history.replaceState(null, "", location.pathname + location.search); } catch (e) {} return o; } catch (e) { return null; }
+}
+function w20OpenExternal(done) {
+  var ua = navigator.userAgent || "", url = w20ExternalURL(), u;
+  try { u = new URL(url); } catch (e) { return false; }
+  if (/iPhone|iPad|iPod/i.test(ua)) { location.href = "x-safari-" + url; }
+  else if (/Android/i.test(ua)) { location.href = "intent://" + u.host + u.pathname + u.search + u.hash + "#Intent;scheme=https;package=com.android.chrome;S.browser_fallback_url=" + encodeURIComponent(url) + ";end"; }
+  else { window.open(url, "_blank"); }
+  setTimeout(function () { if (!document.hidden) done && done(false); }, 1500); /* vẫn còn ở đây = ứng dụng không cho mở */
+  return true;
+}
+
 /* Lưu ảnh thiệp: trình duyệt thường thì tải về; trong Zalo/Facebook… (không cho tải) thì mở ảnh to để nhấn giữ và lưu */
 function w20SaveImage(cv, name, done) {
   var inapp = /Zalo|FBAN|FBAV|FB_IAB|Instagram|Line\/|; wv\)|MiuiBrowser|MicroMessenger|KAKAOTALK/i.test(navigator.userAgent || "");
+  function say(t) { var el = document.getElementById("toast"); if (el) { el.textContent = t; el.className = "toast show"; clearTimeout(say.t); say.t = setTimeout(function () { el.className = "toast"; }, 3600); } }
   function overlay() {
     var url = cv.toDataURL("image/png"), d = document.createElement("div"); d.className = "savebox";
-    d.innerHTML = '<div class="sv-in"><p class="sv-t">Nhấn giữ vào ảnh rồi chọn <b>“Lưu ảnh”</b></p><img alt="Thiệp 20/10" src="' + url + '"><div class="sv-b"><button type="button" class="btn ghost sv-link">🔗 Sao chép link, mở bằng Chrome/Safari</button><button type="button" class="btn sv-x">Đóng</button></div></div>';
+    d.innerHTML = '<div class="sv-in"><p class="sv-t">Nhấn giữ vào ảnh rồi chọn <b>“Lưu ảnh”</b></p><img alt="Thiệp 20/10" src="' + url + '"><div class="sv-b"><button type="button" class="btn pink sv-open">🌐 Mở bằng Safari/Chrome</button><button type="button" class="btn ghost sv-link">🔗 Sao chép link</button><button type="button" class="btn sv-x">Đóng</button></div><p class="sv-h">Nếu chưa mở được: bấm dấu <b>⋯</b> (góc phải trên) → <b>“Mở bằng trình duyệt”</b>. Tiến độ của bạn được giữ nguyên.</p></div>';
     document.body.appendChild(d);
     d.querySelector(".sv-x").onclick = function () { d.remove(); };
-    d.querySelector(".sv-link").onclick = function () { w20Copy(location.href, function () { var t = document.getElementById("toast"); if (t) { t.textContent = "Đã sao chép link, dán vào Chrome/Safari để tải ảnh 📋"; t.className = "toast show"; setTimeout(function () { t.className = "toast"; }, 2600); } }); };
+    d.querySelector(".sv-open").onclick = function () { w20OpenExternal(function () { say("Ứng dụng chưa cho mở tự động. Bấm ⋯ (góc phải trên) → Mở bằng trình duyệt nhé"); }); };
+    d.querySelector(".sv-link").onclick = function () { w20Copy(w20ExternalURL(), function () { say("Đã sao chép link. Dán vào Safari/Chrome để mở tiếp, không phải chơi lại 📋"); }); };
     done && done();
   }
   if (inapp) { overlay(); return; }
