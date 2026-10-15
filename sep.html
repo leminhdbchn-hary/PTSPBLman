@@ -137,12 +137,12 @@
 </div>
 <div class="toast" id="toast" role="status"></div>
 
-<script src="assets/config.js?v=20261013"></script>
-<script src="assets/stock.js?v=20261013"></script>
+<script src="assets/config.js?v=20261024"></script>
+<script src="assets/stock.js?v=20261024"></script>
 <script src="assets/people.js?v=20261022"></script>
-<script src="assets/common.js?v=20261022"></script>
+<script src="assets/common.js?v=20261024"></script>
 <script src="assets/flowers.js?v=20261013"></script>
-<script src="assets/modules.js?v=20261023"></script>
+<script src="assets/modules.js?v=20261025"></script>
 <script src="assets/boxflow.js?v=20261016"></script>
 <script src="assets/firebase-sync.js?v=20261013"></script>
 <script>
@@ -242,6 +242,7 @@
     w20DrawCard(g, { mode: "sep", greet: "Thân gửi:", name: S.to ? "Chị " + S.to : "Các chị lãnh đạo của Phòng", sub: me ? w20Sub(me.t) : "", role: W20.sep.roles[ri()], wish: CW ? CW : w20SepWish(wi(), "chị"), prizes: got.map(function (i) { return W20CFG.prizes[i]; }).filter(Boolean), from: S.f, bq: S.bq });
   }
   var bgImg = w20Img("assets/card-bg.webp"); if (!bgImg.complete) bgImg.onload = function () { card(); };
+  W20CFG.prizes.forEach(function (p) { if (/^assets\//.test(p.icon)) { var im = w20Img(p.icon); if (!im.complete) im.addEventListener("load", function () { card(); }); } }); /* ảnh quà tải xong thì vẽ lại thiệp */
   var cardT = 0; function cardSoon() { cancelAnimationFrame(cardT); cardT = requestAnimationFrame(card); }
   $("#dl").onclick = function () { card(); $("#card").toBlob(function (b) { var a = document.createElement("a"); a.href = URL.createObjectURL(b); a.download = "thiep-20-10-" + (S.to || "chi").replace(/\s+/g, "-") + ".png"; document.body.appendChild(a); a.click(); setTimeout(function () { URL.revokeObjectURL(a.href); a.remove(); }, 1500); toast("Đã tải thiệp về máy 🌹"); FX.burst(innerWidth / 2, innerHeight * .6, 70); }, "image/png"); };
   $("#shr").onclick = function () {

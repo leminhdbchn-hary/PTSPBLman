@@ -130,17 +130,17 @@ code{background:rgba(0,0,0,.25);border-radius:6px;padding:1px 6px;font-size:.92e
 </section>
 <div class="toast" id="toast" role="status"></div>
 
-<script src="assets/config.js?v=20261013"></script>
-<script src="assets/stock.js"></script>
+<script src="assets/config.js?v=20261024"></script>
+<script src="assets/stock.js?v=20261024"></script>
 <script src="assets/people.js?v=20261013"></script>
-<script src="assets/common.js?v=20261013"></script>
+<script src="assets/common.js?v=20261024"></script>
 <script src="assets/firebase-sync.js?v=20261013"></script>
 <script>
 (function () {
   var $ = function (s) { return document.querySelector(s); };
   var base = new URL("index.html", location.href).href, baseSep = new URL("sep.html", location.href).href;
   (function () { var h = "<p style='margin:0 0 6px'><b>🧪 Link thử</b> (mở đi mở lại thoải mái, không lưu tiến độ, không tính vào quà)</p>"; W20TEST.forEach(function (t) { var a = (t.lead ? baseSep : base) + "?u=" + t.id; h += "<p style='margin:4px 0;word-break:break-all'>" + t.n + " · " + t.t + ":<br><a href='" + a + "' target='_blank' style='color:inherit'>" + a + "</a></p>"; }); document.getElementById("testlinks").innerHTML = h; })();
-  var PR = W20CFG.prizes, N = W20P.length, NEED = N, REC = [22, 20, 10];
+  var PR = W20CFG.prizes, N = W20P.length, NEED = N, REC = [16, 16, 10, 10];
   var draft = { qty: W20STOCK.qty.slice(), seed: String(W20STOCK.seed) }, A = w20Assign(draft);
   var REPO = "leminhdbchn-hary/PTSPBLman", BRANCH = "main", FILE = "assets/stock.js";
   function toast(t) { var e = $("#toast"); e.textContent = t; e.className = "toast show"; clearTimeout(toast.t); toast.t = setTimeout(function () { e.className = "toast"; }, 2000); }
@@ -194,7 +194,7 @@ code{background:rgba(0,0,0,.25);border-radius:6px;padding:1px 6px;font-size:.92e
     var q = $("#q3").value;
     rows = rows.filter(function (r) { return match(r.p, q); }).sort(function (a, b) { var A = a.o && a.o.at ? a.o.at.getTime() : (a.o ? 1 : 0), B = b.o && b.o.at ? b.o.at.getTime() : (b.o ? 1 : 0); return B - A; });
     $("#llist").innerHTML = rows.map(function (r) {
-      var st = !r.o ? "⚪ Chưa mở link" : r.pr ? "🎡 Đã quay: " + r.pr.icon + " " + esc(r.pr.name) : r.o.kind === "v4" ? "🟡 Đang xem, phần " + Math.min((r.d.step || 0) + 1, N7) + "/" + N7 : "🟡 Đã mở trang Sếp";
+      var st = !r.o ? "⚪ Chưa mở link" : r.pr ? "🎡 Đã quay: " + w20IconHTML(r.pr.icon, 22) + " " + esc(r.pr.name) : r.o.kind === "v4" ? "🟡 Đang xem, phần " + Math.min((r.d.step || 0) + 1, N7) + "/" + N7 : "🟡 Đã mở trang Sếp";
       return '<div class="row"><div class="who"><b>' + esc(r.p.n) + "</b><small>" + esc(r.p.t) + '</small></div><div class="who" style="flex:1 1 300px"><b>' + st + "</b>" + (r.o ? "<small>" + (r.o.at ? "Lúc " + fmt(r.o.at) : "") + (r.o.dev > 1 ? " · ⚠ " + r.o.dev + " điện thoại" : "") + "</small>" : "") + "</div></div>";
     }).join("");
     var rq = LIVE.req.filter(function (r) { return /^w20(v4|sep3)/.test(r.id || ""); }).sort(function (a, b) { var A = ts(a.at), B = ts(b.at); return (B ? B.getTime() : 0) - (A ? A.getTime() : 0); });
@@ -230,7 +230,7 @@ code{background:rgba(0,0,0,.25);border-radius:6px;padding:1px 6px;font-size:.92e
   function renderStock() {
     $("#need").innerHTML = "Có <b>" + N + "</b> người, mỗi người quay <b>1 lần, nhận 1 món</b> → cần đúng <b>" + NEED + "</b> suất quà. Mỗi món tối đa " + N + " suất.";
     $("#prows").innerHTML = PR.map(function (p, i) {
-      return '<div class="prow"><div class="ic">' + p.icon + '</div><div class="nm"><b>' + esc(p.name) + '</b><div class="bar2"><i style="width:' + Math.min(100, draft.qty[i] / N * 100) + '%"></i></div></div>'
+      return '<div class="prow"><div class="ic">' + w20IconHTML(p.icon, 30) + '</div><div class="nm"><b>' + esc(p.name) + '</b><div class="bar2"><i style="width:' + Math.min(100, draft.qty[i] / N * 100) + '%"></i></div></div>'
         + '<div class="step2"><button type="button" data-i="' + i + '" data-d="-1" aria-label="Giảm">−</button><input type="number" min="0" max="' + N + '" inputmode="numeric" data-i="' + i + '" value="' + draft.qty[i] + '" aria-label="Số lượng"><button type="button" data-i="' + i + '" data-d="1" aria-label="Tăng">+</button></div></div>';
     }).join("");
     var t = total(), ok = valid();
@@ -265,7 +265,7 @@ code{background:rgba(0,0,0,.25);border-radius:6px;padding:1px 6px;font-size:.92e
   function renderDetail() {
     if ($("#detail").hidden) return;
     var q = $("#q2").value, L = W20P.filter(function (p) { return match(p, q); });
-    $("#plist").innerHTML = L.map(function (p, k) { var z = A[p.id]; return '<div class="row"><div class="who"><b>' + (k + 1) + ". " + esc(p.n) + '</b><small>' + esc(p.t) + '</small></div><div class="who" style="flex:1 1 300px"><b>' + PR[z[0]].icon + " " + esc(PR[z[0]].name) + "</b></div></div>"; }).join("");
+    $("#plist").innerHTML = L.map(function (p, k) { var z = A[p.id]; return '<div class="row"><div class="who"><b>' + (k + 1) + ". " + esc(p.n) + '</b><small>' + esc(p.t) + '</small></div><div class="who" style="flex:1 1 300px"><b>' + w20IconHTML(PR[z[0]].icon, 22) + " " + esc(PR[z[0]].name) + "</b></div></div>"; }).join("");
   }
   $("#peek").onclick = function () { if ($("#detail").hidden && !confirm("Danh sách này tiết lộ ai nhận món gì. Chỉ nên xem khi phát quà. Mở chứ?")) return; $("#detail").hidden = !$("#detail").hidden; $("#peek").textContent = $("#detail").hidden ? "👁 Mở danh sách chi tiết" : "🙈 Ẩn danh sách"; renderDetail(); };
   $("#q2").oninput = renderDetail;

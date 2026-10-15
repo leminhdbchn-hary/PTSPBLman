@@ -285,3 +285,6 @@ function w20Assign(stock) {
 
 /* Chức danh gọn trên thiệp: bỏ "Chuyên viên…", bỏ chữ "PTSPBL" thừa */
 function w20Sub(t) { t = String(t || "").trim(); if (!t || /chuyên viên/i.test(t)) return ""; return t.replace(/\s*Phòng\s+PTSPBL\s*$/i, " Phòng").replace(/\s*PTSPBL\s*$/i, "").trim(); }
+
+/* Biểu tượng quà: emoji hoặc ảnh (đường dẫn assets/…) → HTML */
+function w20IconHTML(icon, size) { icon = String(icon || ""); size = size || 32; return /^assets\//.test(icon) ? '<img src="' + icon + '?v=20261015" alt="" style="height:' + size + 'px;width:auto;vertical-align:middle;display:inline-block">' : icon; }

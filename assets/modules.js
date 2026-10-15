@@ -4,9 +4,11 @@ var W20FL = (typeof W20FN !== "undefined" ? W20FN : ["a", "b", "c", "d", "e", "f
 var W20SLOT = [[0, -.3, 1.2], [-.38, -.22, 1.04], [.38, -.2, 1.04], [-.2, -.6, 1.06], [.22, -.58, 1.06], [-.6, -.5, .92], [.6, -.48, .92],
   [0, -.9, .96], [-.4, -.86, .86], [.42, -.84, .86], [-.74, -.2, .84], [.74, -.18, .84]];
 var W20SPR = {};
-function w20Spr(e, px) { /* emoji vẽ sẵn thành hình (nét, nhẹ) */
+function w20Spr(e, px) { /* emoji (hoặc ảnh assets/…) vẽ sẵn thành hình vuông (nét, nhẹ) */
   var k = e + px; if (W20SPR[k]) return W20SPR[k];
   var c = document.createElement("canvas"); c.width = c.height = px; var g = c.getContext("2d");
+  if (/^assets\//.test(e)) { var im = w20Img(e); if (!im.complete || !im.naturalWidth) return c; /* chưa tải xong: trả hình trống, không lưu cache */
+    var sc = Math.min(px * .92 / im.naturalWidth, px * .92 / im.naturalHeight), w = im.naturalWidth * sc, h = im.naturalHeight * sc; g.drawImage(im, (px - w) / 2, (px - h) / 2, w, h); return (W20SPR[k] = c); }
   g.font = Math.round(px * .8) + "px serif"; g.textAlign = "center"; g.textBaseline = "middle"; g.fillText(e, px / 2, px * .56);
   return (W20SPR[k] = c);
 }
@@ -232,7 +234,9 @@ function w20Wheel(cv, prizes, onWin) {
     cv.style.willChange = "transform";
     (function step(now) { var t = Math.min(1, (now - t0) / D); rot = start + (finalRot - start) * ease(t); cv.style.transform = "rotate(" + rot + "rad)"; if (t < 1) requestAnimationFrame(step); else { busy = false; cv.style.willChange = "auto"; onWin && onWin(prizes[idx], idx); } })(t0);
   }
-  draw(); return { spin: spin, setAt: setAt };
+  draw();
+  prizes.forEach(function (p) { var e = ic(p); if (/^assets\//.test(e)) { var im = w20Img(e); if (!im.complete) im.addEventListener("load", draw); } }); /* ảnh quà tải xong thì vẽ lại vòng quay */
+  return { spin: spin, setAt: setAt };
 }
 
 /* Tường lời chúc */
@@ -250,7 +254,7 @@ function w20Wheel2(o) {
   var wv = w20Wheel(o.cv, P, function (p, idx) { got.push(idx); o.onGot && o.onGot(got.slice()); render(true); });
   function render(fresh) {
     var h = "";
-    got.forEach(function (i, k) { var p = P[i]; h += "<div class='pzrow'><span class='pz'>" + p.icon + "</span><div><small>Quà của bạn</small><b>" + String(p.name).replace(/&/g, "&amp;").replace(/</g, "&lt;") + "</b></div></div>"; });
+    got.forEach(function (i, k) { var p = P[i]; h += "<div class='pzrow'><span class='pz'>" + w20IconHTML(p.icon, 44) + "</span><div><small>Quà của bạn</small><b>" + String(p.name).replace(/&/g, "&amp;").replace(/</g, "&lt;") + "</b></div></div>"; });
     o.out.innerHTML = h;
     if (got.length >= 1) { o.btn.disabled = true; o.btn.textContent = "✔ Đã quay rồi"; }
     else { o.btn.disabled = false; o.btn.textContent = "🎡 QUAY NGAY"; }
@@ -325,10 +329,12 @@ function w20DrawCard(g, o) {
   if (pz.length) {
     y += 34; var px = 130, py2 = y, ph = 48; g.textAlign = "left";
     pz.forEach(function (p) {
-      var t = p.icon + "  " + p.name, ps = 28; g.font = ps + "px " + W20HW; while (g.measureText(t).width > 560 && ps > 20) { ps--; g.font = ps + "px " + W20HW; }
-      var tw = g.measureText(t).width + 44; if (px + tw > 780 && px > 130) { px = 130; py2 += ph + 10; }
-      g.fillStyle = "rgba(255,255,255,.82)"; g.strokeStyle = "rgba(179,38,95,.6)"; g.lineWidth = 1.8; w20Rr(g, px, py2, tw, ph, 27); g.fill(); g.stroke();
-      w20Ink(g, t, px + 22, py2 + 33, ps, 0); px += tw + 12;
+      var isImg = /^assets\//.test(p.icon), t = isImg ? p.name : p.icon + "  " + p.name, ps = 28; g.font = ps + "px " + W20HW; while (g.measureText(t).width > 520 && ps > 20) { ps--; g.font = ps + "px " + W20HW; }
+      var im = isImg ? w20Img(p.icon) : null, ih = isImg ? 84 : 0, iw = isImg && im.naturalWidth ? ih * im.naturalWidth / im.naturalHeight : 0, ext = iw ? iw + 10 : 0;
+      var tw = g.measureText(t).width + 44 + ext, rowH = isImg ? 94 : ph; if (px + tw > 780 && px > 130) { px = 130; py2 += ph + 10; }
+      g.fillStyle = "rgba(255,255,255,.82)"; g.strokeStyle = "rgba(179,38,95,.6)"; g.lineWidth = 1.8; w20Rr(g, px, py2, tw, rowH, rowH / 2); g.fill(); g.stroke();
+      if (iw) g.drawImage(im, px + 18, py2 + (rowH - ih) / 2, iw, ih);
+      w20Ink(g, t, px + 22 + ext, py2 + rowH / 2 + 10, ps, 0); px += tw + 12; if (isImg) ph = Math.max(ph, rowH);
     });
     g.textAlign = "center"; y = py2 + ph;
   }

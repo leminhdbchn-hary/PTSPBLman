@@ -25,9 +25,10 @@ var W20CFG = {
      Mỗi người quay 1 lượt và nhận 1 món, ngẫu nhiên và không ai chọn sẵn.
      Số lượng từng món chỉnh ở trang admin.html (tab "Chia quà"). key "nho" = thẻ nhờ việc. */
   prizes: [
-    { icon: "🍫", name: "1 gói KitKat" },
-    { icon: "☕", name: "1 ly cà phê / trà sữa anh em đãi" },
-    { icon: "🙋", name: "Nhờ anh em giúp 1 việc vặt", key: "nho" }
+    { icon: "🍫", name: "KitKat" },
+    { icon: "☕", name: "Cà phê/Trà sữa" },
+    { icon: "🙋", name: "KitKat và nhờ ae giúp 1 việc vặt", key: "nho" },
+    { icon: "assets/prize-kem.webp", name: "Kem dưỡng da tay" }
   ],
 
   /* (Không bắt buộc) Nhận "Thẻ nhờ việc" qua Google Form để anh em xem tập trung trong Google Sheet.
