@@ -69,7 +69,7 @@ function w20DrawBouquet(g, cx, cy, S, list) {
 }
 /* ===== Chibi: đầu là ảnh thật (assets/men), thân vẽ bằng canvas ===== */
 var W20IMG = {};
-function w20Img(src) { if (!W20IMG[src]) { var im = new Image(); im.src = /^assets\//.test(src) ? src + "?v=20261061" : src; W20IMG[src] = im; } return W20IMG[src]; }
+function w20Img(src) { if (!W20IMG[src]) { var im = new Image(); im.src = /^assets\//.test(src) ? src + "?v=20261071" : src; W20IMG[src] = im; } return W20IMG[src]; }
 function w20Rr(g, x, y, w, h, r) { g.beginPath(); g.moveTo(x + r, y); g.arcTo(x + w, y, x + w, y + h, r); g.arcTo(x + w, y + h, x, y + h, r); g.arcTo(x, y + h, x, y, r); g.arcTo(x, y, x + w, y, r); g.closePath(); }
 /* o: {img, shirt, step (pha chạy), up (0..1 giơ tay), lift (nhảy, px), flower (emoji hoặc null), dir (+1 nhìn phải, -1 nhìn trái)} */
 function w20Chibi(g, cx, gy, sc, o) {
@@ -304,11 +304,11 @@ function w20Wavy(g, x1, x2, y, col) { g.save(); g.strokeStyle = col; g.lineWidth
 /* ===== 6 mẫu thiệp: nền là ảnh thiệp (assets/cards), đã xoá lời chúc gốc; chữ riêng từng người được vẽ lên khung "blk" ===== */
 var W20THEMES = [
   { name: "Bó hồng trên bàn", file: "t1", w: 1536, h: 1024, blk: { x: 205, y: 512, w: 500, h: 226 }, ink: "#4a3036", acc: "#d81b60", em: "🌹" },
-  { name: "Hoa hồng nắng sớm", file: "t2", w: 1528, h: 1070, blk: { x: 170, y: 640, w: 590, h: 250 }, ink: "#4a3036", acc: "#d81b60", em: "🌸" },
-  { name: "Trời xanh mây hồng", file: "t3", w: 1528, h: 1070, blk: { x: 205, y: 732, w: 565, h: 268 }, ink: "#274a43", acc: "#b8305c", em: "🌷" },
-  { name: "Tulip trên giấy", file: "t4", w: 1014, h: 962, blk: { x: 420, y: 476, w: 430, h: 290 }, ink: "#4a3a3a", acc: "#c43563", em: "💌" },
-  { name: "Cúc hoạ mi và sách", file: "t5", w: 1020, h: 962, blk: { x: 150, y: 438, w: 500, h: 212 }, ink: "#37483f", acc: "#e0245e", em: "📚" },
-  { name: "Quý cô và hoa", file: "t6", w: 1008, h: 962, blk: { x: 125, y: 548, w: 420, h: 250 }, ink: "#6a1f3a", acc: "#b02a58", em: "👒" }
+  { name: "Hoa hồng nắng sớm", file: "t2", w: 2000, h: 1493, blk: { x: 240, y: 890, w: 750, h: 310 }, ink: "#4a3036", acc: "#d81b60", em: "🌸" },
+  { name: "Trời xanh mây hồng", file: "t3", w: 2000, h: 1493, blk: { x: 300, y: 1010, w: 690, h: 340 }, ink: "#274a43", acc: "#b8305c", em: "🌷" },
+  { name: "Tulip trên giấy", file: "t4", w: 2000, h: 1493, blk: { x: 930, y: 740, w: 560, h: 440 }, ink: "#4a3a3a", acc: "#c43563", em: "💌" },
+  { name: "Cúc hoạ mi và sách", file: "t5", w: 2000, h: 1493, blk: { x: 430, y: 700, w: 770, h: 290 }, ink: "#37483f", acc: "#e0245e", em: "📚" },
+  { name: "Quý cô và hoa", file: "t6", w: 2000, h: 1493, blk: { x: 250, y: 870, w: 710, h: 380 }, ink: "#6a1f3a", acc: "#b02a58", em: "👒" }
 ];
 W20THEMES.forEach(function (t) { t.pv = "url(assets/cards/" + t.file + ".webp) center/cover"; });
 function w20Hex2rgba(h, a) { var n = parseInt(h.slice(1), 16); return "rgba(" + (n >> 16) + "," + ((n >> 8) & 255) + "," + (n & 255) + "," + a + ")"; }
@@ -324,7 +324,7 @@ function w20DrawCard(g, o) {
   var nm = o.name || "Chị em Phòng PTSPBL", sg = "Thương mến, " + (o.from || ""), wish = o.wish || "", greet = o.greet || "Thân gửi:";
   /* bố cục thoáng: lời chào, tên, lời chúc, rồi chữ ký ở dưới cùng cách xa lời chúc */
   function build(s) {
-    var F = b.w * .13 * s, fn = F, P = [], h = 0, wf = F * .62, lines, lh = wf * 1.45;
+    var F = b.w * .15 * s, fn = F, P = [], h = 0, wf = F * .62, lines, lh = wf * 1.45;
     g.font = fn + "px " + W20HW; while (g.measureText(nm).width > b.w && fn > 18) { fn -= 2; g.font = fn + "px " + W20HW; }
     P.push({ t: greet, f: F * .46, y: h + F * .4, col: T.ink }); h += F * .62;
     P.push({ t: nm, f: fn, y: h + fn * .8, col: T.acc, bold: 1 }); h += fn * 1.0 + F * .5;
