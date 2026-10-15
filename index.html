@@ -125,9 +125,9 @@
 
 <script src="assets/config.js?v=20261024"></script>
 <script src="assets/stock.js?v=20261024"></script>
-<script src="assets/firebase-sync.js?v=20261013"></script>
+<script src="assets/firebase-sync.js?v=20261030"></script>
 <script src="assets/people.js?v=20261022"></script>
-<script src="assets/common.js?v=20261029"></script>
+<script src="assets/common.js?v=20261030"></script>
 <script src="assets/flowers.js?v=20261013"></script>
 <script src="assets/modules.js?v=20261028"></script>
 <script src="assets/boxflow.js?v=20261016"></script>
@@ -142,9 +142,10 @@
   /* mở từ Zalo/Facebook sang Safari/Chrome: nhận lại tiến độ đã chơi (qua #s=…) nếu máy chưa có */
   var IMP = w20ImportHash(); if (IMP && !TEST) { try { if (!localStorage.getItem(KEY)) localStorage.setItem(KEY, JSON.stringify(IMP)); } catch (e) {} }
   window.W20EXPORT = function () { return JSON.stringify(ST); };
+  /* (ImportHash chỉ đọc 1 lần lúc vào trang; sau đó địa chỉ lại được cập nhật theo tiến độ) */
   var loading = true; var ST = load(); /* tiến độ đã lưu: step, notes[], pulls, scratched, perks[], bq[], prize, req, wall */
   function load() { if (TEST) return {}; try { return JSON.parse(localStorage.getItem(KEY) || "{}"); } catch (e) { return {}; } }
-  function save() { if (TEST) return; try { localStorage.setItem(KEY, JSON.stringify(ST)); } catch (e) {} try { W20DB.progress(KEY, ST); } catch (e) {} }
+  function save() { if (TEST) return; try { localStorage.setItem(KEY, JSON.stringify(ST)); } catch (e) {} try { W20DB.progress(KEY, ST); } catch (e) {} w20SyncHash(); }
   function norm() { ST.step = ST.step || 0; ST.notes = ST.notes || []; ST.bq = ST.bq || []; ST.prizes = ST.prizes || []; }
   norm();
 
@@ -323,6 +324,9 @@
   /* ---------- khởi động ---------- */
   FX.init(); hero(); notes(); atm(); scratch(); flowers(); wheel(); card();
   loading = false;
+  if (!TEST && !ST.opened && !(ST.step > 0)) { /* máy này chưa có tiến độ: thử lấy lại tiến độ vừa chơi gần đây của đúng người này (VD vừa chuyển từ Zalo sang Safari) */
+    try { W20DB.restore(KEY, 3 * 3600 * 1000, function (rv) { if (!rv || ST.opened || ST.step > 0 || !(rv.opened || rv.step > 0)) return; ST = rv; norm(); try { localStorage.setItem(KEY, JSON.stringify(ST)); } catch (e) {} loading = true; notes(); atm(); scratch(); flowers(); wheel(); card(); loading = false; show(Math.min(ST.step, N - 1), false); }); } catch (e) {}
+  }
   if (ST.opened || ST.step > 0) show(Math.min(ST.step, N - 1), false); /* đã mở trước đó: vào lại đúng lớp đang dở */
   if (document.fonts && document.fonts.load) Promise.all(FONTS.map(function (f) { return document.fonts.load(f, "Chị Hạnh ơi 20.10"); })).then(card, card);
 })();

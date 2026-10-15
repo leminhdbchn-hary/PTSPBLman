@@ -49,9 +49,21 @@ var W20DB = (function () {
         ready(function () {
           var ref = db.collection("progress").doc(key(id + "@" + dev()));
           /* đọc bản trên server rồi gộp, tránh máy mới/ngoại tuyến ghi đè mất tiến độ cũ */
-          ref.get().then(function (d) { var rv = d.exists ? (d.data() || {}).data : null; return ref.set({ data: clean(merge(rv, clean(data))), updated: firebase.firestore.FieldValue.serverTimestamp() }); }, function () { return ref.set({ data: clean(data), updated: firebase.firestore.FieldValue.serverTimestamp() }); }).catch(function () {});
+          ref.get().then(function (d) { var rv = d.exists ? (d.data() || {}).data : null; return ref.set({ pid: String(id), data: clean(merge(rv, clean(data))), updated: firebase.firestore.FieldValue.serverTimestamp() }); }, function () { return ref.set({ pid: String(id), data: clean(data), updated: firebase.firestore.FieldValue.serverTimestamp() }); }).catch(function () {});
         });
       }, 1500);
+    },
+    /* Khôi phục tiến độ gần nhất của cùng một người (cùng link) ghi trong maxAgeMs gần đây: dùng khi người chơi mở link ở trình duyệt khác trên cùng điện thoại
+       (VD đang chơi trong Zalo rồi chuyển sang Safari). Lỗi/chặn mạng/quá 4 giây thì gọi cb(null). */
+    restore: function (id, maxAgeMs, cb) {
+      var fin = false, t = setTimeout(function () { end(null); }, 4000);
+      function end(v) { if (fin) return; fin = true; clearTimeout(t); try { cb(v); } catch (e) {} }
+      ready(function () {
+        db.collection("progress").where("pid", "==", String(id)).get().then(function (snap) {
+          var best = null; snap.forEach(function (d) { var v = d.data() || {}, tm = v.updated && v.updated.toMillis ? v.updated.toMillis() : Date.now(); if (!best || tm > best.t) best = { t: tm, data: v.data }; });
+          end(best && Date.now() - best.t < maxAgeMs ? best.data : null);
+        }, function () { end(null); });
+      });
     },
     /* Theo dõi trực tiếp một collection (cho trang quản lý): cb(rows) mỗi khi có thay đổi, err(lỗi) nếu bị chặn */
     watch: function (col, cb, err) {

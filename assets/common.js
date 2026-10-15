@@ -329,3 +329,10 @@ function w20SaveImage(cv, name, done) {
     }, "image/png");
   } catch (e) { overlay(); }
 }
+
+function w20InApp() { return /Zalo|FBAN|FBAV|FB_IAB|Instagram|Line\/|; wv\)|MiuiBrowser|MicroMessenger|KAKAOTALK/i.test(navigator.userAgent || ""); }
+/* Trong Zalo/Facebook: luôn gắn tiến độ vào địa chỉ trang (#s=…) để "Mở bằng trình duyệt" của ứng dụng cũng mang theo tiến độ */
+function w20SyncHash() {
+  if (!w20InApp() || !window.W20EXPORT) return;
+  try { var st = window.W20EXPORT(); if (st) history.replaceState(null, "", location.pathname + location.search + "#s=" + encodeURIComponent(btoa(unescape(encodeURIComponent(st))))); } catch (e) {}
+}

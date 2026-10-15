@@ -139,11 +139,11 @@
 <script src="assets/config.js?v=20261024"></script>
 <script src="assets/stock.js?v=20261024"></script>
 <script src="assets/people.js?v=20261022"></script>
-<script src="assets/common.js?v=20261029"></script>
+<script src="assets/common.js?v=20261030"></script>
 <script src="assets/flowers.js?v=20261013"></script>
 <script src="assets/modules.js?v=20261028"></script>
 <script src="assets/boxflow.js?v=20261016"></script>
-<script src="assets/firebase-sync.js?v=20261013"></script>
+<script src="assets/firebase-sync.js?v=20261030"></script>
 <script>
 (function () {
   var $ = function (s) { return document.querySelector(s); };
@@ -162,10 +162,11 @@
   var N = 8, PK = "w20sepst3:" + (me ? me.id : "guest"), PS = { opened: 0, step: 0 }, loading = true;
   /* mở từ Zalo/Facebook sang Safari/Chrome: nhận lại tiến độ đã chơi (qua #s=…) nếu máy chưa có */
   var IMP = w20ImportHash(); if (IMP && !TEST) { try { if (!localStorage.getItem(PK) && IMP.ps) localStorage.setItem(PK, JSON.stringify(IMP.ps)); var K0 = "w20sep3:" + (me ? me.id : "guest"); if (!localStorage.getItem(K0) && IMP.pr) localStorage.setItem(K0, JSON.stringify(IMP.pr)); var C0 = "w20sepcw:" + (me ? me.id : "guest"); if (!localStorage.getItem(C0) && IMP.cw) localStorage.setItem(C0, IMP.cw); } catch (e) {} }
-  window.W20EXPORT = function () { var pr = []; try { pr = JSON.parse(localStorage.getItem("w20sep3:" + (me ? me.id : "guest")) || "[]"); } catch (e) {} return JSON.stringify({ ps: PS, pr: pr, cw: CW }); };
+  window.W20EXPORT_OBJ = function () { var pr = []; try { pr = JSON.parse(localStorage.getItem("w20sep3:" + (me ? me.id : "guest")) || "[]"); } catch (e) {} return { ps: PS, pr: pr, cw: typeof CW === "string" ? CW : "" }; };
+  window.W20EXPORT = function () { return JSON.stringify(window.W20EXPORT_OBJ()); };
   try { if (!TEST) PS = JSON.parse(localStorage.getItem(PK) || "{}") || {}; } catch (e) { PS = {}; }
   PS.step = PS.step || 0;
-  function savePS() { if (TEST) return; try { localStorage.setItem(PK, JSON.stringify(PS)); } catch (e) {} }
+  function savePS() { if (TEST) return; try { localStorage.setItem(PK, JSON.stringify(PS)); } catch (e) {} try { W20DB.progress(PK, window.W20EXPORT_OBJ()); } catch (e) {} w20SyncHash(); }
   function scene(i) { return i < 0 ? $("#sc-intro") : $("#p" + i); }
   var FL = W20Flow.make({ N: N, stage: "#stage", scene: scene, onReveal: function (i) { if (i === 7) card(); } });
   function go(k, delay) { /* xong lớp k → mở lớp k+1 */
@@ -266,6 +267,9 @@
   FX.init(); paper(); hero(); profile(); pledges(); flowers(); wheel();
   if (W20CFG.wallSep.length) w20Wall($("#wall"), W20CFG.wallSep); else $("#next6").parentNode.insertAdjacentHTML("beforebegin", "<p class='sub'>Chúc các Sếp 20/10 thật vui 🌷</p>");
   card(); loading = false;
+  if (!TEST && !PS.opened && !(PS.step > 0)) { /* máy này chưa có tiến độ: thử lấy lại tiến độ vừa chơi gần đây của đúng người này (VD vừa chuyển từ Zalo sang Safari) */
+    try { W20DB.restore(PK, 3 * 3600 * 1000, function (rv) { if (!rv || !rv.ps || PS.opened || PS.step > 0 || !(rv.ps.opened || rv.ps.step > 0)) return; try { localStorage.setItem(PK, JSON.stringify(rv.ps)); if (rv.pr) localStorage.setItem("w20sep3:" + (me ? me.id : "guest"), JSON.stringify(rv.pr)); if (rv.cw) localStorage.setItem("w20sepcw:" + (me ? me.id : "guest"), rv.cw); } catch (e) {} location.reload(); }); } catch (e) {}
+  }
   if (PS.opened || PS.step > 0) FL.show(Math.min(PS.step, N - 1), false); /* đã mở trước đó: vào lại đúng lớp đang dở */
   if (document.fonts && document.fonts.load) Promise.all(["700 80px 'Playfair Display'", "italic 700 80px 'Playfair Display'", "italic 500 40px 'Playfair Display'", "700 60px 'Dancing Script'", "58px 'Patrick Hand'", "600 28px 'Be Vietnam Pro'", "700 28px 'Be Vietnam Pro'", "500 28px 'Be Vietnam Pro'", "italic 600 26px 'Be Vietnam Pro'"].map(function (f) { return document.fonts.load(f, "Chị Hạnh ơi 20.10"); })).then(card, card);
 })();
