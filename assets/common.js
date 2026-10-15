@@ -308,17 +308,25 @@ function w20OpenExternal(done) {
   return true;
 }
 
-/* Lưu ảnh thiệp: trình duyệt thường thì tải về; trong Zalo/Facebook… (không cho tải) thì mở ảnh to để nhấn giữ và lưu */
+/* Lưu ảnh thiệp: trình duyệt thường thì tải về; trong Zalo/Facebook… (không cho tải) thì thử chia sẻ ảnh, mở ảnh riêng, hoặc nhấn giữ để lưu */
 function w20SaveImage(cv, name, done) {
-  var inapp = /Zalo|FBAN|FBAV|FB_IAB|Instagram|Line\/|; wv\)|MiuiBrowser|MicroMessenger|KAKAOTALK/i.test(navigator.userAgent || "");
-  function say(t) { var el = document.getElementById("toast"); if (el) { el.textContent = t; el.className = "toast show"; clearTimeout(say.t); say.t = setTimeout(function () { el.className = "toast"; }, 3600); } }
+  var inapp = w20InApp();
+  function say(t) { var el = document.getElementById("toast"); if (el) { el.textContent = t; el.className = "toast show"; clearTimeout(say.t); say.t = setTimeout(function () { el.className = "toast"; }, 3800); } }
   function overlay() {
-    var url = cv.toDataURL("image/png"), d = document.createElement("div"); d.className = "savebox";
-    d.innerHTML = '<div class="sv-in"><p class="sv-t">Nhấn giữ vào ảnh rồi chọn <b>“Lưu ảnh”</b></p><img alt="Thiệp 20/10" src="' + url + '"><div class="sv-b"><button type="button" class="btn pink sv-open">🌐 Mở bằng Safari/Chrome</button><button type="button" class="btn ghost sv-link">🔗 Sao chép link</button><button type="button" class="btn sv-x">Đóng</button></div><p class="sv-h">Nếu chưa mở được: bấm dấu <b>⋯</b> (góc phải trên) → <b>“Mở bằng trình duyệt”</b>. Tiến độ của bạn được giữ nguyên.</p></div>';
+    var url = cv.toDataURL("image/png"), link = w20ExternalURL(), d = document.createElement("div"); d.className = "savebox";
+    d.innerHTML = '<div class="sv-in"><p class="sv-t">Nhấn giữ vào ảnh rồi chọn <b>“Lưu ảnh”</b></p><img alt="Thiệp 20/10" src="' + url + '">'
+      + '<div class="sv-b"><button type="button" class="btn pink sv-share" hidden>📲 Lưu / Gửi ảnh</button><a class="btn sv-img" target="_blank" rel="noopener" hidden>🖼️ Mở ảnh riêng để lưu</a><button type="button" class="btn ghost sv-open">🌐 Mở bằng Safari/Chrome</button><button type="button" class="btn sv-x">Đóng</button></div>'
+      + '<p class="sv-h">Nếu chưa lưu được: dán link bên dưới vào Safari/Chrome (tiến độ vẫn được giữ), hoặc bấm <b>⋯</b> → <b>“Mở bằng trình duyệt”</b>.</p><input class="sv-url" readonly value="' + link.replace(/"/g, "&quot;") + '"></div>';
     document.body.appendChild(d);
+    var shareBtn = d.querySelector(".sv-share"), imgLink = d.querySelector(".sv-img"), inp = d.querySelector(".sv-url");
     d.querySelector(".sv-x").onclick = function () { d.remove(); };
-    d.querySelector(".sv-open").onclick = function () { w20OpenExternal(function () { say("Ứng dụng chưa cho mở tự động. Bấm ⋯ (góc phải trên) → Mở bằng trình duyệt nhé"); }); };
-    d.querySelector(".sv-link").onclick = function () { w20Copy(w20ExternalURL(), function () { say("Đã sao chép link. Dán vào Safari/Chrome để mở tiếp, không phải chơi lại 📋"); }); };
+    d.querySelector(".sv-open").onclick = function () { w20OpenExternal(function () { say("Ứng dụng chưa cho mở tự động. Bấm ⋯ (góc phải trên) → Mở bằng trình duyệt, hoặc dán link bên dưới nhé"); }); };
+    inp.onclick = inp.onfocus = function () { try { inp.select(); inp.setSelectionRange(0, 99999); } catch (e) {} w20Copy(link, function () { say("Đã chọn sẵn link, nếu chưa tự sao chép thì nhấn giữ rồi chọn “Sao chép” 📋"); }); };
+    cv.toBlob(function (b) { /* thử chia sẻ file ảnh (nếu ứng dụng hỗ trợ) và mở ảnh riêng */
+      if (!b) return; var file = null; try { file = new File([b], name, { type: "image/png" }); } catch (e) {}
+      imgLink.href = URL.createObjectURL(b); imgLink.hidden = false;
+      if (file && navigator.canShare && navigator.canShare({ files: [file] })) { shareBtn.hidden = false; shareBtn.onclick = function () { navigator.share({ files: [file], title: "Thiệp 20/10" }).catch(function () {}); }; }
+    }, "image/png");
     done && done();
   }
   if (inapp) { overlay(); return; }
@@ -329,7 +337,6 @@ function w20SaveImage(cv, name, done) {
     }, "image/png");
   } catch (e) { overlay(); }
 }
-
 function w20InApp() { return /Zalo|FBAN|FBAV|FB_IAB|Instagram|Line\/|; wv\)|MiuiBrowser|MicroMessenger|KAKAOTALK/i.test(navigator.userAgent || ""); }
 /* Trong Zalo/Facebook: luôn gắn tiến độ vào địa chỉ trang (#s=…) để "Mở bằng trình duyệt" của ứng dụng cũng mang theo tiến độ */
 function w20SyncHash() {
