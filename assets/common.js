@@ -312,20 +312,19 @@ function w20OpenExternal(done) {
 function w20SaveImage(cv, name, done) {
   var inapp = w20InApp();
   function say(t) { var el = document.getElementById("toast"); if (el) { el.textContent = t; el.className = "toast show"; clearTimeout(say.t); say.t = setTimeout(function () { el.className = "toast"; }, 3800); } }
-  function overlay() {
+  function overlay() { /* chỉ còn tấm thiệp + nút Lưu/Gửi ảnh (chạm ra ngoài hoặc ✕ để đóng) */
     var url = cv.toDataURL("image/png"), d = document.createElement("div"); d.className = "savebox";
-    d.innerHTML = '<div class="sv-in"><p class="sv-t">Nhấn giữ vào ảnh rồi chọn <b>“Lưu ảnh”</b></p><img alt="Thiệp 20/10" src="' + url + '">'
-      + '<div class="sv-b"><button type="button" class="btn pink sv-share" hidden>📲 Lưu / Gửi ảnh</button><a class="btn sv-img" target="_blank" rel="noopener" hidden>🖼️ Mở ảnh riêng để lưu</a><button type="button" class="btn sv-x">Đóng</button></div>'
-      + '</div>';
+    d.innerHTML = '<button type="button" class="sv-x2" aria-label="Đóng">✕</button><div class="sv-in"><img alt="Thiệp 20/10" src="' + url + '"><div class="sv-b"><button type="button" class="btn pink sv-share">📲 Lưu / Gửi ảnh</button></div></div>';
     document.body.appendChild(d);
-    var shareBtn = d.querySelector(".sv-share"), imgLink = d.querySelector(".sv-img");
-    d.querySelector(".sv-x").onclick = function () { d.remove(); };
-    cv.toBlob(function (b) { /* thử chia sẻ file ảnh (nếu ứng dụng hỗ trợ) và mở ảnh riêng */
-      if (!b) return; var file = null; try { file = new File([b], name, { type: "image/png" }); } catch (e) {}
-      imgLink.href = URL.createObjectURL(b); imgLink.hidden = false;
-      if (file && navigator.canShare && navigator.canShare({ files: [file] })) { shareBtn.hidden = false; shareBtn.onclick = function () { navigator.share({ files: [file], title: "Thiệp 20/10" }).catch(function () {}); }; }
-    }, "image/png");
-    done && done();
+    var blobUrl = "", file = null;
+    d.querySelector(".sv-x2").onclick = function () { d.remove(); };
+    d.onclick = function (e) { if (e.target === d) d.remove(); };
+    cv.toBlob(function (b) { if (!b) return; blobUrl = URL.createObjectURL(b); try { file = new File([b], name, { type: "image/png" }); } catch (e) {} }, "image/png");
+    d.querySelector(".sv-share").onclick = function () {
+      if (file && navigator.canShare && navigator.canShare({ files: [file] })) { navigator.share({ files: [file], title: "Thiệp 20/10" }).catch(function () {}); return; } /* mở bảng chia sẻ/lưu của điện thoại */
+      if (blobUrl) { window.open(blobUrl, "_blank"); return; } /* không chia sẻ được thì mở ảnh riêng để lưu */
+      say("Nhấn giữ vào ảnh rồi chọn “Lưu ảnh” nhé");
+    };
   }
   if (inapp) { overlay(); return; }
   try {
