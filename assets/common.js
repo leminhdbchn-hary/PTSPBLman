@@ -353,9 +353,8 @@ function w20InAppGuide() {
     + '<p class="gd-s">Trong Zalo/Facebook không tải được thiệp về máy. Chị mở bằng trình duyệt ngay từ đầu để lưu được thiệp đẹp nha 💝</p>'
     + '<ol>' + steps.map(function (t) { return "<li>" + t + "</li>"; }).join("") + '</ol>'
     + '<input class="gd-url" readonly value="' + link.replace(/"/g, "&quot;") + '"><p class="gd-h">Hoặc nhấn giữ vào ô link ở trên → <b>Sao chép</b> → dán vào ' + (ios ? "Safari" : "Chrome") + '.</p>'
-    + '<div class="gd-b"><button type="button" class="btn pink gd-open">🌐 Thử mở tự động</button><button type="button" class="btn ghost gd-x">Cứ chơi ở đây</button></div></div>';
+    + '<div class="gd-b"><button type="button" class="btn pink gd-x">Đã hiểu, chơi tiếp</button></div></div>';
   document.body.appendChild(d);
   var inp = d.querySelector(".gd-url"); inp.onclick = inp.onfocus = function () { try { inp.select(); inp.setSelectionRange(0, 99999); } catch (e) {} w20Copy(link, function () {}); };
   d.querySelector(".gd-x").onclick = function () { d.remove(); };
-  d.querySelector(".gd-open").onclick = function () { w20OpenExternal(function () { var h = d.querySelector(".gd-h"); h.innerHTML = "Ứng dụng chưa cho mở tự động. Chị làm theo bước 1–2 ở trên nhé ☝️"; h.style.color = "#ffe08a"; }); };
 }
