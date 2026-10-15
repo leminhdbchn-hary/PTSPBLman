@@ -139,7 +139,7 @@
 <script src="assets/config.js?v=20261024"></script>
 <script src="assets/stock.js?v=20261024"></script>
 <script src="assets/people.js?v=20261022"></script>
-<script src="assets/common.js?v=20261037"></script>
+<script src="assets/common.js?v=20261038"></script>
 <script src="assets/flowers.js?v=20261013"></script>
 <script src="assets/modules.js?v=20261028"></script>
 <script src="assets/boxflow.js?v=20261016"></script>
@@ -264,7 +264,7 @@
   $("#next3").onclick = function () { go(3, 200); };
   $("#next6").onclick = function () { go(6, 300); };
 
-  FX.init(); paper(); hero(); w20InAppGuide(); profile(); pledges(); flowers(); wheel();
+  FX.init(); paper(); hero(); profile(); pledges(); flowers(); wheel();
   if (W20CFG.wallSep.length) w20Wall($("#wall"), W20CFG.wallSep); else $("#next6").parentNode.insertAdjacentHTML("beforebegin", "<p class='sub'>Chúc các Sếp 20/10 thật vui 🌷</p>");
   card(); loading = false;
   if (!TEST && !PS.opened && !(PS.step > 0)) { /* máy này chưa có tiến độ: thử lấy lại tiến độ vừa chơi gần đây của đúng người này (VD vừa chuyển từ Zalo sang Safari) */

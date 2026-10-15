@@ -341,20 +341,3 @@ function w20SyncHash() {
   try { var st = window.W20EXPORT(); if (st) history.replaceState(null, "", location.pathname + location.search + "#s=" + encodeURIComponent(btoa(unescape(encodeURIComponent(st))))); } catch (e) {}
 }
 
-/* Hướng dẫn mở bằng Safari/Chrome ngay từ đầu (khi đang trong Zalo/Facebook…, nơi không tải được thiệp). Hiện 1 lần mỗi lần mở. */
-function w20InAppGuide() {
-  if (!w20InApp()) return;
-  try { if (sessionStorage.getItem("w20guide")) return; sessionStorage.setItem("w20guide", "1"); } catch (e) {}
-  var ua = navigator.userAgent || "", ios = /iPhone|iPad|iPod/i.test(ua), link = location.origin + location.pathname + location.search, d = document.createElement("div"); d.className = "guide";
-  var steps = ios
-    ? ["Bấm dấu <b>⋯</b> (hoặc <b>chia sẻ</b>) ở góc phải trên màn hình", "Chọn <b>“Mở bằng trình duyệt”</b> hoặc <b>“Open in Safari”</b>"]
-    : ["Bấm dấu <b>⋮</b> hoặc <b>⋯</b> ở góc phải trên màn hình", "Chọn <b>“Mở bằng trình duyệt”</b> (Chrome)"];
-  d.innerHTML = '<div class="gd-in"><div class="gd-ic">🌐</div><h3>Mở bằng ' + (ios ? "Safari" : "Chrome") + ' để chơi trọn vẹn nhé!</h3>'
-    + '<p class="gd-s">Trong Zalo/Facebook không tải được thiệp về máy. Chị mở bằng trình duyệt ngay từ đầu để lưu được thiệp đẹp nha 💝</p>'
-    + '<ol>' + steps.map(function (t) { return "<li>" + t + "</li>"; }).join("") + '</ol>'
-    + '<input class="gd-url" readonly value="' + link.replace(/"/g, "&quot;") + '"><p class="gd-h">Hoặc nhấn giữ vào ô link ở trên → <b>Sao chép</b> → dán vào ' + (ios ? "Safari" : "Chrome") + '.</p>'
-    + '<div class="gd-b"><button type="button" class="btn pink gd-x">Đã hiểu, chơi tiếp</button></div></div>';
-  document.body.appendChild(d);
-  var inp = d.querySelector(".gd-url"); inp.onclick = inp.onfocus = function () { try { inp.select(); inp.setSelectionRange(0, 99999); } catch (e) {} w20Copy(link, function () {}); };
-  d.querySelector(".gd-x").onclick = function () { d.remove(); };
-}
