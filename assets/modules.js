@@ -69,7 +69,7 @@ function w20DrawBouquet(g, cx, cy, S, list) {
 }
 /* ===== Chibi: đầu là ảnh thật (assets/men), thân vẽ bằng canvas ===== */
 var W20IMG = {};
-function w20Img(src) { if (!W20IMG[src]) { var im = new Image(); im.src = /^assets\//.test(src) ? src + "?v=20261079" : src; W20IMG[src] = im; } return W20IMG[src]; }
+function w20Img(src) { if (!W20IMG[src]) { var im = new Image(); im.src = /^assets\//.test(src) ? src + "?v=20261083" : src; W20IMG[src] = im; } return W20IMG[src]; }
 function w20Rr(g, x, y, w, h, r) { g.beginPath(); g.moveTo(x + r, y); g.arcTo(x + w, y, x + w, y + h, r); g.arcTo(x + w, y + h, x, y + h, r); g.arcTo(x, y + h, x, y, r); g.arcTo(x, y, x + w, y, r); g.closePath(); }
 /* o: {img, shirt, step (pha chạy), up (0..1 giơ tay), lift (nhảy, px), flower (emoji hoặc null), dir (+1 nhìn phải, -1 nhìn trái)} */
 function w20Chibi(g, cx, gy, sc, o) {
@@ -305,10 +305,10 @@ function w20Wavy(g, x1, x2, y, col) { g.save(); g.strokeStyle = col; g.lineWidth
 var W20THEMES = [
   { name: "Bó hồng trên bàn", file: "t1", w: 1536, h: 1024, blk: { x: 205, y: 500, w: 500, h: 280 }, ink: "#4a3036", acc: "#d81b60", em: "🌹" },
   { name: "Hoa hồng nắng sớm", file: "t2", w: 2000, h: 1493, blk: { x: 170, y: 856, w: 850, h: 330 }, ink: "#4a3036", acc: "#d81b60", em: "🌸" },
-  { name: "Trời xanh mây hồng", file: "t3", w: 2000, h: 1493, blk: { x: 250, y: 990, w: 790, h: 420 }, ink: "#274a43", acc: "#b8305c", em: "🌷" },
-  { name: "Tulip trên giấy", file: "t4", w: 2000, h: 1493, blk: { x: 880, y: 730, w: 640, h: 500 }, ink: "#4a3a3a", acc: "#c43563", em: "💌" },
+  { name: "Trời xanh mây hồng", file: "t3", w: 2000, h: 1493, blk: { x: 250, y: 990, w: 790, h: 470 }, ink: "#274a43", acc: "#b8305c", em: "🌷" },
+  { name: "Tulip trên giấy", file: "t4", w: 2000, h: 1493, blk: { x: 880, y: 730, w: 640, h: 540 }, ink: "#4a3a3a", acc: "#c43563", em: "💌" },
   { name: "Cúc hoạ mi và sách", file: "t5", w: 2000, h: 1493, blk: { x: 380, y: 690, w: 760, h: 300 }, ink: "#37483f", acc: "#e0245e", em: "📚" },
-  { name: "Quý cô và hoa", file: "t6", w: 2000, h: 1493, blk: { x: 250, y: 850, w: 700, h: 440 }, ink: "#6a1f3a", acc: "#b02a58", em: "👒" }
+  { name: "Quý cô và hoa", file: "t6", w: 2000, h: 1493, blk: { x: 250, y: 850, w: 700, h: 480 }, ink: "#6a1f3a", acc: "#b02a58", em: "👒" }
 ];
 W20THEMES.forEach(function (t) { t.pv = "url(assets/cards/" + t.file + ".webp) center/cover"; });
 function w20Hex2rgba(h, a) { var n = parseInt(h.slice(1), 16); return "rgba(" + (n >> 16) + "," + ((n >> 8) & 255) + "," + (n & 255) + "," + a + ")"; }
@@ -324,9 +324,9 @@ function w20DrawCard(g, o) {
   var nm = o.name || "Chị em Phòng PTSPBL", sg = "Thương mến, " + (o.from || ""), wish = o.wish || "", greet = o.greet || "Thân gửi:";
   /* bố cục thoáng: lời chào, tên, lời chúc, rồi chữ ký ở dưới cùng cách xa lời chúc */
   function build(s) {
-    var F = b.w * .25 * s, fn = F, P = [], h = 0, wf = F * .80, lines, lh = wf * 1.38;
+    var F = b.w * .25 * s, fn = F, P = [], h = F * .45, wf = F * .80, lines, lh = wf * 1.38;
     g.font = fn + "px " + W20HW; while (g.measureText(nm).width > b.w && fn > 18) { fn -= 2; g.font = fn + "px " + W20HW; }
-    P.push({ t: greet, f: F * .6, y: h + F * .4, col: T.ink }); h += F * .62;
+    P.push({ t: greet, f: F * .9, y: h + F * .7, col: T.ink }); h += F * .86;
     P.push({ t: nm, f: fn, y: h + fn * .8, col: T.acc, bold: 1 }); h += fn * 1.0 + F * .36;
     g.font = wf + "px " + W20HW; lines = w20WrapBal(g, wish, b.w); if (lines.length > 6) lines = lines.slice(0, 6);
     lines.forEach(function (l, k) { P.push({ t: l, f: wf, y: h + wf * .8 + k * lh, col: T.ink }); }); h += lines.length * lh + F * .5;
@@ -336,7 +336,7 @@ function w20DrawCard(g, o) {
   var L = null, s;
   for (s = 1; s >= .3 && !L; s -= .03) { var r = build(s); if (r.h <= b.h) L = r; }
   if (!L) L = build(.3);
-  var y0 = b.y + Math.max(0, (b.h - L.h) * .3);
+  var y0 = b.y + Math.max(0, (b.h - L.h) * .5);
   L.P.forEach(function (p) {
     var f = p.f; if (p.fit) { g.font = f + "px " + W20HW; while (g.measureText(p.t).width > b.w && f > 16) { f -= 2; g.font = f + "px " + W20HW; } }
     var save = W20INK; W20INK = p.col; w20Ink(g, p.t, cx, y0 + p.y, f, p.bold); W20INK = save;
