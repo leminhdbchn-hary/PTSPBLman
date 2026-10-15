@@ -10,7 +10,7 @@
 <meta name="theme-color" content="#00381f">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E🌹%3C/text%3E%3C/svg%3E">
 <link rel="stylesheet" href="assets/style.css?v=20261013">
-<link rel="stylesheet" href="assets/box.css?v=202610150954">
+<link rel="stylesheet" href="assets/box.css?v=202610151009">
 </head>
 <body class="bx">
 <canvas id="fx" aria-hidden="true"></canvas>
@@ -99,9 +99,10 @@
     <div class="paper2"><div class="pbody">
       <h2 class="hw">Thiệp for U</h2>
       <div class="cardbox">
-        <canvas id="card" width="1620" height="1080"></canvas>
+        <canvas id="card" width="1080" height="1620"></canvas>
         <div class="side">
         <div class="themes" id="themes" role="group" aria-label="Chọn mẫu thiệp"></div>
+        <div class="cardopts"><button type="button" class="btn ghost" id="optLand"></button><button type="button" class="btn ghost" id="optMen"></button><button type="button" class="btn ghost" id="optMenRnd">🎲 Đổi anh em</button></div>
         <div class="acts">
           <button class="btn" id="dl" type="button">⬇️ Tải thiệp về máy</button>
           <button class="btn pink" id="shr" type="button">📤 Chia sẻ</button>
@@ -130,7 +131,7 @@
 <script src="assets/people.js?v=20261022"></script>
 <script src="assets/common.js?v=20261038"></script>
 <script src="assets/flowers.js?v=20261013"></script>
-<script src="assets/modules.js?v=202610150954"></script>
+<script src="assets/modules.js?v=202610151010"></script>
 <script src="assets/boxflow.js?v=20261016"></script>
 <script>
 (function () {
@@ -295,10 +296,11 @@
   var cardT = 0; function cardSoon() { cancelAnimationFrame(cardT); cardT = requestAnimationFrame(card); }
   var FONTS = ["700 80px 'Playfair Display'", "italic 700 80px 'Playfair Display'", "italic 500 40px 'Playfair Display'", "700 60px 'Dancing Script'", "58px 'Patrick Hand'", "600 28px 'Be Vietnam Pro'", "700 28px 'Be Vietnam Pro'", "500 28px 'Be Vietnam Pro'", "italic 600 26px 'Be Vietnam Pro'"];
   function card() {
-    var c = $("#card"), g = c.getContext("2d");
-    var pk = ST.prizes.map(function (i) { return W20CFG.prizes[i]; }).filter(Boolean);
+    var c = $("#card"), land = !!ST.land; if (ST.mseed == null) { ST.mseed = 1 + Math.floor(Math.random() * 1e6); save(); }
+    if (c.width !== (land ? 1620 : 1080)) { c.width = land ? 1620 : 1080; c.height = land ? 1080 : 1620; } c.classList.toggle("land", land); c.parentNode.classList.toggle("land", land);
+    var g = c.getContext("2d"), pk = [];
     w20DrawCard(g, { mode: "chi", greet: "Thân gửi:", name: S.full ? S.x + " " + S.full : "Các chị em Phòng PTSPBL", sub: w20Sub(S.title), role: role(),
-      wish: ST.cw ? ST.cw : w20Wish(wishIdx(), S.full ? S.x.toLowerCase() : "chị em"), bd: S.bd, prizes: pk, from: S.f, bq: ST.bq, theme: ST.theme || 0 });
+      wish: ST.cw ? ST.cw : w20Wish(wishIdx(), S.full ? S.x.toLowerCase() : "chị em"), bd: S.bd, prizes: pk, from: S.f, bq: ST.bq, theme: ST.theme || 0, land: land, men: ST.men === 0 ? null : w20PickMen(ST.mseed, 6) });
   }
   var bgImg = w20Img("assets/card-bg.webp"); if (!bgImg.complete) bgImg.onload = function () { card(); };
   W20CFG.prizes.forEach(function (p) { if (/^assets\//.test(p.icon)) { var im = w20Img(p.icon); if (!im.complete) im.addEventListener("load", function () { card(); }); } }); /* ảnh quà tải xong thì vẽ lại thiệp */
@@ -310,6 +312,11 @@
     box.onclick = function (e) { var b = e.target.closest(".thm"); if (!b) return; ST.theme = +b.getAttribute("data-i"); save(); card(); [].forEach.call(box.children, function (x) { x.classList.toggle("on", x === b); }); };
   }
   themeUI();
+  function optUI() { $("#optLand").textContent = ST.land ? "↕️ Thiệp dọc" : "↔️ Thiệp ngang"; $("#optMen").textContent = ST.men === 0 ? "🧑‍🤝‍🧑 Hiện anh em" : "🧑‍🤝‍🧑 Ẩn anh em"; $("#optMenRnd").style.display = ST.men === 0 ? "none" : ""; }
+  $("#optLand").onclick = function () { ST.land = ST.land ? 0 : 1; save(); optUI(); card(); };
+  $("#optMen").onclick = function () { ST.men = ST.men === 0 ? 1 : 0; save(); optUI(); card(); };
+  $("#optMenRnd").onclick = function () { ST.mseed = 1 + Math.floor(Math.random() * 1e6); save(); card(); };
+  optUI();
   function fname() { return "thiep-20-10-" + w20Fold(S.full || "ptspbl").replace(/[^a-z0-9]+/g, "-") + ".png"; }
   $("#dl").onclick = function () { card(); w20SaveImage($("#card"), fname(), function () { toast("Đã tải thiệp về máy 🌹"); FX.burst(innerWidth / 2, innerHeight * .6, 70); }); };
   $("#shr").onclick = function () {

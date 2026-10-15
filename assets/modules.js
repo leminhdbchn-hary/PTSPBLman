@@ -416,7 +416,85 @@ function w20Magnolia(g, x, y, r, rot) { /* hoa trắng ngà kiểu mộc lan */
 }
 function w20Bud(g, x, y, r, rot) { g.save(); g.translate(x, y); g.rotate(rot); var q = g.createLinearGradient(-r * .4, 0, r * .4, 0); q.addColorStop(0, "#e6d9d6"); q.addColorStop(.5, "#ffffff"); q.addColorStop(1, "#e3d4d1"); g.fillStyle = q; g.strokeStyle = "rgba(150,120,120,.3)"; g.lineWidth = 1.5; g.beginPath(); g.moveTo(0, 0); g.bezierCurveTo(-r * .5, -r * .3, -r * .35, -r * .9, 0, -r); g.bezierCurveTo(r * .35, -r * .9, r * .5, -r * .3, 0, 0); g.fill(); g.stroke(); g.restore(); }
 function w20Rib(g, pts, c1, c2) { [[96, c1], [72, c2], [10, "rgba(255,255,255,.6)"]].forEach(function (s) { g.save(); g.strokeStyle = s[1]; g.lineWidth = s[0]; g.lineCap = "round"; g.beginPath(); g.moveTo(pts[0], pts[1]); g.bezierCurveTo(pts[2], pts[3], pts[4], pts[5], pts[6], pts[7]); g.stroke(); g.restore(); }); }
-var W20BG2 = {
+var W20BGP = {
+  lineart: function (g, T, W, H) {
+    g.fillStyle = "#fffdfb"; g.fillRect(0, 0, W, H);
+    w20Wash(g, 160, 170, 460, "#f4c2ae", .55); w20Wash(g, 960, 1480, 560, "#f4c2ae", .6); w20Wash(g, 960, 120, 330, "#f6d2c0", .45); w20Wash(g, 540, 900, 520, "#fdeae2", .5); w20Wash(g, 80, 1000, 300, "#f9dccd", .4);
+    var gd = g.createLinearGradient(0, 0, W, H); gd.addColorStop(0, "#b8862a"); gd.addColorStop(.35, "#e8c46a"); gd.addColorStop(.6, "#c99a3c"); gd.addColorStop(1, "#a8761f");
+    g.save(); g.lineCap = "round"; w20LineFlower(g, 90, 80, 120, .3, gd); w20LineFlower(g, 60, 360, 90, -.4, gd); w20LineFlower(g, 1050, 20, 140, .6, gd);
+    w20LineSprig(g, 10, 1000, -1.15, 320, gd); w20LineSprig(g, 1075, 640, -2.0, 300, gd); w20LineFlower(g, 930, 1390, 190, .2, gd); w20LineFlower(g, 760, 1560, 110, -.3, gd); w20LineSprig(g, 1070, 1300, -2.5, 280, gd); g.restore();
+    w20GoldDots(g, W, H, 70, 17, "#d3a53c");
+  },
+  papercut: function (g, T, W, H) {
+    g.fillStyle = "#fde6ee"; g.fillRect(0, 0, W, H);
+    var q = g.createLinearGradient(0, 80, W, H); q.addColorStop(0, "#ea5a85"); q.addColorStop(1, "#d63e6c");
+    g.save(); g.shadowColor = "rgba(150,30,70,.3)"; g.shadowBlur = 30; g.shadowOffsetY = 10; g.fillStyle = q; w20Rr(g, 90, 70, 880, 1470, 360); g.fill(); g.restore();
+    g.save(); g.fillStyle = "rgba(255,255,255,.1)"; g.beginPath(); g.moveTo(90, 1200); g.bezierCurveTo(300, 1050, 600, 1400, 970, 1150); g.lineTo(970, 1400); g.bezierCurveTo(950, 1540, 800, 1540, 700, 1540); g.lineTo(450, 1540); g.bezierCurveTo(200, 1540, 90, 1450, 90, 1300); g.fill(); g.restore();
+    g.fillStyle = "rgba(255,255,255,.85)"; g.beginPath(); g.moveTo(0, 1500); g.bezierCurveTo(260, 1420, 520, 1560, 1080, 1440); g.lineTo(1080, 1620); g.lineTo(0, 1620); g.fill();
+    var P = { o: "#fbd0dc", m: "#f3a0b8", c: "#e0668a", line: "#b8446a", shadow: 1, L: 5, N: 5 };
+    w20Rose(g, 130, 130, 118, P); w20Rose(g, 60, 290, 70, P); w20Rose(g, 930, 1400, 150, P); w20Rose(g, 800, 1530, 90, P); w20Rose(g, 1040, 1250, 70, P);
+    w20Leaf(g, 190, 200, 100, 26, .7, "#f5b8ca", "#ee8fae"); w20Butterfly(g, 960, 300, .7, "#fbd0dc", "#f08aa8", .5);
+  },
+  hearts2: function (g, T, W, H) {
+    g.fillStyle = "#fffafc"; g.fillRect(0, 0, W, H);
+    w20Wash(g, 540, 900, 560, "#fbd3e4", .45); w20Wash(g, 300, 700, 300, "#f9c6dc", .3);
+    g.save(); g.strokeStyle = "#f08cb0"; g.lineWidth = 5; w20Rr(g, 78, 120, 924, 1300, 26); g.stroke(); g.restore();
+    w20HeartStripe(g, 160, 190, 60, "#f08cb0", .55); w20HeartStripe(g, 880, 260, 130, "#f4b6cc", .4); w20HeartStripe(g, 130, 520, 55, "#f4a2bf", .5); w20HeartStripe(g, 940, 860, 60, "#f4a2bf", .5); w20HeartStripe(g, 200, 1180, 120, "#f4a2bf", .55); w20HeartStripe(g, 980, 1130, 45, "#f8c8d9", .6);
+    var pk = { o: "#f7a8c4", m: "#e86a9c", c: "#c83a76", line: "#a02a5a", shadow: 1, L: 5, N: 6 }, pu = { o: "#c8a4d8", m: "#a276bc", c: "#7a4c98", line: "#5a3478", shadow: 1, L: 5, N: 6 };
+    [[90, 1560, 170, pk], [330, 1590, 150, pu], [560, 1560, 160, pk], [800, 1590, 150, pu], [1010, 1550, 150, pk], [200, 1620, 110, pu]].forEach(function (r) { w20Rose(g, r[0], r[1], r[2], r[3]); });
+  },
+  peach: function (g, T, W, H) {
+    g.fillStyle = "#fffdfc"; g.fillRect(0, 0, W, H);
+    w20Wash(g, 400, 300, 520, "#f9dfe0", .6); w20Wash(g, 800, 1000, 520, "#f9dfe0", .6); w20Wash(g, 200, 1300, 380, "#fbe7e2", .5);
+    var pe = { o: "#fbd9d6", m: "#f2aaa6", c: "#d9706f", line: "#b45a5c", shadow: 1, L: 5, N: 5 }, dk = { o: "#e6a6a4", m: "#cf7a7c", c: "#a64a52", line: "#7e3640", shadow: 1, L: 5, N: 5 };
+    w20Leaf(g, 60, 480, 140, 30, -.9, "#fff", "#e4dad8"); w20Leaf(g, 20, 300, 150, 30, -.6, "#fff", "#e4dad8"); w20Leaf(g, 20, 40, 130, 26, .5, "#fff", "#e4dad8");
+    w20Rose(g, 40, 390, 105, pe); w20Rose(g, 55, 190, 80, pe); w20Lily(g, 40, 560, 50, .5, "#f3e4e2");
+    w20Leaf(g, 720, 1480, 190, 34, -2.5, "#fff", "#e4dad8"); w20Leaf(g, 640, 1400, 170, 30, -2.2, "#fff", "#e4dad8");
+    w20Rose(g, 880, 1350, 105, pe); w20Rose(g, 1010, 1470, 130, dk); w20Rose(g, 860, 1560, 100, pe); w20Rose(g, 1050, 1230, 70, pe); w20Anem(g, 740, 1500, 55, "#fff", "#e8d9a0");
+  },
+  tulip: function (g, T, W, H) {
+    g.fillStyle = "#fffefd"; g.fillRect(0, 0, W, H);
+    w20Rib(g, [760, -60, 880, 60, 1000, 10, 1110, 150], "#f7b3c8", "#fbd0de"); w20Rib(g, [1000, 120, 1080, 260, 1130, 240, 1180, 320], "#f7b3c8", "#fbd0de");
+    w20Rib(g, [-60, 1300, 90, 1440, 180, 1290, 330, 1420], "#f7b3c8", "#fbd0de");
+    [[130, 450, 50], [980, 410, 36], [900, 700, 26], [80, 760, 24], [900, 1090, 50], [1000, 1180, 40]].forEach(function (c) { g.fillStyle = "rgba(248,196,214,.75)"; g.beginPath(); g.arc(c[0], c[1], c[2], 0, 6.2832); g.fill(); });
+    g.save(); g.globalAlpha = .9; w20Tulip(g, 90, 140, 260, .5, "#f9c4d4", "#f09ab6"); g.restore();
+    w20Tulip(g, 900, 1290, 300, -.1, "#f9bfd1", "#ee93b2"); w20Tulip(g, 620, 1420, 190, .4, "#fad0dc", "#f4a4be");
+  },
+  lily: function (g, T, W, H) {
+    g.fillStyle = "#fffefb"; g.fillRect(0, 0, W, H); w20Wash(g, 540, 800, 600, "#f6f2de", .5);
+    var gd = g.createLinearGradient(0, 0, W, H); gd.addColorStop(0, "#c9a24a"); gd.addColorStop(.5, "#f1dc9a"); gd.addColorStop(1, "#a8812f");
+    w20Leaf(g, 20, 330, 260, 44, -.6, "#efe9d0", "#d9d3b0"); w20Leaf(g, 760, 60, 240, 40, .6, "#efe9d0", "#d9d3b0");
+    w20Lily(g, 60, 70, 150, .4); w20Lily(g, 1050, 40, 110, -.3, "#cfc89a"); w20Lily(g, 40, 1130, 170, 1.0); w20Lily(g, 930, 1420, 230, -.5); w20Lily(g, 780, 1580, 110, .8, "#cfc89a"); w20Lily(g, 1050, 640, 120, 2.2, "#e8e2c6");
+    g.save(); g.strokeStyle = gd; g.lineWidth = 5; g.beginPath(); g.moveTo(110, 1330); g.lineTo(110, 180); g.arcTo(110, 70, 220, 70, 110); g.lineTo(860, 70); g.arcTo(970, 70, 970, 180, 110); g.lineTo(970, 1330); g.stroke(); g.restore();
+    w20GoldDots(g, W, H, 10, 5, "#b8862a");
+  },
+  nude: function (g, T, W, H) {
+    g.fillStyle = "#fffdfc"; g.fillRect(0, 0, W, H);
+    g.fillStyle = "#e6cbc1"; g.beginPath(); g.arc(560, 820, 440, 0, 6.2832); g.fill(); g.strokeStyle = "#ffffff"; g.lineWidth = 3; g.beginPath(); g.arc(560, 820, 418, 0, 6.2832); g.stroke();
+    w20Stem(g, [60, 640, 140, 420, 250, 300, 350, 170], "#7fa384", 6); w20Leaf(g, 100, 520, 150, 30, -.5, "#9bbf9f", "#5f8a66"); w20Leaf(g, 160, 400, 120, 24, 3.6, "#9bbf9f", "#5f8a66"); w20Leaf(g, 260, 280, 120, 26, -.4, "#9bbf9f", "#5f8a66");
+    w20Magnolia(g, 170, 470, 82, -.5); w20Magnolia(g, 270, 255, 95, .3); w20Bud(g, 360, 190, 90, .7); w20Bud(g, 120, 360, 60, -.4);
+    w20Stem(g, [1010, 1450, 960, 1520, 880, 1600, 800, 1640], "#7fa384", 5); w20Leaf(g, 940, 1500, 110, 24, -2.5, "#9bbf9f", "#5f8a66"); w20Magnolia(g, 1000, 1380, 70, .6);
+  },
+  watercolor: function (g, T, W, H) {
+    g.fillStyle = "#fffdfc"; g.fillRect(0, 0, W, H);
+    w20Wash(g, 880, 160, 420, "#f8d4d4", .6); w20Wash(g, 960, 420, 280, "#f8d4d4", .45); w20Wash(g, 130, 1500, 330, "#fbe2e0", .5);
+    var pk = { o: "#f6c8c4", m: "#f4a9a4", c: "#ee7e7a", line: "#c46a6a", shadow: 1, L: 6, N: 5 };
+    w20Leaf(g, 40, 330, 150, 30, 1.0, "#e6dcea", "#c9bcd8"); w20Leaf(g, 970, 1300, 200, 36, -2.2, "#e6dcea", "#c9bcd8");
+    w20Rose(g, 110, 130, 130, pk); w20Anem(g, 280, 150, 70, "#fff", "#f4d57a"); w20Rose(g, 100, 420, 90, pk); w20Anem(g, 140, 300, 90, "#fbf7f6", "#f1b8a0");
+    w20Rose(g, 990, 1380, 140, pk); w20Anem(g, 880, 1250, 100, "#fbf7f6", "#f1b8a0"); w20Rose(g, 920, 1560, 130, pk); w20Anem(g, 790, 1520, 75, "#fff", "#f4d57a"); w20Anem(g, 1040, 1120, 60, "#fff", "#f4d57a");
+    w20GoldDots(g, W, H, 22, 23, "#d3a53c");
+  },
+  peony: function (g, T, W, H) {
+    g.fillStyle = "#fffefe"; g.fillRect(0, 0, W, H);
+    for (var i = 0; i < 160; i++) { var a = w20Rnd(i) * 6.28, d = Math.sqrt(w20Rnd(i + 40)) * 330; g.fillStyle = "rgba(190,165,225," + (.12 + w20Rnd(i + 9) * .3) + ")"; g.beginPath(); g.arc(860 + Math.cos(a) * d, 1400 + Math.sin(a) * d * .8, 2 + w20Rnd(i + 3) * 7, 0, 6.2832); g.fill(); }
+    g.save(); g.strokeStyle = "#8a5fc0"; g.lineWidth = 3; g.beginPath(); g.moveTo(70, 220); g.arcTo(70, 70, 220, 70, 150); g.lineTo(1010, 70); g.lineTo(1010, 1400); g.arcTo(1010, 1550, 860, 1550, 150); g.lineTo(70, 1550); g.closePath(); g.stroke(); g.restore();
+    w20Stem(g, [870, 1480, 820, 1540, 760, 1590, 700, 1630], "#6aa05a", 9); w20Leaf(g, 790, 1560, 190, 38, 2.9, "#7ab568", "#4e8a40"); w20Leaf(g, 900, 1500, 180, 38, -.3, "#7ab568", "#4e8a40");
+    var py = { o: "#d6c8ee", m: "#efe8d2", c: "#fbf5d6", line: "#8a74b8", shadow: 1, L: 7, N: 7 };
+    w20Rose(g, 880, 1420, 150, py); w20Rose(g, 860, 1470, 45, { o: "#c9b8e8", m: "#d9cdf0", c: "#efe8ff", line: "#8a74b8", L: 3, N: 6 });
+    g.save(); g.translate(830, 1520); g.rotate(-.35); g.fillStyle = "rgba(205,190,235,.92)"; g.fillRect(-90, -26, 180, 52); g.restore();
+  }
+};
+var W20BGL = {
   lineart: function (g, T, W, H) {
     g.fillStyle = "#fffdfb"; g.fillRect(0, 0, W, H);
     w20Wash(g, 180, 140, 520, "#f4c2ae", .55); w20Wash(g, 1500, 950, 620, "#f4c2ae", .6); w20Wash(g, 800, 540, 620, "#fdeae2", .5); w20Wash(g, 1500, 120, 380, "#f6d2c0", .45);
@@ -470,23 +548,81 @@ var W20BG2 = {
     w20Rose(g, 1520, 120, 105, py); w20Leaf(g, 1420, 190, 170, 34, 2.9, "#7ab568", "#4e8a40"); w20Leaf(g, 1520, 210, 150, 30, 1.7, "#7ab568", "#4e8a40");
   }
 };
-function w20ThemeBg(g, T, W, H) {
-  if (W20BG2[T.bg]) { W20BG2[T.bg](g, T, W, H); return; }
-  /* mẫu mặc định: hoa hồng màu nước gốc (cụm góc trái-trên và cụm lớn góc phải-dưới) trên nền hồng phấn */
-  var bgr = g.createLinearGradient(0, 0, W, H); bgr.addColorStop(0, "#fffaf8"); bgr.addColorStop(1, "#fdeef0"); g.fillStyle = bgr; g.fillRect(0, 0, W, H);
-  w20Wash(g, 1250, 800, 700, "#f9d5dc", .5); w20Wash(g, 250, 200, 450, "#fbe0e4", .5);
-  var A = w20Crop("A", 0, 1, 1, false), B = w20Crop("B", 0, 1, 1, false), C = w20Crop("C", 0, 1, 1, false);
-  g.save(); g.globalCompositeOperation = "multiply";
-  if (A) g.drawImage(A, 0, 0, A.width * 1.1, A.height * 1.1);
-  if (B) g.drawImage(B, W - B.width * .66, H - B.height * .66, B.width * .66, B.height * .66);
-  if (C) { g.save(); g.translate(W + 4, 120); g.scale(-1, 1); g.globalAlpha = .9; g.drawImage(C, 0, 0, C.width * .62, C.height * .62); g.restore(); }
+function w20ThemeBg(g, T, W, H, land) {
+  if (land) {
+    if (W20BGL[T.bg]) { W20BGL[T.bg](g, T, W, H); return; }
+    /* mẫu mặc định (ngang): hoa hồng màu nước gốc, cụm góc trái-trên và cụm lớn góc phải-dưới trên nền hồng phấn */
+    var bgr = g.createLinearGradient(0, 0, W, H); bgr.addColorStop(0, "#fffaf8"); bgr.addColorStop(1, "#fdeef0"); g.fillStyle = bgr; g.fillRect(0, 0, W, H);
+    w20Wash(g, 1250, 800, 700, "#f9d5dc", .5); w20Wash(g, 250, 200, 450, "#fbe0e4", .5);
+    var A = w20Crop("A", 0, 1, 1, false), B = w20Crop("B", 0, 1, 1, false), C = w20Crop("C", 0, 1, 1, false);
+    g.save(); g.globalCompositeOperation = "multiply";
+    if (A) g.drawImage(A, 0, 0, A.width * 1.1, A.height * 1.1);
+    if (B) g.drawImage(B, W - B.width * .66, H - B.height * .66, B.width * .66, B.height * .66);
+    if (C) { g.save(); g.translate(W + 4, 120); g.scale(-1, 1); g.globalAlpha = .9; g.drawImage(C, 0, 0, C.width * .62, C.height * .62); g.restore(); }
+    g.restore(); return;
+  }
+  if (W20BGP[T.bg]) { W20BGP[T.bg](g, T, W, H); return; }
+  var bg = w20Img("assets/card-bg.webp");
+  if (bg.complete && bg.naturalWidth) g.drawImage(bg, 0, 0, W, H); else { g.fillStyle = "#fff8f5"; g.fillRect(0, 0, W, H); }
+}
+/* chọn ngẫu nhiên (cố định theo seed) n anh em trong số các anh */
+function w20PickMen(seed, n) { var a = [], i, j, t, N = (W20CFG.men || []).length; for (i = 0; i < N; i++) a.push(i); for (i = N - 1; i > 0; i--) { j = Math.floor(w20Rnd(seed * 31 + i * 7 + 1) * (i + 1)); t = a[i]; a[i] = a[j]; a[j] = t; } return a.slice(0, n); }
+/* bó hoa + hàng anh em com lê cà vạt đứng cạnh. c: {bx, by, bs, x0, dx, y, sc} */
+function w20Group(g, o, T, c) {
+  var MEN = (typeof W20CFG !== "undefined" && W20CFG.men) || [];
+  if (o.bq && o.bq.length) { W20WRAP = T.wrap || null; w20DrawBouquet(g, c.bx, c.by, c.bs, o.bq); W20WRAP = null; }
+  (o.men || []).forEach(function (id, k) { var m = MEN[id]; if (!m) return; w20Chibi(g, c.x0 + k * c.dx, c.y, c.sc, { img: w20Img(m.img), dir: 1, step: 1.6, up: k % 2 ? 0 : .85, lift: 0 }); });
+}
+function w20DrawCardP(g, o) {
+  var W = 1080, H = 1620, i, DS = "'Dancing Script','Brush Script MT',cursive", PF = "'Playfair Display',Georgia,serif";
+  var T = W20THEMES[o.theme >= 0 && o.theme < W20THEMES.length ? o.theme : 0], ROSE = T.acc, ROSE2 = T.acc2; W20INK = T.ink;
+  g.save(); g.textBaseline = "alphabetic"; g.textAlign = "center";
+  w20ThemeBg(g, T, W, H, false);
+  function ls(px) { if ("letterSpacing" in g) g.letterSpacing = px + "px"; }
+  /* ---- đầu thiệp (lệch phải để tránh hoa góc trái-trên) ---- */
+  var hx = 650; ls(5); w20Ink(g, "PHÒNG PTSPBL  ·  20.10." + new Date().getFullYear(), hx, 128, 30, 1); ls(0);
+  var hs = 116, hw = 700; g.font = "700 " + hs + "px " + DS; while (g.measureText("Happy Women's Day").width > hw && hs > 70) { hs -= 4; g.font = "700 " + hs + "px " + DS; }
+  g.fillStyle = ROSE2; g.shadowColor = w20Hex2rgba(ROSE2, .25); g.shadowBlur = 10; g.shadowOffsetY = 3; g.fillText("Happy Women's Day", hx, 262); g.shadowColor = "transparent"; g.shadowBlur = 0; g.shadowOffsetY = 0;
+  var gr = g.createLinearGradient(0, 290, 0, 470); gr.addColorStop(0, T.g1); gr.addColorStop(1, T.g2);
+  g.shadowColor = w20Hex2rgba(ROSE, .25); g.shadowBlur = 22; g.shadowOffsetY = 8; g.fillStyle = gr; g.font = "700 184px " + PF; g.fillText("20.10", 600, 440); g.shadowColor = "transparent"; g.shadowBlur = 0; g.shadowOffsetY = 0;
+  w20Ink(g, o.greet || "Gửi chị em thương mến", 560, 508, 36, 0); var y = 508;
+  /* ---- tên ---- */
+  var nm = o.name || "Chị em Phòng PTSPBL", fs = 104; g.font = fs + "px " + W20HW;
+  while (g.measureText(nm).width > 780 && fs > 50) { fs -= 4; g.font = fs + "px " + W20HW; }
+  y += fs * .82 + 22; w20Ink(g, nm, 560, y, fs, 1);
+  if (o.sub) { y += 50; var ss = 30; g.font = ss + "px " + W20HW; while (g.measureText(o.sub).width > 800 && ss > 22) { ss--; g.font = ss + "px " + W20HW; } w20Ink(g, o.sub, 560, y, ss, 0); }
+  /* ---- danh hiệu vui: chữ viết tay + nét lượn gạch chân ---- */
+  var rl = o.role || "", rs = 38;
+  if (rl) {
+    g.font = rs + "px " + W20HW; while (g.measureText(rl).width > 800 && rs > 28) { rs--; g.font = rs + "px " + W20HW; }
+    y += 78; var rw = g.measureText(rl).width; w20Ink(g, rl, 560, y, rs, 0); w20Wavy(g, 560 - rw / 2 - 6, 560 + rw / 2 + 6, y + 18, ROSE2); y += 18;
+  }
+  if (o.bd) { y += 58; w20Ink(g, "🎂 Chúc mừng sinh nhật tháng 10 nha!", 560, y, 32, 0); }
+  /* ---- lời chúc ---- */
+  y += 112; var wsz = 46, WX = 470, WW = 640; g.font = wsz + "px " + W20HW; var txt = o.wish || "", wl = w20WrapBal(g, txt, WW);
+  while (wl.length > 5 && wsz > 32) { wsz -= 2; g.font = wsz + "px " + W20HW; wl = w20WrapBal(g, txt, WW); }
+  var lh = wsz * 1.5, ny = Math.min(wl.length, 8), mw = 0;
+  g.font = wsz + "px " + W20HW; for (i = 0; i < ny; i++) mw = Math.max(mw, g.measureText(wl[i]).width);
+  var lw = ny ? g.measureText(wl[ny - 1]).width : 0, qc = w20Hex2rgba(ROSE2, .6);
+  g.fillStyle = qc; g.font = "700 110px " + PF; g.textAlign = "right"; g.fillText("“", WX - mw / 2 - 6, y + 24); g.textAlign = "center";
+  for (i = 0; i < ny; i++) { g.save(); g.translate(WX, y + i * lh); g.rotate((((i * 7) % 5) - 2) * .0045); w20Ink(g, wl[i], 0, 0, wsz, 0); g.restore(); } /* mỗi dòng nghiêng nhẹ cho giống tay viết */
+  var wend = y + (ny - 1) * lh; g.fillStyle = qc; g.font = "700 110px " + PF; g.textAlign = "left"; g.fillText("”", Math.min(WX + WW / 2 + 8, WX + lw / 2 + 6), wend + 54); g.textAlign = "center";
+  /* ---- ký tên ---- */
+  y = wend + 104; var sg = "Thương mến, " + (o.from || ""), sgs = 44; g.font = sgs + "px " + W20HW; while (g.measureText(sg).width > WW - 40 && sgs > 28) { sgs -= 2; g.font = sgs + "px " + W20HW; }
+  w20Ink(g, sg, WX, y, sgs, 1); var sgw = g.measureText(sg).width; g.fillStyle = ROSE2; g.font = sgs + "px " + W20HW; g.textAlign = "left"; g.fillText("♥", WX + sgw / 2 + 12, y); g.textAlign = "center";
+  /* ---- bó hoa và các anh em xếp hàng cạnh hoa ---- */
+  var hasM = o.men && o.men.length, top = y + 70, S = hasM ? 185 : 230, cy;
+  if (top + 2.35 * S > H - 40) S = (H - 40 - top) / 2.35; cy = top + 1.1 * S;
+  if (hasM) { var bx = 50 + S * 1.05, sc = .9, x1 = bx + S * 1.05 + 30, dx = (W - 50 - x1 - sc * 108) / 5; w20Group(g, o, T, { bx: bx, by: cy, bs: S, x0: x1 + sc * 54, dx: dx, y: cy + 1.25 * S - 8, sc: sc }); }
+  else w20Group(g, o, T, { bx: W / 2, by: cy, bs: S });
   g.restore();
 }
-function w20DrawCard(g, o) {
+
+function w20DrawCardL(g, o) {
   var W = 1620, H = 1080, i, DS = "'Dancing Script','Brush Script MT',cursive", PF = "'Playfair Display',Georgia,serif", TX = 625;
   var T = W20THEMES[o.theme >= 0 && o.theme < W20THEMES.length ? o.theme : 0], ROSE = T.acc, ROSE2 = T.acc2; W20INK = T.ink;
   g.save(); g.textBaseline = "alphabetic"; g.textAlign = "center";
-  w20ThemeBg(g, T, W, H);
+  w20ThemeBg(g, T, W, H, true);
   function ls(px) { if ("letterSpacing" in g) g.letterSpacing = px + "px"; }
   /* ---- cột chữ bên trái ---- */
   ls(5); w20Ink(g, "PHÒNG PTSPBL  ·  20.10." + new Date().getFullYear(), TX, 104, 28, 1); ls(0);
@@ -516,20 +652,13 @@ function w20DrawCard(g, o) {
   var wend = y + (ny - 1) * lh; g.fillStyle = qc; g.font = "700 100px " + PF; g.textAlign = "left"; g.fillText("”", Math.min(TX + WW / 2 + 8, TX + lw / 2 + 6), wend + 50); g.textAlign = "center";
   y = wend + 88; var sg = "Thương mến, " + (o.from || ""), sgs = 42; g.font = sgs + "px " + W20HW; while (g.measureText(sg).width > WW - 40 && sgs > 28) { sgs -= 2; g.font = sgs + "px " + W20HW; }
   w20Ink(g, sg, TX, y, sgs, 1); var sgw = g.measureText(sg).width; g.fillStyle = ROSE2; g.font = sgs + "px " + W20HW; g.textAlign = "left"; g.fillText("♥", TX + sgw / 2 + 12, y); g.textAlign = "center";
-  /* ---- bên phải: bó hoa, 10 anh em com lê cà vạt đứng quanh ---- */
-  var MEN = (typeof W20CFG !== "undefined" && W20CFG.men) || [], BX = 1335, BY = 590, BS = 150, ppl = [];
-  var spots = [[-.97, 1.1], [-.86, 1.2], [-.72, 1.3], [.72, 1.7], [.86, 1.8], [.97, 1.9], [-.93, .12], [-.6, .3], [.6, .3], [.93, .12]];
-  MEN.slice(0, 10).forEach(function (m, k) {
-    var s = spots[k], th = s[1] * Math.PI, sn = Math.sin(th), front = sn > 0, px = BX + s[0] * 238, py = 820 + 190 * sn, sc = (.56 + .2 * (sn + 1) / 2) * 1.25;
-    ppl.push({ m: m, x: px, y: py, sc: front ? sc + .05 : sc, front: front, dir: px < BX ? 1 : -1, k: k });
-  });
-  ppl.sort(function (a, b) { return a.y - b.y; });
-  function man(P) { w20Chibi(g, P.x, P.y, P.sc, { img: w20Img(P.m.img), dir: P.dir, step: 1.6, up: P.front ? 0 : .9, lift: 0 }); }
-  ppl.forEach(function (P) { if (!P.front) man(P); });
-  if (o.bq && o.bq.length) { W20WRAP = T.wrap || null; w20DrawBouquet(g, BX, BY, BS, o.bq); W20WRAP = null; }
-  ppl.forEach(function (P) { if (P.front) man(P); });
+  /* ---- bên phải: bó hoa, các anh em xếp hàng bên dưới ---- */
+  var hasM = o.men && o.men.length;
+  w20Group(g, o, T, hasM ? { bx: 1345, by: 470, bs: 150, x0: 1345 - 2.5 * 84, dx: 84, y: 910, sc: .74 } : { bx: 1345, by: 560, bs: 175 });
   g.restore();
 }
+
+function w20DrawCard(g, o) { if (o.land) w20DrawCardL(g, o); else w20DrawCardP(g, o); }
 
 /* Bấm vào khung ảnh tập thể để xem to */
 document.addEventListener("click", function (e) {

@@ -10,7 +10,7 @@
 <meta name="theme-color" content="#00381f">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E💐%3C/text%3E%3C/svg%3E">
 <link rel="stylesheet" href="assets/style.css?v=20261013">
-<link rel="stylesheet" href="assets/box.css?v=202610150954">
+<link rel="stylesheet" href="assets/box.css?v=202610151009">
 </head>
 <body class="bx">
 <canvas id="fx" aria-hidden="true"></canvas>
@@ -104,9 +104,10 @@
     <div class="paper2"><div class="pbody">
       <h2 class="hw">Thiệp for U</h2>
       <div class="cardbox">
-        <canvas id="card" width="1620" height="1080"></canvas>
+        <canvas id="card" width="1080" height="1620"></canvas>
         <div class="side">
           <div class="themes" id="themes" role="group" aria-label="Chọn mẫu thiệp"></div>
+        <div class="cardopts"><button type="button" class="btn ghost" id="optLand"></button><button type="button" class="btn ghost" id="optMen"></button><button type="button" class="btn ghost" id="optMenRnd">🎲 Đổi anh em</button></div>
         <div class="acts">
             <button class="btn" id="dl" type="button">⬇️ Tải thiệp về máy</button>
             <button class="btn pink" id="shr" type="button">📤 Chia sẻ</button>
@@ -133,7 +134,7 @@
 <script src="assets/people.js?v=20261022"></script>
 <script src="assets/common.js?v=20261038"></script>
 <script src="assets/flowers.js?v=20261013"></script>
-<script src="assets/modules.js?v=202610150954"></script>
+<script src="assets/modules.js?v=202610151010"></script>
 <script src="assets/boxflow.js?v=20261016"></script>
 <script src="assets/firebase-sync.js?v=20261030"></script>
 <script>
@@ -232,18 +233,27 @@
   }
   /* giấy khen */
   function card() {
-    var c = $("#card"), g = c.getContext("2d");
+    var c = $("#card"), land = !!OP.land; if (!OP.seed) OP.seed = 1 + Math.floor(Math.random() * 1e6);
+    if (c.width !== (land ? 1620 : 1080)) { c.width = land ? 1620 : 1080; c.height = land ? 1080 : 1620; } c.classList.toggle("land", land); c.parentNode.classList.toggle("land", land);
+    var g = c.getContext("2d");
     var got = []; try { got = (me && me.test) ? (window.W20TESTGOT || []) : JSON.parse(localStorage.getItem("w20sep3:" + (me ? me.id : "guest")) || "[]"); } catch (e) {}
-    w20DrawCard(g, { mode: "sep", greet: "Thân gửi:", name: S.to ? "Chị " + S.to : "Các chị lãnh đạo của Phòng", sub: me ? w20Sub(me.t) : "", role: W20.sep.roles[ri()], wish: CW ? CW : w20SepWish(wi(), "chị"), prizes: got.map(function (i) { return W20CFG.prizes[i]; }).filter(Boolean), from: S.f, bq: S.bq, theme: TH });
+    w20DrawCard(g, { mode: "sep", greet: "Thân gửi:", name: S.to ? "Chị " + S.to : "Các chị lãnh đạo của Phòng", sub: me ? w20Sub(me.t) : "", role: W20.sep.roles[ri()], wish: CW ? CW : w20SepWish(wi(), "chị"), prizes: got.map(function (i) { return W20CFG.prizes[i]; }).filter(Boolean), from: S.f, bq: S.bq, theme: TH, land: land, men: OP.men === 0 ? null : w20PickMen(OP.seed, 6) });
   }
   W20CFG.men.forEach(function (m) { var im = w20Img(m.img); if (!im.complete) im.addEventListener("load", function () { card(); }); }); /* ảnh các anh tải xong thì vẽ lại thiệp */
   /* 10 mẫu thiệp (mẫu 1 hồng phấn là mặc định), nhớ lựa chọn trên máy */
+  var OPK = "w20sepopt:" + (me ? me.id : "guest"), OP = {}; try { if (!TEST) OP = JSON.parse(localStorage.getItem(OPK) || "{}") || {}; } catch (e) {}
+  function saveOP() { try { if (!TEST) localStorage.setItem(OPK, JSON.stringify(OP)); } catch (e) {} }
   var TH = 0; try { if (!TEST) TH = +localStorage.getItem("w20septh:" + (me ? me.id : "guest")) || 0; } catch (e) {}
   function themeUI() {
     var box = $("#themes"); box.innerHTML = W20THEMES.map(function (t, i) { return '<button type="button" class="thm' + (TH === i ? " on" : "") + '" data-i="' + i + '" aria-label="Mẫu ' + (i + 1) + ': ' + t.name + '" title="' + t.name + '" style="background:' + t.pv + '"><span>' + t.em + "</span></button>"; }).join("");
     box.onclick = function (e) { var b = e.target.closest(".thm"); if (!b) return; TH = +b.getAttribute("data-i"); try { if (!TEST) localStorage.setItem("w20septh:" + (me ? me.id : "guest"), String(TH)); } catch (er) {} card(); [].forEach.call(box.children, function (x) { x.classList.toggle("on", x === b); }); };
   }
   themeUI();
+  function optUI() { $("#optLand").textContent = OP.land ? "↕️ Thiệp dọc" : "↔️ Thiệp ngang"; $("#optMen").textContent = OP.men === 0 ? "🧑‍🤝‍🧑 Hiện anh em" : "🧑‍🤝‍🧑 Ẩn anh em"; $("#optMenRnd").style.display = OP.men === 0 ? "none" : ""; }
+  $("#optLand").onclick = function () { OP.land = OP.land ? 0 : 1; saveOP(); optUI(); card(); };
+  $("#optMen").onclick = function () { OP.men = OP.men === 0 ? 1 : 0; saveOP(); optUI(); card(); };
+  $("#optMenRnd").onclick = function () { OP.seed = 1 + Math.floor(Math.random() * 1e6); saveOP(); card(); };
+  optUI();
   var bgImg = w20Img("assets/card-bg.webp"); if (!bgImg.complete) bgImg.onload = function () { card(); };
   W20CFG.prizes.forEach(function (p) { if (/^assets\//.test(p.icon)) { var im = w20Img(p.icon); if (!im.complete) im.addEventListener("load", function () { card(); }); } }); /* ảnh quà tải xong thì vẽ lại thiệp */
   var cardT = 0; function cardSoon() { cancelAnimationFrame(cardT); cardT = requestAnimationFrame(card); }

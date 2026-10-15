@@ -77,7 +77,7 @@ body.bx:before{background:radial-gradient(900px 600px at 80% -10%,rgba(255,93,15
 .scene .wheelbox{width:min(270px,100%)}
 .scene .wall{grid-template-columns:1fr 1fr;gap:10px}
 .scene .note2{font-size:14px;padding:10px 10px 8px}
-.scene #card{width:100%;height:auto;box-shadow:0 10px 28px rgba(0,0,0,.35)}
+.scene #card{width:min(100%,300px);box-shadow:0 10px 28px rgba(0,0,0,.35)}
 .scene .frame{margin-top:30px}
 .scene .frame figcaption{color:var(--rose)}
 .endnote{font-family:"Dancing Script",cursive;font-weight:700;font-size:24px;color:var(--rose);margin:14px 0 0;line-height:1.2}
@@ -95,7 +95,7 @@ body.bx:before{background:radial-gradient(900px 600px at 80% -10%,rgba(255,93,15
 .scene .bqstage{max-width:210px}
 .scene .bqpal{gap:6px;margin-bottom:6px}
 .scene .bqpal .fl{padding:3px 0}
-.scene #card{width:100%;height:auto}
+.scene #card{width:min(100%,270px)}
 .litebtn{width:max-content!important;right:auto!important;height:auto!important}
 
 /* ----- hộp thư lời chúc (thay cho máy ATM) ----- */
@@ -154,8 +154,9 @@ body.bx:before{background:radial-gradient(900px 600px at 80% -10%,rgba(255,93,15
   #s4 .wheelbox{grid-area:w;width:min(340px,100%);justify-self:center}#s4 .hw{grid-area:h;align-self:end}#s4 .sub{grid-area:s}#s4 .pbody>p:not(.sub){grid-area:p}#s4 #prize{grid-area:z}#s4 .reqbox{grid-area:r;width:100%}#s4 .gate{grid-area:g}
   .scene .wall{grid-template-columns:repeat(4,1fr);gap:14px}
   .scene .note2{font-size:15px}
-  #s5 .cardbox{display:grid;display:block;text-align:center}
-  #s5 #card{width:min(100%,720px)!important;height:auto;aspect-ratio:3/2;max-width:none;margin:0 auto}
+  #s5 .cardbox{display:grid;grid-template-columns:auto 1fr;gap:30px;align-items:start;text-align:left}
+  #s5 .cardbox.land{display:block;text-align:center}
+  #s5 #card{width:auto!important;height:min(560px,calc(100svh - 270px));aspect-ratio:2/3;max-width:none}
   #s5 .side{display:flex;flex-direction:column;gap:14px}
   #s5 .side .acts{justify-content:flex-start}
   #s5 .frame{margin-top:6px;max-width:340px}
@@ -174,9 +175,10 @@ body.bx:before{background:radial-gradient(900px 600px at 80% -10%,rgba(255,93,15
   #p4 .bqpal{grid-template-columns:repeat(8,1fr)}#p4 .bqstage{max-width:300px}
   #p5 .pbody{grid-template-columns:1fr 1fr;grid-template-areas:"w h" "w s" "w p" "w z" "w g";grid-template-rows:auto auto auto auto 1fr;align-content:center}
   #p5 .wheelbox{grid-area:w;width:min(340px,100%);justify-self:center}#p5 .hw{grid-area:h;align-self:end}#p5 .sub{grid-area:s}#p5 .pbody>p:not(.sub){grid-area:p}#p5 #prize{grid-area:z}
-  #p6 .cardbox{display:grid;display:block;text-align:center}
-  #p6 #card{width:min(100%,720px)!important;height:auto;aspect-ratio:3/2;max-width:none;margin:0 auto}
-  #p6 .side{display:flex;flex-direction:column;gap:14px;align-items:center}#p6 .side .acts{justify-content:center}
+  #p6 .cardbox{display:grid;grid-template-columns:auto 1fr;gap:30px;align-items:start;text-align:left}
+  #p6 .cardbox.land{display:block;text-align:center}
+  #p6 #card{width:auto!important;height:min(560px,calc(100svh - 270px));aspect-ratio:2/3;max-width:none}
+  #p6 .side{display:flex;flex-direction:column;gap:14px}#p6 .side .acts{justify-content:flex-start}
   #p6 .frame{margin-top:6px;max-width:340px}
   #p6 .pbody>.hw,#p6 .pbody>.sub,#p6 .pbody>.endnote{grid-column:1/-1}
 }
@@ -223,7 +225,7 @@ body.bx:before{background:radial-gradient(900px 600px at 80% -10%,rgba(255,93,15
   .intro .hw1{font-size:44px}.intro .tapme{font-size:22px}
   .scene .note b{font-size:17px}.scene .note span{font-size:15.5px}
   .mbx .scr{font-size:17.5px}.endnote{font-size:21px}
-  #s5 #card2,#p6 #card2{width:min(100%,720px)!important;height:auto;aspect-ratio:3/2;max-width:none;margin:0 auto}
+  #s5 #card2,#p6 #card2{width:auto!important;height:min(560px,calc(100svh - 270px));aspect-ratio:2/3;max-width:none}
   #s5 .sidetabs,#p6 .sidetabs{grid-column:1/-1;justify-content:flex-start}
 }
 @media (min-width:900px) and (min-height:520px){
@@ -292,3 +294,10 @@ body.bx:before{background:radial-gradient(900px 600px at 80% -10%,rgba(255,93,15
 @media (min-width:900px) and (min-height:520px){.themes{justify-content:flex-start}}
 
 .thm span{font-size:16px;text-shadow:none}
+
+/* thiệp ngang (chị em chọn) */
+.scene #card.land{width:100%}
+@media (min-width:900px) and (min-height:520px){#s5 #card.land,#p6 #card.land{width:min(100%,720px)!important;height:auto;aspect-ratio:3/2;margin:0 auto}}
+.cardopts{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:2px 0 6px}
+.cardopts .btn{font-size:14px;padding:8px 14px}
+@media (min-width:900px) and (min-height:520px){.cardopts{justify-content:flex-start}}
