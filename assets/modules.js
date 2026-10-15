@@ -69,7 +69,7 @@ function w20DrawBouquet(g, cx, cy, S, list) {
 }
 /* ===== Chibi: đầu là ảnh thật (assets/men), thân vẽ bằng canvas ===== */
 var W20IMG = {};
-function w20Img(src) { if (!W20IMG[src]) { var im = new Image(); im.src = /^assets\//.test(src) ? src + "?v=20261052" : src; W20IMG[src] = im; } return W20IMG[src]; }
+function w20Img(src) { if (!W20IMG[src]) { var im = new Image(); im.src = /^assets\//.test(src) ? src + "?v=20261061" : src; W20IMG[src] = im; } return W20IMG[src]; }
 function w20Rr(g, x, y, w, h, r) { g.beginPath(); g.moveTo(x + r, y); g.arcTo(x + w, y, x + w, y + h, r); g.arcTo(x + w, y + h, x, y + h, r); g.arcTo(x, y + h, x, y, r); g.arcTo(x, y, x + w, y, r); g.closePath(); }
 /* o: {img, shirt, step (pha chạy), up (0..1 giơ tay), lift (nhảy, px), flower (emoji hoặc null), dir (+1 nhìn phải, -1 nhìn trái)} */
 function w20Chibi(g, cx, gy, sc, o) {
@@ -303,12 +303,12 @@ function w20Wavy(g, x1, x2, y, col) { g.save(); g.strokeStyle = col; g.lineWidth
 /* ===== 10 mẫu thiệp: nền, khung, hoa màu nước thật (tách từ ảnh gốc) đổi tông/đổi chỗ, hạt lấp lánh, ren, bướm… Mẫu 0 = hoa hồng gốc (mặc định) ===== */
 /* ===== 6 mẫu thiệp: nền là ảnh thiệp (assets/cards), đã xoá lời chúc gốc; chữ riêng từng người được vẽ lên khung "blk" ===== */
 var W20THEMES = [
-  { name: "Bó hồng trên bàn", file: "t1", w: 1536, h: 1024, blk: { x: 215, y: 516, w: 485, h: 214 }, bq: { x: 108, y: 640, s: 52 }, ink: "#4a3036", acc: "#d81b60", em: "🌹" },
-  { name: "Hoa hồng nắng sớm", file: "t2", w: 1530, h: 1070, blk: { x: 200, y: 646, w: 555, h: 232 }, bq: { x: 98, y: 800, s: 58 }, ink: "#4a3036", acc: "#d81b60", em: "🌸" },
-  { name: "Trời xanh mây hồng", file: "t3", w: 1528, h: 1070, blk: { x: 205, y: 732, w: 565, h: 268 }, bq: { x: 100, y: 850, s: 52 }, ink: "#274a43", acc: "#b8305c", em: "🌷" },
-  { name: "Tulip trên giấy", file: "t4", w: 1016, h: 964, blk: { x: 410, y: 474, w: 400, h: 296 }, bq: { x: 100, y: 128, s: 44 }, ink: "#4a3a3a", acc: "#c43563", em: "💌" },
-  { name: "Cúc hoạ mi và sách", file: "t5", w: 1024, h: 964, blk: { x: 122, y: 428, w: 464, h: 216 }, bq: { x: 96, y: 800, s: 56 }, ink: "#37483f", acc: "#e0245e", em: "📚" },
-  { name: "Quý cô và hoa", file: "t6", w: 1008, h: 964, blk: { x: 116, y: 528, w: 456, h: 284 }, bq: { x: 88, y: 868, s: 52 }, ink: "#6a1f3a", acc: "#b02a58", em: "👒" }
+  { name: "Bó hồng trên bàn", file: "t1", w: 1536, h: 1024, blk: { x: 205, y: 512, w: 500, h: 226 }, ink: "#4a3036", acc: "#d81b60", em: "🌹" },
+  { name: "Hoa hồng nắng sớm", file: "t2", w: 1528, h: 1070, blk: { x: 170, y: 640, w: 590, h: 250 }, ink: "#4a3036", acc: "#d81b60", em: "🌸" },
+  { name: "Trời xanh mây hồng", file: "t3", w: 1528, h: 1070, blk: { x: 205, y: 732, w: 565, h: 268 }, ink: "#274a43", acc: "#b8305c", em: "🌷" },
+  { name: "Tulip trên giấy", file: "t4", w: 1014, h: 962, blk: { x: 420, y: 476, w: 430, h: 290 }, ink: "#4a3a3a", acc: "#c43563", em: "💌" },
+  { name: "Cúc hoạ mi và sách", file: "t5", w: 1020, h: 962, blk: { x: 150, y: 438, w: 500, h: 212 }, ink: "#37483f", acc: "#e0245e", em: "📚" },
+  { name: "Quý cô và hoa", file: "t6", w: 1008, h: 962, blk: { x: 125, y: 548, w: 420, h: 250 }, ink: "#6a1f3a", acc: "#b02a58", em: "👒" }
 ];
 W20THEMES.forEach(function (t) { t.pv = "url(assets/cards/" + t.file + ".webp) center/cover"; });
 function w20Hex2rgba(h, a) { var n = parseInt(h.slice(1), 16); return "rgba(" + (n >> 16) + "," + ((n >> 8) & 255) + "," + (n & 255) + "," + a + ")"; }
@@ -321,31 +321,27 @@ function w20DrawCard(g, o) {
   W20INK = T.ink; g.save(); g.textBaseline = "alphabetic"; g.textAlign = "center";
   var bg = w20Img("assets/cards/" + T.file + ".webp");
   if (bg.complete && bg.naturalWidth) g.drawImage(bg, 0, 0, W, H); else { g.fillStyle = "#fdf0ee"; g.fillRect(0, 0, W, H); }
-  var nm = o.name || "Chị em Phòng PTSPBL", sub = o.sub || "", role = o.role || "", sg = "Thương mến, " + (o.from || ""), wish = o.wish || "", greet = o.greet || "Thân gửi:";
-  function build(s, useSub, useRole) {
-    var F = b.w * .108 * s, fn = F, gap = F * .3, P = [], h = 0, wf = F * .62, lines;
+  var nm = o.name || "Chị em Phòng PTSPBL", sg = "Thương mến, " + (o.from || ""), wish = o.wish || "", greet = o.greet || "Thân gửi:";
+  /* bố cục thoáng: lời chào, tên, lời chúc, rồi chữ ký ở dưới cùng cách xa lời chúc */
+  function build(s) {
+    var F = b.w * .13 * s, fn = F, P = [], h = 0, wf = F * .62, lines, lh = wf * 1.45;
     g.font = fn + "px " + W20HW; while (g.measureText(nm).width > b.w && fn > 18) { fn -= 2; g.font = fn + "px " + W20HW; }
-    P.push({ t: greet, f: F * .5, y: h + F * .42, col: T.ink }); h += F * .56;
-    P.push({ t: nm, f: fn, y: h + fn * .8, col: T.acc, bold: 1 }); h += fn * 1.08;
-    if (useSub && sub) { P.push({ t: sub, f: F * .44, y: h + F * .4, col: T.ink, fit: 1 }); h += F * .52; }
-    if (useRole && role) { P.push({ t: role, f: F * .5, y: h + F * .5, col: T.ink, wavy: 1, fit: 1 }); h += F * .74; }
-    h += gap * .6; g.font = wf + "px " + W20HW; lines = w20WrapBal(g, wish, b.w * .94); if (lines.length > 6) lines = lines.slice(0, 6);
-    lines.forEach(function (l, k) { P.push({ t: l, f: wf, y: h + wf * .8 + k * wf * 1.3, col: T.ink }); }); h += lines.length * wf * 1.3 + gap * .5;
-    P.push({ t: sg, f: F * .5, y: h + F * .44, col: T.acc, bold: 1, heart: 1, fit: 1 }); h += F * .56;
+    P.push({ t: greet, f: F * .46, y: h + F * .4, col: T.ink }); h += F * .62;
+    P.push({ t: nm, f: fn, y: h + fn * .8, col: T.acc, bold: 1 }); h += fn * 1.0 + F * .5;
+    g.font = wf + "px " + W20HW; lines = w20WrapBal(g, wish, b.w * .78); if (lines.length > 6) lines = lines.slice(0, 6);
+    lines.forEach(function (l, k) { P.push({ t: l, f: wf, y: h + wf * .8 + k * lh, col: T.ink }); }); h += lines.length * lh + F * .8;
+    P.push({ t: sg, f: F * .48, y: h + F * .4, col: T.acc, bold: 1, heart: 1, fit: 1 }); h += F * .56;
     return { P: P, h: h };
   }
-  var L = null, s, tries = [[1, 1], [1, 0], [0, 0]], tk;
-  for (tk = 0; tk < tries.length && !L; tk++) for (s = 1; s >= .5; s -= .05) { var r = build(s, tries[tk][0], tries[tk][1]); if (r.h <= b.h) { L = r; break; } }
-  if (!L) L = build(.5, 0, 0);
-  var y0 = b.y + Math.max(0, (b.h - L.h) * .35);
+  var L = null, s;
+  for (s = 1; s >= .5 && !L; s -= .05) { var r = build(s); if (r.h <= b.h) L = r; }
+  if (!L) L = build(.5);
+  var y0 = b.y + Math.max(0, (b.h - L.h) * .3);
   L.P.forEach(function (p) {
     var f = p.f; if (p.fit) { g.font = f + "px " + W20HW; while (g.measureText(p.t).width > b.w && f > 16) { f -= 2; g.font = f + "px " + W20HW; } }
     var save = W20INK; W20INK = p.col; w20Ink(g, p.t, cx, y0 + p.y, f, p.bold); W20INK = save;
-    if (p.wavy) { var w = g.measureText(p.t).width; w20Wavy(g, cx - w / 2 - 6, cx + w / 2 + 6, y0 + p.y + f * .38, T.acc); }
     if (p.heart) { var w2 = g.measureText(p.t).width; g.save(); g.fillStyle = T.acc; g.textAlign = "left"; g.font = f + "px " + W20HW; g.fillText("♥", cx + w2 / 2 + 8, y0 + p.y); g.restore(); }
   });
-  /* bó hoa các chị cắm: nhỏ ở góc trái */
-  if (o.bq && o.bq.length) w20DrawBouquet(g, T.bq.x, T.bq.y, T.bq.s, o.bq);
   /* anh em com lê cà vạt xếp hàng dưới thiệp (tuỳ chọn) */
   var MEN = (typeof W20CFG !== "undefined" && W20CFG.men) || [], sc = Math.max(.42, W * .00036), dx = W * .075, x0 = W * .36;
   (o.men || []).forEach(function (id, k) { var m = MEN[id]; if (!m) return; w20Chibi(g, x0 + k * dx, H - 12, sc, { img: w20Img(m.img), dir: 1, step: 1.6, up: k % 2 ? 0 : .85, lift: 0 }); });
