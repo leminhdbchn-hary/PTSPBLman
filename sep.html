@@ -10,7 +10,7 @@
 <meta name="theme-color" content="#00381f">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E💐%3C/text%3E%3C/svg%3E">
 <link rel="stylesheet" href="assets/style.css?v=20261013">
-<link rel="stylesheet" href="assets/box.css?v=20261022">
+<link rel="stylesheet" href="assets/box.css?v=20261027">
 </head>
 <body class="bx">
 <canvas id="fx" aria-hidden="true"></canvas>
@@ -139,9 +139,9 @@
 <script src="assets/config.js?v=20261024"></script>
 <script src="assets/stock.js?v=20261024"></script>
 <script src="assets/people.js?v=20261022"></script>
-<script src="assets/common.js?v=20261024"></script>
+<script src="assets/common.js?v=20261027"></script>
 <script src="assets/flowers.js?v=20261013"></script>
-<script src="assets/modules.js?v=20261026"></script>
+<script src="assets/modules.js?v=20261028"></script>
 <script src="assets/boxflow.js?v=20261016"></script>
 <script src="assets/firebase-sync.js?v=20261013"></script>
 <script>
@@ -243,7 +243,7 @@
   var bgImg = w20Img("assets/card-bg.webp"); if (!bgImg.complete) bgImg.onload = function () { card(); };
   W20CFG.prizes.forEach(function (p) { if (/^assets\//.test(p.icon)) { var im = w20Img(p.icon); if (!im.complete) im.addEventListener("load", function () { card(); }); } }); /* ảnh quà tải xong thì vẽ lại thiệp */
   var cardT = 0; function cardSoon() { cancelAnimationFrame(cardT); cardT = requestAnimationFrame(card); }
-  $("#dl").onclick = function () { card(); $("#card").toBlob(function (b) { var a = document.createElement("a"); a.href = URL.createObjectURL(b); a.download = "thiep-20-10-" + (S.to || "chi").replace(/\s+/g, "-") + ".png"; document.body.appendChild(a); a.click(); setTimeout(function () { URL.revokeObjectURL(a.href); a.remove(); }, 1500); toast("Đã tải thiệp về máy 🌹"); FX.burst(innerWidth / 2, innerHeight * .6, 70); }, "image/png"); };
+  $("#dl").onclick = function () { card(); w20SaveImage($("#card"), "thiep-20-10-" + (S.to || "chi").replace(/\s+/g, "-") + ".png", function () { toast("Đã tải thiệp về máy 🌹"); FX.burst(innerWidth / 2, innerHeight * .6, 70); }); };
   $("#shr").onclick = function () {
     var url = w20Link(location.origin + location.pathname, { to: S.to, x: S.to ? S.x : "", f: S.f === W20CFG.from ? "" : S.f, r: S.to ? ri() : null, w: S.to ? wi() : null });
     var data = { title: "20/10 · Thiệp của chị " + (S.to || ""), text: "Thiệp 20/10 của chị " + (S.to || "") + " 🌹", url: url };

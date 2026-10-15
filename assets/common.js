@@ -51,18 +51,16 @@ var W20 = {
   notes: [
     ["✨", "Xinh đẹp không cần điều kiện", "Chị em chính thức được kích hoạt chế độ xinh đẹp, rạng rỡ và tràn đầy năng lượng. Không cần OTP, không cần phê duyệt, hiệu lực suốt ngày 20/10."],
     ["🐞", "Chốt bản cuối trong một nốt nhạc", "Đã xử lý lỗi phát sinh khi bản cuối có thêm bản cuối 2, bản cuối chốt và bản cuối chốt thật."],
-    ["⚡", "Năng suất tăng, áp lực giảm", "Tăng gấp đôi tốc độ xử lý tờ trình, chính sách và tài liệu sản phẩm. Riêng thời gian uống trà, cà phê và tám chuyện ngày 20/10 được ưu tiên bảo toàn."],
     ["🔒", "Tiếp nhận góp ý, không tiếp nhận áp lực", "Tự động kích hoạt bộ lọc bình tĩnh khi nhận góp ý từ các đơn vị, chi nhánh và những pha “bổ sung thêm một ý nhỏ”. Tâm thế vững vàng, nụ cười luôn trực tuyến."],
-    ["📈", "Lãi suất yêu thương luôn ở mức ưu đãi nhất", "Đặc quyền gồm: miễn phí nhận lời khen, giảm 100% áp lực không đáng có, hoàn tiền bằng những nụ cười và ưu đãi không giới hạn sự quan tâm."],
-    ["⚠️", "100% hồ sơ được duyệt ngay lần đầu", "Hồ sơ xinh đẹp của chị em đã được thẩm định, đánh giá và phê duyệt tự động. Không yêu cầu bổ sung chứng từ, không cần trình ký, không có điều kiện ngoại lệ."]
+    ["📈", "Lãi suất yêu thương luôn ở mức ưu đãi nhất", "Đặc quyền gồm: miễn phí nhận lời khen, giảm 100% áp lực không đáng có, hoàn tiền bằng những nụ cười và ưu đãi không giới hạn sự quan tâm."]
   ],
   coupons: [
     ["🎟️", "Miễn 1 cuộc họp", "Dùng lúc nào tùy chị"],
-    ["☕", "Ngủ trưa thêm 15 phút có anh em bảo kê", "Hạn dùng: hôm nay"],
-    ["🕊️", "Quyền được 1 ae bóp vai 1 lần (nếu cần)", "Không áp dụng cuối quý"],
-    ["🍰", "Có 1 ae trực nhật hộ 1 hôm", "Hiệu lực đến hết 20/10"],
-    ["👑", "Nhờ ae thay bình nước 1 lần", "Không cần nộp hồ sơ"],
-    ["🤝", "Nhờ ae xuống lấy ship 1 lần", "Trong giờ hành chính nha"]
+    ["😴", "Ngủ trưa thêm 15 phút, có anh em bảo kê", "Anh em canh cửa giúp chị"],
+    ["💆", "Được 1 ae bóp vai 1 lần (nếu cần)", "Dùng khi chị mỏi vai"],
+    ["🧹", "1 ae trực nhật hộ chị 1 hôm", "Chị cứ để đó, anh em lo"],
+    ["🚰", "Nhờ ae thay bình nước 1 lần", "Bình nặng để anh em"],
+    ["📦", "Nhờ ae xuống lấy đồ ship 1 lần", "Chị ngồi đó, anh em xuống"]
   ],
   pulls: [
     "Máy vừa soi hồ sơ: chị em PTSPBL đạt loại “xuất sắc” ở mọi tiêu chí, kể cả tiêu chí xinh.",
@@ -288,3 +286,23 @@ function w20Sub(t) { t = String(t || "").trim(); if (!t || /chuyên viên/i.test
 
 /* Biểu tượng quà: emoji hoặc ảnh (đường dẫn assets/…) → HTML */
 function w20IconHTML(icon, size) { icon = String(icon || ""); size = size || 32; return /^assets\//.test(icon) ? '<img src="' + icon + '?v=20261015" alt="" style="height:' + size + 'px;width:auto;vertical-align:middle;display:inline-block">' : icon; }
+
+/* Lưu ảnh thiệp: trình duyệt thường thì tải về; trong Zalo/Facebook… (không cho tải) thì mở ảnh to để nhấn giữ và lưu */
+function w20SaveImage(cv, name, done) {
+  var inapp = /Zalo|FBAN|FBAV|FB_IAB|Instagram|Line\/|; wv\)|MiuiBrowser|MicroMessenger|KAKAOTALK/i.test(navigator.userAgent || "");
+  function overlay() {
+    var url = cv.toDataURL("image/png"), d = document.createElement("div"); d.className = "savebox";
+    d.innerHTML = '<div class="sv-in"><p class="sv-t">Nhấn giữ vào ảnh rồi chọn <b>“Lưu ảnh”</b></p><img alt="Thiệp 20/10" src="' + url + '"><div class="sv-b"><button type="button" class="btn ghost sv-link">🔗 Sao chép link, mở bằng Chrome/Safari</button><button type="button" class="btn sv-x">Đóng</button></div></div>';
+    document.body.appendChild(d);
+    d.querySelector(".sv-x").onclick = function () { d.remove(); };
+    d.querySelector(".sv-link").onclick = function () { w20Copy(location.href, function () { var t = document.getElementById("toast"); if (t) { t.textContent = "Đã sao chép link, dán vào Chrome/Safari để tải ảnh 📋"; t.className = "toast show"; setTimeout(function () { t.className = "toast"; }, 2600); } }); };
+    done && done();
+  }
+  if (inapp) { overlay(); return; }
+  try {
+    cv.toBlob(function (b) {
+      if (!b) { overlay(); return; }
+      try { var a = document.createElement("a"); a.href = URL.createObjectURL(b); a.download = name; document.body.appendChild(a); a.click(); setTimeout(function () { URL.revokeObjectURL(a.href); a.remove(); }, 1500); done && done(); } catch (e) { overlay(); }
+    }, "image/png");
+  } catch (e) { overlay(); }
+}

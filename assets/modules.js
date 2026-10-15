@@ -118,7 +118,7 @@ function w20Chibi(g, cx, gy, sc, o) {
 /* Giao diện cắm hoa: các anh chibi chạy ra, mỗi anh cầm 1 bông ném vào bó.
    opt: { min, start, onChange(list), onDone(list, e) } */
 function w20BouquetUI(box, opt) {
-  opt = typeof opt === "function" ? { onChange: opt } : (opt || {}); var list = (opt.start || []).slice(), MAX = W20SLOT.length, min = opt.min || 1;
+  opt = typeof opt === "function" ? { onChange: opt } : (opt || {}); var list = (opt.start || []).slice(), min = opt.min || 1, MAX = Math.min(W20SLOT.length, opt.max || min);
   var MEN = (typeof W20CFG !== "undefined" && W20CFG.men) || [], CW = 680, CH = 610, CX = 340, CY = 409, SR = 135, GY = 590, SC = 1.8;
   box.innerHTML = '<div class="bqpal"></div><div class="bqstage"><canvas class="bqcv" width="' + CW + '" height="' + CH + '"></canvas><canvas class="bqan" width="' + CW + '" height="' + CH + '"></canvas></div><div class="bqinfo"></div>'
     + '<div class="acts"><button type="button" class="btn ghost bqauto" style="font-size:15px;padding:10px 18px">🪄 Chọn giúp ' + (opt.min || 1) + ' bông</button><button type="button" class="btn ghost bqundo" style="font-size:15px;padding:10px 18px">↩️ Bỏ bông vừa cắm</button><button type="button" class="btn pink bqgive" style="font-size:16px;padding:12px 22px">💐 Xong bó hoa</button></div>';
@@ -129,7 +129,7 @@ function w20BouquetUI(box, opt) {
   function draw() { g.clearRect(0, 0, CW, CH); w20DrawBouquet(g, CX, CY, SR, list); }
   function text() {
     var n = list.length + pendingCount;
-    info.textContent = !n ? "Chạm vào loại hoa để các anh chạy ra cắm giúp nha (tối đa " + MAX + " bông)" : n < min ? "Đã có " + n + " bông, cần thêm " + (min - n) + " bông nữa là đẹp" : "Đã có " + n + "/" + MAX + " bông. Đẹp rồi đó!";
+    info.textContent = !n ? "Chạm vào loại hoa để các anh chạy ra cắm giúp nha (đủ " + min + " bông là thành một bó)" : n < min ? "Đã có " + n + " bông, cần thêm " + (min - n) + " bông nữa là đẹp" : "Đủ " + n + " bông rồi. Bấm “Xong bó hoa” nha!";
   }
   function upd() { cancelAnimationFrame(raf); raf = requestAnimationFrame(draw); text(); opt.onChange && opt.onChange(list.slice()); }
   function plant(a) { if (a.man && crew.indexOf(a.man) < 0) crew.push(a.man); if (list.length >= MAX) list.shift(); list.push(a.f); pendingCount = Math.max(0, pendingCount - 1); upd(); }
@@ -164,6 +164,7 @@ function w20BouquetUI(box, opt) {
   function loopA() { if (rafA) return; rafA = requestAnimationFrame(function fr(now) { ag.clearRect(0, 0, CW, CH); actors = actors.filter(function (a) { return step(a, now); }); while (queue.length && actors.length < MAXA && (!fastOn || actors.every(function (a) { return now - a.t0 > T_IN + T_REACH + T_INS; }))) { pendingCount--; spawn(queue.shift()); } if (actors.length || queue.length) rafA = requestAnimationFrame(fr); else { rafA = 0; ag.clearRect(0, 0, CW, CH); if (fastOn) fast(false); text(); } }); }
   pal.addEventListener("click", function (e) {
     var b = e.target.closest(".fl"); if (!b) return; var f = +b.getAttribute("data-i");
+    if (list.length + pendingCount >= MAX) { info.textContent = "Đủ " + MAX + " bông rồi, bấm “Xong bó hoa” nha 💐"; return; } /* chỉ cần đúng số bông của một bó */
     if (actors.length >= MAXA) { queue.push(f); pendingCount++; text(); return; } spawn(f);
   });
   /* bấm 1 lần: tự chọn đủ số bông tối thiểu (10) với đủ loại hoa, cắm lần lượt rất nhanh */

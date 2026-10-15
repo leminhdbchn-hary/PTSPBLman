@@ -154,13 +154,13 @@ body.bx:before{background:radial-gradient(900px 600px at 80% -10%,rgba(255,93,15
   #s4 .wheelbox{grid-area:w;width:min(340px,100%);justify-self:center}#s4 .hw{grid-area:h;align-self:end}#s4 .sub{grid-area:s}#s4 .pbody>p:not(.sub){grid-area:p}#s4 #prize{grid-area:z}#s4 .reqbox{grid-area:r;width:100%}#s4 .gate{grid-area:g}
   .scene .wall{grid-template-columns:repeat(4,1fr);gap:14px}
   .scene .note2{font-size:15px}
-  #s6 .cardbox{display:grid;grid-template-columns:auto 1fr;gap:30px;align-items:start;text-align:left}
-  #s6 #card{width:auto!important;height:min(560px,calc(100svh - 270px));aspect-ratio:2/3;max-width:none}
-  #s6 .side{display:flex;flex-direction:column;gap:14px}
-  #s6 .side .acts{justify-content:flex-start}
-  #s6 .frame{margin-top:6px;max-width:340px}
-  #s6 .pbody>.hw,#s6 .pbody>.sub,#s6 .pbody>.endnote{grid-column:1/-1}
-  #s6 .endnote{margin-top:6px}
+  #s5 .cardbox{display:grid;grid-template-columns:auto 1fr;gap:30px;align-items:start;text-align:left}
+  #s5 #card{width:auto!important;height:min(560px,calc(100svh - 270px));aspect-ratio:2/3;max-width:none}
+  #s5 .side{display:flex;flex-direction:column;gap:14px}
+  #s5 .side .acts{justify-content:flex-start}
+  #s5 .frame{margin-top:6px;max-width:340px}
+  #s5 .pbody>.hw,#s5 .pbody>.sub,#s5 .pbody>.endnote{grid-column:1/-1}
+  #s5 .endnote{margin-top:6px}
   /* tờ trình + các lớp Sếp */
   #p0 .tt{max-width:620px;margin:0 auto}
   #p1 .pbody{grid-template-columns:.8fr 1.3fr;grid-template-areas:"h l" "s l" "g l";grid-template-rows:auto auto 1fr}
@@ -223,12 +223,12 @@ body.bx:before{background:radial-gradient(900px 600px at 80% -10%,rgba(255,93,15
   .intro .hw1{font-size:44px}.intro .tapme{font-size:22px}
   .scene .note b{font-size:17px}.scene .note span{font-size:15.5px}
   .mbx .scr{font-size:17.5px}.endnote{font-size:21px}
-  #s6 #card2,#p7 #card2{width:auto!important;height:min(560px,calc(100svh - 270px));aspect-ratio:2/3;max-width:none}
-  #s6 .sidetabs,#p7 .sidetabs{grid-column:1/-1;justify-content:flex-start}
+  #s5 #card2,#p7 #card2{width:auto!important;height:min(560px,calc(100svh - 270px));aspect-ratio:2/3;max-width:none}
+  #s5 .sidetabs,#p7 .sidetabs{grid-column:1/-1;justify-content:flex-start}
 }
 @media (min-width:900px) and (min-height:520px){
-  #s6 .frame,#p7 .frame{max-width:230px;margin-top:2px}
-  #s6 .side,#p7 .side{gap:10px}
+  #s5 .frame,#p7 .frame{max-width:230px;margin-top:2px}
+  #s5 .side,#p7 .side{gap:10px}
 }
 
 /* ===== chữ nhỏ gọn hơn ===== */
@@ -248,3 +248,13 @@ body.bx:before{background:radial-gradient(900px 600px at 80% -10%,rgba(255,93,15
   .scene .note b{font-size:16px}.scene .note span{font-size:14.5px}
   .mbx .scr{font-size:16px}.endnote{font-size:18px}.scene .note2{font-size:14px}
 }
+
+/* hình dán (sticker) cho ưu đãi ở thẻ cào */
+.scene .under .ic{width:78px;height:78px;border-radius:50%;background:#fff;border:4px solid #fff;box-shadow:0 5px 12px rgba(0,0,0,.22),0 0 0 2px rgba(168,50,79,.25);display:flex;align-items:center;justify-content:center;font-size:42px;transform:rotate(-7deg);margin-bottom:8px}
+.scene .under b{font-family:"Be Vietnam Pro",sans-serif;font-size:16px;color:var(--ink)}.scene .under small{font-family:"Be Vietnam Pro",sans-serif;font-size:13px;color:var(--rose2);opacity:1}
+/* lưu ảnh trong Zalo/Facebook */
+.savebox{position:fixed;inset:0;z-index:60;background:rgba(0,0,0,.86);display:flex;align-items:center;justify-content:center;padding:14px}
+.sv-in{max-width:420px;width:100%;max-height:100%;display:flex;flex-direction:column;align-items:center;gap:10px;text-align:center;color:#fff;font-family:"Be Vietnam Pro",sans-serif}
+.sv-t{margin:0;font-size:15px}.sv-t b{color:#ffe08a}
+.sv-in img{max-width:100%;max-height:68svh;width:auto;height:auto;border-radius:14px;box-shadow:0 10px 30px rgba(0,0,0,.5);-webkit-touch-callout:default;user-select:auto}
+.sv-b{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}.sv-b .btn{font-size:14px;padding:10px 16px}
