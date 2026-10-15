@@ -313,15 +313,13 @@ function w20SaveImage(cv, name, done) {
   var inapp = w20InApp();
   function say(t) { var el = document.getElementById("toast"); if (el) { el.textContent = t; el.className = "toast show"; clearTimeout(say.t); say.t = setTimeout(function () { el.className = "toast"; }, 3800); } }
   function overlay() {
-    var url = cv.toDataURL("image/png"), link = w20ExternalURL(), d = document.createElement("div"); d.className = "savebox";
+    var url = cv.toDataURL("image/png"), d = document.createElement("div"); d.className = "savebox";
     d.innerHTML = '<div class="sv-in"><p class="sv-t">Nhấn giữ vào ảnh rồi chọn <b>“Lưu ảnh”</b></p><img alt="Thiệp 20/10" src="' + url + '">'
-      + '<div class="sv-b"><button type="button" class="btn pink sv-share" hidden>📲 Lưu / Gửi ảnh</button><a class="btn sv-img" target="_blank" rel="noopener" hidden>🖼️ Mở ảnh riêng để lưu</a><button type="button" class="btn ghost sv-open">🌐 Mở bằng Safari/Chrome</button><button type="button" class="btn sv-x">Đóng</button></div>'
-      + '<p class="sv-h">Nếu chưa lưu được: dán link bên dưới vào Safari/Chrome (tiến độ vẫn được giữ), hoặc bấm <b>⋯</b> → <b>“Mở bằng trình duyệt”</b>.</p><input class="sv-url" readonly value="' + link.replace(/"/g, "&quot;") + '"></div>';
+      + '<div class="sv-b"><button type="button" class="btn pink sv-share" hidden>📲 Lưu / Gửi ảnh</button><a class="btn sv-img" target="_blank" rel="noopener" hidden>🖼️ Mở ảnh riêng để lưu</a><button type="button" class="btn sv-x">Đóng</button></div>'
+      + '</div>';
     document.body.appendChild(d);
-    var shareBtn = d.querySelector(".sv-share"), imgLink = d.querySelector(".sv-img"), inp = d.querySelector(".sv-url");
+    var shareBtn = d.querySelector(".sv-share"), imgLink = d.querySelector(".sv-img");
     d.querySelector(".sv-x").onclick = function () { d.remove(); };
-    d.querySelector(".sv-open").onclick = function () { w20OpenExternal(function () { say("Ứng dụng chưa cho mở tự động. Bấm ⋯ (góc phải trên) → Mở bằng trình duyệt, hoặc dán link bên dưới nhé"); }); };
-    inp.onclick = inp.onfocus = function () { try { inp.select(); inp.setSelectionRange(0, 99999); } catch (e) {} w20Copy(link, function () { say("Đã chọn sẵn link, nếu chưa tự sao chép thì nhấn giữ rồi chọn “Sao chép” 📋"); }); };
     cv.toBlob(function (b) { /* thử chia sẻ file ảnh (nếu ứng dụng hỗ trợ) và mở ảnh riêng */
       if (!b) return; var file = null; try { file = new File([b], name, { type: "image/png" }); } catch (e) {}
       imgLink.href = URL.createObjectURL(b); imgLink.hidden = false;
@@ -342,4 +340,23 @@ function w20InApp() { return /Zalo|FBAN|FBAV|FB_IAB|Instagram|Line\/|; wv\)|Miui
 function w20SyncHash() {
   if (!w20InApp() || !window.W20EXPORT) return;
   try { var st = window.W20EXPORT(); if (st) history.replaceState(null, "", location.pathname + location.search + "#s=" + encodeURIComponent(btoa(unescape(encodeURIComponent(st))))); } catch (e) {}
+}
+
+/* Hướng dẫn mở bằng Safari/Chrome ngay từ đầu (khi đang trong Zalo/Facebook…, nơi không tải được thiệp). Hiện 1 lần mỗi lần mở. */
+function w20InAppGuide() {
+  if (!w20InApp()) return;
+  try { if (sessionStorage.getItem("w20guide")) return; sessionStorage.setItem("w20guide", "1"); } catch (e) {}
+  var ua = navigator.userAgent || "", ios = /iPhone|iPad|iPod/i.test(ua), link = location.origin + location.pathname + location.search, d = document.createElement("div"); d.className = "guide";
+  var steps = ios
+    ? ["Bấm dấu <b>⋯</b> (hoặc <b>chia sẻ</b>) ở góc phải trên màn hình", "Chọn <b>“Mở bằng trình duyệt”</b> hoặc <b>“Open in Safari”</b>"]
+    : ["Bấm dấu <b>⋮</b> hoặc <b>⋯</b> ở góc phải trên màn hình", "Chọn <b>“Mở bằng trình duyệt”</b> (Chrome)"];
+  d.innerHTML = '<div class="gd-in"><div class="gd-ic">🌐</div><h3>Mở bằng ' + (ios ? "Safari" : "Chrome") + ' để chơi trọn vẹn nhé!</h3>'
+    + '<p class="gd-s">Trong Zalo/Facebook không tải được thiệp về máy. Chị mở bằng trình duyệt ngay từ đầu để lưu được thiệp đẹp nha 💝</p>'
+    + '<ol>' + steps.map(function (t) { return "<li>" + t + "</li>"; }).join("") + '</ol>'
+    + '<input class="gd-url" readonly value="' + link.replace(/"/g, "&quot;") + '"><p class="gd-h">Hoặc nhấn giữ vào ô link ở trên → <b>Sao chép</b> → dán vào ' + (ios ? "Safari" : "Chrome") + '.</p>'
+    + '<div class="gd-b"><button type="button" class="btn pink gd-open">🌐 Thử mở tự động</button><button type="button" class="btn ghost gd-x">Cứ chơi ở đây</button></div></div>';
+  document.body.appendChild(d);
+  var inp = d.querySelector(".gd-url"); inp.onclick = inp.onfocus = function () { try { inp.select(); inp.setSelectionRange(0, 99999); } catch (e) {} w20Copy(link, function () {}); };
+  d.querySelector(".gd-x").onclick = function () { d.remove(); };
+  d.querySelector(".gd-open").onclick = function () { w20OpenExternal(function () { var h = d.querySelector(".gd-h"); h.innerHTML = "Ứng dụng chưa cho mở tự động. Chị làm theo bước 1–2 ở trên nhé ☝️"; h.style.color = "#ffe08a"; }); };
 }

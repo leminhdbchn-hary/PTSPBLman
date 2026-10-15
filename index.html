@@ -10,7 +10,7 @@
 <meta name="theme-color" content="#00381f">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E🌹%3C/text%3E%3C/svg%3E">
 <link rel="stylesheet" href="assets/style.css?v=20261013">
-<link rel="stylesheet" href="assets/box.css?v=20261032">
+<link rel="stylesheet" href="assets/box.css?v=20261034">
 </head>
 <body class="bx">
 <canvas id="fx" aria-hidden="true"></canvas>
@@ -127,7 +127,7 @@
 <script src="assets/stock.js?v=20261024"></script>
 <script src="assets/firebase-sync.js?v=20261030"></script>
 <script src="assets/people.js?v=20261022"></script>
-<script src="assets/common.js?v=20261031"></script>
+<script src="assets/common.js?v=20261034"></script>
 <script src="assets/flowers.js?v=20261013"></script>
 <script src="assets/modules.js?v=20261028"></script>
 <script src="assets/boxflow.js?v=20261016"></script>
@@ -322,7 +322,7 @@
   $("#rnd").onclick = function (e) { S.w = (wishIdx() + 1 + ((Math.random() * (W20.wishes.length - 1)) | 0)) % W20.wishes.length; ST.w = S.w; delete ST.cw; save(); cwEl.value = curWish(); card(); FX.burst(e.clientX, e.clientY, 50); toast("Đổi lời chúc rồi nè 🎲"); };
 
   /* ---------- khởi động ---------- */
-  FX.init(); hero(); notes(); atm(); scratch(); flowers(); wheel(); card();
+  FX.init(); hero(); w20InAppGuide(); notes(); atm(); scratch(); flowers(); wheel(); card();
   loading = false;
   if (!TEST && !ST.opened && !(ST.step > 0)) { /* máy này chưa có tiến độ: thử lấy lại tiến độ vừa chơi gần đây của đúng người này (VD vừa chuyển từ Zalo sang Safari) */
     try { W20DB.restore(KEY, 48 * 3600 * 1000, function (rv) { if (!rv || ST.opened || ST.step > 0 || !(rv.opened || rv.step > 0)) return; ST = rv; norm(); try { localStorage.setItem(KEY, JSON.stringify(ST)); } catch (e) {} loading = true; notes(); atm(); scratch(); flowers(); wheel(); card(); loading = false; show(Math.min(ST.step, N - 1), false); }); } catch (e) {}
