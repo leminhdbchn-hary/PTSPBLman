@@ -19,14 +19,15 @@ function w20Leaf(g, x, y, len, wid, ang, c1, c2) {
   g.strokeStyle = "rgba(255,255,255,.25)"; g.lineWidth = Math.max(1, wid * .08); g.beginPath(); g.moveTo(0, 0); g.lineTo(len * .9, 0); g.stroke(); g.restore();
 }
 /* Vẽ bó hoa: tâm (cx, cy) là giữa phần hoa, S = nửa chiều rộng bó */
+var W20WRAP = null;
 function w20DrawBouquet(g, cx, cy, S, list) {
-  if (!S) return; var i, n = list.length, rnd = function (k) { return ((Math.sin(k * 99.13) * 43758.5) % 1 + 1) % 1; };
+  if (!S) return; var WP = W20WRAP || ["#fde3ea", "#f3a9bf", "#fff7ee", "#f6d9c9", "#f7b8ca", "#e7849f", "#d6204a", "#ff5a7e", "#b5123a"]; var i, n = list.length, rnd = function (k) { return ((Math.sin(k * 99.13) * 43758.5) % 1 + 1) % 1; };
   var neckY = cy + S * .62, botY = cy + S * 1.25;
   g.save();
   /* bóng mờ dưới bó */
   var sh = g.createRadialGradient(cx, botY, 2, cx, botY, S * .7); sh.addColorStop(0, "rgba(0,0,0,.28)"); sh.addColorStop(1, "rgba(0,0,0,0)"); g.fillStyle = sh; g.beginPath(); g.ellipse(cx, botY + S * .04, S * .7, S * .12, 0, 0, 6.283); g.fill();
   /* giấy gói phía sau (mép lượn sóng) */
-  var bk = g.createLinearGradient(cx - S, cy - S, cx + S, cy + S * .6); bk.addColorStop(0, "#fde3ea"); bk.addColorStop(1, "#f3a9bf");
+  var bk = g.createLinearGradient(cx - S, cy - S, cx + S, cy + S * .6); bk.addColorStop(0, WP[0]); bk.addColorStop(1, WP[1]);
   g.fillStyle = bk; g.beginPath(); g.moveTo(cx - S * .16, neckY);
   g.lineTo(cx - S * 1.02, cy - S * .55);
   for (i = 0; i <= 6; i++) { var px = cx - S * 1.02 + i * (S * 2.04 / 6), py = cy - S * (.55 + (i % 2 ? .28 : .1)); g.quadraticCurveTo(px - S * .17, py - S * .12, px, py); }
@@ -49,14 +50,14 @@ function w20DrawBouquet(g, cx, cy, S, list) {
   /* cuống hoa dưới nơ */
   g.strokeStyle = "#3e8a55"; g.lineWidth = S * .03; for (i = -3; i <= 3; i++) { g.beginPath(); g.moveTo(cx + i * S * .02, neckY); g.lineTo(cx + i * S * .035, botY); g.stroke(); }
   /* giấy gói phía trước: hai vạt chéo */
-  var f1 = g.createLinearGradient(cx - S, cy, cx + S * .2, neckY); f1.addColorStop(0, "#fff7ee"); f1.addColorStop(1, "#f6d9c9");
+  var f1 = g.createLinearGradient(cx - S, cy, cx + S * .2, neckY); f1.addColorStop(0, WP[2]); f1.addColorStop(1, WP[3]);
   g.fillStyle = f1; g.beginPath(); g.moveTo(cx - S * .92, cy + S * .02); g.quadraticCurveTo(cx - S * .4, cy + S * .22, cx + S * .3, cy + S * .12); g.lineTo(cx + S * .1, botY); g.lineTo(cx - S * .1, botY); g.closePath(); g.fill();
   g.strokeStyle = "rgba(160,110,80,.25)"; g.stroke();
-  var f2 = g.createLinearGradient(cx + S, cy, cx - S * .2, neckY); f2.addColorStop(0, "#f7b8ca"); f2.addColorStop(1, "#e7849f");
+  var f2 = g.createLinearGradient(cx + S, cy, cx - S * .2, neckY); f2.addColorStop(0, WP[4]); f2.addColorStop(1, WP[5]);
   g.fillStyle = f2; g.beginPath(); g.moveTo(cx + S * .92, cy + S * .06); g.quadraticCurveTo(cx + S * .4, cy + S * .28, cx - S * .25, cy + S * .2); g.lineTo(cx - S * .08, botY); g.lineTo(cx + S * .14, botY); g.closePath(); g.fill();
   g.strokeStyle = "rgba(150,40,80,.2)"; g.stroke();
   /* nơ lụa */
-  var rb = g.createLinearGradient(cx - S * .4, neckY, cx + S * .4, neckY + S * .2); rb.addColorStop(0, "#d6204a"); rb.addColorStop(.5, "#ff5a7e"); rb.addColorStop(1, "#b5123a");
+  var rb = g.createLinearGradient(cx - S * .4, neckY, cx + S * .4, neckY + S * .2); rb.addColorStop(0, WP[6]); rb.addColorStop(.5, WP[7]); rb.addColorStop(1, WP[8]);
   g.fillStyle = rb;
   [-1, 1].forEach(function (d) {
     g.beginPath(); g.moveTo(cx, neckY); g.bezierCurveTo(cx + d * S * .45, neckY - S * .28, cx + d * S * .5, neckY + S * .18, cx, neckY + S * .02); g.fill();
@@ -302,15 +303,12 @@ function w20Wavy(g, x1, x2, y, col) { g.save(); g.strokeStyle = col; g.lineWidth
 /* ===== 10 mẫu thiệp: nền, khung, hoa màu nước thật (tách từ ảnh gốc) đổi tông/đổi chỗ, hạt lấp lánh, ren, bướm… Mẫu 0 = hoa hồng gốc (mặc định) ===== */
 var W20THEMES = [
   { name: "Hoa hồng", bg: "flower", ink: "#b3265f", acc: "#a8324f", acc2: "#c8506f", g1: "#d9728b", g2: "#9c2d4b", chip: "rgba(255,255,255,.84)", pv: "linear-gradient(135deg,#fde3ea,#e58aa2)", em: "🌹" },
-  { name: "Họa tiết vàng kim", bg: "lineart", ink: "#c23a6c", acc: "#c23a6c", acc2: "#d9487f", g1: "#e0568a", g2: "#b02a5c", chip: "rgba(255,255,255,.88)", chipLine: "rgba(201,154,46,.8)", pv: "linear-gradient(135deg,#fff,#f6cdb8)", em: "🌼" },
-  { name: "Giấy cắt hồng", bg: "papercut", ink: "#ffffff", chipInk: "#a8204f", acc: "#ffffff", acc2: "#ffffff", g1: "#ffffff", g2: "#ffe0ea", chip: "rgba(255,255,255,.93)", chipLine: "rgba(255,255,255,1)", pv: "linear-gradient(135deg,#f58aa8,#d93f6e)", em: "🌸" },
-  { name: "Tim và hồng tím", bg: "hearts2", ink: "#c92e68", acc: "#c92e68", acc2: "#e0457c", g1: "#e8508a", g2: "#b01f55", chip: "rgba(255,255,255,.9)", pv: "linear-gradient(135deg,#fff,#e6a0c4)", em: "💗" },
-  { name: "Hồng đào nhẹ nhàng", bg: "peach", ink: "#c94a6e", acc: "#c94a6e", acc2: "#d85d82", g1: "#e27696", g2: "#b23a5e", chip: "rgba(255,255,255,.9)", pv: "linear-gradient(135deg,#fff,#f5c6c0)", em: "🌷" },
-  { name: "Tulip xanh lá", bg: "tulip", ink: "#4f7a2e", acc: "#4f7a2e", acc2: "#6a9a3e", g1: "#86b04e", g2: "#42692a", chip: "rgba(255,255,255,.9)", chipLine: "rgba(106,154,62,.7)", pv: "linear-gradient(135deg,#fff,#f7c0d0)", em: "🍀" },
-  { name: "Ly trắng vòm vàng", bg: "lily", ink: "#8a6a2a", acc: "#8a6a2a", acc2: "#a07f35", g1: "#c9a24a", g2: "#7e5d1c", chip: "rgba(255,255,255,.9)", chipLine: "rgba(201,162,74,.8)", pv: "linear-gradient(135deg,#fffdf4,#e3d9a8)", em: "🤍" },
-  { name: "Tròn nude", bg: "nude", ink: "#4a3a3a", acc: "#4a3a3a", acc2: "#5e4646", g1: "#5a4343", g2: "#2d2222", chip: "rgba(255,255,255,.88)", chipLine: "rgba(120,90,90,.5)", pv: "linear-gradient(135deg,#fff,#e2c4b8)", em: "🤎" },
-  { name: "Hoa hồng màu nước", bg: "watercolor", ink: "#a8393f", acc: "#a8393f", acc2: "#b84a50", g1: "#c0585c", g2: "#8e2c33", chip: "rgba(255,255,255,.9)", chipLine: "rgba(168,57,63,.5)", pv: "linear-gradient(135deg,#fff,#f6c4c0)", em: "🌹" },
-  { name: "Mẫu đơn tím", bg: "peony", ink: "#4b2a82", acc: "#4b2a82", acc2: "#6b3fa8", g1: "#7d52bf", g2: "#3f2174", chip: "rgba(255,255,255,.9)", chipLine: "rgba(107,63,168,.5)", pv: "linear-gradient(135deg,#fff,#d3c3ee)", em: "💜" }
+  { name: "Họa tiết vàng kim", bg: "lineart", wrap: ["#fff0e4","#f2c9a4","#fffaf0","#f5e3cc","#f0c99a","#d9a066","#a8761f","#e8c46a","#8e6012"], ink: "#c23a6c", acc: "#c23a6c", acc2: "#d9487f", g1: "#e0568a", g2: "#b02a5c", chip: "rgba(255,255,255,.88)", chipLine: "rgba(201,154,46,.8)", pv: "linear-gradient(135deg,#fff,#f6cdb8)", em: "🌼" },
+  { name: "Hồng đào nhẹ nhàng", bg: "peach", wrap: ["#ffe9e6","#f2b6b2","#ffffff","#f8e0dc","#f4b8b4","#d98a8c","#b84a58","#e0788a","#9a3646"], ink: "#c94a6e", acc: "#c94a6e", acc2: "#d85d82", g1: "#e27696", g2: "#b23a5e", chip: "rgba(255,255,255,.9)", pv: "linear-gradient(135deg,#fff,#f5c6c0)", em: "🌷" },
+  { name: "Tulip xanh lá", bg: "tulip", wrap: ["#eef6dc","#b9d88a","#fbfff2","#e3efcf","#a9cf78","#78a84a","#5f8a34","#8fbf5a","#4a6f28"], ink: "#4f7a2e", acc: "#4f7a2e", acc2: "#6a9a3e", g1: "#86b04e", g2: "#42692a", chip: "rgba(255,255,255,.9)", chipLine: "rgba(106,154,62,.7)", pv: "linear-gradient(135deg,#fff,#f7c0d0)", em: "🍀" },
+  { name: "Ly trắng vòm vàng", bg: "lily", wrap: ["#fff8e4","#e9d9a2","#fffdf5","#f3ead0","#e8d28f","#c9a24a","#a8761f","#e8c46a","#8e6012"], ink: "#8a6a2a", acc: "#8a6a2a", acc2: "#a07f35", g1: "#c9a24a", g2: "#7e5d1c", chip: "rgba(255,255,255,.9)", chipLine: "rgba(201,162,74,.8)", pv: "linear-gradient(135deg,#fffdf4,#e3d9a8)", em: "🤍" },
+  { name: "Hoa hồng màu nước", bg: "watercolor", wrap: ["#fde6e4","#eaa6a4","#fff8f6","#f6dbd7","#e9a09e","#c2605f","#a8393f","#d0646a","#8e2c33"], ink: "#a8393f", acc: "#a8393f", acc2: "#b84a50", g1: "#c0585c", g2: "#8e2c33", chip: "rgba(255,255,255,.9)", chipLine: "rgba(168,57,63,.5)", pv: "linear-gradient(135deg,#fff,#f6c4c0)", em: "🌹" },
+  { name: "Mẫu đơn tím", bg: "peony", wrap: ["#efe8fb","#c3aee6","#fbf9ff","#e6def5","#bba3e3","#8e6cc8","#5b34a0","#8a62d0","#44238a"], ink: "#4b2a82", acc: "#4b2a82", acc2: "#6b3fa8", g1: "#7d52bf", g2: "#3f2174", chip: "rgba(255,255,255,.9)", chipLine: "rgba(107,63,168,.5)", pv: "linear-gradient(135deg,#fff,#d3c3ee)", em: "💜" }
 ];
 function w20Hex2rgba(h, a) { var n = parseInt(h.slice(1), 16); return "rgba(" + (n >> 16) + "," + ((n >> 8) & 255) + "," + (n & 255) + "," + a + ")"; }
 function w20Rnd(k) { var x = Math.sin(k * 127.1 + 311.7) * 43758.5453; return x - Math.floor(x); }
@@ -423,7 +421,7 @@ var W20BG2 = {
     g.fillStyle = "#fffdfb"; g.fillRect(0, 0, W, H);
     w20Wash(g, 160, 170, 460, "#f4c2ae", .55); w20Wash(g, 960, 1480, 560, "#f4c2ae", .6); w20Wash(g, 960, 120, 330, "#f6d2c0", .45); w20Wash(g, 540, 900, 520, "#fdeae2", .5); w20Wash(g, 80, 1000, 300, "#f9dccd", .4);
     var gd = g.createLinearGradient(0, 0, W, H); gd.addColorStop(0, "#b8862a"); gd.addColorStop(.35, "#e8c46a"); gd.addColorStop(.6, "#c99a3c"); gd.addColorStop(1, "#a8761f");
-    g.save(); g.lineCap = "round"; w20LineFlower(g, 200, 170, 150, .3, gd); w20LineFlower(g, 60, 360, 90, -.4, gd); w20LineFlower(g, 1020, 40, 170, .6, gd); w20LineFlower(g, 600, 40, 80, .1, gd);
+    g.save(); g.lineCap = "round"; w20LineFlower(g, 90, 80, 120, .3, gd); w20LineFlower(g, 60, 360, 90, -.4, gd); w20LineFlower(g, 1050, 20, 140, .6, gd);
     w20LineSprig(g, 10, 1000, -1.15, 320, gd); w20LineSprig(g, 1075, 640, -2.0, 300, gd); w20LineFlower(g, 930, 1390, 190, .2, gd); w20LineFlower(g, 760, 1560, 110, -.3, gd); w20LineSprig(g, 1070, 1300, -2.5, 280, gd); g.restore();
     w20GoldDots(g, W, H, 70, 17, "#d3a53c");
   },
@@ -452,23 +450,22 @@ var W20BG2 = {
     w20Leaf(g, 60, 480, 140, 30, -.9, "#fff", "#e4dad8"); w20Leaf(g, 20, 300, 150, 30, -.6, "#fff", "#e4dad8"); w20Leaf(g, 20, 40, 130, 26, .5, "#fff", "#e4dad8");
     w20Rose(g, 40, 390, 105, pe); w20Rose(g, 55, 190, 80, pe); w20Lily(g, 40, 560, 50, .5, "#f3e4e2");
     w20Leaf(g, 720, 1480, 190, 34, -2.5, "#fff", "#e4dad8"); w20Leaf(g, 640, 1400, 170, 30, -2.2, "#fff", "#e4dad8");
-    w20Rose(g, 790, 1300, 120, pe); w20Rose(g, 990, 1400, 140, dk); w20Rose(g, 830, 1530, 100, pe); w20Rose(g, 1040, 1150, 80, pe); w20Anem(g, 740, 1500, 55, "#fff", "#e8d9a0");
+    w20Rose(g, 880, 1350, 105, pe); w20Rose(g, 1010, 1470, 130, dk); w20Rose(g, 860, 1560, 100, pe); w20Rose(g, 1050, 1230, 70, pe); w20Anem(g, 740, 1500, 55, "#fff", "#e8d9a0");
   },
   tulip: function (g, T, W, H) {
     g.fillStyle = "#fffefd"; g.fillRect(0, 0, W, H);
-    w20Rib(g, [660, -50, 800, 90, 930, 20, 1010, 210], "#f7b3c8", "#fbd0de"); w20Rib(g, [900, 140, 1010, 300, 1090, 270, 1140, 360], "#f7b3c8", "#fbd0de");
+    w20Rib(g, [760, -60, 880, 60, 1000, 10, 1110, 150], "#f7b3c8", "#fbd0de"); w20Rib(g, [1000, 120, 1080, 260, 1130, 240, 1180, 320], "#f7b3c8", "#fbd0de");
     w20Rib(g, [-60, 1300, 90, 1440, 180, 1290, 330, 1420], "#f7b3c8", "#fbd0de");
-    [[130, 450, 50], [980, 410, 36], [900, 700, 26], [80, 760, 24], [840, 1140, 120], [1000, 1180, 40]].forEach(function (c) { g.fillStyle = "rgba(248,196,214,.75)"; g.beginPath(); g.arc(c[0], c[1], c[2], 0, 6.2832); g.fill(); });
+    [[130, 450, 50], [980, 410, 36], [900, 700, 26], [80, 760, 24], [900, 1090, 50], [1000, 1180, 40]].forEach(function (c) { g.fillStyle = "rgba(248,196,214,.75)"; g.beginPath(); g.arc(c[0], c[1], c[2], 0, 6.2832); g.fill(); });
     g.save(); g.globalAlpha = .9; w20Tulip(g, 90, 140, 260, .5, "#f9c4d4", "#f09ab6"); g.restore();
-    w20Tulip(g, 880, 1120, 360, -.1, "#f9bfd1", "#ee93b2"); w20Tulip(g, 620, 1420, 190, .4, "#fad0dc", "#f4a4be");
+    w20Tulip(g, 900, 1290, 300, -.1, "#f9bfd1", "#ee93b2"); w20Tulip(g, 620, 1420, 190, .4, "#fad0dc", "#f4a4be");
   },
   lily: function (g, T, W, H) {
     g.fillStyle = "#fffefb"; g.fillRect(0, 0, W, H); w20Wash(g, 540, 800, 600, "#f6f2de", .5);
     var gd = g.createLinearGradient(0, 0, W, H); gd.addColorStop(0, "#c9a24a"); gd.addColorStop(.5, "#f1dc9a"); gd.addColorStop(1, "#a8812f");
     w20Leaf(g, 20, 330, 260, 44, -.6, "#efe9d0", "#d9d3b0"); w20Leaf(g, 760, 60, 240, 40, .6, "#efe9d0", "#d9d3b0");
-    w20Lily(g, 190, 150, 190, .4); w20Lily(g, 960, 90, 150, -.3, "#cfc89a"); w20Lily(g, 40, 1130, 170, 1.0); w20Lily(g, 930, 1420, 230, -.5); w20Lily(g, 780, 1580, 110, .8, "#cfc89a"); w20Lily(g, 1050, 640, 120, 2.2, "#e8e2c6");
-    g.save(); g.strokeStyle = gd; g.lineWidth = 5; g.beginPath(); g.moveTo(110, 1330); g.lineTo(110, 300); g.arc(310, 300, 200, Math.PI, 0); g.lineTo(510, 330); g.stroke(); g.restore();
-    g.save(); g.strokeStyle = gd; g.lineWidth = 5; g.beginPath(); g.moveTo(970, 1330); g.lineTo(970, 330); g.stroke(); g.restore();
+    w20Lily(g, 60, 70, 150, .4); w20Lily(g, 1050, 40, 110, -.3, "#cfc89a"); w20Lily(g, 40, 1130, 170, 1.0); w20Lily(g, 930, 1420, 230, -.5); w20Lily(g, 780, 1580, 110, .8, "#cfc89a"); w20Lily(g, 1050, 640, 120, 2.2, "#e8e2c6");
+    g.save(); g.strokeStyle = gd; g.lineWidth = 5; g.beginPath(); g.moveTo(110, 1330); g.lineTo(110, 180); g.arcTo(110, 70, 220, 70, 110); g.lineTo(860, 70); g.arcTo(970, 70, 970, 180, 110); g.lineTo(970, 1330); g.stroke(); g.restore();
     w20GoldDots(g, W, H, 10, 5, "#b8862a");
   },
   nude: function (g, T, W, H) {
@@ -489,12 +486,12 @@ var W20BG2 = {
   },
   peony: function (g, T, W, H) {
     g.fillStyle = "#fffefe"; g.fillRect(0, 0, W, H);
-    for (var i = 0; i < 160; i++) { var a = w20Rnd(i) * 6.28, d = Math.sqrt(w20Rnd(i + 40)) * 330; g.fillStyle = "rgba(190,165,225," + (.12 + w20Rnd(i + 9) * .3) + ")"; g.beginPath(); g.arc(780 + Math.cos(a) * d, 1260 + Math.sin(a) * d * .9, 2 + w20Rnd(i + 3) * 7, 0, 6.2832); g.fill(); }
+    for (var i = 0; i < 160; i++) { var a = w20Rnd(i) * 6.28, d = Math.sqrt(w20Rnd(i + 40)) * 330; g.fillStyle = "rgba(190,165,225," + (.12 + w20Rnd(i + 9) * .3) + ")"; g.beginPath(); g.arc(860 + Math.cos(a) * d, 1400 + Math.sin(a) * d * .8, 2 + w20Rnd(i + 3) * 7, 0, 6.2832); g.fill(); }
     g.save(); g.strokeStyle = "#8a5fc0"; g.lineWidth = 3; g.beginPath(); g.moveTo(70, 220); g.arcTo(70, 70, 220, 70, 150); g.lineTo(1010, 70); g.lineTo(1010, 1400); g.arcTo(1010, 1550, 860, 1550, 150); g.lineTo(70, 1550); g.closePath(); g.stroke(); g.restore();
-    w20Stem(g, [800, 1250, 740, 1400, 640, 1500, 560, 1600], "#6aa05a", 9); w20Leaf(g, 700, 1420, 220, 44, 2.6, "#7ab568", "#4e8a40"); w20Leaf(g, 760, 1330, 220, 44, -.5, "#7ab568", "#4e8a40"); w20Leaf(g, 640, 1500, 210, 40, 3.5, "#7ab568", "#4e8a40"); w20Leaf(g, 770, 1300, 160, 34, 2.2, "#8cc278", "#5a9a4a");
+    w20Stem(g, [870, 1480, 820, 1540, 760, 1590, 700, 1630], "#6aa05a", 9); w20Leaf(g, 790, 1560, 190, 38, 2.9, "#7ab568", "#4e8a40"); w20Leaf(g, 900, 1500, 180, 38, -.3, "#7ab568", "#4e8a40");
     var py = { o: "#d6c8ee", m: "#efe8d2", c: "#fbf5d6", line: "#8a74b8", shadow: 1, L: 7, N: 7 };
-    w20Rose(g, 810, 1180, 200, py); w20Rose(g, 760, 1260, 60, { o: "#c9b8e8", m: "#d9cdf0", c: "#efe8ff", line: "#8a74b8", L: 3, N: 6 });
-    g.save(); g.translate(760, 1330); g.rotate(-.35); g.fillStyle = "rgba(205,190,235,.92)"; g.fillRect(-120, -34, 240, 68); g.restore();
+    w20Rose(g, 880, 1420, 150, py); w20Rose(g, 860, 1470, 45, { o: "#c9b8e8", m: "#d9cdf0", c: "#efe8ff", line: "#8a74b8", L: 3, N: 6 });
+    g.save(); g.translate(830, 1520); g.rotate(-.35); g.fillStyle = "rgba(205,190,235,.92)"; g.fillRect(-90, -26, 180, 52); g.restore();
   }
 };
 function w20ThemeBg(g, T, W, H) {
@@ -590,7 +587,7 @@ function w20DrawCard(g, o) {
     g.textAlign = "center"; y = py2 + ph;
   }
   /* ---- bó hoa tự cắm (to): góc trái-dưới, không chạm chữ ---- */
-  if (o.bq && o.bq.length) { var S = 160, cy = Math.max(1395, y + 0.95 * S + 12); if (cy + S * 1.25 > H - 14) cy = H - 14 - S * 1.25; w20DrawBouquet(g, 215, cy, S, o.bq); }
+  if (o.bq && o.bq.length) { W20WRAP = T.wrap || null; var S = 160, cy = Math.max(1395, y + 0.95 * S + 12); if (cy + S * 1.25 > H - 14) cy = H - 14 - S * 1.25; w20DrawBouquet(g, 215, cy, S, o.bq); W20WRAP = null; }
   g.restore();
 }
 
