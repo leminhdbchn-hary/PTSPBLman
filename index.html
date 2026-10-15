@@ -10,7 +10,7 @@
 <meta name="theme-color" content="#00381f">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E🌹%3C/text%3E%3C/svg%3E">
 <link rel="stylesheet" href="assets/style.css?v=20261013">
-<link rel="stylesheet" href="assets/box.css?v=202610150720">
+<link rel="stylesheet" href="assets/box.css?v=202610150954">
 </head>
 <body class="bx">
 <canvas id="fx" aria-hidden="true"></canvas>
@@ -99,7 +99,7 @@
     <div class="paper2"><div class="pbody">
       <h2 class="hw">Thiệp for U</h2>
       <div class="cardbox">
-        <canvas id="card" width="1080" height="1620"></canvas>
+        <canvas id="card" width="1620" height="1080"></canvas>
         <div class="side">
         <div class="themes" id="themes" role="group" aria-label="Chọn mẫu thiệp"></div>
         <div class="acts">
@@ -130,7 +130,7 @@
 <script src="assets/people.js?v=20261022"></script>
 <script src="assets/common.js?v=20261038"></script>
 <script src="assets/flowers.js?v=20261013"></script>
-<script src="assets/modules.js?v=202610150859"></script>
+<script src="assets/modules.js?v=202610150954"></script>
 <script src="assets/boxflow.js?v=20261016"></script>
 <script>
 (function () {
@@ -302,6 +302,7 @@
   }
   var bgImg = w20Img("assets/card-bg.webp"); if (!bgImg.complete) bgImg.onload = function () { card(); };
   W20CFG.prizes.forEach(function (p) { if (/^assets\//.test(p.icon)) { var im = w20Img(p.icon); if (!im.complete) im.addEventListener("load", function () { card(); }); } }); /* ảnh quà tải xong thì vẽ lại thiệp */
+  W20CFG.men.forEach(function (m) { var im = w20Img(m.img); if (!im.complete) im.addEventListener("load", function () { card(); }); }); /* ảnh các anh tải xong thì vẽ lại thiệp */
   function rr(g, x, y, w, h, r) { g.beginPath(); g.moveTo(x + r, y); g.arcTo(x + w, y, x + w, y + h, r); g.arcTo(x + w, y + h, x, y + h, r); g.arcTo(x, y + h, x, y, r); g.arcTo(x, y, x + w, y, r); g.closePath(); }
   /* 10 mẫu thiệp (mẫu 1 hồng phấn là mặc định) */
   function themeUI() {

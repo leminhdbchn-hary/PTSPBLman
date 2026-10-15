@@ -10,7 +10,7 @@
 <meta name="theme-color" content="#00381f">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E💐%3C/text%3E%3C/svg%3E">
 <link rel="stylesheet" href="assets/style.css?v=20261013">
-<link rel="stylesheet" href="assets/box.css?v=202610150720">
+<link rel="stylesheet" href="assets/box.css?v=202610150954">
 </head>
 <body class="bx">
 <canvas id="fx" aria-hidden="true"></canvas>
@@ -104,7 +104,7 @@
     <div class="paper2"><div class="pbody">
       <h2 class="hw">Thiệp for U</h2>
       <div class="cardbox">
-        <canvas id="card" width="1080" height="1620"></canvas>
+        <canvas id="card" width="1620" height="1080"></canvas>
         <div class="side">
           <div class="themes" id="themes" role="group" aria-label="Chọn mẫu thiệp"></div>
         <div class="acts">
@@ -133,7 +133,7 @@
 <script src="assets/people.js?v=20261022"></script>
 <script src="assets/common.js?v=20261038"></script>
 <script src="assets/flowers.js?v=20261013"></script>
-<script src="assets/modules.js?v=202610150859"></script>
+<script src="assets/modules.js?v=202610150954"></script>
 <script src="assets/boxflow.js?v=20261016"></script>
 <script src="assets/firebase-sync.js?v=20261030"></script>
 <script>
@@ -236,6 +236,7 @@
     var got = []; try { got = (me && me.test) ? (window.W20TESTGOT || []) : JSON.parse(localStorage.getItem("w20sep3:" + (me ? me.id : "guest")) || "[]"); } catch (e) {}
     w20DrawCard(g, { mode: "sep", greet: "Thân gửi:", name: S.to ? "Chị " + S.to : "Các chị lãnh đạo của Phòng", sub: me ? w20Sub(me.t) : "", role: W20.sep.roles[ri()], wish: CW ? CW : w20SepWish(wi(), "chị"), prizes: got.map(function (i) { return W20CFG.prizes[i]; }).filter(Boolean), from: S.f, bq: S.bq, theme: TH });
   }
+  W20CFG.men.forEach(function (m) { var im = w20Img(m.img); if (!im.complete) im.addEventListener("load", function () { card(); }); }); /* ảnh các anh tải xong thì vẽ lại thiệp */
   /* 10 mẫu thiệp (mẫu 1 hồng phấn là mặc định), nhớ lựa chọn trên máy */
   var TH = 0; try { if (!TEST) TH = +localStorage.getItem("w20septh:" + (me ? me.id : "guest")) || 0; } catch (e) {}
   function themeUI() {
