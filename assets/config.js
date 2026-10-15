@@ -1,5 +1,6 @@
 /* ====== CẤU HÌNH DO NGƯỜI TỔ CHỨC CHỈNH (sửa file này là đủ) ====== */
 var W20CFG = {
+  publicBase: "https://ptspbl-man-2010.web.app/", /* địa chỉ chính thức gửi cho chị em/Sếp (đổi thành tên miền riêng nếu có) */
   /* Dòng ký tên cuối thiệp */
   from: "Anh em Phòng PTSPBL",
 

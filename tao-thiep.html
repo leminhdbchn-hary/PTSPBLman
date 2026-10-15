@@ -45,13 +45,13 @@
   </div>
 </section>
 <div class="toast" id="toast" role="status"></div>
-<script src="assets/config.js?v=20261013"></script>
+<script src="assets/config.js?v=202610150842"></script>
 <script src="assets/common.js?v=20261013"></script>
 <script>
 (function () {
   var $ = function (s) { return document.querySelector(s); };
   var items = [];
-  var base = new URL("index.html", location.href).href.replace(/index\.html$/, "");
+  var base = new URL("index.html", W20CFG.publicBase || location.href).href.replace(/index\.html$/, "");
   function toast(t) { var e = $("#toast"); e.textContent = t; e.className = "toast show"; clearTimeout(toast.t); toast.t = setTimeout(function () { e.className = "toast"; }, 1800); }
   function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); }
   try { $("#names").value = localStorage.getItem("w20names") || ""; $("#from").value = localStorage.getItem("w20from") || ""; } catch (e) {}
