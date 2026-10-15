@@ -10,7 +10,7 @@
 <meta name="theme-color" content="#00381f">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E💐%3C/text%3E%3C/svg%3E">
 <link rel="stylesheet" href="assets/style.css?v=20261013">
-<link rel="stylesheet" href="assets/box.css?v=20261036">
+<link rel="stylesheet" href="assets/box.css?v=20261039">
 </head>
 <body class="bx">
 <canvas id="fx" aria-hidden="true"></canvas>
@@ -115,7 +115,8 @@
       <div class="cardbox">
         <canvas id="card" width="1080" height="1620"></canvas>
         <div class="side">
-          <div class="acts">
+          <div class="themes" id="themes" role="group" aria-label="Chọn mẫu thiệp"></div>
+        <div class="acts">
             <button class="btn" id="dl" type="button">⬇️ Tải thiệp về máy</button>
             <button class="btn pink" id="shr" type="button">📤 Chia sẻ</button>
             <button class="btn ghost" id="rnd" type="button">🎲 Đổi danh hiệu & lời chúc</button>
@@ -141,7 +142,7 @@
 <script src="assets/people.js?v=20261022"></script>
 <script src="assets/common.js?v=20261038"></script>
 <script src="assets/flowers.js?v=20261013"></script>
-<script src="assets/modules.js?v=20261028"></script>
+<script src="assets/modules.js?v=20261039"></script>
 <script src="assets/boxflow.js?v=20261016"></script>
 <script src="assets/firebase-sync.js?v=20261030"></script>
 <script>
@@ -232,7 +233,7 @@
     var K = "w20sep3:" + (me ? me.id : "guest"), had = []; try { if (!TEST) had = JSON.parse(localStorage.getItem(K) || "[]"); } catch (e) {}
     var as = me ? (me.test ? null : w20Assign()[me.id]) : [w20Hash("guest|" + K) % W20CFG.prizes.length]; /* quà cố định theo từng người */
     function nextBtn() { $("#next5box").style.display = ""; }
-    w20Wheel2({ cv: $("#wcv"), btn: $("#spin"), out: $("#prize"), prizes: W20CFG.prizes, assigned: as, got: had,
+    w20Wheel2({ cv: $("#wcv"), btn: $("#spin"), out: $("#prize"), prizes: W20CFG.prizes, slots: W20CFG.wheelSlots, assigned: as, got: had,
       onGot: function (l) { if (!TEST) { try { localStorage.setItem(K, JSON.stringify(l)); } catch (e) {} try { W20DB.progress(K, { prizes: l, step: l.length }); } catch (e) {} } else window.W20TESTGOT = l; setTimeout(card, 50); },
       onShow: function (i, k, fresh) { if (fresh) { FX.burst(innerWidth / 2, innerHeight * .5, 130); FX.rain(); } },
       onAll: function (fresh) { nextBtn(); if (fresh) go(5, 3800); } });
@@ -242,8 +243,15 @@
   function card() {
     var c = $("#card"), g = c.getContext("2d");
     var got = []; try { got = (me && me.test) ? (window.W20TESTGOT || []) : JSON.parse(localStorage.getItem("w20sep3:" + (me ? me.id : "guest")) || "[]"); } catch (e) {}
-    w20DrawCard(g, { mode: "sep", greet: "Thân gửi:", name: S.to ? "Chị " + S.to : "Các chị lãnh đạo của Phòng", sub: me ? w20Sub(me.t) : "", role: W20.sep.roles[ri()], wish: CW ? CW : w20SepWish(wi(), "chị"), prizes: got.map(function (i) { return W20CFG.prizes[i]; }).filter(Boolean), from: S.f, bq: S.bq });
+    w20DrawCard(g, { mode: "sep", greet: "Thân gửi:", name: S.to ? "Chị " + S.to : "Các chị lãnh đạo của Phòng", sub: me ? w20Sub(me.t) : "", role: W20.sep.roles[ri()], wish: CW ? CW : w20SepWish(wi(), "chị"), prizes: got.map(function (i) { return W20CFG.prizes[i]; }).filter(Boolean), from: S.f, bq: S.bq, theme: TH });
   }
+  /* 10 mẫu thiệp (mẫu 1 hồng phấn là mặc định), nhớ lựa chọn trên máy */
+  var TH = 0; try { if (!TEST) TH = +localStorage.getItem("w20septh:" + (me ? me.id : "guest")) || 0; } catch (e) {}
+  function themeUI() {
+    var box = $("#themes"); box.innerHTML = W20THEMES.map(function (t, i) { return '<button type="button" class="thm' + (TH === i ? " on" : "") + '" data-i="' + i + '" aria-label="Mẫu ' + (i + 1) + ': ' + t.name + '" title="' + t.name + '" style="background:' + t.pv + '"><span>' + (i + 1) + "</span></button>"; }).join("");
+    box.onclick = function (e) { var b = e.target.closest(".thm"); if (!b) return; TH = +b.getAttribute("data-i"); try { if (!TEST) localStorage.setItem("w20septh:" + (me ? me.id : "guest"), String(TH)); } catch (er) {} card(); [].forEach.call(box.children, function (x) { x.classList.toggle("on", x === b); }); };
+  }
+  themeUI();
   var bgImg = w20Img("assets/card-bg.webp"); if (!bgImg.complete) bgImg.onload = function () { card(); };
   W20CFG.prizes.forEach(function (p) { if (/^assets\//.test(p.icon)) { var im = w20Img(p.icon); if (!im.complete) im.addEventListener("load", function () { card(); }); } }); /* ảnh quà tải xong thì vẽ lại thiệp */
   var cardT = 0; function cardSoon() { cancelAnimationFrame(cardT); cardT = requestAnimationFrame(card); }

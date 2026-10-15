@@ -214,26 +214,38 @@ function w20BouquetUI(box, opt) {
 
 /* Vòng quay quà: vẽ một lần, quay bằng CSS (GPU) nên không giật.
    prizes: [{icon, name}] hoặc [[icon, name]]. spin(idx) quay tới đúng ô idx (nếu có). */
-function w20Wheel(cv, prizes, onWin) {
-  var g = cv.getContext("2d"), n = prizes.length, seg = 6.283185 / n, rot = 0, busy = false, COL = ["#ff4f9a", "#ffd76a", "#12a05f", "#a78bfa", "#ff9f43", "#4fc3f7", "#ef5350", "#9ccc65"];
+function w20Wheel(cv, prizes, onWin, slots) {
+  /* slots: thứ tự các ô trên vòng quay, mỗi phần tử là số thứ tự món quà (hoặc -1 = ô “Chúc bạn may mắn”, không bao giờ trúng). Mặc định mỗi quà một ô. */
+  slots = slots && slots.length ? slots : prizes.map(function (_, i) { return i; });
+  var g = cv.getContext("2d"), n = slots.length, seg = 6.283185 / n, rot = 0, busy = false, COL = ["#ff4f9a", "#ffd76a", "#12a05f", "#a78bfa", "#ff9f43", "#4fc3f7", "#ef5350", "#9ccc65"];
   function ic(p) { return p.icon || p[0]; }
   function draw() {
-    var W = cv.width, R = W / 2 - 8, i;
+    var W = cv.width, R = W / 2 - 8, i, k;
     g.clearRect(0, 0, W, W); g.save(); g.translate(W / 2, W / 2);
     for (i = 0; i < n; i++) {
-      g.beginPath(); g.moveTo(0, 0); g.arc(0, 0, R, -1.5708 + i * seg, -1.5708 + (i + 1) * seg); g.closePath(); g.fillStyle = COL[i % COL.length]; g.fill(); g.strokeStyle = "#fff"; g.lineWidth = 4; g.stroke();
-      g.save(); g.rotate((i + .5) * seg); var sp = w20Spr(ic(prizes[i]), 128), z = R * .3; g.drawImage(sp, -z / 2, -R * .66 - z / 2, z, z); g.restore();
+      k = slots[i];
+      g.beginPath(); g.moveTo(0, 0); g.arc(0, 0, R, -1.5708 + i * seg, -1.5708 + (i + 1) * seg); g.closePath(); g.fillStyle = k < 0 ? "#f3ecd9" : COL[k % COL.length]; g.fill(); g.strokeStyle = "#fff"; g.lineWidth = n > 8 ? 3 : 4; g.stroke();
+      g.save(); g.rotate((i + .5) * seg);
+      var arc = 6.283185 * R * .66 / n, z = Math.min(R * .3, arc * .92);
+      if (k < 0) { /* ô may mắn: trèfle + chữ nhỏ dọc theo bán kính */
+        var sp0 = w20Spr("🍀", 96), z0 = Math.min(R * .2, arc * .8); g.drawImage(sp0, -z0 / 2, -R * .8 - z0 / 2, z0, z0);
+        g.save(); g.translate(0, -R * .45); g.rotate(-1.5708); g.fillStyle = "#8a6a2a"; g.font = "700 " + Math.round(R * .075) + "px 'Be Vietnam Pro',sans-serif"; g.textAlign = "center"; g.textBaseline = "middle"; g.fillText("May mắn", 0, 0); g.restore();
+      } else { var sp = w20Spr(ic(prizes[k]), 128); g.drawImage(sp, -z / 2, -R * .7 - z / 2, z, z); }
+      g.restore();
     }
     g.restore();
   }
   function ease(t) { return 1 - Math.pow(1 - t, 3.2); }
-  function target(idx) { return (idx + .5) * seg; }
-  function setAt(idx) { rot = 6.283 - target(idx); cv.style.transform = "rotate(" + rot + "rad)"; }
+  function ofPrize(p) { var l = [], i; for (i = 0; i < n; i++) if (slots[i] === p) l.push(i); return l; }
+  function slotFor(p) { var l = ofPrize(p); return l.length ? l[(Math.random() * l.length) | 0] : ((Math.random() * n) | 0); }
+  function target(s) { return (s + .5) * seg; }
+  function setAt(p) { var l = ofPrize(p), s = l.length ? l[0] : 0; rot = 6.283 - target(s); cv.style.transform = "rotate(" + rot + "rad)"; }
   function spin(forced) {
-    if (busy) return; busy = true; var idx = forced !== undefined && forced !== null ? forced : (Math.random() * n) | 0, start = rot;
-    var finalRot = Math.ceil((start + 6.283 * 5) / 6.283) * 6.283 - target(idx) + (Math.random() - .5) * seg * .6, t0 = performance.now(), D = 4600;
+    if (busy) return; busy = true;
+    var p = forced !== undefined && forced !== null ? forced : (function () { var l = slots.filter(function (x) { return x >= 0; }); return l[(Math.random() * l.length) | 0]; })(), s = slotFor(p), start = rot;
+    var finalRot = Math.ceil((start + 6.283 * 5) / 6.283) * 6.283 - target(s) + (Math.random() - .5) * seg * .5, t0 = performance.now(), D = 4600;
     cv.style.willChange = "transform";
-    (function step(now) { var t = Math.min(1, (now - t0) / D); rot = start + (finalRot - start) * ease(t); cv.style.transform = "rotate(" + rot + "rad)"; if (t < 1) requestAnimationFrame(step); else { busy = false; cv.style.willChange = "auto"; onWin && onWin(prizes[idx], idx); } })(t0);
+    (function step(now) { var t = Math.min(1, (now - t0) / D); rot = start + (finalRot - start) * ease(t); cv.style.transform = "rotate(" + rot + "rad)"; if (t < 1) requestAnimationFrame(step); else { busy = false; cv.style.willChange = "auto"; onWin && onWin(prizes[p], p); } })(t0);
   }
   draw();
   prizes.forEach(function (p) { var e = ic(p); if (/^assets\//.test(e)) { var im = w20Img(e); if (!im.complete) im.addEventListener("load", draw); } }); /* ảnh quà tải xong thì vẽ lại vòng quay */
@@ -252,7 +264,7 @@ function w20Wall(el, msgs) {
    opt: {cv, btn, out, prizes, assigned:[a,b]|null, got:[...](đã nhận), onGot(list), onShow(idx,k,fresh), onAll()} */
 function w20Wheel2(o) {
   var P = o.prizes, got = (o.got || []).slice(), as = o.assigned;
-  var wv = w20Wheel(o.cv, P, function (p, idx) { got.push(idx); o.onGot && o.onGot(got.slice()); render(true); });
+  var wv = w20Wheel(o.cv, P, function (p, idx) { got.push(idx); o.onGot && o.onGot(got.slice()); render(true); }, o.slots);
   function render(fresh) {
     var h = "";
     got.forEach(function (i, k) { var p = P[i]; h += "<div class='pzrow'><span class='pz'>" + w20IconHTML(p.icon, 44) + "</span><div><small>Quà của bạn</small><b>" + String(p.name).replace(/&/g, "&amp;").replace(/</g, "&lt;") + "</b></div></div>"; });
@@ -287,19 +299,52 @@ function w20Ink(g, txt, x, y, px, bold) { /* chữ viết tay đen; bold = đè 
   if (bold) { g.strokeStyle = W20INK; g.lineWidth = Math.max(1, px / 38); g.lineJoin = "round"; g.strokeText(txt, x, y); }
 }
 function w20Wavy(g, x1, x2, y, col) { g.save(); g.strokeStyle = col; g.lineWidth = 4; g.lineCap = "round"; g.beginPath(); g.moveTo(x1, y); for (var x = x1, k = 0; x < x2; x += 18, k++) g.quadraticCurveTo(x + 9, y + (k % 2 ? 7 : -7), Math.min(x + 18, x2), y); g.stroke(); g.restore(); }
+/* ===== 10 mẫu thiệp: mẫu 0 (hồng phấn) là mặc định ===== */
+var W20THEMES = [
+  { name: "Hồng phấn", bg: "flower", tint: null, ink: "#b3265f", acc: "#a8324f", acc2: "#c8506f", g1: "#d9728b", g2: "#9c2d4b", chip: "rgba(255,255,255,.84)", pv: "linear-gradient(135deg,#fde3ea,#e58aa2)" },
+  { name: "Tím oải hương", bg: "flower", tint: "#8f6fd1", ink: "#5b2f9a", acc: "#5b2f9a", acc2: "#8a63cf", g1: "#a98be0", g2: "#5b2f9a", chip: "rgba(255,255,255,.84)", pv: "linear-gradient(135deg,#ece4fb,#8a63cf)" },
+  { name: "Xanh bạc hà", bg: "flower", tint: "#2fa08a", ink: "#146b5a", acc: "#146b5a", acc2: "#2fa08a", g1: "#5fc4ae", g2: "#146b5a", chip: "rgba(255,255,255,.84)", pv: "linear-gradient(135deg,#dcf5ee,#2fa08a)" },
+  { name: "Nắng vàng", bg: "flower", tint: "#e2a61f", ink: "#8a5a05", acc: "#8a5a05", acc2: "#d19a1f", g1: "#efc358", g2: "#a86f0a", chip: "rgba(255,255,255,.84)", pv: "linear-gradient(135deg,#fdf1c9,#e2a61f)" },
+  { name: "Đỏ rực", bg: "flower", tint: "#d03a45", ink: "#a3121f", acc: "#a3121f", acc2: "#d03a45", g1: "#e66470", g2: "#8e0f1b", chip: "rgba(255,255,255,.84)", pv: "linear-gradient(135deg,#fbd9dc,#d03a45)" },
+  { name: "Biển xanh", bg: "flower", tint: "#4a86d6", ink: "#1c4f9c", acc: "#1c4f9c", acc2: "#4a86d6", g1: "#7aa8e6", g2: "#1c4f9c", chip: "rgba(255,255,255,.84)", pv: "linear-gradient(135deg,#dde9fb,#4a86d6)" },
+  { name: "Cam đào", bg: "flower", tint: "#f28b5b", ink: "#b4501f", acc: "#b4501f", acc2: "#e8824f", g1: "#f4a47c", g2: "#b4501f", chip: "rgba(255,255,255,.84)", pv: "linear-gradient(135deg,#fde4d6,#f28b5b)" },
+  { name: "Xanh rêu", bg: "flower", tint: "#6aa04f", ink: "#3a6a22", acc: "#3a6a22", acc2: "#5f9645", g1: "#8cbf70", g2: "#3a6a22", chip: "rgba(255,255,255,.84)", pv: "linear-gradient(135deg,#e3f2da,#6aa04f)" },
+  { name: "Giấy kraft", bg: "kraft", ink: "#6b3a1f", acc: "#8a4b24", acc2: "#b0703d", g1: "#c98a54", g2: "#7a4020", chip: "rgba(255,255,255,.7)", pv: "linear-gradient(135deg,#f6e9d2,#c9a26b)" },
+  { name: "Đêm lấp lánh", bg: "night", ink: "#ffe9a6", acc: "#ffd76a", acc2: "#f6c453", g1: "#fff1b8", g2: "#f0b83a", chip: "rgba(255,255,255,.12)", chipLine: "rgba(255,215,106,.8)", pv: "linear-gradient(135deg,#27346b,#0e1530)" }
+];
+function w20Hex2rgba(h, a) { var n = parseInt(h.slice(1), 16); return "rgba(" + (n >> 16) + "," + ((n >> 8) & 255) + "," + (n & 255) + "," + a + ")"; }
+function w20ThemeBg(g, T, W, H) {
+  var i, r;
+  function rnd(k) { var x = Math.sin(k * 127.1 + 311.7) * 43758.5453; return x - Math.floor(x); }
+  if (T.bg === "flower") {
+    var bg = w20Img("assets/card-bg.webp");
+    if (bg.complete && bg.naturalWidth) g.drawImage(bg, 0, 0, W, H); else { g.fillStyle = "#fff8f5"; g.fillRect(0, 0, W, H); }
+    if (T.tint) { g.save(); g.globalCompositeOperation = "color"; g.fillStyle = T.tint; g.fillRect(0, 0, W, H); g.restore(); } /* đổi tông màu hoa nhưng giữ sáng tối */
+  } else if (T.bg === "kraft") {
+    var kg = g.createLinearGradient(0, 0, W, H); kg.addColorStop(0, "#f6ead3"); kg.addColorStop(1, "#ecd9b8"); g.fillStyle = kg; g.fillRect(0, 0, W, H);
+    for (i = 0; i < 520; i++) { g.fillStyle = "rgba(120,80,40," + (0.04 + rnd(i + 3) * .06) + ")"; g.fillRect(rnd(i) * W, rnd(i + 900) * H, 2 + rnd(i + 7) * 3, 2 + rnd(i + 11) * 3); }
+    g.strokeStyle = T.acc2; g.lineWidth = 4; g.setLineDash([16, 12]); w20Rr(g, 44, 44, W - 88, H - 88, 36); g.stroke(); g.setLineDash([]); g.lineWidth = 2; w20Rr(g, 64, 64, W - 128, H - 128, 26); g.stroke();
+    g.font = "54px serif"; g.textAlign = "center"; g.fillStyle = T.acc2; g.fillText("♥", 96, 132); g.fillText("♥", W - 96, 132); g.fillText("♥", 96, H - 80); g.fillText("♥", W - 96, H - 80);
+    g.fillStyle = "rgba(176,112,61,.28)"; for (r = 0; r < 14; r++) for (i = 0; i < 9; i++) if ((r + i) % 2 === 0) { g.beginPath(); g.arc(150 + i * 100, 200 + r * 100, 4, 0, 6.283); g.fill(); }
+  } else if (T.bg === "night") {
+    var ng = g.createLinearGradient(0, 0, 0, H); ng.addColorStop(0, "#0e1530"); ng.addColorStop(.6, "#27346b"); ng.addColorStop(1, "#4a2a6b"); g.fillStyle = ng; g.fillRect(0, 0, W, H);
+    for (i = 0; i < 90; i++) { var sx = rnd(i + 5) * W, sy = rnd(i + 77) * H, sr = 1 + rnd(i + 9) * 3.2; g.fillStyle = "rgba(255,240,190," + (.35 + rnd(i + 13) * .6) + ")"; g.beginPath(); g.arc(sx, sy, sr, 0, 6.283); g.fill(); if (sr > 3) { g.strokeStyle = "rgba(255,240,190,.6)"; g.lineWidth = 1.6; g.beginPath(); g.moveTo(sx - 12, sy); g.lineTo(sx + 12, sy); g.moveTo(sx, sy - 12); g.lineTo(sx, sy + 12); g.stroke(); } }
+    g.fillStyle = "#fff2c4"; g.beginPath(); g.arc(150, 190, 70, 0, 6.283); g.fill(); g.fillStyle = "#1a2552"; g.beginPath(); g.arc(180, 172, 64, 0, 6.283); g.fill();
+    g.strokeStyle = "rgba(255,215,106,.7)"; g.lineWidth = 3; w20Rr(g, 40, 40, W - 80, H - 80, 36); g.stroke();
+  }
+}
 function w20DrawCard(g, o) {
   var W = 1080, H = 1620, i, DS = "'Dancing Script','Brush Script MT',cursive", PF = "'Playfair Display',Georgia,serif";
-  var ROSE = "#a8324f", ROSE2 = "#c8506f";
+  var T = W20THEMES[o.theme >= 0 && o.theme < W20THEMES.length ? o.theme : 0], ROSE = T.acc, ROSE2 = T.acc2; W20INK = T.ink;
   g.save(); g.textBaseline = "alphabetic"; g.textAlign = "center";
-  var bg = w20Img("assets/card-bg.webp");
-  if (bg.complete && bg.naturalWidth) g.drawImage(bg, 0, 0, W, H); else { g.fillStyle = "#fff8f5"; g.fillRect(0, 0, W, H); }
+  w20ThemeBg(g, T, W, H);
   function ls(px) { if ("letterSpacing" in g) g.letterSpacing = px + "px"; }
   /* ---- đầu thiệp (lệch phải để tránh hoa góc trái-trên) ---- */
   var hx = 650; ls(5); w20Ink(g, "PHÒNG PTSPBL  ·  20.10." + new Date().getFullYear(), hx, 128, 30, 1); ls(0);
   var hs = 116, hw = 700; g.font = "700 " + hs + "px " + DS; while (g.measureText("Happy Women's Day").width > hw && hs > 70) { hs -= 4; g.font = "700 " + hs + "px " + DS; }
-  g.fillStyle = ROSE2; g.shadowColor = "rgba(200,80,111,.25)"; g.shadowBlur = 10; g.shadowOffsetY = 3; g.fillText("Happy Women's Day", hx, 262); g.shadowColor = "transparent"; g.shadowBlur = 0; g.shadowOffsetY = 0;
-  var gr = g.createLinearGradient(0, 290, 0, 470); gr.addColorStop(0, "#d9728b"); gr.addColorStop(1, "#9c2d4b");
-  g.shadowColor = "rgba(168,50,79,.25)"; g.shadowBlur = 22; g.shadowOffsetY = 8; g.fillStyle = gr; g.font = "700 184px " + PF; g.fillText("20.10", 600, 440); g.shadowColor = "transparent"; g.shadowBlur = 0; g.shadowOffsetY = 0;
+  g.fillStyle = ROSE2; g.shadowColor = w20Hex2rgba(ROSE2, .25); g.shadowBlur = 10; g.shadowOffsetY = 3; g.fillText("Happy Women's Day", hx, 262); g.shadowColor = "transparent"; g.shadowBlur = 0; g.shadowOffsetY = 0;
+  var gr = g.createLinearGradient(0, 290, 0, 470); gr.addColorStop(0, T.g1); gr.addColorStop(1, T.g2);
+  g.shadowColor = w20Hex2rgba(ROSE, .25); g.shadowBlur = 22; g.shadowOffsetY = 8; g.fillStyle = gr; g.font = "700 184px " + PF; g.fillText("20.10", 600, 440); g.shadowColor = "transparent"; g.shadowBlur = 0; g.shadowOffsetY = 0;
   w20Ink(g, o.greet || "Gửi chị em thương mến", 560, 508, 36, 0); var y = 508;
   /* ---- tên ---- */
   var nm = o.name || "Chị em Phòng PTSPBL", fs = 104; g.font = fs + "px " + W20HW;
@@ -318,24 +363,24 @@ function w20DrawCard(g, o) {
   while (wl.length > 5 && wsz > 32) { wsz -= 2; g.font = wsz + "px " + W20HW; wl = w20WrapBal(g, txt, WW); }
   var lh = wsz * 1.5, ny = Math.min(wl.length, 8), mw = 0;
   g.font = wsz + "px " + W20HW; for (i = 0; i < ny; i++) mw = Math.max(mw, g.measureText(wl[i]).width);
-  var lw = ny ? g.measureText(wl[ny - 1]).width : 0;
-  g.fillStyle = "rgba(200,80,111,.6)"; g.font = "700 110px " + PF; g.textAlign = "right"; g.fillText("“", WX - mw / 2 - 6, y + 24); g.textAlign = "center";
+  var lw = ny ? g.measureText(wl[ny - 1]).width : 0, qc = w20Hex2rgba(ROSE2, .6);
+  g.fillStyle = qc; g.font = "700 110px " + PF; g.textAlign = "right"; g.fillText("“", WX - mw / 2 - 6, y + 24); g.textAlign = "center";
   for (i = 0; i < ny; i++) { g.save(); g.translate(WX, y + i * lh); g.rotate((((i * 7) % 5) - 2) * .0045); w20Ink(g, wl[i], 0, 0, wsz, 0); g.restore(); } /* mỗi dòng nghiêng nhẹ cho giống tay viết */
-  var wend = y + (ny - 1) * lh; g.fillStyle = "rgba(200,80,111,.6)"; g.font = "700 110px " + PF; g.textAlign = "left"; g.fillText("”", Math.min(WX + WW / 2 + 8, WX + lw / 2 + 6), wend + 54); g.textAlign = "center";
+  var wend = y + (ny - 1) * lh; g.fillStyle = qc; g.font = "700 110px " + PF; g.textAlign = "left"; g.fillText("”", Math.min(WX + WW / 2 + 8, WX + lw / 2 + 6), wend + 54); g.textAlign = "center";
   /* ---- ký tên ---- */
   y = wend + 104; var sg = "Thương mến, " + (o.from || ""), sgs = 44; g.font = sgs + "px " + W20HW; while (g.measureText(sg).width > WW - 40 && sgs > 28) { sgs -= 2; g.font = sgs + "px " + W20HW; }
-  w20Ink(g, sg, WX, y, sgs, 1); var sgw = g.measureText(sg).width; g.fillStyle = ROSE; g.font = sgs + "px " + W20HW; g.textAlign = "left"; g.fillText("♥", WX + sgw / 2 + 12, y); g.textAlign = "center";
-  /* ---- quà đã nhận ---- */
+  w20Ink(g, sg, WX, y, sgs, 1); var sgw = g.measureText(sg).width; g.fillStyle = ROSE2; g.font = sgs + "px " + W20HW; g.textAlign = "left"; g.fillText("♥", WX + sgw / 2 + 12, y); g.textAlign = "center";
+  /* ---- quà đã nhận (to, ở giữa) ---- */
   var pz = (o.prizes || []).slice(0, 2);
   if (pz.length) {
-    y += 44; var px = 130, py2 = y, ph = 48; g.textAlign = "left";
+    y += 40; var px = 130, py2 = y, ph = 80; g.textAlign = "left";
     pz.forEach(function (p) {
-      var isImg = /^assets\//.test(p.icon), t = isImg ? p.name : p.icon + "  " + p.name, ps = 28; g.font = ps + "px " + W20HW; while (g.measureText(t).width > 520 && ps > 20) { ps--; g.font = ps + "px " + W20HW; }
-      var im = isImg ? w20Img(p.icon) : null, ih = isImg ? 84 : 0, iw = isImg && im.naturalWidth ? ih * im.naturalWidth / im.naturalHeight : 0, ext = iw ? iw + 10 : 0;
-      var tw = g.measureText(t).width + 44 + ext, rowH = isImg ? 94 : ph; if (pz.length === 1) px = 540 - tw / 2; else if (px + tw > 780 && px > 130) { px = 130; py2 += ph + 10; }
-      g.fillStyle = "rgba(255,255,255,.82)"; g.strokeStyle = "rgba(179,38,95,.6)"; g.lineWidth = 1.8; w20Rr(g, px, py2, tw, rowH, rowH / 2); g.fill(); g.stroke();
-      if (iw) g.drawImage(im, px + 18, py2 + (rowH - ih) / 2, iw, ih);
-      w20Ink(g, t, px + 22 + ext, py2 + rowH / 2 + 10, ps, 0); px += tw + 12; if (isImg) ph = Math.max(ph, rowH);
+      var isImg = /^assets\//.test(p.icon), t = isImg ? p.name : p.icon + "  " + p.name, ps = 42; g.font = ps + "px " + W20HW; while (g.measureText(t).width > (isImg ? 400 : 480) && ps > 24) { ps--; g.font = ps + "px " + W20HW; }
+      var im = isImg ? w20Img(p.icon) : null, ih = isImg ? 130 : 0, iw = isImg && im.naturalWidth ? ih * im.naturalWidth / im.naturalHeight : 0, ext = iw ? iw + 12 : 0;
+      var tw = g.measureText(t).width + 60 + ext, rowH = isImg ? 150 : ph; if (pz.length === 1) px = 640 - tw / 2; else if (px + tw > 780 && px > 130) { px = 130; py2 += ph + 10; }
+      g.fillStyle = T.chip; g.strokeStyle = T.chipLine || w20Hex2rgba(ROSE, .6); g.lineWidth = 2.4; w20Rr(g, px, py2, tw, rowH, rowH / 2); g.fill(); g.stroke();
+      if (iw) g.drawImage(im, px + 26, py2 + (rowH - ih) / 2, iw, ih);
+      w20Ink(g, t, px + 30 + ext, py2 + rowH / 2 + ps * .33, ps, 0); px += tw + 12; if (isImg) ph = Math.max(ph, rowH);
     });
     g.textAlign = "center"; y = py2 + ph;
   }

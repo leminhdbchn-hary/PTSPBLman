@@ -31,6 +31,10 @@ var W20CFG = {
     { icon: "assets/prize-kem.webp", name: "Kem dưỡng da tay" }
   ],
 
+  /* Vòng quay có 16 ô: mỗi món quà chiếm 3 ô (xen kẽ), thêm 4 ô “Chúc bạn may mắn” (-1) mà người chơi không bao giờ quay trúng.
+     Số trong mảng = thứ tự món ở danh sách prizes phía trên (0 = KitKat, 1 = Cà phê/Trà sữa, 2 = KitKat + việc vặt, 3 = Kem dưỡng da tay). */
+  wheelSlots: [0, 1, 2, -1, 3, 0, 1, -1, 2, 3, 0, -1, 1, 2, 3, -1],
+
   /* (Không bắt buộc) Nhận "Thẻ nhờ việc" qua Google Form để anh em xem tập trung trong Google Sheet.
      Cách lấy: tạo Form có 1 câu hỏi dạng đoạn văn → ⋮ → "Nhận đường liên kết điền sẵn" → điền chữ "x" → lấy link.
      url: phần trước dấu ?   |   field: phần "entry.xxxxx" của câu hỏi.  Để trống thì nút Gửi sẽ sao chép lời nhờ để dán vào nhóm chat. */
