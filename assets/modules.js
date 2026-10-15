@@ -133,7 +133,7 @@ function w20BouquetUI(box, opt) {
   function plant(a) { if (a.man && crew.indexOf(a.man) < 0) crew.push(a.man); if (list.length >= MAX) list.shift(); list.push(a.f); pendingCount = Math.max(0, pendingCount - 1); upd(); }
   /* hoạt cảnh: anh chạy ra, đứng cạnh bó, giơ tay cắm bông hoa vào đúng chỗ rồi vẫy (ms) */
   var T_IN = 1500, T_REACH = 800, T_INS = 900, T_WAVE = 800, T_OUT = 1000, MAXA = 4, fastOn = false;
-  function fast(on) { fastOn = on; if (on) { T_IN = 900; T_REACH = 500; T_INS = 550; T_WAVE = 450; T_OUT = 600; MAXA = 5; } else { T_IN = 1500; T_REACH = 800; T_INS = 900; T_WAVE = 800; T_OUT = 1000; MAXA = 4; } }
+  function fast(on) { fastOn = on; if (on) { T_IN = 650; T_REACH = 350; T_INS = 400; T_WAVE = 300; T_OUT = 400; MAXA = 2; } else { T_IN = 1500; T_REACH = 800; T_INS = 900; T_WAVE = 800; T_OUT = 1000; MAXA = 4; } }
   function spawn(f) {
     var man = MEN.length ? MEN[nextMan++ % MEN.length] : null, sl = W20SLOT[Math.min(list.length + actors.length, MAX - 1)] || W20SLOT[0], dir;
     if (sl[0] < -.05) dir = 1; else if (sl[0] > .05) dir = -1; else { dir = side; side = -side; }
@@ -159,7 +159,7 @@ function w20BouquetUI(box, opt) {
     return true;
   }
   function man_img(a) { return a.man ? w20Img(a.man.img) : null; }
-  function loopA() { if (rafA) return; rafA = requestAnimationFrame(function fr(now) { ag.clearRect(0, 0, CW, CH); actors = actors.filter(function (a) { return step(a, now); }); while (queue.length && actors.length < MAXA) { pendingCount--; spawn(queue.shift()); } if (actors.length) rafA = requestAnimationFrame(fr); else { rafA = 0; ag.clearRect(0, 0, CW, CH); if (fastOn) fast(false); text(); } }); }
+  function loopA() { if (rafA) return; rafA = requestAnimationFrame(function fr(now) { ag.clearRect(0, 0, CW, CH); actors = actors.filter(function (a) { return step(a, now); }); while (queue.length && actors.length < MAXA && (!fastOn || actors.every(function (a) { return now - a.t0 > T_IN + T_REACH + T_INS; }))) { pendingCount--; spawn(queue.shift()); } if (actors.length || queue.length) rafA = requestAnimationFrame(fr); else { rafA = 0; ag.clearRect(0, 0, CW, CH); if (fastOn) fast(false); text(); } }); }
   pal.addEventListener("click", function (e) {
     var b = e.target.closest(".fl"); if (!b) return; var f = +b.getAttribute("data-i");
     if (actors.length >= MAXA) { queue.push(f); pendingCount++; text(); return; } spawn(f);
@@ -171,8 +171,9 @@ function w20BouquetUI(box, opt) {
     var pool = []; while (pool.length < need) pool = pool.concat(W20FL.map(function (_, i) { return i; }).sort(function () { return Math.random() - .5; })); pool.length = need;
     /* các anh lần lượt chạy ra cắm từng bông (mỗi bông một anh, đủ 10 anh), chạy nhanh hơn bình thường */
     if (!reduce) fast(true);
-    pool.forEach(function (f) { if (actors.length >= MAXA) { queue.push(f); pendingCount++; } else spawn(f); });
-    text();
+    /* lần lượt từng anh một (anh sau chỉ ra khi anh trước đã cắm xong) để không che mặt nhau */
+    pool.forEach(function (f) { queue.push(f); pendingCount++; });
+    text(); loopA();
   };
   box.querySelector(".bqundo").onclick = function () { if (actors.length) return; list.pop(); upd(); };
   var give = box.querySelector(".bqgive");
