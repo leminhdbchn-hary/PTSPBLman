@@ -290,3 +290,5 @@ body.bx:before{background:radial-gradient(900px 600px at 80% -10%,rgba(255,93,15
 .thm span{font:700 12px "Be Vietnam Pro",sans-serif;color:#fff;text-shadow:0 1px 2px rgba(0,0,0,.55)}
 .thm.on{box-shadow:0 0 0 3px #a8324f,0 3px 8px rgba(0,0,0,.3);transform:scale(1.12)}
 @media (min-width:900px) and (min-height:520px){.themes{justify-content:flex-start}}
+
+.thm span{font-size:16px;text-shadow:none}

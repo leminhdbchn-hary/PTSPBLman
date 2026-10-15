@@ -10,7 +10,7 @@
 <meta name="theme-color" content="#00381f">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E🌹%3C/text%3E%3C/svg%3E">
 <link rel="stylesheet" href="assets/style.css?v=20261013">
-<link rel="stylesheet" href="assets/box.css?v=20261039">
+<link rel="stylesheet" href="assets/box.css?v=20261041">
 </head>
 <body class="bx">
 <canvas id="fx" aria-hidden="true"></canvas>
@@ -130,7 +130,7 @@
 <script src="assets/people.js?v=20261022"></script>
 <script src="assets/common.js?v=20261038"></script>
 <script src="assets/flowers.js?v=20261013"></script>
-<script src="assets/modules.js?v=20261039"></script>
+<script src="assets/modules.js?v=20261041"></script>
 <script src="assets/boxflow.js?v=20261016"></script>
 <script>
 (function () {
@@ -305,7 +305,7 @@
   function rr(g, x, y, w, h, r) { g.beginPath(); g.moveTo(x + r, y); g.arcTo(x + w, y, x + w, y + h, r); g.arcTo(x + w, y + h, x, y + h, r); g.arcTo(x, y + h, x, y, r); g.arcTo(x, y, x + w, y, r); g.closePath(); }
   /* 10 mẫu thiệp (mẫu 1 hồng phấn là mặc định) */
   function themeUI() {
-    var box = $("#themes"); box.innerHTML = W20THEMES.map(function (t, i) { return '<button type="button" class="thm' + ((ST.theme || 0) === i ? " on" : "") + '" data-i="' + i + '" aria-label="Mẫu ' + (i + 1) + ': ' + t.name + '" title="' + t.name + '" style="background:' + t.pv + '"><span>' + (i + 1) + "</span></button>"; }).join("");
+    var box = $("#themes"); box.innerHTML = W20THEMES.map(function (t, i) { return '<button type="button" class="thm' + ((ST.theme || 0) === i ? " on" : "") + '" data-i="' + i + '" aria-label="Mẫu ' + (i + 1) + ': ' + t.name + '" title="' + t.name + '" style="background:' + t.pv + '"><span>' + t.em + "</span></button>"; }).join("");
     box.onclick = function (e) { var b = e.target.closest(".thm"); if (!b) return; ST.theme = +b.getAttribute("data-i"); save(); card(); [].forEach.call(box.children, function (x) { x.classList.toggle("on", x === b); }); };
   }
   themeUI();

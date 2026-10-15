@@ -10,7 +10,7 @@
 <meta name="theme-color" content="#00381f">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E💐%3C/text%3E%3C/svg%3E">
 <link rel="stylesheet" href="assets/style.css?v=20261013">
-<link rel="stylesheet" href="assets/box.css?v=20261039">
+<link rel="stylesheet" href="assets/box.css?v=20261041">
 </head>
 <body class="bx">
 <canvas id="fx" aria-hidden="true"></canvas>
@@ -142,7 +142,7 @@
 <script src="assets/people.js?v=20261022"></script>
 <script src="assets/common.js?v=20261038"></script>
 <script src="assets/flowers.js?v=20261013"></script>
-<script src="assets/modules.js?v=20261039"></script>
+<script src="assets/modules.js?v=20261041"></script>
 <script src="assets/boxflow.js?v=20261016"></script>
 <script src="assets/firebase-sync.js?v=20261030"></script>
 <script>
@@ -248,7 +248,7 @@
   /* 10 mẫu thiệp (mẫu 1 hồng phấn là mặc định), nhớ lựa chọn trên máy */
   var TH = 0; try { if (!TEST) TH = +localStorage.getItem("w20septh:" + (me ? me.id : "guest")) || 0; } catch (e) {}
   function themeUI() {
-    var box = $("#themes"); box.innerHTML = W20THEMES.map(function (t, i) { return '<button type="button" class="thm' + (TH === i ? " on" : "") + '" data-i="' + i + '" aria-label="Mẫu ' + (i + 1) + ': ' + t.name + '" title="' + t.name + '" style="background:' + t.pv + '"><span>' + (i + 1) + "</span></button>"; }).join("");
+    var box = $("#themes"); box.innerHTML = W20THEMES.map(function (t, i) { return '<button type="button" class="thm' + (TH === i ? " on" : "") + '" data-i="' + i + '" aria-label="Mẫu ' + (i + 1) + ': ' + t.name + '" title="' + t.name + '" style="background:' + t.pv + '"><span>' + t.em + "</span></button>"; }).join("");
     box.onclick = function (e) { var b = e.target.closest(".thm"); if (!b) return; TH = +b.getAttribute("data-i"); try { if (!TEST) localStorage.setItem("w20septh:" + (me ? me.id : "guest"), String(TH)); } catch (er) {} card(); [].forEach.call(box.children, function (x) { x.classList.toggle("on", x === b); }); };
   }
   themeUI();
