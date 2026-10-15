@@ -10,7 +10,7 @@
 <meta name="theme-color" content="#00381f">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E💐%3C/text%3E%3C/svg%3E">
 <link rel="stylesheet" href="assets/style.css?v=20261013">
-<link rel="stylesheet" href="assets/box.css?v=20261041">
+<link rel="stylesheet" href="assets/box.css?v=202610150720">
 </head>
 <body class="bx">
 <canvas id="fx" aria-hidden="true"></canvas>
@@ -99,17 +99,8 @@
     </div></div>
   </section>
 
-  <!-- Lớp 7: tường lời chúc -->
-  <section class="scene" id="p6" aria-label="Lời nhắn của anh em">
-    <div class="paper2"><div class="pbody">
-      <h2 class="hw">Anh em nhắn gửi</h2>
-      <div class="wall" id="wall"></div>
-      <p style="text-align:center;margin-top:14px"><button class="btn" id="next6" type="button">Mở tiếp 🎁</button></p>
-    </div></div>
-  </section>
-
-  <!-- Lớp 8 (nhỏ nhất): thiệp riêng -->
-  <section class="scene" id="p7" aria-label="Thiệp riêng">
+  <!-- Lớp 7 (nhỏ nhất): thiệp riêng -->
+  <section class="scene" id="p6" aria-label="Thiệp riêng">
     <div class="paper2"><div class="pbody">
       <h2 class="hw">Thiệp for U</h2>
       <div class="cardbox">
@@ -142,7 +133,7 @@
 <script src="assets/people.js?v=20261022"></script>
 <script src="assets/common.js?v=20261038"></script>
 <script src="assets/flowers.js?v=20261013"></script>
-<script src="assets/modules.js?v=2026101507"></script>
+<script src="assets/modules.js?v=202610150720"></script>
 <script src="assets/boxflow.js?v=20261016"></script>
 <script src="assets/firebase-sync.js?v=20261030"></script>
 <script>
@@ -160,7 +151,7 @@
   function wi() { return S.w !== null ? S.w % W20.sep.wishes.length : dv().w; }
 
   /* ---------- các lớp hộp quà (lớn → bé dần), tiến độ lưu trên máy ---------- */
-  var N = 8, PK = "w20sepst3:" + (me ? me.id : "guest"), PS = { opened: 0, step: 0 }, loading = true;
+  var N = 7, PK = "w20sepst3:" + (me ? me.id : "guest"), PS = { opened: 0, step: 0 }, loading = true;
   /* mở từ Zalo/Facebook sang Safari/Chrome: nhận lại tiến độ đã chơi (qua #s=…) nếu máy chưa có */
   var IMP = w20ImportHash(); if (IMP && !TEST) { try { if (!localStorage.getItem(PK) && IMP.ps) localStorage.setItem(PK, JSON.stringify(IMP.ps)); var K0 = "w20sep3:" + (me ? me.id : "guest"); if (!localStorage.getItem(K0) && IMP.pr) localStorage.setItem(K0, JSON.stringify(IMP.pr)); var C0 = "w20sepcw:" + (me ? me.id : "guest"); if (!localStorage.getItem(C0) && IMP.cw) localStorage.setItem(C0, IMP.cw); } catch (e) {} }
   window.W20EXPORT_OBJ = function () { var pr = []; try { pr = JSON.parse(localStorage.getItem("w20sep3:" + (me ? me.id : "guest")) || "[]"); } catch (e) {} return { ps: PS, pr: pr, cw: typeof CW === "string" ? CW : "" }; };
@@ -169,7 +160,7 @@
   PS.step = PS.step || 0;
   function savePS() { if (TEST) return; try { localStorage.setItem(PK, JSON.stringify(PS)); } catch (e) {} try { W20DB.progress(PK, window.W20EXPORT_OBJ()); } catch (e) {} w20SyncHash(); }
   function scene(i) { return i < 0 ? $("#sc-intro") : $("#p" + i); }
-  var FL = W20Flow.make({ N: N, stage: "#stage", scene: scene, onReveal: function (i) { if (i === 7) card(); } });
+  var FL = W20Flow.make({ N: N, stage: "#stage", scene: scene, onReveal: function (i) { if (i === 6) card(); } });
   function go(k, delay) { /* xong lớp k → mở lớp k+1 */
     if (PS.step > k) return; PS.step = k + 1; savePS(); FX.burst(innerWidth / 2, innerHeight * .55, 60);
     setTimeout(function () { FL.show(k + 1, true); }, delay === undefined ? 900 : delay);
@@ -270,10 +261,8 @@
   $("#rnd").onclick = function (e) { S.r = (Math.random() * W20.sep.roles.length) | 0; S.w = (Math.random() * W20.sep.wishes.length) | 0; CW = ""; saveCW(); cwEl.value = curWish(); card(); FX.burst(e.clientX, e.clientY, 60); toast("Đã đổi danh hiệu & lời chúc 🎲"); };
   $("#ask").onclick = ask;
   $("#next3").onclick = function () { go(3, 200); };
-  $("#next6").onclick = function () { go(6, 300); };
 
   FX.init(); paper(); hero(); profile(); pledges(); flowers(); wheel();
-  if (W20CFG.wallSep.length) w20Wall($("#wall"), W20CFG.wallSep); else $("#next6").parentNode.insertAdjacentHTML("beforebegin", "<p class='sub'>Chúc các Sếp 20/10 thật vui 🌷</p>");
   card(); loading = false;
   if (!TEST && !PS.opened && !(PS.step > 0)) { /* máy này chưa có tiến độ: thử lấy lại tiến độ vừa chơi gần đây của đúng người này (VD vừa chuyển từ Zalo sang Safari) */
     try { W20DB.restore(PK, 48 * 3600 * 1000, function (rv) { if (!rv || !rv.ps || PS.opened || PS.step > 0 || !(rv.ps.opened || rv.ps.step > 0)) return; try { localStorage.setItem(PK, JSON.stringify(rv.ps)); if (rv.pr) localStorage.setItem("w20sep3:" + (me ? me.id : "guest"), JSON.stringify(rv.pr)); if (rv.cw) localStorage.setItem("w20sepcw:" + (me ? me.id : "guest"), rv.cw); } catch (e) {} location.reload(); }); } catch (e) {}

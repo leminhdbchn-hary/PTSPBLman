@@ -165,13 +165,13 @@ function w20BouquetUI(box, opt) {
   function loopA() { if (rafA) return; rafA = requestAnimationFrame(function fr(now) { ag.clearRect(0, 0, CW, CH); actors = actors.filter(function (a) { return step(a, now); }); while (queue.length && actors.length < MAXA && (!fastOn || actors.every(function (a) { return now - a.t0 > T_IN + T_REACH + T_INS; }))) { pendingCount--; spawn(queue.shift()); } if (actors.length || queue.length) rafA = requestAnimationFrame(fr); else { rafA = 0; ag.clearRect(0, 0, CW, CH); if (fastOn) fast(false); text(); } }); }
   pal.addEventListener("click", function (e) {
     var b = e.target.closest(".fl"); if (!b) return; var f = +b.getAttribute("data-i");
-    if (list.length + pendingCount >= MAX) { info.textContent = "Đủ " + MAX + " bông rồi, bấm “Xong bó hoa” nha 💐"; return; } /* chỉ cần đúng số bông của một bó */
+    if (list.length + pendingCount >= MAX) { info.textContent = "Đủ " + MAX + " bông rồi. Bấm “Xong bó hoa” nhé ạ! 💐"; return; } /* chỉ cần đúng số bông của một bó */
     if (actors.length >= MAXA) { queue.push(f); pendingCount++; text(); return; } spawn(f);
   });
   /* bấm 1 lần: tự chọn đủ số bông tối thiểu (10) với đủ loại hoa, cắm lần lượt rất nhanh */
   box.querySelector(".bqauto").onclick = function () {
     if (actors.length || queue.length || finaleOn) return;
-    var need = min - list.length; if (need <= 0) { info.textContent = "Đủ " + min + " bông rồi, bấm “Xong bó hoa” nha 💐"; return; }
+    var need = min - list.length; if (need <= 0) { info.textContent = "Đủ " + min + " bông rồi. Bấm “Xong bó hoa” nhé ạ! 💐"; return; }
     var pool = []; while (pool.length < need) pool = pool.concat(W20FL.map(function (_, i) { return i; }).sort(function () { return Math.random() - .5; })); pool.length = need;
     /* các anh lần lượt chạy ra cắm từng bông (mỗi bông một anh, đủ 10 anh), chạy nhanh hơn bình thường */
     if (!reduce) fast(true);
@@ -230,7 +230,7 @@ function w20Wheel(cv, prizes, onWin, slots) {
       var arc = 6.283185 * R * .66 / n, z = Math.min(R * .3, arc * .92);
       if (k < 0) { /* ô may mắn: trèfle + chữ nhỏ dọc theo bán kính */
         var sp0 = w20Spr("🍀", 96), z0 = Math.min(R * .2, arc * .8); g.drawImage(sp0, -z0 / 2, -R * .8 - z0 / 2, z0, z0);
-        g.save(); g.translate(0, -R * .45); g.rotate(-1.5708); g.fillStyle = "#8a6a2a"; g.font = "700 " + Math.round(R * .075) + "px 'Be Vietnam Pro',sans-serif"; g.textAlign = "center"; g.textBaseline = "middle"; g.fillText("May mắn", 0, 0); g.restore();
+        g.save(); g.translate(0, -R * .45); g.rotate(-1.5708); g.fillStyle = "#8a6a2a"; g.font = "700 " + Math.round(R * .075) + "px 'Be Vietnam Pro',sans-serif"; g.textAlign = "center"; g.textBaseline = "middle"; g.fillText("Chúc bạn may mắn", 0, 0); g.restore();
       } else { var sp = w20Spr(ic(prizes[k]), 128); g.drawImage(sp, -z / 2, -R * .7 - z / 2, z, z); }
       g.restore();
     }
