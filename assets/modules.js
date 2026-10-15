@@ -517,7 +517,7 @@ var W20BGL = {
     w20Rib(g, [1180, -60, 1330, 60, 1450, 10, 1560, 150], "#f7b3c8", "#fbd0de"); w20Rib(g, [1450, 120, 1550, 260, 1600, 240, 1670, 320], "#f7b3c8", "#fbd0de");
     w20Rib(g, [-60, 960, 90, 1100, 180, 950, 340, 1090], "#f7b3c8", "#fbd0de");
     [[170, 330, 36], [1100, 200, 30], [1090, 900, 40], [90, 780, 24], [1000, 70, 22]].forEach(function (c) { g.fillStyle = "rgba(248,196,214,.75)"; g.beginPath(); g.arc(c[0], c[1], c[2], 0, 6.2832); g.fill(); });
-    w20Tulip(g, 70, 100, 220, .5, "#f9c4d4", "#f09ab6"); w20Tulip(g, 1540, 520, 250, -.1, "#f9bfd1", "#ee93b2"); w20Tulip(g, 230, 800, 150, .3, "#fad0dc", "#f4a4be");
+    w20Tulip(g, 70, 100, 220, .5, "#f9c4d4", "#f09ab6"); w20Tulip(g, 1540, 520, 250, -.1, "#f9bfd1", "#ee93b2"); w20Tulip(g, 90, 800, 130, .3, "#fad0dc", "#f4a4be");
   },
   lily: function (g, T, W, H) {
     g.fillStyle = "#fffefb"; g.fillRect(0, 0, W, H); w20Wash(g, 800, 540, 700, "#f6f2de", .5);
@@ -545,7 +545,7 @@ var W20BGL = {
     var py = { o: "#d6c8ee", m: "#efe8d2", c: "#fbf5d6", line: "#8a74b8", shadow: 1, L: 7, N: 7 };
     w20Rose(g, 160, 930, 140, py); w20Rose(g, 150, 975, 42, { o: "#c9b8e8", m: "#d9cdf0", c: "#efe8ff", line: "#8a74b8", L: 3, N: 6 });
     g.save(); g.translate(120, 1030); g.rotate(-.35); g.fillStyle = "rgba(205,190,235,.92)"; g.fillRect(-80, -24, 160, 48); g.restore();
-    w20Rose(g, 1520, 120, 105, py); w20Leaf(g, 1420, 190, 170, 34, 2.9, "#7ab568", "#4e8a40"); w20Leaf(g, 1520, 210, 150, 30, 1.7, "#7ab568", "#4e8a40");
+    w20Rose(g, 1570, 90, 90, py); w20Leaf(g, 1500, 170, 140, 30, 2.4, "#7ab568", "#4e8a40"); w20Leaf(g, 1570, 190, 120, 26, 1.7, "#7ab568", "#4e8a40");
   }
 };
 function w20ThemeBg(g, T, W, H, land) {
@@ -556,8 +556,8 @@ function w20ThemeBg(g, T, W, H, land) {
     w20Wash(g, 1250, 800, 700, "#f9d5dc", .5); w20Wash(g, 250, 200, 450, "#fbe0e4", .5);
     var A = w20Crop("A", 0, 1, 1, false), B = w20Crop("B", 0, 1, 1, false), C = w20Crop("C", 0, 1, 1, false);
     g.save(); g.globalCompositeOperation = "multiply";
-    if (A) g.drawImage(A, 0, 0, A.width * 1.1, A.height * 1.1);
-    if (B) g.drawImage(B, W - B.width * .66, H - B.height * .66, B.width * .66, B.height * .66);
+    if (A) g.drawImage(A, 0, 0, A.width * .9, A.height * .9);
+    if (B) g.drawImage(B, W - B.width * .5, H - B.height * .5, B.width * .5, B.height * .5);
     if (C) { g.save(); g.translate(W + 4, 120); g.scale(-1, 1); g.globalAlpha = .9; g.drawImage(C, 0, 0, C.width * .62, C.height * .62); g.restore(); }
     g.restore(); return;
   }
@@ -611,15 +611,15 @@ function w20DrawCardP(g, o) {
   y = wend + 104; var sg = "Thương mến, " + (o.from || ""), sgs = 44; g.font = sgs + "px " + W20HW; while (g.measureText(sg).width > WW - 40 && sgs > 28) { sgs -= 2; g.font = sgs + "px " + W20HW; }
   w20Ink(g, sg, WX, y, sgs, 1); var sgw = g.measureText(sg).width; g.fillStyle = ROSE2; g.font = sgs + "px " + W20HW; g.textAlign = "left"; g.fillText("♥", WX + sgw / 2 + 12, y); g.textAlign = "center";
   /* ---- bó hoa và các anh em xếp hàng cạnh hoa ---- */
-  var hasM = o.men && o.men.length, top = y + 70, S = hasM ? 185 : 230, cy;
+  var hasM = o.men && o.men.length, top = y + 70, S = 185, cy;
   if (top + 2.35 * S > H - 40) S = (H - 40 - top) / 2.35; cy = top + 1.1 * S;
-  if (hasM) { var bx = 50 + S * 1.05, sc = .9, x1 = bx + S * 1.05 + 30, dx = (W - 50 - x1 - sc * 108) / 5; w20Group(g, o, T, { bx: bx, by: cy, bs: S, x0: x1 + sc * 54, dx: dx, y: cy + 1.25 * S - 8, sc: sc }); }
-  else w20Group(g, o, T, { bx: W / 2, by: cy, bs: S });
+  var bx = 50 + S * 1.05, sc = .9, x1 = bx + S * 1.05 + 30, dx = (W - 50 - x1 - sc * 108) / 5; /* bó hoa luôn ở góc trái-dưới; anh em (nếu hiện) xếp hàng bên phải */
+  w20Group(g, o, T, { bx: bx, by: cy, bs: S, x0: x1 + sc * 54, dx: dx, y: cy + 1.25 * S - 8, sc: sc });
   g.restore();
 }
 
 function w20DrawCardL(g, o) {
-  var W = 1620, H = 1080, i, DS = "'Dancing Script','Brush Script MT',cursive", PF = "'Playfair Display',Georgia,serif", TX = 625;
+  var W = 1620, H = 1080, i, DS = "'Dancing Script','Brush Script MT',cursive", PF = "'Playfair Display',Georgia,serif", TX = 1065;
   var T = W20THEMES[o.theme >= 0 && o.theme < W20THEMES.length ? o.theme : 0], ROSE = T.acc, ROSE2 = T.acc2; W20INK = T.ink;
   g.save(); g.textBaseline = "alphabetic"; g.textAlign = "center";
   w20ThemeBg(g, T, W, H, true);
@@ -652,9 +652,9 @@ function w20DrawCardL(g, o) {
   var wend = y + (ny - 1) * lh; g.fillStyle = qc; g.font = "700 100px " + PF; g.textAlign = "left"; g.fillText("”", Math.min(TX + WW / 2 + 8, TX + lw / 2 + 6), wend + 50); g.textAlign = "center";
   y = wend + 88; var sg = "Thương mến, " + (o.from || ""), sgs = 42; g.font = sgs + "px " + W20HW; while (g.measureText(sg).width > WW - 40 && sgs > 28) { sgs -= 2; g.font = sgs + "px " + W20HW; }
   w20Ink(g, sg, TX, y, sgs, 1); var sgw = g.measureText(sg).width; g.fillStyle = ROSE2; g.font = sgs + "px " + W20HW; g.textAlign = "left"; g.fillText("♥", TX + sgw / 2 + 12, y); g.textAlign = "center";
-  /* ---- bên phải: bó hoa, các anh em xếp hàng bên dưới ---- */
+  /* ---- bên trái: bó hoa; nếu hiện anh em thì xếp hàng ngang bên dưới bó hoa ---- */
   var hasM = o.men && o.men.length;
-  w20Group(g, o, T, hasM ? { bx: 1345, by: 470, bs: 150, x0: 1345 - 2.5 * 84, dx: 84, y: 910, sc: .74 } : { bx: 1345, by: 560, bs: 175 });
+  w20Group(g, o, T, hasM ? { bx: 375, by: 400, bs: 150, x0: 375 - 2.5 * 84, dx: 84, y: 930, sc: .74 } : { bx: 375, by: 520, bs: 195 });
   g.restore();
 }
 
