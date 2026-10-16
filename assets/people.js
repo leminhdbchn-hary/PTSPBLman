@@ -140,6 +140,7 @@ function w20Sha(s) {
 }
 function w20ByEmail(txt) {
   var e = String(txt || "").toLowerCase().replace(/\s+/g, "").split("@")[0].replace(/[^a-z0-9._-]/g, ""); if (!e) return null;
+  var tt = e.replace(/\.ho\d*$/, ""); if (tt === "test01" || tt === "test02") return tt; /* email thử */
   var id = W20MAIL[w20Sha("ptspbl:" + e).slice(0, 16)] || (!/\.ho\d*$/.test(e) && W20MAIL[w20Sha("ptspbl:" + e + ".ho").slice(0, 16)]);
   return id || null;
 }

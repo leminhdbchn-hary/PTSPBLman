@@ -126,7 +126,7 @@
 <script src="assets/config.js?v=202610150842"></script>
 <script src="assets/stock.js?v=20261024"></script>
 <script src="assets/firebase-sync.js?v=20261030"></script>
-<script src="assets/people.js?v=202610160347"></script>
+<script src="assets/people.js?v=202610160350"></script>
 <script src="assets/common.js?v=202610160349"></script>
 <script src="assets/flowers.js?v=20261013"></script>
 <script src="assets/modules.js?v=202610151112"></script>
@@ -196,7 +196,7 @@
     $("#nameform").onsubmit = function (e) {
       e.preventDefault(); var id = w20ByEmail($("#nameinp").value);
       if (!id) { toast("Chưa thấy email này trong danh sách. Chị nhập lại giúp em nha (vd: tenban.ho) 😄"); return; }
-      try { localStorage.setItem("w20me", id); } catch (er) {}
+      if (id.indexOf("test") !== 0) { try { localStorage.setItem("w20me", id); } catch (er) {} }
       location.replace("index.html?u=" + id);
     };
     $("#openbox").onclick = function () {
