@@ -69,7 +69,7 @@ code{background:rgba(0,0,0,.25);border-radius:6px;padding:1px 6px;font-size:.92e
       <h3>🎭 Sân khấu trao quà</h3>
       <p class="muted" id="sstat">Đang kết nối Firebase…</p>
       <div class="stagewrap"><canvas id="stagecv" aria-label="Sân khấu trao quà"></canvas></div>
-      <div class="acts2 noprint" style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap"><button class="btn ghost" id="sdemo" type="button" style="font-size:15px;padding:10px 16px">▶ Chạy thử một lượt</button><button class="btn ghost" id="sfull" type="button" style="font-size:15px;padding:10px 16px">⛶ Toàn màn hình</button></div>
+      <div class="acts2 noprint" style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap"><button class="btn ghost" id="sdemo" type="button" style="font-size:15px;padding:10px 16px">▶ Chạy thử một lượt</button><button class="btn ghost" id="sdemo5" type="button" style="font-size:15px;padding:10px 16px">▶▶ Thử 5 chị cùng lúc</button><button class="btn ghost" id="sfull" type="button" style="font-size:15px;padding:10px 16px">⛶ Toàn màn hình</button></div>
     </div>
     <div class="panel"><h3>🎁 Chị em đã nhận quà</h3><p class="muted" id="slogcnt"></p><div class="list" id="slog"></div></div>
   </div>
@@ -148,7 +148,7 @@ code{background:rgba(0,0,0,.25);border-radius:6px;padding:1px 6px;font-size:.92e
 <script src="assets/firebase-sync.js?v=20261013"></script>
 <script src="assets/flowers.js?v=20261013"></script>
 <script src="assets/modules.js?v=20261090"></script>
-<script src="assets/stage.js?v=3"></script>
+<script src="assets/stage.js?v=5"></script>
 <script>
 (function () {
   var $ = function (s) { return document.querySelector(s); };
@@ -230,6 +230,7 @@ code{background:rgba(0,0,0,.25);border-radius:6px;padding:1px 6px;font-size:.92e
   }
   $("#q3").oninput = renderLive;
   $("#sdemo").onclick = function () { var st = stage(), p = W20TEST[0], pr = W20CFG.prizes[(Math.random() * W20CFG.prizes.length) | 0]; if (st) st.queue({ id: p.id, name: (p.x || "Chị") + " " + p.n, prize: pr }); };
+  $("#sdemo5").onclick = function () { var st = stage(); if (!st) return; var ids = ["test01"].concat(W20P.slice(6, 10).map(function (p) { return p.id; })); ids.forEach(function (id, i) { var p = W20P.filter(function (x) { return x.id === id; })[0] || W20TEST[0]; st.queue({ id: id, name: (p.x || "Chị") + " " + p.n, prize: W20CFG.prizes[i % W20CFG.prizes.length] }); }); };
   $("#sfull").onclick = function () { var w = document.querySelector(".stagewrap"); try { (w.requestFullscreen || w.webkitRequestFullscreen).call(w); } catch (e) {} };
 
   /* ---- Link ---- */

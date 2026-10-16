@@ -1,4 +1,5 @@
-/* Sân khấu giả lập (trang Admin): khi một chị em quay xong, một anh Chibi đại diện bước lên tặng quà cho chị (cũng là Chibi).
+/* Sân khấu giả lập (nhiều chị nhận quà cùng lúc: tối đa 5 cặp lên cùng một lượt; mỗi cặp một kiểu trao quà, mỗi chị một danh hiệu hoa hậu)
+   Sân khấu giả lập (trang Admin): khi một chị em quay xong, một anh Chibi đại diện bước lên tặng quà cho chị (cũng là Chibi).
    Ảnh mặt chị em: đặt file assets/women/<mã người>.webp (mã trong assets/people.js, VD f513a5.webp). Chưa có ảnh thì vẽ mặt hoạt hình.
    W20Stage.make(canvas, opts) → { play({id,name,prize:{icon,name}}), queue(evt), idle() } */
 var W20Stage = (function () {
@@ -46,29 +47,38 @@ var W20Stage = (function () {
     if (/^assets\//.test(icon)) { var im = img(icon); if (im.complete && im.naturalWidth) { var h = size, w = h * im.naturalWidth / im.naturalHeight; g.drawImage(im, x - w / 2, y - h / 2, w, h); } }
     else { g.save(); g.font = size * .9 + "px 'Segoe UI Emoji','Apple Color Emoji',sans-serif"; g.textAlign = "center"; g.textBaseline = "middle"; g.fillText(icon, x, y); g.restore(); }
   }
-  /* chị em Chibi: đầu là ảnh assets/women/<id>.webp (nếu có), thân váy hồng */
+  var TITLES = [
+    ["Người xinh đẹp nhất", ["#ff9ac4", "#d6336c"]], ["Người đáng yêu nhất", ["#ffb38a", "#e8590c"]], ["Người cười tươi nhất", ["#ffd666", "#e0a100"]],
+    ["Người hiền nhất phòng", ["#9be7c4", "#12a05f"]], ["Người giỏi giang nhất", ["#9ec5ff", "#2b6fd6"]], ["Người đẹp không cần filter", ["#d9a8ff", "#8a3fd0"]],
+    ["Người ít than việc nhất", ["#8fe3e8", "#0f9aa6"]], ["Người đi ăn trưa đúng giờ nhất", ["#ffc2a8", "#d9480f"]], ["Người có giọng nói ngọt nhất", ["#ffa8d8", "#c2255c"]], ["Người luôn làm việc “rất nhanh”", ["#c8e07a", "#6a9a1a"]]
+  ];
+  function hash(x) { var h = 0; x = String(x); for (var i = 0; i < x.length; i++) h = (h * 31 + x.charCodeAt(i)) >>> 0; return h; }
+  function shortName(n) { var w = String(n || "").trim().split(/\s+/); return w.length > 3 ? w[0] + " " + w.slice(-2).join(" ") : w.join(" "); }
+  /* chị em Chibi hoa hậu: váy xoè, băng đô vương miện, dải sash; đầu là ảnh assets/women/<id>.webp (nếu có) */
   function girl(g, cx, gy, sc, o) {
-    var t = o.t || 0, jump = o.jump || 0, up = o.up || 0, dir = o.dir || -1, sw = Math.sin(t / 110) * (o.walk ? 6 : 0);
+    var t = o.t || 0, jump = o.jump || 0, dir = o.dir || -1, sw = Math.sin(t / 110) * (o.walk ? 6 : 0), pal = o.pal || ["#ff8fb4", "#d6336c"];
     g.save(); g.translate(cx, gy); g.scale(sc, sc);
-    g.fillStyle = "rgba(0,0,0,.28)"; g.beginPath(); g.ellipse(0, 3, 40 - jump * .12, 9, 0, 0, 6.283); g.fill();
+    g.fillStyle = "rgba(0,0,0,.28)"; g.beginPath(); g.ellipse(0, 3, 52 - jump * .12, 10, 0, 0, 6.283); g.fill();
     g.translate(0, -jump);
-    g.fillStyle = "#f2c9a6"; [-1, 1].forEach(function (d) { g.fillRect(d * 11 - 5, -40 - (o.walk ? Math.max(0, Math.sin(t / 110 + (d > 0 ? 0 : 3.14))) * 6 : 0), 10, 38); g.fillStyle = "#7a1a3a"; g.beginPath(); g.ellipse(d * 11, -1, 11, 6, 0, 0, 6.283); g.fill(); g.fillStyle = "#f2c9a6"; });
-    var dg = g.createLinearGradient(0, -110, 0, -30); dg.addColorStop(0, "#ff8fb4"); dg.addColorStop(1, "#d6336c"); g.fillStyle = dg;
-    g.beginPath(); g.moveTo(-26, -112); g.lineTo(26, -112); g.lineTo(52, -34); g.quadraticCurveTo(0, -22, -52, -34); g.closePath(); g.fill();
-    g.fillStyle = "#fff"; g.globalAlpha = .85; g.beginPath(); g.moveTo(-14, -112); g.lineTo(0, -96); g.lineTo(14, -112); g.closePath(); g.fill(); g.globalAlpha = 1;
+    g.fillStyle = "#f2c9a6"; [-1, 1].forEach(function (d) { g.fillRect(d * 11 - 5, -34, 10, 32); g.fillStyle = "#7a1a3a"; g.beginPath(); g.ellipse(d * 11, -1, 11, 6, 0, 0, 6.283); g.fill(); g.fillStyle = "#f2c9a6"; });
+    /* váy hoa hậu xoè rộng, lấp lánh */
+    var dg = g.createLinearGradient(0, -110, 0, -20); dg.addColorStop(0, pal[0]); dg.addColorStop(1, pal[1]); g.fillStyle = dg;
+    g.beginPath(); g.moveTo(-24, -112); g.lineTo(24, -112); g.bezierCurveTo(30, -70, 74, -46, 78, -18); g.quadraticCurveTo(0, 0, -78, -18); g.bezierCurveTo(-74, -46, -30, -70, -24, -112); g.closePath(); g.fill();
+    g.strokeStyle = "rgba(255,255,255,.4)"; g.lineWidth = 2; for (var k = -3; k <= 3; k++) { g.beginPath(); g.moveTo(k * 7, -88); g.quadraticCurveTo(k * 22, -50, k * 26, -14); g.stroke(); }
+    g.fillStyle = "rgba(255,255,255,.9)"; for (var q = 0; q < 9; q++) { var sx = Math.sin(q * 12.9 + t / 900 * (q % 2 ? 1 : -1)) * 58, sy = -80 + (q * 37 % 60); g.beginPath(); g.arc(sx, sy + 20, 2.2, 0, 6.283); g.fill(); }
+    /* dải sash */
+    g.save(); g.strokeStyle = "#fff6c9"; g.lineWidth = 11; g.lineCap = "butt"; g.beginPath(); g.moveTo(-26, -110); g.lineTo(26, -66); g.stroke(); g.strokeStyle = "#e0a100"; g.lineWidth = 2; g.stroke(); g.restore();
     g.strokeStyle = "#f2c9a6"; g.lineWidth = 12; g.lineCap = "round";
-    var armA = o.arms == null ? 0 : o.arms; /* 0 xuôi, 1 đưa ra nhận, 2 giơ cao */
+    var armA = o.arms == null ? 0 : o.arms;
     [-1, 1].forEach(function (d) {
-      g.beginPath(); g.moveTo(d * 24, -104);
+      g.beginPath(); g.moveTo(d * 22, -104);
       if (armA === 2) { if (d > 0) g.lineTo(46, -96); else g.lineTo(-46, -166 + Math.sin(t / 90) * 8); }
       else if (armA === 1) g.lineTo(dir * 46, -88 - d * 6);
       else g.lineTo(d * 40 - d * sw, -62);
       g.stroke();
     });
-    /* đầu */
     var im = o.img, hw = 112, hh = 126;
-    g.translate(0, -146);
-    g.rotate(Math.sin(t / 220) * .05);
+    g.translate(0, -146); g.rotate(Math.sin(t / 220) * .05);
     if (im && im.complete && im.naturalWidth) { hh = hw * im.naturalHeight / im.naturalWidth; g.shadowColor = "rgba(0,0,0,.3)"; g.shadowBlur = 8; g.drawImage(im, -hw / 2, -hh / 2 - 6, hw, hh); g.shadowColor = "transparent"; }
     else {
       g.fillStyle = "#3b2418"; g.beginPath(); g.ellipse(0, -6, 52, 56, 0, 0, 6.283); g.fill();
@@ -77,22 +87,65 @@ var W20Stage = (function () {
       g.fillStyle = "#2a1a12"; g.beginPath(); g.arc(-15, 2, 4.5, 0, 6.283); g.arc(15, 2, 4.5, 0, 6.283); g.fill();
       g.strokeStyle = "#c2476b"; g.lineWidth = 3; g.beginPath(); g.arc(0, 14, 10, .15, 2.99); g.stroke();
       g.fillStyle = "rgba(255,120,140,.45)"; g.beginPath(); g.ellipse(-27, 12, 8, 5, 0, 0, 6.283); g.ellipse(27, 12, 8, 5, 0, 0, 6.283); g.fill();
-      g.fillStyle = "#ff6f96"; g.beginPath(); g.arc(30, -34, 9, 0, 6.283); g.fill();
     }
+    /* vương miện */
+    var top = -(hh / 2) - 12; g.fillStyle = "#ffd24a"; g.strokeStyle = "#b8860b"; g.lineWidth = 2;
+    g.beginPath(); g.moveTo(-26, top + 4); g.lineTo(-26, top - 14); g.lineTo(-13, top - 2); g.lineTo(0, top - 22); g.lineTo(13, top - 2); g.lineTo(26, top - 14); g.lineTo(26, top + 4); g.closePath(); g.fill(); g.stroke();
+    g.fillStyle = "#ff4f86"; g.beginPath(); g.arc(0, top - 6, 4, 0, 6.283); g.fill();
     g.restore();
   }
-  function bubble(g, x, y, lines) {
-    g.save(); g.font = "700 20px 'Be Vietnam Pro',sans-serif"; g.textAlign = "center"; g.textBaseline = "middle";
-    var w = 0; lines.forEach(function (l) { w = Math.max(w, g.measureText(l).width); }); w += 36; var h = 20 + lines.length * 26;
-    g.fillStyle = "rgba(255,255,255,.96)"; g.shadowColor = "rgba(0,0,0,.3)"; g.shadowBlur = 12; w20Rr(g, x - w / 2, y - h / 2, w, h, 16); g.fill(); g.shadowColor = "transparent";
-    g.beginPath(); g.moveTo(x - 10, y + h / 2 - 1); g.lineTo(x, y + h / 2 + 14); g.lineTo(x + 12, y + h / 2 - 1); g.fill();
-    g.fillStyle = "#5b1030"; lines.forEach(function (l, i) { g.fillText(l, x, y - h / 2 + 22 + i * 26 + 4); }); g.restore();
+  function wrapTxt(g, txt, w) { var ws = txt.split(" "), L = [], c = ""; ws.forEach(function (x) { var n = c ? c + " " + x : x; if (g.measureText(n).width > w && c) { L.push(c); c = x; } else c = n; }); if (c) L.push(c); return L; }
+  function plate(g, cx, y, w, it, fs, a) {
+    g.save(); g.globalAlpha = a; g.textAlign = "center"; g.textBaseline = "alphabetic";
+    g.font = "700 " + fs + "px 'Playfair Display',serif"; var tl = wrapTxt(g, "👑 " + it.title[0], w - 16);
+    g.font = "700 " + fs * .9 + "px 'Be Vietnam Pro',sans-serif"; var pn = it.prize && it.prize.name || "quà bí mật", nl = wrapTxt(g, pn, w - 16 - fs * 1.2);
+    var lh = fs * 1.25, h = 14 + (tl.length + 1 + nl.length) * lh + 6;
+    g.fillStyle = "rgba(255,246,214,.97)"; g.shadowColor = "rgba(0,0,0,.4)"; g.shadowBlur = 14; w20Rr(g, cx - w / 2, y, w, h, 16); g.fill(); g.shadowColor = "transparent";
+    var yy = y + 10 + fs; g.fillStyle = "#8a1040"; g.font = "700 " + fs + "px 'Playfair Display',serif"; tl.forEach(function (l) { g.fillText(l, cx, yy); yy += lh; });
+    g.fillStyle = "#c2255c"; g.font = "700 " + fs * .95 + "px 'Be Vietnam Pro',sans-serif"; g.fillText(shortName(it.name), cx, yy); yy += lh;
+    g.fillStyle = "#3b2418"; g.font = "700 " + fs * .9 + "px 'Be Vietnam Pro',sans-serif";
+    nl.forEach(function (l, i) { var tw = g.measureText(l).width, ox = i === 0 ? fs * .6 : 0; g.textAlign = "left"; g.fillText(l, cx - tw / 2 + ox, yy); if (i === 0) prizeIcon(g, it.prize && it.prize.icon, cx - tw / 2 - fs * .55 + ox, yy - fs * .3, fs * 1.2); g.textAlign = "center"; yy += lh; });
+    g.restore();
   }
+  var STYLES = ["Đưa hai tay", "Quỳ gối trao", "Cúi chào trao quà", "Tung quà", "Quà từ trên trời rơi xuống"];
   function make(cv, opt) {
-    cv.width = W; cv.height = H; var g = cv.getContext("2d"), Q = [], cur = null, raf = 0, last = { id: null }, nextMan = 0;
+    cv.width = W; cv.height = H; var g = cv.getContext("2d"), Q = [], cur = null, raf = 0, nextMan = 0, nextStyle = 0;
     opt = opt || {};
     var MEN = (typeof W20CFG !== "undefined" && W20CFG.men) || [];
     MEN.forEach(function (m) { img(m.img); });
+    var T1 = 2300, T2 = 3800, TEND = 10500;
+    function drawPair(it, t, n, now) {
+      var sc = [0, 1.7, 1.28, 1.05, .9, .8][n], slotW = (W - 70) / n, c = 35 + slotW * (it.k + .5), d = 58 * sc;
+      var mxT = c - d, wxT = c + d, st = it.style, k1 = ease(t / T1), mx = lerp(-130, mxT, k1), wx = lerp(W + 130, wxT, k1);
+      var u = t < T1 ? 0 : ease((t - T1) / (T2 - T1)), after = t >= T2, tt = t - T2, walking = t < T1;
+      var carry = [mx + 36 * sc, GY - 76 * sc], hand = [wxT - 44 * sc, GY - 84 * sc], gs = .62 * sc;
+      var mo = { img: w20Img(it.man.img), dir: 1, step: now / 110 + it.k, lift: 0, run: walking ? 1 : 0 }, wo = { t: now + it.k * 300, img: it.wimg, dir: -1, walk: walking ? 1 : 0, arms: 0, pal: it.title[1] };
+      var gp = null, kneel = 0, tilt = 0;
+      if (!walking) mo.step = 1.6;
+      if (walking) { mo.lift = Math.abs(Math.sin(now / 130 + it.k)) * 5; if (st !== 4) { mo.reach = carry; gp = [carry[0] + 6, carry[1] - 22 * sc]; } else mo.reach = null; }
+      else if (!after) {
+        wx = wxT; mx = mxT;
+        if (st === 0) { var r0 = [lerp(carry[0], hand[0], u), lerp(carry[1], hand[1], u)]; mo.reach = r0; gp = [r0[0] + 10 * sc, r0[1] - 12 * sc]; wo.arms = u > .4 ? 1 : 0; }
+        else if (st === 1) { kneel = 36 * ease(Math.min(1, u * 1.6)); var r1 = [lerp(carry[0], hand[0] - 4 * sc, u), lerp(carry[1], GY - 150 * sc, u)]; mo.reach = r1; gp = [r1[0] + 6 * sc, r1[1] - 20 * sc]; wo.arms = u > .5 ? 1 : 0; }
+        else if (st === 2) { tilt = .3 * Math.sin(u * Math.PI); var r2 = [lerp(carry[0], hand[0], u), lerp(carry[1], hand[1] + 6 * sc, u)]; mo.reach = r2; gp = [r2[0] + 8 * sc, r2[1] - 12 * sc]; wo.arms = u > .4 ? 1 : 0; }
+        else if (st === 3) { var f = Math.max(0, (u - .3) / .6); if (f <= 0) { mo.reach = [lerp(carry[0], mx + 40 * sc, u / .3), lerp(carry[1], GY - 150 * sc, u / .3)]; gp = [mo.reach[0] + 6, mo.reach[1] - 20 * sc]; } else { mo.reach = [mx + 40 * sc, GY - 150 * sc]; var gx = lerp(mx + 46 * sc, wx - 12 * sc, f), gy2 = lerp(GY - 170 * sc, GY - 100 * sc, f) - Math.sin(f * Math.PI) * 130 * sc; gp = [gx, gy2]; } wo.arms = u > .35 ? 1 : 0; }
+        else { mo.clap = (t - T1) / 95 + it.k; mo.reach = null; var f4 = u; gp = [wx - 30 * sc, lerp(-30, GY - 110 * sc, f4)]; g.save(); g.strokeStyle = "#ffd6e6"; g.lineWidth = 3; g.beginPath(); g.moveTo(gp[0], 0); g.lineTo(gp[0], gp[1] - 30 * sc); g.stroke(); g.restore(); wo.arms = u > .5 ? 1 : 0; }
+      } else {
+        wx = wxT; mx = mxT; wo.arms = 2; wo.jump = Math.abs(Math.sin(tt / 260 + it.k)) * 26 * sc / 1.7; mo.clap = tt / 95 + it.k; mo.lift = Math.abs(Math.sin(tt / 200 + it.k)) * 8; mo.reach = null; mo.run = 0;
+        if (st === 1) { kneel = 36; mo.lift = 0; }
+        gp = [wx + 46 * sc, GY - 112 * sc - wo.jump];
+        if (!it.burst) { it.burst = 1; try { var rc = cv.getBoundingClientRect(); FX.burst(rc.left + rc.width * (c / W), rc.top + rc.height * .5, n > 2 ? 70 : 130); if (it.k === 0) FX.rain(); } catch (er) {} }
+      }
+      /* nam Chibi */
+      g.save(); g.beginPath(); g.rect(0, 0, W, GY + 6); if (kneel) g.clip();
+      if (tilt) { g.translate(mx, GY); g.rotate(tilt); g.translate(-mx, -GY); }
+      mo.lift = (mo.lift || 0) - kneel; w20Chibi(g, mx, GY, sc, mo); g.restore();
+      girl(g, wx, GY, sc, wo);
+      if (gp) gift(g, gp[0], gp[1], gs, it.prize, 1);
+      if (walking && t < 900 + it.k * 0) { /* lời hô khi bước ra */ }
+      if (st === 1 && !walking && !after && u > .2) { g.save(); g.font = 26 * sc / 1.2 + "px 'Segoe UI Emoji',sans-serif"; g.textAlign = "center"; g.fillText("💖", (mx + wx) / 2, GY - 250 * sc - Math.sin(now / 200) * 6); g.restore(); }
+      if (after) plate(g, c, n === 1 ? 54 : 44, Math.min(slotW - 8, 560), it, n === 1 ? 26 : n === 2 ? 20 : n === 3 ? 17 : 14, Math.min(1, tt / 500));
+    }
     function frame(now) {
       backdrop(g, now);
       var e = cur;
@@ -102,40 +155,27 @@ var W20Stage = (function () {
         var m0 = MEN[0]; if (m0) w20Chibi(g, 250, GY, 1.7, { img: w20Img(m0.img), dir: 1, step: now / 500, up: 0, lift: 0 });
         girl(g, 710, GY, 1.7, { t: now, dir: -1, arms: 0 });
       } else {
-        var t = now - e.t0, man = e.man, pz = e.prize, name = e.name;
-        var mx0 = -120, mxA = 300, mxB = 395, wx0 = W + 120, wxA = 640, wxB = 600;
-        var mx, wx, manO = { img: w20Img(man.img), dir: 1, step: now / 110, lift: 0, run: 1 }, wO = { t: now, img: e.wimg, dir: -1, walk: 1, arms: 0 }, giftAt = null, giftA = 1;
-        var T1 = 2200, T2 = 3500, T3 = 4200;
-        if (t < T1) { var k = ease(t / T1); mx = lerp(mx0, mxA, k); wx = lerp(wx0, wxA, k); manO.reach = [mx + 62, GY - 128]; giftAt = [mx + 70, GY - 150]; manO.lift = Math.abs(Math.sin(now / 130)) * 5; }
-        else if (t < T2) { var k2 = ease((t - T1) / (T2 - T1)); mx = lerp(mxA, mxB, k2); wx = lerp(wxA, wxB, k2); manO.run = 0; manO.step = 1.6; wO.walk = 0; wO.arms = k2 > .5 ? 1 : 0; var hx = lerp(mx + 62, wx - 78, k2); manO.reach = [hx, GY - 134]; giftAt = [hx + 8, GY - 156]; }
-        else { mx = mxB; wx = wxB; manO.run = 0; manO.step = 1.6; wO.walk = 0; var tt = t - T3; if (t < T3) { manO.reach = [wx - 78, GY - 134]; giftAt = [wx - 70, GY - 156]; wO.arms = 1; }
-          else { wO.arms = 2; wO.jump = Math.abs(Math.sin(tt / 260)) * 26; manO.clap = tt / 95; manO.lift = Math.abs(Math.sin(tt / 200)) * 10; giftAt = [wx + 78, GY - 190 - wO.jump]; } }
-        if (!e.burst && t >= T3) { e.burst = 1; try { FX.burst(cv.getBoundingClientRect().left + cv.getBoundingClientRect().width * .62, cv.getBoundingClientRect().top + cv.getBoundingClientRect().height * .45, 130); FX.rain(); } catch (er) {} }
-        w20Chibi(g, mx, GY, 1.7, manO);
-        girl(g, wx, GY, 1.7, wO);
-        if (giftAt) { gift(g, giftAt[0], giftAt[1], 1.05, pz, giftA); }
-        if (t < T1 - 200) bubble(g, mx + 40, GY - 340, ["Tặng quà đây! 🎁"]);
-        if (t >= T3) {
-          var pa = Math.min(1, (t - T3) / 500);
-          g.save(); g.globalAlpha = pa; g.fillStyle = "rgba(255,246,214,.97)"; g.shadowColor = "rgba(0,0,0,.4)"; g.shadowBlur = 16; w20Rr(g, W / 2 - 330, 62, 660, 96, 22); g.fill(); g.shadowColor = "transparent";
-          g.textAlign = "center"; g.fillStyle = "#8a1040"; g.font = "700 28px 'Playfair Display',serif"; g.fillText(name, W / 2, 100);
-          g.fillStyle = "#3b2418"; g.font = "700 22px 'Be Vietnam Pro',sans-serif";
-          var txt = "vừa nhận: " + (pz && pz.name || "quà bí mật"), tw = g.measureText(txt).width; g.textAlign = "left"; g.fillText(txt, W / 2 - tw / 2 + 24, 140);
-          prizeIcon(g, pz && pz.icon, W / 2 - tw / 2 - 18, 134, 38);
-          g.restore();
-        }
-        if (t > T3 + 6000) { cur = null; last.id = null; opt.onEnd && opt.onEnd(e); }
+        var t = now - e.t0, n = e.items.length;
+        e.items.forEach(function (it) { drawPair(it, Math.max(0, t - it.k * 260), n, now); });
+        if (t > TEND + n * 260) { cur = null; opt.onEnd && opt.onEnd(e); }
       }
       raf = requestAnimationFrame(frame);
     }
     function pump() {
-      if (cur || !Q.length) return; var e = Q.shift(), man = MEN.length ? MEN[nextMan++ % MEN.length] : { img: "" };
-      cur = { name: e.name, prize: e.prize, man: man, wimg: e.id ? w20Img("assets/women/" + e.id + ".webp") : null, t0: performance.now(), burst: 0, id: e.id };
-      opt.onStart && opt.onStart(e);
+      if (cur || !Q.length) return; var now = performance.now();
+      if (Q.length < 5 && now - Q[0].at < 1500) return; /* chờ thêm một chút để gom các chị quay cùng lúc thành một lượt */
+      var batch = Q.splice(0, 5), used = {};
+      var items = batch.map(function (e, k) {
+        var ti = hash(e.id || e.name) % TITLES.length; while (used[ti]) ti = (ti + 1) % TITLES.length; used[ti] = 1;
+        var man = MEN.length ? MEN[nextMan++ % MEN.length] : { img: "" };
+        return { k: k, name: e.name, prize: e.prize, man: man, title: TITLES[ti], style: (nextStyle++) % STYLES.length, wimg: e.id ? w20Img("assets/women/" + e.id + ".webp") : null, burst: 0 };
+      });
+      cur = { items: items, t0: now };
+      opt.onStart && opt.onStart(batch);
     }
-    var it = setInterval(pump, 400);
+    var it = setInterval(pump, 300);
     raf = requestAnimationFrame(frame);
-    return { queue: function (e) { Q.push(e); pump(); }, size: function () { return Q.length + (cur ? 1 : 0); }, stop: function () { cancelAnimationFrame(raf); clearInterval(it); } };
+    return { queue: function (e) { e.at = performance.now(); Q.push(e); }, size: function () { return Q.length + (cur ? cur.items.length : 0); }, stop: function () { cancelAnimationFrame(raf); clearInterval(it); }, titles: TITLES, styles: STYLES };
   }
   return { make: make };
 })();
