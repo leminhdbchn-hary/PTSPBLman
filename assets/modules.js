@@ -69,7 +69,7 @@ function w20DrawBouquet(g, cx, cy, S, list) {
 }
 /* ===== Chibi: đầu là ảnh thật (assets/men), thân vẽ bằng canvas ===== */
 var W20IMG = {};
-function w20Img(src) { if (!W20IMG[src]) { var im = new Image(); im.src = /^assets\//.test(src) ? src + "?v=20261083" : src; W20IMG[src] = im; } return W20IMG[src]; }
+function w20Img(src) { if (!W20IMG[src]) { var im = new Image(); im.src = /^assets\//.test(src) ? src + "?v=20261090" : src; W20IMG[src] = im; } return W20IMG[src]; }
 function w20Rr(g, x, y, w, h, r) { g.beginPath(); g.moveTo(x + r, y); g.arcTo(x + w, y, x + w, y + h, r); g.arcTo(x + w, y + h, x, y + h, r); g.arcTo(x, y + h, x, y, r); g.arcTo(x, y, x + w, y, r); g.closePath(); }
 /* o: {img, shirt, step (pha chạy), up (0..1 giơ tay), lift (nhảy, px), flower (emoji hoặc null), dir (+1 nhìn phải, -1 nhìn trái)} */
 function w20Chibi(g, cx, gy, sc, o) {
@@ -324,9 +324,9 @@ function w20DrawCard(g, o) {
   var nm = o.name || "Chị em Phòng PTSPBL", sg = "Thương mến, " + (o.from || ""), wish = o.wish || "", greet = o.greet || "Thân gửi:";
   /* bố cục thoáng: lời chào, tên, lời chúc, rồi chữ ký ở dưới cùng cách xa lời chúc */
   function build(s) {
-    var F = b.w * .25 * s, fn = F, P = [], h = F * .45, wf = F * .80, lines, lh = wf * 1.38;
+    var F = b.w * .25 * s, fn = F, P = [], h = F * .95, wf = F * .80, lines, lh = wf * 1.38;
     g.font = fn + "px " + W20HW; while (g.measureText(nm).width > b.w && fn > 18) { fn -= 2; g.font = fn + "px " + W20HW; }
-    P.push({ t: greet, f: F * .9, y: h + F * .7, col: T.ink }); h += F * .86;
+    P.push({ t: greet, f: F * .9, y: h + F * .7, col: T.ink }); h += F * .98;
     P.push({ t: nm, f: fn, y: h + fn * .8, col: T.acc, bold: 1 }); h += fn * 1.0 + F * .36;
     g.font = wf + "px " + W20HW; lines = w20WrapBal(g, wish, b.w); if (lines.length > 6) lines = lines.slice(0, 6);
     lines.forEach(function (l, k) { P.push({ t: l, f: wf, y: h + wf * .8 + k * lh, col: T.ink }); }); h += lines.length * lh + F * .5;
