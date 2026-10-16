@@ -32,9 +32,6 @@ var W20Stage = (function () {
     /* thảm đỏ */
     g.fillStyle = "#b3122f"; g.beginPath(); g.moveTo(300, GY + 2); g.lineTo(660, GY + 2); g.lineTo(760, H); g.lineTo(200, H); g.closePath(); g.fill();
     g.strokeStyle = "#f3c969"; g.lineWidth = 3; g.beginPath(); g.moveTo(300, GY + 2); g.lineTo(200, H); g.moveTo(660, GY + 2); g.lineTo(760, H); g.stroke();
-    /* khán giả ở dưới (bóng đen + que cổ vũ sáng) */
-    g.fillStyle = "rgba(20,4,22,.92)"; for (var au = 0; au < 18; au++) { var axp = 20 + au * 54 + (au % 2) * 14, ah = 18 + (au * 7) % 12; g.beginPath(); g.arc(axp, H - 6, 22 + (au % 3) * 3, Math.PI, 0); g.fill(); g.beginPath(); g.arc(axp, H - 6 - ah - 8, 12, 0, 6.283); g.fill(); }
-    for (var gl = 0; gl < 9; gl++) { var gx = 40 + gl * 108 + (gl % 2) * 30, gy2 = H - 40 - Math.abs(Math.sin(t / 420 + gl * 1.3)) * 14; g.strokeStyle = ["#ff7aa8", "#ffe08a", "#8ff0d0"][gl % 3]; g.lineWidth = 4; g.lineCap = "round"; g.shadowColor = g.strokeStyle; g.shadowBlur = 10; g.beginPath(); g.moveTo(gx, gy2); g.lineTo(gx + 6, gy2 - 20); g.stroke(); g.shadowBlur = 0; }
     /* rèm */
     [[0, 1], [W, -1]].forEach(function (c) {
       g.save(); g.translate(c[0], 0); g.scale(c[1], 1);
@@ -183,7 +180,7 @@ var W20Stage = (function () {
       var items = batch.map(function (e, k) {
         var ti = hash(e.id || e.name) % TITLES.length; while (used[ti]) ti = (ti + 1) % TITLES.length; used[ti] = 1;
         var man = MEN.length ? MEN[nextMan++ % MEN.length] : { img: "" };
-        return { k: k, name: e.name, prize: e.prize, man: man, title: TITLES[ti], style: (nextStyle++) % STYLES.length, wimg: e.id ? w20Img("assets/women/" + e.id + ".webp") : null, wimg2: w20Img("assets/women/r" + (1 + hash(e.id || e.name) % 10) + ".webp"), burst: 0 };
+        return { k: k, name: e.name, prize: e.prize, man: man, title: TITLES[ti], style: (nextStyle++) % STYLES.length, wimg: e.id ? w20Img("assets/women/" + e.id + ".webp") : null, wimg2: w20Img("assets/women/r" + (1 + hash(e.id || e.name) % 6) + ".webp"), burst: 0 };
       });
       cur = { items: items, t0: now };
       opt.onStart && opt.onStart(batch);
