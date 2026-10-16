@@ -30,9 +30,13 @@ var W20Stage = (function () {
       g.strokeStyle = "rgba(0,0,0,.18)"; g.lineWidth = 3; for (var k = 25; k < 150; k += 32) { g.beginPath(); g.moveTo(k, 0); g.quadraticCurveTo(k + 20, 220, k - 8, GY); g.stroke(); }
       g.restore();
     });
+    /* băng rôn tên chương trình */
+    g.save(); var bw = 520, bx = W / 2 - bw / 2, bg2 = g.createLinearGradient(0, 24, 0, 66); bg2.addColorStop(0, "#ffe9a0"); bg2.addColorStop(1, "#e0a100");
+    g.shadowColor = "rgba(0,0,0,.45)"; g.shadowBlur = 12; g.shadowOffsetY = 4; g.fillStyle = bg2; g.beginPath(); g.moveTo(bx - 26, 26); g.lineTo(bx + bw + 26, 26); g.lineTo(bx + bw + 10, 46); g.lineTo(bx + bw + 26, 66); g.lineTo(bx - 26, 66); g.lineTo(bx - 10, 46); g.closePath(); g.fill(); g.shadowColor = "transparent";
+    g.strokeStyle = "rgba(122,29,79,.5)"; g.lineWidth = 2; g.stroke(); g.fillStyle = "#7a1d4f"; g.font = "700 27px 'Playfair Display',serif"; g.textAlign = "center"; g.textBaseline = "middle"; g.fillText("✨ Chương trình 20.10 Phòng PTSPBL ✨", W / 2, 47); g.restore();
     g.fillStyle = "#f3c969"; g.fillRect(0, 0, W, 16); g.fillStyle = "rgba(0,0,0,.2)"; g.fillRect(0, 16, W, 5);
     /* bóng đèn viền */
-    for (var i = 0; i < 24; i++) { g.fillStyle = (Math.floor(t / 400) + i) % 2 ? "#fff6c9" : "#ffb24a"; g.beginPath(); g.arc(20 + i * 40, 30, 5, 0, 6.283); g.fill(); }
+    for (var i = 0; i < 24; i++) { if (i > 7 && i < 16) continue; g.fillStyle = (Math.floor(t / 400) + i) % 2 ? "#fff6c9" : "#ffb24a"; g.beginPath(); g.arc(20 + i * 40, 30, 5, 0, 6.283); g.fill(); }
   }
   function gift(g, x, y, s, prize, a) {
     g.save(); g.translate(x, y); g.scale(s, s); g.globalAlpha = a == null ? 1 : a;
@@ -115,7 +119,7 @@ var W20Stage = (function () {
     MEN.forEach(function (m) { img(m.img); });
     var T1 = 2300, T2 = 3800, TEND = 10500;
     function drawPair(it, t, n, now) {
-      var sc = [0, 1.7, 1.28, 1.05, .9, .8][n], slotW = (W - 70) / n, c = 35 + slotW * (it.k + .5), d = 58 * sc;
+      var sc = [0, 1.45, 1.2, 1.02, .9, .8][n], slotW = (W - 70) / n, c = 35 + slotW * (it.k + .5), d = 58 * sc;
       var mxT = c - d, wxT = c + d, st = it.style, k1 = ease(t / T1), mx = lerp(-130, mxT, k1), wx = lerp(W + 130, wxT, k1);
       var u = t < T1 ? 0 : ease((t - T1) / (T2 - T1)), after = t >= T2, tt = t - T2, walking = t < T1;
       var carry = [mx + 36 * sc, GY - 76 * sc], hand = [wxT - 44 * sc, GY - 84 * sc], gs = .62 * sc;
@@ -144,7 +148,7 @@ var W20Stage = (function () {
       if (gp) gift(g, gp[0], gp[1], gs, it.prize, 1);
       if (walking && t < 900 + it.k * 0) { /* lời hô khi bước ra */ }
       if (st === 1 && !walking && !after && u > .2) { g.save(); g.font = 26 * sc / 1.2 + "px 'Segoe UI Emoji',sans-serif"; g.textAlign = "center"; g.fillText("💖", (mx + wx) / 2, GY - 250 * sc - Math.sin(now / 200) * 6); g.restore(); }
-      if (after) plate(g, c, n === 1 ? 54 : 44, Math.min(slotW - 8, 560), it, n === 1 ? 26 : n === 2 ? 20 : n === 3 ? 17 : 14, Math.min(1, tt / 500));
+      if (after) plate(g, c, 84, Math.min(slotW - 8, 560), it, n === 1 ? 24 : n === 2 ? 19 : n === 3 ? 17 : 14, Math.min(1, tt / 500));
     }
     function frame(now) {
       backdrop(g, now);
