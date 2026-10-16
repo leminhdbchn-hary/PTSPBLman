@@ -62,3 +62,84 @@ var W20TEST = [
   {"id": "test01", "n": "Nguyễn Test An", "t": "Chuyên viên Phòng PTSPBL", "x": "Chị", "test": 1},
   {"id": "test02", "n": "Trần Test Bình", "t": "Phó trưởng Phòng PTSPBL", "x": "Chị", "test": 1, "lead": 1}
 ];
+
+/* Đăng nhập bằng email: mỗi người điền email (phần trước @, vd thuda.ho) ở link chung, web tự mở đúng trang của người đó.
+   Chỉ lưu dấu băm (SHA-256) của email, không để lộ email thật trong mã nguồn. */
+var W20MAIL = {
+ "5f0bd5e3480f4f81": "f513a5",
+ "e2bed3c1dee272e9": "533d4c",
+ "8484d29a41edd8de": "e97542",
+ "2b36ddde0b391f11": "683207",
+ "5946676e625e01eb": "4b936d",
+ "773c5815a1ccade7": "761c47",
+ "ade50af7080ee9a2": "d9bb15",
+ "ec90db0a32ccee49": "7040ce",
+ "8161567fb9206140": "418150",
+ "bf9360d38a404786": "815693",
+ "ed68bc8446a899af": "df44fb",
+ "38cd0d6d579126ec": "ec27bc",
+ "b6abdbe4deeb0295": "ac7d8d",
+ "29bc281d9cdfc46e": "a80606",
+ "526f9c6cdad89228": "fb96c5",
+ "2602a3e355754bd8": "39b902",
+ "226e2e3b5cae3c05": "dc615b",
+ "9ebb1a80f992abe4": "e04324",
+ "9d042928c1cf7220": "f1f1a3",
+ "b07df073d28f730d": "d5e174",
+ "de9445c8ac561952": "bb2a0e",
+ "7d4c12085bb21e0c": "d61d24",
+ "39fce2f6f374c05b": "c75a35",
+ "d38c0a6a1e9527e1": "bc5f90",
+ "1e65f2861c805bc2": "b6cfae",
+ "8bc33ba72d9495d3": "bf09ec",
+ "96b735f1fa536286": "3e5f12",
+ "f0b95d6fa75f33a9": "aae83c",
+ "14795025bb317dc4": "6f5c9f",
+ "a62b1306e21c0f56": "5f5ed4",
+ "182b67f0f5d7552b": "e722db",
+ "548bfacceb3a5671": "5ad49a",
+ "8ea6649e1920fb73": "ee895a",
+ "671e7cb10761ea61": "d7dcca",
+ "d364f4050ee7c39b": "8584e8",
+ "1ebe905f36f7f322": "5fccc2",
+ "7630f2e0cb0ab66e": "917f80",
+ "c5039d87db6b2bdf": "fb1654",
+ "be934b4c704d8bed": "6d93ba",
+ "631403492a85415f": "ab0777",
+ "8b7c15b397625754": "3a116f",
+ "2a03deb0c7b8c352": "334f8f",
+ "00edc277dc095e2b": "ebd8b5",
+ "c67c18024d24ad6b": "552053",
+ "e6e66cfacd7f8859": "e1bcd9",
+ "a710ea7f105f3837": "a9dadf",
+ "dcdbcba2cde05626": "4d50b3",
+ "f54c537fc92efe73": "5d4d57",
+ "cbf056cd34127766": "d80a9c",
+ "4775778873ddd719": "e0bd72",
+ "1b7e6554cf65fe11": "bae0d6",
+ "d11d9aa3b93cfaea": "15c819"
+};
+function w20Sha(s) {
+  var K = [], i, j, p = 2, isP;
+  for (i = 0; K.length < 64; p++) { isP = true; for (j = 2; j * j <= p; j++) if (p % j === 0) { isP = false; break; } if (isP) K.push((Math.pow(p, 1 / 3) % 1) * 4294967296 | 0); }
+  var H = [], q = 2; for (i = 0; H.length < 8; q++) { isP = true; for (j = 2; j * j <= q; j++) if (q % j === 0) { isP = false; break; } if (isP) H.push((Math.pow(q, .5) % 1) * 4294967296 | 0); }
+  var b = unescape(encodeURIComponent(s)), L = b.length, w = [], nw = (((L + 8) >> 6) + 1) * 16; for (i = 0; i < nw; i++) w.push(0);
+  for (i = 0; i < L; i++) w[i >> 2] |= b.charCodeAt(i) << (24 - (i % 4) * 8);
+  w[L >> 2] |= 0x80 << (24 - (L % 4) * 8); w[(((L + 8) >> 6) + 1) * 16 - 1] = L * 8;
+  function R(x, n) { return (x >>> n) | (x << (32 - n)); }
+  for (var o = 0; o < w.length; o += 16) {
+    var W = w.slice(o, o + 16), a = H.slice(), t;
+    for (i = 16; i < 64; i++) { var s0 = R(W[i - 15], 7) ^ R(W[i - 15], 18) ^ (W[i - 15] >>> 3), s1 = R(W[i - 2], 17) ^ R(W[i - 2], 19) ^ (W[i - 2] >>> 10); W[i] = (W[i - 16] + s0 + W[i - 7] + s1) | 0; }
+    for (i = 0; i < 64; i++) {
+      var S1 = R(a[4], 6) ^ R(a[4], 11) ^ R(a[4], 25), ch = (a[4] & a[5]) ^ (~a[4] & a[6]), t1 = (a[7] + S1 + ch + K[i] + W[i]) | 0, S0 = R(a[0], 2) ^ R(a[0], 13) ^ R(a[0], 22), mj = (a[0] & a[1]) ^ (a[0] & a[2]) ^ (a[1] & a[2]), t2 = (S0 + mj) | 0;
+      a = [(t1 + t2) | 0, a[0], a[1], a[2], (a[3] + t1) | 0, a[4], a[5], a[6]];
+    }
+    for (i = 0; i < 8; i++) H[i] = (H[i] + a[i]) | 0;
+  }
+  return H.map(function (x) { return ("00000000" + (x >>> 0).toString(16)).slice(-8); }).join("");
+}
+function w20ByEmail(txt) {
+  var e = String(txt || "").toLowerCase().replace(/\s+/g, "").split("@")[0].replace(/[^a-z0-9._-]/g, ""); if (!e) return null;
+  var id = W20MAIL[w20Sha("ptspbl:" + e).slice(0, 16)] || (!/\.ho\d*$/.test(e) && W20MAIL[w20Sha("ptspbl:" + e + ".ho").slice(0, 16)]);
+  return id || null;
+}

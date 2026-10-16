@@ -21,8 +21,7 @@
     <div class="intro">
       <p class="hw1" id="hello"></p>
       <form class="nameform" id="nameform" autocomplete="off">
-        <select id="xsel" aria-label="Xưng hô"><option>Chị</option><option>Em</option><option>Cô</option><option>Bạn</option></select>
-        <input id="nameinp" placeholder="Nhập tên để nhận quà riêng" maxlength="40" aria-label="Tên của bạn">
+        <input id="nameinp" type="text" inputmode="email" autocapitalize="off" autocorrect="off" spellcheck="false" placeholder="Email, vd: hanhtt1.ho" maxlength="60" aria-label="Email của bạn">
         <button class="btn pink" style="padding:10px 18px;font-size:16px" type="submit">OK</button>
       </form>
       <button class="giftbtn" id="openbox" type="button" aria-label="Mở hộp quà"></button>
@@ -127,7 +126,7 @@
 <script src="assets/config.js?v=202610150842"></script>
 <script src="assets/stock.js?v=20261024"></script>
 <script src="assets/firebase-sync.js?v=20261030"></script>
-<script src="assets/people.js?v=20261022"></script>
+<script src="assets/people.js?v=202610160347"></script>
 <script src="assets/common.js?v=20261038"></script>
 <script src="assets/flowers.js?v=20261013"></script>
 <script src="assets/modules.js?v=202610151112"></script>
@@ -136,6 +135,9 @@
 (function () {
   var $ = function (s) { return document.querySelector(s); };
   var P = w20Params(), me = w20Person(P.u);
+  if (!P.u && !P.to) { /* link chung: máy đã đăng nhập email trước đó thì vào thẳng trang của mình */
+    try { var rid = localStorage.getItem("w20me"); if (rid && w20Person(rid)) { location.replace("index.html?u=" + rid); return; } } catch (e) {}
+  }
   if (me && me.lead) { location.replace("sep.html?u=" + me.id); return; } /* lãnh đạo chỉ dùng trang riêng của Sếp */
   var S = { to: me ? w20Short(me.n) : P.to, full: me ? me.n : P.to, title: me ? me.t : "", bd: me && me.bd, x: P.x || (me && me.x) || "Chị", f: P.f || W20CFG.from, r: P.r, w: P.w, n: 0, bag: [] };
   var TEST = !!(me && me.test); /* link thử: không lưu, mở đi mở lại thoải mái */
@@ -186,17 +188,19 @@
       $("#nameform").style.display = "none";
     } else {
       $("#hello").textContent = "Gửi các chị em Phòng PTSPBL";
-      $("#lead").textContent = "Hệ thống vừa xác nhận các chị là “Tài sản quý nhất Phòng!”. Nhập tên để nhận quà và thiệp riêng nha!";
+      $("#lead").textContent = "Hệ thống vừa xác nhận các chị là “Tài sản quý nhất Phòng!”. Chị nhập email để nhận quà và thiệp riêng nha!";
       $("#nameform").style.display = "";
     }
     $("#bday").innerHTML = S.bd ? "<div class='bday'>🎂 Psst… tháng 10 còn là tháng sinh nhật của " + esc(xw()) + " nữa. Chúc mừng sinh nhật " + esc(xw()) + " nha!</div>" : "";
     $("#from").textContent = "Thương mến, " + S.f;
     $("#nameform").onsubmit = function (e) {
-      e.preventDefault(); var n = w20Clean($("#nameinp").value, 40); if (!n) { toast("Chị nhập tên trước nha 😄"); return; }
-      S.to = n; S.full = n; S.x = $("#xsel").value; try { history.replaceState(null, "", w20Link(location.pathname, { to: S.to, x: S.x })); } catch (er) {}
-      hero(); card(); FX.burst(innerWidth / 2, innerHeight / 3, 80);
+      e.preventDefault(); var id = w20ByEmail($("#nameinp").value);
+      if (!id) { toast("Chưa thấy email này trong danh sách. Chị nhập lại giúp em nha (vd: tenban.ho) 😄"); return; }
+      try { localStorage.setItem("w20me", id); } catch (er) {}
+      location.replace("index.html?u=" + id);
     };
     $("#openbox").onclick = function () {
+      if (!S.to) { toast("Chị nhập email trước để nhận quà nha 😄"); try { $("#nameinp").focus(); } catch (er) {} return; }
       ST.opened = 1; save(); unbox(0);
     };
   }

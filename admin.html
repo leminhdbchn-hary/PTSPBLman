@@ -132,14 +132,14 @@ code{background:rgba(0,0,0,.25);border-radius:6px;padding:1px 6px;font-size:.92e
 
 <script src="assets/config.js?v=202610150842"></script>
 <script src="assets/stock.js?v=20261024"></script>
-<script src="assets/people.js?v=20261013"></script>
+<script src="assets/people.js?v=202610160347"></script>
 <script src="assets/common.js?v=20261024"></script>
 <script src="assets/firebase-sync.js?v=20261013"></script>
 <script>
 (function () {
   var $ = function (s) { return document.querySelector(s); };
   var PB = W20CFG.publicBase || location.href, base = new URL("index.html", PB).href, baseSep = new URL("sep.html", PB).href;
-  (function () { var h = "<p style='margin:0 0 6px'><b>🧪 Link thử</b> (mở đi mở lại thoải mái, không lưu tiến độ, không tính vào quà)</p>"; W20TEST.forEach(function (t) { var a = (t.lead ? baseSep : base) + "?u=" + t.id; h += "<p style='margin:4px 0;word-break:break-all'>" + t.n + " · " + t.t + ":<br><a href='" + a + "' target='_blank' style='color:inherit'>" + a + "</a></p>"; }); document.getElementById("testlinks").innerHTML = h; })();
+  (function () { var h = "<p style='margin:0 0 10px;word-break:break-all'><b>🔗 Link chung gửi tất cả chị em và các Sếp</b> (mỗi người tự nhập email, ví dụ <i>thuda.ho</i>, web tự mở đúng trang của mình):<br><a href='" + base + "' target='_blank' style='color:inherit;font-weight:800'>" + base + "</a></p><p style='margin:0 0 6px'><b>🧪 Link thử</b> (mở đi mở lại thoải mái, không lưu tiến độ, không tính vào quà)</p>"; W20TEST.forEach(function (t) { var a = (t.lead ? baseSep : base) + "?u=" + t.id; h += "<p style='margin:4px 0;word-break:break-all'>" + t.n + " · " + t.t + ":<br><a href='" + a + "' target='_blank' style='color:inherit'>" + a + "</a></p>"; }); document.getElementById("testlinks").innerHTML = h; })();
   var PR = W20CFG.prizes, N = W20P.length, NEED = N, REC = [16, 16, 10, 10];
   var draft = { qty: W20STOCK.qty.slice(), seed: String(W20STOCK.seed) }, A = w20Assign(draft);
   var REPO = "leminhdbchn-hary/PTSPBLman", BRANCH = "main", FILE = "assets/stock.js";
