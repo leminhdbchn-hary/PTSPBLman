@@ -131,7 +131,7 @@
 <script src="assets/common.js?v=202610160349"></script>
 <script src="assets/flowers.js?v=20261013"></script>
 <script src="assets/modules.js?v=202610151112"></script>
-<script src="assets/boxflow.js?v=202610151017"></script>
+<script src="assets/boxflow.js?v=202610160416"></script>
 <script>
 (function () {
   var $ = function (s) { return document.querySelector(s); };
@@ -177,7 +177,7 @@
     var g = $("#g" + k); if (g) { g.className = "gate ok"; g.textContent = "✔ Xong rồi!"; }
     FX.burst(innerWidth / 2, innerHeight * .55, 70);
     if (quiet || loading) return; /* mở lại trang: vào thẳng lớp đang dở, không chạy hiệu ứng */
-    setTimeout(function () { show(k + 1, true); }, delay === undefined ? 1500 : delay);
+    setTimeout(function () { show(k + 1, true); }, delay === undefined ? 2500 : delay);
   }
 
   /* ---------- Màn mở đầu + lời chào ---------- */
@@ -209,7 +209,7 @@
   /* ---------- 1. Release notes ---------- */
   function notes() {
     $("#noteList").innerHTML = W20.notes.map(function (n, i) { return '<div class="note tap' + (ST.notes.indexOf(i) >= 0 ? " open" : "") + '" data-i="' + i + '"><div class="ic">' + n[0] + '</div><div><b>' + n[1] + '</b><span>' + n[2] + '</span><div class="more">Chạm để đọc 👆</div></div></div>'; }).join("");
-    function upd() { var c = ST.notes.length; if (c >= W20.notes.length) done(0, 1300, loading); else gate(0, "Chạm để đọc: " + c + "/" + W20.notes.length); }
+    function upd() { var c = ST.notes.length; if (c >= W20.notes.length) done(0, 2300, loading); else gate(0, "Chạm để đọc: " + c + "/" + W20.notes.length); }
     $("#noteList").onclick = function (e) { var b = e.target.closest(".note"); if (!b) return; var i = +b.getAttribute("data-i"); b.classList.add("open"); if (ST.notes.indexOf(i) < 0) { ST.notes.push(i); save(); } upd(); };
     upd();
   }
@@ -219,7 +219,7 @@
   function atm() {
     /* thiết bị/người nhận chỉ rút đúng 3 lời chúc, rút đủ là khóa (link thử thì rút thoải mái) */
     function lockPull() { if (!TEST && (ST.pulls || 0) >= 3) { var b = $("#pull"); b.disabled = true; b.textContent = "✔ Đã lấy đủ 3 thư"; } }
-    function upd() { var c = ST.pulls || 0; if (c >= 3) done(1, 2200, loading); else gate(1, c ? "Còn " + (3 - c) + " bức thư nữa" : ""); }
+    function upd() { var c = ST.pulls || 0; if (c >= 3) done(1, 3200, loading); else gate(1, c ? "Còn " + (3 - c) + " bức thư nữa" : ""); }
     $("#pull").onclick = function () {
       var b = $("#pull"), scr = $("#scr"), slip = $("#slip"); b.disabled = true; slip.classList.remove("out"); scr.className = "scr"; scr.textContent = "Đang lấy thư trong hộp… 📬"; var ml = $("#mmail"), fl = $("#mflag"); ml.classList.remove("pop"); void ml.offsetWidth; ml.classList.add("pop"); fl.classList.add("up");
       S.n++; $("#cnt").textContent = "Thư số: " + S.n; if (navigator.vibrate) navigator.vibrate(30);
@@ -254,12 +254,12 @@
       sctx.fillStyle = "#6b727a"; sctx.font = "800 22px 'Be Vietnam Pro',Arial,sans-serif"; sctx.textAlign = "center"; sctx.fillText("✨ CÀO Ở ĐÂY ✨", w / 2, h / 2 + 8);
       sctx.globalCompositeOperation = "destination-out";
     }
-    if (ST.scratched) { cleared = true; scv.style.display = "none"; done(2, 0, true); } else { gate(2, ""); setTimeout(paint, 30); }
+    if (ST.scratched) { cleared = true; scv.style.display = "none"; done(2, 1000, true); } else { gate(2, ""); setTimeout(paint, 30); }
     function at(e) { var r = scv.getBoundingClientRect(); sctx.beginPath(); sctx.arc(e.clientX - r.left, e.clientY - r.top, 22, 0, 6.283); sctx.fill(); }
     function check() {
       if (cleared) return; var d = sctx.getImageData(0, 0, scv.width, scv.height).data, c = 0, n = 0;
       for (var i = 3; i < d.length; i += 64) { n++; if (d[i] < 20) c++; }
-      if (c / n > .5) { cleared = true; sctx.clearRect(0, 0, scv.width, scv.height); ST.scratched = 1; save(); var r = scv.getBoundingClientRect(); FX.burst(r.left + r.width / 2, r.top + r.height / 2, 100); toast("Trúng rồi nè! 🎉"); done(2, 2200); }
+      if (c / n > .5) { cleared = true; sctx.clearRect(0, 0, scv.width, scv.height); ST.scratched = 1; save(); var r = scv.getBoundingClientRect(); FX.burst(r.left + r.width / 2, r.top + r.height / 2, 100); toast("Trúng rồi nè! 🎉"); done(2, 3200); }
     }
     scv.addEventListener("pointerdown", function (e) { scratching = true; try { scv.setPointerCapture(e.pointerId); } catch (x) {} at(e); });
     scv.addEventListener("pointermove", function (e) { if (scratching) at(e); });
@@ -271,8 +271,8 @@
   /* ---------- 4. Cắm hoa ---------- */
   function flowers() {
     w20BouquetUI($("#bqbox"), { min: 10, start: ST.bq, onChange: function (l) { ST.bq = l; save(); cardSoon(); },
-      onDone: function (l, e) { ST.bq = l; ST.bqDone = 1; save(); card(); FX.burst(e.clientX, e.clientY, 120); toast("Bó hoa xinh quá trời 💐"); done(3, 1800); } });
-    if (ST.bqDone) done(3, 0, true); else gate(3, "");
+      onDone: function (l, e) { ST.bq = l; ST.bqDone = 1; save(); card(); FX.burst(e.clientX, e.clientY, 120); toast("Bó hoa xinh quá trời 💐"); done(3, 2800); } });
+    if (ST.bqDone) done(3, 1000, true); else gate(3, "");
   }
 
   /* ---------- 5. Vòng quay 1 lượt, quà đã chia sẵn ---------- */
@@ -282,7 +282,7 @@
     w20Wheel2({ cv: $("#wcv"), btn: $("#spin"), out: $("#prize"), prizes: prizes, slots: W20CFG.wheelSlots, assigned: assigned, got: ST.prizes,
       onGot: function (l) { ST.prizes = l; save(); },
       onShow: function (idx, k, fresh) { showReq(); if (fresh) { FX.burst(innerWidth / 2, innerHeight * .5, 130); FX.rain(); } },
-      onAll: function (fresh) { card(); done(4, 3800, !fresh); } });
+      onAll: function (fresh) { card(); done(4, 4800, !fresh); } });
     if (!ST.prizes.length) gate(4, "");
     $("#reqtxt").oninput = function () { ST.req = $("#reqtxt").value; save(); };
     $("#reqsend").onclick = function () {

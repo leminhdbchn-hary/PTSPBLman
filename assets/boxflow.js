@@ -24,7 +24,8 @@ var W20Flow = (function () {
       setTimeout(function () { reveal(i); ub.classList.add("out"); }, 1450);
       setTimeout(function () { ub.remove(); cb && cb(); }, 2050);
     }
-    function show(i, anim) { if (!anim || reduce) { reveal(i); return; } unbox(i); }
+    var busy = false;
+    function show(i, anim) { if (busy || i === cur) return; if (!anim || reduce) { reveal(i); return; } busy = true; unbox(i, function () { busy = false; }); }
     return { show: show, unbox: unbox, boxHTML: boxHTML, reveal: reveal, cur: function () { return cur; }, N: N };
   }
   return { make: make };

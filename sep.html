@@ -134,7 +134,7 @@
 <script src="assets/common.js?v=20261038"></script>
 <script src="assets/flowers.js?v=20261013"></script>
 <script src="assets/modules.js?v=202610151112"></script>
-<script src="assets/boxflow.js?v=202610151017"></script>
+<script src="assets/boxflow.js?v=202610160416"></script>
 <script src="assets/firebase-sync.js?v=20261030"></script>
 <script>
 (function () {
@@ -163,7 +163,7 @@
   var FL = W20Flow.make({ N: N, stage: "#stage", scene: scene, onReveal: function (i) { if (i === 6) card(); } });
   function go(k, delay) { /* xong lớp k → mở lớp k+1 */
     if (PS.step > k) return; PS.step = k + 1; savePS(); FX.burst(innerWidth / 2, innerHeight * .55, 60);
-    setTimeout(function () { FL.show(k + 1, true); }, delay === undefined ? 900 : delay);
+    setTimeout(function () { FL.show(k + 1, true); }, delay === undefined ? 1900 : delay);
   }
 
   /* ---------- mở đầu + tờ trình ---------- */
@@ -173,7 +173,7 @@
       var st = $("#stamp"); st.classList.add("hit"); $("#p0 .paper2").classList.add("shake"); if (navigator.vibrate) navigator.vibrate(60);
       $("#approve").disabled = true;
       setTimeout(function () { FX.burst(innerWidth / 2, innerHeight / 2, 140); FX.rain(); }, 450);
-      go(0, 1700);
+      go(0, 2700);
     };
   }
   function hero() {
@@ -192,7 +192,7 @@
   function profile() {
     var d = dv();
     $("#profList").innerHTML = d.t.map(function (i, k) { return '<div class="note"><div class="ic">' + ["⭐", "🏆", "💎", "🎯", "🌟"][k % 5] + '</div><div><span>' + esc(W20.sep.traits[i]) + "</span></div></div>"; }).join("");
-    $("#next1").onclick = function () { go(1, 200); };
+    $("#next1").onclick = function () { go(1, 1200); };
   }
   /* cam kết */
   function pledges() {
@@ -203,7 +203,7 @@
       if (k >= 0) S.pledges.splice(k, 1); else S.pledges.push(i);
       b.classList.toggle("on"); var n = S.pledges.length, T = W20.sep.pledges.length;
       $("#pledgeMsg").textContent = n === T ? "🎉 Bản cam kết có hiệu lực… đến hết ngày 20/10!" : "Đã ký " + n + "/" + T + " cam kết";
-      if (n === T) { FX.burst(innerWidth / 2, innerHeight / 2, 140); FX.rain(); go(2, 2200); }
+      if (n === T) { FX.burst(innerWidth / 2, innerHeight / 2, 140); FX.rain(); go(2, 3200); }
     };
   }
   /* chỉ đạo */
@@ -217,7 +217,7 @@
   /* hoa, quà, tường */
   var bq;
   function flowers() {
-    bq = w20BouquetUI($("#bqbox"), { min: 10, onChange: function (l) { S.bq = l; cardSoon(); }, onDone: function (l, e) { FX.burst(e.clientX, e.clientY, 140); FX.rain(); toast("Đã tặng Sếp bó hoa 💐"); go(4, 1200); } });
+    bq = w20BouquetUI($("#bqbox"), { min: 10, onChange: function (l) { S.bq = l; cardSoon(); }, onDone: function (l, e) { FX.burst(e.clientX, e.clientY, 140); FX.rain(); toast("Đã tặng Sếp bó hoa 💐"); go(4, 2200); } });
     bq.give.textContent = "🎁 Tặng Sếp bó hoa";
   }
   function wheel() {
@@ -227,8 +227,8 @@
     w20Wheel2({ cv: $("#wcv"), btn: $("#spin"), out: $("#prize"), prizes: W20CFG.prizes, slots: W20CFG.wheelSlots, assigned: as, got: had,
       onGot: function (l) { if (!TEST) { try { localStorage.setItem(K, JSON.stringify(l)); } catch (e) {} try { W20DB.progress(K, { prizes: l, step: l.length }); } catch (e) {} } else window.W20TESTGOT = l; setTimeout(card, 50); },
       onShow: function (i, k, fresh) { if (fresh) { FX.burst(innerWidth / 2, innerHeight * .5, 130); FX.rain(); } },
-      onAll: function (fresh) { nextBtn(); if (fresh) go(5, 3800); } });
-    $("#next5").onclick = function () { go(5, 200); };
+      onAll: function (fresh) { nextBtn(); if (fresh) go(5, 4800); } });
+    $("#next5").onclick = function () { go(5, 1200); };
   }
   /* giấy khen */
   function card() {
@@ -269,7 +269,7 @@
   $("#cwreset").onclick = function () { CW = ""; saveCW(); cwEl.value = curWish(); card(); toast("Đã về lời chúc gốc"); };
   $("#rnd").onclick = function (e) { S.r = (Math.random() * W20.sep.roles.length) | 0; S.w = (Math.random() * W20.sep.wishes.length) | 0; CW = ""; saveCW(); cwEl.value = curWish(); card(); FX.burst(e.clientX, e.clientY, 60); toast("Đã đổi danh hiệu & lời chúc 🎲"); };
   $("#ask").onclick = ask;
-  $("#next3").onclick = function () { go(3, 200); };
+  $("#next3").onclick = function () { go(3, 1200); };
 
   FX.init(); paper(); hero(); profile(); pledges(); flowers(); wheel();
   card(); loading = false;
