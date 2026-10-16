@@ -10,7 +10,7 @@
 <meta name="theme-color" content="#00381f">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E🌹%3C/text%3E%3C/svg%3E">
 <link rel="stylesheet" href="assets/style.css?v=20261013">
-<link rel="stylesheet" href="assets/box.css?v=202610160402">
+<link rel="stylesheet" href="assets/box.css?v=202610160410">
 </head>
 <body class="bx">
 <canvas id="fx" aria-hidden="true"></canvas>
@@ -186,11 +186,11 @@
     if (S.to) {
       $("#hello").textContent = "Gửi " + who() + ", có quà cho " + xw() + " nè!";
       $("#lead").textContent = who() + " ơi, hệ thống vừa xác nhận " + xw() + " là “Tài sản quý nhất Phòng!”. 20/10 này chúc " + xw() + " thật vui, thật xinh và thật… ít việc nha!";
-      $("#nameform").style.display = "none"; $("#mailhint").style.display = "none"; $("#tapme").className = "tapme"; $("#tapme").textContent = "Chạm vào hộp quà để mở 🎁";
+      $("#nameform").style.display = "none"; $("#mailhint").style.display = "none"; document.body.classList.remove("login"); $("#tapme").className = "tapme"; $("#tapme").textContent = "Chạm vào hộp quà để mở 🎁";
     } else {
       $("#hello").textContent = "Gửi các chị em Phòng PTSPBL 💌";
       $("#lead").textContent = "Hệ thống vừa xác nhận các chị là “Tài sản quý nhất Phòng!”. Chị nhập email để nhận quà và thiệp riêng nha!";
-      $("#nameform").style.display = ""; $("#mailhint").style.display = ""; $("#tapme").className = "tapme secret"; $("#tapme").innerHTML = "<span class='sp'>✨</span> Nhiều phần quà bí mật đang chờ Chị em <span class='sp'>✨</span><small>🎁 Nhập email để hộp quà mở ra nhé 🎁</small>";
+      $("#nameform").style.display = ""; $("#mailhint").style.display = ""; document.body.classList.add("login"); $("#tapme").className = "tapme secret"; $("#tapme").innerHTML = "<span class='sp'>✨</span> Nhiều phần quà bí mật đang chờ Chị em <span class='sp'>✨</span><small>🎁 Nhập email để hộp quà mở ra nhé 🎁</small>";
     }
     $("#bday").innerHTML = S.bd ? "<div class='bday'>🎂 Psst… tháng 10 còn là tháng sinh nhật của " + esc(xw()) + " nữa. Chúc mừng sinh nhật " + esc(xw()) + " nha!</div>" : "";
     $("#from").textContent = "Thương mến, " + S.f;
