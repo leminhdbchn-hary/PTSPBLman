@@ -107,7 +107,7 @@ var W20Stage = (function () {
     nl.forEach(function (l, i) { var tw = g.measureText(l).width, ox = i === 0 ? fs * .6 : 0; g.textAlign = "left"; g.fillText(l, cx - tw / 2 + ox, yy); if (i === 0) prizeIcon(g, it.prize && it.prize.icon, cx - tw / 2 - fs * .55 + ox, yy - fs * .3, fs * 1.2); g.textAlign = "center"; yy += lh; });
     g.restore();
   }
-  var STYLES = ["Đưa hai tay", "Quỳ gối trao", "Cúi chào trao quà", "Tung quà", "Quà từ trên trời rơi xuống"];
+  var STYLES = ["Đưa hai tay", "Quỳ gối trao", "Cúi chào trao quà", "Tung quà", "Bước tới trao quà rồi bắt tay"];
   function make(cv, opt) {
     cv.width = W; cv.height = H; var g = cv.getContext("2d"), Q = [], cur = null, raf = 0, nextMan = 0, nextStyle = 0;
     opt = opt || {};
@@ -126,14 +126,13 @@ var W20Stage = (function () {
       else if (!after) {
         wx = wxT; mx = mxT;
         if (st === 0) { var r0 = [lerp(carry[0], hand[0], u), lerp(carry[1], hand[1], u)]; mo.reach = r0; gp = [r0[0] + 10 * sc, r0[1] - 12 * sc]; wo.arms = u > .4 ? 1 : 0; }
-        else if (st === 1) { kneel = 36 * ease(Math.min(1, u * 1.6)); var r1 = [lerp(carry[0], hand[0] - 4 * sc, u), lerp(carry[1], GY - 150 * sc, u)]; mo.reach = r1; gp = [r1[0] + 6 * sc, r1[1] - 20 * sc]; wo.arms = u > .5 ? 1 : 0; }
+        else if (st === 1) { kneel = 36 * ease(Math.min(1, u * 3)) * (1 - ease(Math.max(0, (u - .72) / .28))); var uu = Math.min(1, u * 1.5), r1 = [lerp(carry[0], hand[0] - 4 * sc, uu), lerp(carry[1], GY - 150 * sc + 40 * sc * Math.max(0, (u - .72) / .28), uu)]; mo.reach = r1; gp = [r1[0] + 6 * sc, r1[1] - 20 * sc]; if (u > .62) { var gv = ease((u - .62) / .38); gp = [lerp(gp[0], wx - 30 * sc, gv), lerp(gp[1], GY - 112 * sc, gv)]; } wo.arms = u > .4 ? 1 : 0; }
         else if (st === 2) { tilt = .3 * Math.sin(u * Math.PI); var r2 = [lerp(carry[0], hand[0], u), lerp(carry[1], hand[1] + 6 * sc, u)]; mo.reach = r2; gp = [r2[0] + 8 * sc, r2[1] - 12 * sc]; wo.arms = u > .4 ? 1 : 0; }
         else if (st === 3) { var f = Math.max(0, (u - .3) / .6); if (f <= 0) { mo.reach = [lerp(carry[0], mx + 40 * sc, u / .3), lerp(carry[1], GY - 150 * sc, u / .3)]; gp = [mo.reach[0] + 6, mo.reach[1] - 20 * sc]; } else { mo.reach = [mx + 40 * sc, GY - 150 * sc]; var gx = lerp(mx + 46 * sc, wx - 12 * sc, f), gy2 = lerp(GY - 170 * sc, GY - 100 * sc, f) - Math.sin(f * Math.PI) * 130 * sc; gp = [gx, gy2]; } wo.arms = u > .35 ? 1 : 0; }
-        else { mo.clap = (t - T1) / 95 + it.k; mo.reach = null; var f4 = u; gp = [wx - 30 * sc, lerp(-30, GY - 110 * sc, f4)]; g.save(); g.strokeStyle = "#ffd6e6"; g.lineWidth = 3; g.beginPath(); g.moveTo(gp[0], 0); g.lineTo(gp[0], gp[1] - 30 * sc); g.stroke(); g.restore(); wo.arms = u > .5 ? 1 : 0; }
+        else { mx = mxT + 22 * sc * u; var r4 = [lerp(carry[0] + 22 * sc * u, hand[0] + 22 * sc, u), lerp(carry[1], hand[1], u)]; mo.reach = r4; gp = [r4[0] + 10 * sc, r4[1] - 12 * sc]; if (u > .7) { var g4 = ease((u - .7) / .3); gp = [lerp(gp[0], wx - 30 * sc, g4), lerp(gp[1], GY - 112 * sc, g4)]; } wo.arms = u > .4 ? 1 : 0; }
       } else {
         wx = wxT; mx = mxT; wo.arms = 2; wo.jump = Math.abs(Math.sin(tt / 260 + it.k)) * 26 * sc / 1.7; mo.clap = tt / 95 + it.k; mo.lift = Math.abs(Math.sin(tt / 200 + it.k)) * 8; mo.reach = null; mo.run = 0;
-        if (st === 1) { kneel = 36; mo.lift = 0; }
-        gp = [wx + 46 * sc, GY - 112 * sc - wo.jump];
+        gp = [wx + 46 * sc, GY - 112 * sc - wo.jump]; if (st === 4) { mx = mxT + 22 * sc; wo.arms = 1; wo.jump = 0; mo.clap = null; mo.reach = [wx - 44 * sc, GY - 84 * sc + Math.sin(tt / 110) * 8 * sc]; gp = [wx + 40 * sc, GY - 120 * sc]; if (tt > 2600) { wo.arms = 2; wo.jump = Math.abs(Math.sin(tt / 260)) * 26 * sc / 1.7; mo.reach = null; mo.clap = tt / 95; } }
         if (!it.burst) { it.burst = 1; try { var rc = cv.getBoundingClientRect(); FX.burst(rc.left + rc.width * (c / W), rc.top + rc.height * .5, n > 2 ? 70 : 130); if (it.k === 0) FX.rain(); } catch (er) {} }
       }
       /* nam Chibi */
