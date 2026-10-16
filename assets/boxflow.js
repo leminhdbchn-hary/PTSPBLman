@@ -11,7 +11,7 @@ var W20Flow = (function () {
     function frame(i) { var c = L(i), el = o.scene(i); el.style.setProperty("--c", c[0]); el.style.setProperty("--c3", c[2]); el.style.setProperty("--i", i); }
     function reveal(i) {
       [].forEach.call(document.querySelectorAll(".scene"), function (x) { x.classList.remove("on", "leave"); });
-      document.body.classList.toggle("fin", i === N - 1); /* màn cuối (thiệp) không nằm trong hộp quà nữa */
+      document.body.classList.toggle("fin", i === N - 1); document.body.classList.toggle("wh", o.wheel != null && i === o.wheel); /* màn cuối (thiệp) không nằm trong hộp quà nữa */
       if (i >= 0) frame(i); var el = o.scene(i); el.classList.add("on"); cur = i;
       var pb = el.querySelector(".pbody"); if (pb) pb.scrollTop = 0;
       o.onReveal && o.onReveal(i);

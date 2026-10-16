@@ -346,3 +346,32 @@ body.login .intro .nameform input::placeholder{color:#8a6a76}
 body.login #tapme{display:none}
 body.bx.login:before{bottom:-16vh;background-position:center top}
 @media (max-width:699px){body.bx.login:before{bottom:0;background-size:auto 74vh;background-position:center bottom;background-color:#157f77}}
+
+/* ===== Vòng quay: sân khấu lớn, tia sáng quay, đèn nhấp nháy, nhịp thở ===== */
+body.bx.wh:before{background:radial-gradient(700px 520px at 50% 42%,#7a1d6a,transparent 70%),linear-gradient(170deg,#1a0630 0%,#3d0f4a 50%,#12071f 100%)}
+body.wh #s4.scene,body.wh #p5.scene{--m:6px;padding-top:calc(env(safe-area-inset-top,0px) + 12px);align-items:flex-start}
+body.wh #s4.scene:before,body.wh #p5.scene:before{content:"";position:absolute;left:50%;top:38%;width:240vmax;height:240vmax;margin:-120vmax 0 0 -120vmax;pointer-events:none;
+  background:repeating-conic-gradient(from 0deg,rgba(255,226,140,.20) 0 7deg,transparent 7deg 20deg);-webkit-mask:radial-gradient(circle,#000 6%,transparent 38%);mask:radial-gradient(circle,#000 6%,transparent 38%);animation:rays 38s linear infinite}
+body.wh #s4.scene:after,body.wh #p5.scene:after{content:"";position:absolute;inset:0;pointer-events:none;opacity:.8;
+  background:radial-gradient(2px 2px at 12% 20%,#fff,transparent),radial-gradient(2px 2px at 82% 14%,#ffe08a,transparent),radial-gradient(3px 3px at 30% 78%,#fff,transparent),radial-gradient(2px 2px at 70% 70%,#ffd0ef,transparent),radial-gradient(2px 2px at 92% 48%,#fff,transparent),radial-gradient(3px 3px at 6% 56%,#ffe08a,transparent);animation:twk 2.6s ease-in-out infinite alternate}
+@keyframes rays{to{transform:rotate(360deg)}}
+@keyframes twk{from{opacity:.35}to{opacity:1}}
+body.wh #s4 .paper2,body.wh #p5 .paper2{border:0;background:none;box-shadow:none;max-width:980px;z-index:1}
+body.wh #s4 .paper2:before,body.wh #s4 .paper2:after,body.wh #p5 .paper2:before,body.wh #p5 .paper2:after{display:none}
+body.wh #s4 .pbody,body.wh #p5 .pbody{background:none;color:#fff;padding:6px 8px 16px}
+body.wh #s4 .hw,body.wh #p5 .hw{color:#ffe9a6;font-size:clamp(34px,9.5vw,52px);text-shadow:0 3px 16px rgba(255,120,200,.6)}
+body.wh #s4 .sub,body.wh #p5 .sub{color:#ffe;opacity:.95}
+body.wh #s4 .wheelbox,body.wh #p5 .wheelbox{width:min(92vw,52svh,470px);padding:18px;margin-top:30px;outline:9px dotted #fff3b0;outline-offset:3px;animation:bulbs 1s steps(1) infinite;box-shadow:0 0 0 4px rgba(0,0,0,.25),0 0 46px 10px rgba(255,170,220,.45),0 18px 44px rgba(0,0,0,.5)}
+@keyframes bulbs{0%{outline-color:#fff3b0}50%{outline-color:#ff9ad2}}
+@keyframes breathe{50%{transform:scale(1.025)}}
+@keyframes wglow{from{box-shadow:0 0 0 4px rgba(0,0,0,.25),0 0 34px 6px rgba(255,200,90,.45),0 18px 44px rgba(0,0,0,.5)}to{box-shadow:0 0 0 4px rgba(0,0,0,.25),0 0 70px 20px rgba(255,120,200,.6),0 18px 44px rgba(0,0,0,.5)}}
+body.wh #s4 .wheelbox:before,body.wh #p5 .wheelbox:before{top:-26px;border-width:30px 22px 0;animation:ptr .9s ease-in-out infinite alternate;transform-origin:50% 0}
+@keyframes ptr{from{transform:translateX(-50%) rotate(-7deg)}to{transform:translateX(-50%) rotate(7deg)}}
+body.wh #s4 .wheelbox:after,body.wh #p5 .wheelbox:after{width:76px;height:76px;margin:-38px 0 0 -38px;border-width:8px}
+body.wh #spin{font-size:21px;padding:15px 38px;animation:spinpulse 1.3s ease-in-out infinite}
+@keyframes spinpulse{50%{transform:scale(1.07);box-shadow:0 0 0 10px rgba(255,93,158,.3)}}
+body.wh #s4 .gate,body.wh #p5 .gate{color:#ffe9a6}
+@media (min-width:900px) and (min-height:520px){
+  body.wh #s4 .wheelbox,body.wh #p5 .wheelbox{width:min(62vh,540px)}
+}
+@media (prefers-reduced-motion:reduce){body.wh .wheelbox,body.wh #spin,body.wh .wheelbox:before,body.wh #s4.scene:before,body.wh #p5.scene:before,body.wh #s4.scene:after,body.wh #p5.scene:after{animation:none!important}}

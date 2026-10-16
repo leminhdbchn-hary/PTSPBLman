@@ -9,6 +9,7 @@
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E🗂️%3C/text%3E%3C/svg%3E">
 <link rel="stylesheet" href="assets/style.css?v=20261013">
 <style>
+.stagewrap{border-radius:16px;overflow:hidden;box-shadow:0 12px 34px rgba(0,0,0,.5);border:2px solid rgba(255,215,106,.5);background:#2a0b24}.stagewrap canvas{display:block;width:100%;height:auto}.stagewrap:fullscreen{display:flex;align-items:center;background:#000}
 section.adm{max-width:1000px}
 .pin{max-width:380px;margin:12vh auto 0;text-align:center;background:linear-gradient(180deg,rgba(255,255,255,.1),rgba(255,255,255,.04));border:1px solid rgba(255,255,255,.18);border-radius:28px;padding:28px 22px}
 .pin input{font:inherit;font-size:26px;letter-spacing:.35em;text-align:center;width:100%;border-radius:16px;border:2px solid rgba(255,255,255,.35);background:rgba(0,0,0,.18);color:#fff;padding:12px;margin:14px 0}
@@ -61,9 +62,19 @@ code{background:rgba(0,0,0,.25);border-radius:6px;padding:1px 6px;font-size:.92e
 <section id="main" class="adm" hidden>
   <span class="kicker">Anh em tổ chức</span>
   <h2>Quản lý quà 20/10</h2>
-  <div class="tabs"><button class="tab on" data-t="links" type="button">🔗 Link từng người</button><button class="tab" data-t="stock" type="button">🎁 Chia quà & thống kê</button><button class="tab" data-t="live" type="button">📡 Theo dõi trực tiếp</button></div>
+  <div class="tabs"><button class="tab on" data-t="stage" type="button">🎭 Sân khấu trao quà</button><button class="tab" data-t="links" type="button">🔗 Link từng người</button><button class="tab" data-t="stock" type="button">🎁 Chia quà & thống kê</button><button class="tab" data-t="live" type="button">📡 Theo dõi trực tiếp</button></div>
 
-  <div id="tlinks">
+  <div id="tstage">
+    <div class="panel">
+      <h3>🎭 Sân khấu trao quà</h3>
+      <p class="muted" id="sstat">Đang kết nối Firebase…</p>
+      <div class="stagewrap"><canvas id="stagecv" aria-label="Sân khấu trao quà"></canvas></div>
+      <div class="acts2 noprint" style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap"><button class="btn ghost" id="sdemo" type="button" style="font-size:15px;padding:10px 16px">▶ Chạy thử một lượt</button><button class="btn ghost" id="sfull" type="button" style="font-size:15px;padding:10px 16px">⛶ Toàn màn hình</button></div>
+    </div>
+    <div class="panel"><h3>🎁 Chị em đã nhận quà</h3><p class="muted" id="slogcnt"></p><div class="list" id="slog"></div></div>
+  </div>
+
+  <div id="tlinks" hidden>
     <div class="search">
       <input id="q" placeholder="🔍 Tìm theo tên (gõ không dấu cũng được)" aria-label="Tìm theo tên">
       <button class="btn" id="copyAll" type="button" style="font-size:15px;padding:10px 18px">📋 Sao chép tất cả</button>
@@ -135,6 +146,9 @@ code{background:rgba(0,0,0,.25);border-radius:6px;padding:1px 6px;font-size:.92e
 <script src="assets/people.js?v=202610160350"></script>
 <script src="assets/common.js?v=20261024"></script>
 <script src="assets/firebase-sync.js?v=20261013"></script>
+<script src="assets/flowers.js?v=20261013"></script>
+<script src="assets/modules.js?v=20261090"></script>
+<script src="assets/stage.js?v=2"></script>
 <script>
 (function () {
   var $ = function (s) { return document.querySelector(s); };
@@ -149,7 +163,7 @@ code{background:rgba(0,0,0,.25);border-radius:6px;padding:1px 6px;font-size:.92e
   function link(p) { return (p.lead ? baseSep : base) + "?u=" + p.id; }
   function match(p, q) { return !q || w20Fold(p.n).indexOf(w20Fold(q)) >= 0; }
 
-  function open() { $("#lockscr").hidden = true; $("#main").hidden = false; renderLinks(); renderStock(); }
+  function open() { $("#lockscr").hidden = true; $("#main").hidden = false; renderLinks(); renderStock(); startLive(); stage(); }
   $("#unlock").onclick = function () {
     if ($("#pin").value === String(W20CFG.adminPin)) { try { sessionStorage.setItem("w20admin", "1"); } catch (e) {} open(); }
     else { $("#pinmsg").textContent = "Sai mã rồi, thử lại nha."; $("#pin").value = ""; }
@@ -159,7 +173,7 @@ code{background:rgba(0,0,0,.25);border-radius:6px;padding:1px 6px;font-size:.92e
   document.querySelector(".tabs").onclick = function (e) {
     var b = e.target.closest(".tab"); if (!b) return; [].forEach.call(document.querySelectorAll(".tab"), function (x) { x.classList.toggle("on", x === b); });
     var t = b.getAttribute("data-t");
-    $("#tlinks").hidden = t !== "links"; $("#tstock").hidden = t !== "stock"; $("#tlive").hidden = t !== "live";
+    $("#tstage").hidden = t !== "stage"; $("#tlinks").hidden = t !== "links"; $("#tstock").hidden = t !== "stock"; $("#tlive").hidden = t !== "live";
     if (t === "live") startLive();
   };
 
@@ -174,6 +188,18 @@ code{background:rgba(0,0,0,.25);border-radius:6px;padding:1px 6px;font-size:.92e
   }
   function ts(v) { try { return v && v.toDate ? v.toDate() : null; } catch (e) { return null; } }
   function fmt(d) { return d ? d.toLocaleString("vi-VN", { hour: "2-digit", minute: "2-digit", day: "2-digit", month: "2-digit" }) : ""; }
+  /* ---- Sân khấu trao quà ---- */
+  var STG = null, stSeen = null, stLoaded = false;
+  function stage() { if (!STG && window.W20Stage) STG = W20Stage.make($("#stagecv"), {}); return STG; }
+  function stageFeed(rows) {
+    var st = stage(); var got = rows.filter(function (r) { return r.pr; });
+    if (stSeen === null) { stSeen = {}; got.forEach(function (r) { stSeen[r.p.id] = 1; }); }
+    else got.forEach(function (r) { if (!stSeen[r.p.id]) { stSeen[r.p.id] = 1; if (st) st.queue({ id: r.p.id, name: (r.p.x || "Chị") + " " + r.p.n, prize: r.pr }); } });
+    $("#sstat").textContent = "🔴 Đang theo dõi trực tiếp. Chị em nào quay xong là anh em lên sân khấu trao quà (tự động).";
+    var L = got.slice().sort(function (a, b) { return (b.o && b.o.at ? b.o.at.getTime() : 0) - (a.o && a.o.at ? a.o.at.getTime() : 0); });
+    $("#slogcnt").textContent = L.length ? "Đã có " + L.length + "/" + W20P.length + " chị em nhận quà, mới nhất ở trên cùng." : "Chưa có chị em nào quay xong.";
+    $("#slog").innerHTML = L.map(function (r) { return '<div class="row"><div class="who"><b>' + esc(r.p.n) + "</b><small>" + esc(r.p.t) + (r.o && r.o.at ? " · " + fmt(r.o.at) : "") + '</small></div><div class="who" style="flex:1 1 220px"><b>' + w20IconHTML(r.pr.icon, 24) + " " + esc(r.pr.name) + "</b></div></div>"; }).join("");
+  }
   function renderLive() {
     var by = {}, PRZ = W20CFG.prizes, N7 = 7;
     LIVE.prog.forEach(function (r) {
@@ -189,6 +215,7 @@ code{background:rgba(0,0,0,.25);border-radius:6px;padding:1px 6px;font-size:.92e
       if (o) { opened++; if (pr) spun++; if (o.kind === "v4" && (d.step || 0) >= N7) done++; }
       return { p: p, o: o, d: d, pr: pr };
     });
+    stageFeed(rows);
     $("#lchips").innerHTML = ['<span class="chip">👀 Đã mở link: ' + opened + "/" + W20P.length + "</span>", '<span class="chip">🎡 Đã quay quà: ' + spun + "/" + W20P.length + "</span>", '<span class="chip">✅ Xem hết 7 phần: ' + done + "</span>", '<span class="chip">🙋 Lời nhờ việc: ' + LIVE.req.filter(function (r) { return /^w20(v4|sep3)/.test(r.id || ""); }).length + "</span>"].join("");
     $("#lstat").textContent = "Cập nhật tự động. Lần nhận dữ liệu gần nhất: " + new Date(liveAt).toLocaleTimeString("vi-VN") + ".";
     var q = $("#q3").value;
@@ -202,6 +229,8 @@ code{background:rgba(0,0,0,.25);border-radius:6px;padding:1px 6px;font-size:.92e
     $("#lreq").innerHTML = rq.map(function (r) { return '<div class="row"><div class="who"><b>' + esc(r.who || "Một chị em") + "</b><small>" + fmt(ts(r.at)) + '</small></div><div class="who" style="flex:2 1 320px">' + esc(r.text || "") + "</div></div>"; }).join("");
   }
   $("#q3").oninput = renderLive;
+  $("#sdemo").onclick = function () { var st = stage(), p = W20TEST[0], pr = W20CFG.prizes[(Math.random() * W20CFG.prizes.length) | 0]; if (st) st.queue({ id: p.id, name: (p.x || "Chị") + " " + p.n, prize: pr }); };
+  $("#sfull").onclick = function () { var w = document.querySelector(".stagewrap"); try { (w.requestFullscreen || w.webkitRequestFullscreen).call(w); } catch (e) {} };
 
   /* ---- Link ---- */
   function shown() { var q = $("#q").value; return W20P.filter(function (p) { return match(p, q); }); }

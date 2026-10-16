@@ -10,7 +10,7 @@
 <meta name="theme-color" content="#00381f">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E💐%3C/text%3E%3C/svg%3E">
 <link rel="stylesheet" href="assets/style.css?v=20261013">
-<link rel="stylesheet" href="assets/box.css?v=202610151039">
+<link rel="stylesheet" href="assets/box.css?v=202610160732">
 </head>
 <body class="bx">
 <canvas id="fx" aria-hidden="true"></canvas>
@@ -134,7 +134,7 @@
 <script src="assets/common.js?v=20261038"></script>
 <script src="assets/flowers.js?v=20261013"></script>
 <script src="assets/modules.js?v=202610160421"></script>
-<script src="assets/boxflow.js?v=202610160416"></script>
+<script src="assets/boxflow.js?v=202610160731"></script>
 <script src="assets/firebase-sync.js?v=20261030"></script>
 <script>
 (function () {
@@ -160,7 +160,7 @@
   PS.step = PS.step || 0;
   function savePS() { if (TEST) return; try { localStorage.setItem(PK, JSON.stringify(PS)); } catch (e) {} try { W20DB.progress(PK, window.W20EXPORT_OBJ()); } catch (e) {} w20SyncHash(); }
   function scene(i) { return i < 0 ? $("#sc-intro") : $("#p" + i); }
-  var FL = W20Flow.make({ N: N, stage: "#stage", scene: scene, onReveal: function (i) { if (i === 6) card(); } });
+  var FL = W20Flow.make({ wheel: 5, N: N, stage: "#stage", scene: scene, onReveal: function (i) { if (i === 6) card(); } });
   function go(k, delay) { /* xong lớp k → mở lớp k+1 */
     if (PS.step > k) return; PS.step = k + 1; savePS(); FX.burst(innerWidth / 2, innerHeight * .55, 60);
     setTimeout(function () { FL.show(k + 1, true); }, delay === undefined ? 1900 : delay);
