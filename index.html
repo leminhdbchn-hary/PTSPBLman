@@ -10,7 +10,7 @@
 <meta name="theme-color" content="#00381f">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E🌹%3C/text%3E%3C/svg%3E">
 <link rel="stylesheet" href="assets/style.css?v=20261013">
-<link rel="stylesheet" href="assets/box.css?v=202610151039">
+<link rel="stylesheet" href="assets/box.css?v=202610160355">
 </head>
 <body class="bx">
 <canvas id="fx" aria-hidden="true"></canvas>
@@ -20,9 +20,10 @@
   <section class="scene on" id="sc-intro" aria-label="Hộp quà">
     <div class="intro">
       <p class="hw1" id="hello"></p>
+      <p class="mailhint" id="mailhint">Chị nhập email VCB vào đây nhé ạ 💕<small>(bỏ chữ @vietcombank.com.vn)</small></p>
       <form class="nameform" id="nameform" autocomplete="off">
-        <input id="nameinp" type="text" inputmode="email" autocapitalize="off" autocorrect="off" spellcheck="false" placeholder="Email, vd: hanhtt1.ho" maxlength="60" aria-label="Email của bạn">
-        <button class="btn pink" style="padding:10px 18px;font-size:16px" type="submit">OK</button>
+        <input id="nameinp" type="text" inputmode="email" autocapitalize="off" autocorrect="off" spellcheck="false" placeholder="vd: hanhtt1.ho" maxlength="60" aria-label="Email của bạn">
+        <span class="pointer" aria-hidden="true">👉</span><button class="btn pink mailgo" type="submit" aria-label="Vào nhận quà">❤️ Vào thôi</button>
       </form>
       <button class="giftbtn" id="openbox" type="button" aria-label="Mở hộp quà"></button>
       <p class="tapme">Chạm vào hộp quà để mở 🎁</p>
@@ -185,17 +186,17 @@
     if (S.to) {
       $("#hello").textContent = "Gửi " + who() + ", có quà cho " + xw() + " nè!";
       $("#lead").textContent = who() + " ơi, hệ thống vừa xác nhận " + xw() + " là “Tài sản quý nhất Phòng!”. 20/10 này chúc " + xw() + " thật vui, thật xinh và thật… ít việc nha!";
-      $("#nameform").style.display = "none";
+      $("#nameform").style.display = "none"; $("#mailhint").style.display = "none";
     } else {
-      $("#hello").textContent = "Gửi các chị em Phòng PTSPBL";
+      $("#hello").textContent = "Gửi các chị em Phòng PTSPBL 💌";
       $("#lead").textContent = "Hệ thống vừa xác nhận các chị là “Tài sản quý nhất Phòng!”. Chị nhập email để nhận quà và thiệp riêng nha!";
-      $("#nameform").style.display = "";
+      $("#nameform").style.display = ""; $("#mailhint").style.display = "";
     }
     $("#bday").innerHTML = S.bd ? "<div class='bday'>🎂 Psst… tháng 10 còn là tháng sinh nhật của " + esc(xw()) + " nữa. Chúc mừng sinh nhật " + esc(xw()) + " nha!</div>" : "";
     $("#from").textContent = "Thương mến, " + S.f;
     $("#nameform").onsubmit = function (e) {
       e.preventDefault(); var id = w20ByEmail($("#nameinp").value);
-      if (!id) { toast("Chưa thấy email này trong danh sách. Chị nhập lại giúp em nha (vd: tenban.ho) 😄"); return; }
+      if (!id) { toast("Ơ, em chưa thấy email này. Chị nhập đúng kiểu hanhtt1.ho (bỏ @vietcombank.com.vn) giúp em nha 😄"); return; }
       if (id.indexOf("test") !== 0) { try { localStorage.setItem("w20me", id); } catch (er) {} }
       location.replace("index.html?u=" + id);
     };
