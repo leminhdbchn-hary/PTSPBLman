@@ -325,3 +325,9 @@ body.fin .endnote{color:var(--ink)}
 @keyframes point{0%,100%{transform:translateX(-5px)}50%{transform:translateX(5px)}}
 @keyframes mailpulse{50%{transform:scale(1.06);box-shadow:0 0 0 6px rgba(255,93,158,.25)}}
 @media (prefers-reduced-motion:reduce){.pointer,.intro .nameform .mailgo{animation:none}}
+
+.intro .tapme.secret{font-family:"Playfair Display",Georgia,serif;font-style:italic;font-weight:700;font-size:21px;line-height:1.35;color:#ffe9a6;max-width:340px;margin-top:10px;padding:12px 18px;border-radius:18px;border:1.5px dashed rgba(255,233,166,.7);background:rgba(255,255,255,.08);text-shadow:0 2px 10px rgba(0,0,0,.4);animation:tapb 2.4s ease-in-out infinite}
+.intro .tapme.secret small{display:block;margin-top:5px;font:600 13px "Be Vietnam Pro",sans-serif;font-style:normal;color:#fff;opacity:.9}
+.intro .tapme.secret .sp{display:inline-block;animation:spk 1.6s ease-in-out infinite}
+.intro .tapme.secret .sp:last-of-type{animation-delay:.8s}
+@keyframes spk{50%{transform:scale(1.35) rotate(15deg);opacity:.7}}
