@@ -98,7 +98,7 @@ var W20Stage3D = (function () {
       g.strokeStyle = "#ff6cc4"; g.lineWidth = 6; g.shadowColor = "#ff3fa8"; g.shadowBlur = 22; g.stroke(); g.shadowBlur = 0;
       g.fillStyle = "#fff4fb"; g.shadowColor = "#ff6cc4"; g.shadowBlur = 18; g.font = "800 70px 'Playfair Display',Georgia,serif"; g.textAlign = "center"; g.textBaseline = "middle"; g.fillText("PTSPBL AWARDS | 20.10", w / 2, h / 2 + 4);
     });
-    var banner = new T.Mesh(new T.PlaneGeometry(9.2, 1.44), new T.MeshBasicMaterial({ map: banTex, transparent: true })); banner.position.set(0, 7.3, -3.4); S.add(banner);
+    var banner = new T.Mesh(new T.PlaneGeometry(9.2, 1.44), new T.MeshBasicMaterial({ map: banTex, transparent: true })); banner.position.set(0, 6.55, -3.4); S.add(banner);
     var bulbs = [], balloons = [];
     /* pháo giấy 3D rơi nhẹ liên tục */
     var CN = 140, cpos = new Float32Array(CN * 3), ccol = new Float32Array(CN * 3), cspd = new Float32Array(CN), cpal = ["#ff5cb8", "#5cc8ff", "#ffd45c", "#ffffff", "#a05cff", "#7affc8"];
@@ -189,6 +189,34 @@ var W20Stage3D = (function () {
     var GLOW = null;
     function glowTex() { if (GLOW) return GLOW; var c = document.createElement("canvas"); c.width = c.height = 128; var g = c.getContext("2d"), r = g.createRadialGradient(64, 64, 4, 64, 64, 64); r.addColorStop(0, "rgba(255,246,205,1)"); r.addColorStop(.4, "rgba(255,226,150,.55)"); r.addColorStop(1, "rgba(255,226,150,0)"); g.fillStyle = r; g.fillRect(0, 0, 128, 128); GLOW = new T.CanvasTexture(c); return GLOW; }
     GL = false;
+    /* tim bay và bong bóng biểu cảm đáng yêu của anh em */
+    var HEART = null, EMO = {}, EMOJIS = ["😍", "🥰", "😘", "🤩", "😊", "😻", "💖", "😆", "🥳", "😇"];
+    function heartTex() { if (HEART) return HEART; var c = document.createElement("canvas"); c.width = c.height = 128; var g = c.getContext("2d"); g.translate(64, 62); g.scale(1.5, 1.5);
+      var gr = g.createRadialGradient(-10, -14, 4, 0, 0, 46); gr.addColorStop(0, "#ffd0e6"); gr.addColorStop(.5, "#ff5fa0"); gr.addColorStop(1, "#d6246e"); g.fillStyle = gr;
+      g.beginPath(); g.moveTo(0, 28); g.bezierCurveTo(-46, -4, -26, -40, 0, -16); g.bezierCurveTo(26, -40, 46, -4, 0, 28); g.fill(); g.fillStyle = "rgba(255,255,255,.55)"; g.beginPath(); g.ellipse(-16, -16, 7, 4, -.6, 0, 6.283); g.fill();
+      HEART = new T.CanvasTexture(c); HEART.encoding = T.sRGBEncoding; return HEART; }
+    function emoTex(ch) { if (EMO[ch]) return EMO[ch]; var c = document.createElement("canvas"); c.width = c.height = 192; var g = c.getContext("2d");
+      g.fillStyle = "#fff"; g.shadowColor = "rgba(0,0,0,.35)"; g.shadowBlur = 10; g.beginPath(); g.arc(96, 90, 76, 0, 6.283); g.fill(); g.beginPath(); g.moveTo(52, 140); g.lineTo(34, 180); g.lineTo(86, 156); g.fill(); g.shadowBlur = 0;
+      g.font = "100px 'Segoe UI Emoji','Apple Color Emoji','Noto Color Emoji',sans-serif"; g.textAlign = "center"; g.textBaseline = "middle"; g.fillText(ch, 96, 96);
+      var t = new T.CanvasTexture(c); t.encoding = T.sRGBEncoding; EMO[ch] = t; return t; }
+    function makeFx(k) {
+      var fx = new T.Group(), hs = [];
+      for (var i = 0; i < 9; i++) { var sp = new T.Sprite(new T.SpriteMaterial({ map: heartTex(), transparent: true, depthWrite: false, opacity: 0 })); sp.userData.ph = i / 9; sp.userData.dx = (i % 3 - 1) * .5 + (Math.random() - .5) * .4; fx.add(sp); hs.push(sp); }
+      var bub = new T.Sprite(new T.SpriteMaterial({ map: emoTex(EMOJIS[(k * 3 + Math.floor(Math.random() * 10)) % EMOJIS.length]), transparent: true, depthWrite: false, opacity: 0 })); bub.scale.set(.1, .1, 1); fx.add(bub);
+      var bub2 = new T.Sprite(new T.SpriteMaterial({ map: emoTex(["💕", "✨", "💗", "😍"][Math.floor(Math.random() * 4)]), transparent: true, depthWrite: false, opacity: 0 })); bub2.scale.set(.1, .1, 1); fx.add(bub2);
+      fx.userData = { hearts: hs, bub: bub, bub2: bub2 }; return fx;
+    }
+    function updFx(it, mx, gx, t, tt, after, presenting, now) {
+      var fx = it.fx, u = fx.userData, sc = it.sc, on = presenting || after, mid = (mx + gx) / 2, k;
+      u.hearts.forEach(function (h, i) {
+        var ph = ((now / 1700) + h.userData.ph) % 1, a = on ? Math.sin(Math.min(1, ph) * Math.PI) : 0, big = after ? 1 : .6;
+        h.position.set(mid + h.userData.dx * sc * .7 + Math.sin(ph * 6 + i) * .14, (1.8 + ph * 2.6) * sc * .85, 1.2); h.scale.setScalar((.28 + (i % 3) * .09) * sc * big); h.material.opacity = a * .95;
+      });
+      /* anh em: bong bóng biểu cảm nhún nhảy bên đầu */
+      var pop = on ? ease((tt + 400) / 500) : 0, bob = Math.sin(now / 180) * .06;
+      u.bub.position.set(mx - .95 * sc, 2.75 * sc * .9 + bob, 1.1); u.bub.scale.setScalar(.8 * sc * pop); u.bub.material.opacity = pop;
+      var p2 = after ? ease((tt - 200) / 400) : 0; u.bub2.position.set(gx + .95 * sc, 2.8 * sc * .9 - bob, 1.1); u.bub2.scale.setScalar(.8 * sc * p2); u.bub2.material.opacity = p2;
+    }
     function makeGift() {
       var g0 = new T.Group(), bx = new T.Mesh(new T.BoxGeometry(.34, .3, .34), mat("#f4a6c4", { roughness: .4 })); bx.castShadow = true; g0.add(bx);
       var lidG = new T.Group(); lidG.position.set(-.19, .15, 0); g0.add(lidG);
@@ -206,14 +234,14 @@ var W20Stage3D = (function () {
 
     /* ---------- lớp chữ: bảng công bố, lời chúc, chữ chờ ---------- */
     var ov = document.createElement("div"); ov.className = "s3ov"; ov.setAttribute("data-s", "WAITING");
-    ov.innerHTML = '<div class="s3vig"></div><div class="s3plates" aria-live="polite"></div><div class="s3wait"><b>Đang chờ chị em quay quà…</b><small>Chị em quay xong là anh em lên trao quà ngay!</small></div><div class="s3wish"></div><div class="s3next"></div>';
+    ov.innerHTML = '<div class="s3vig"></div><div class="s3plates" aria-live="polite"></div><div class="s3wish"></div><div class="s3next"></div>';
     wrap.style.position = "relative"; wrap.appendChild(ov);
-    var platesEl = ov.querySelector(".s3plates"), waitEl = ov.querySelector(".s3wait"), wishEl = ov.querySelector(".s3wish"), nextEl = ov.querySelector(".s3next");
+    var platesEl = ov.querySelector(".s3plates"), wishEl = ov.querySelector(".s3wish"), nextEl = ov.querySelector(".s3next");
     if (!document.getElementById("s3css")) {
       var st = document.createElement("style"); st.id = "s3css";
       st.textContent = ".s3ov{position:absolute;inset:0;pointer-events:none;font-family:'Be Vietnam Pro',sans-serif}" +
         ".s3vig{position:absolute;inset:0;opacity:0;transition:opacity .6s;background:radial-gradient(ellipse at 50% 55%,rgba(0,0,0,0) 35%,rgba(0,22,18,.62) 100%)}.s3ov[data-s=ANNOUNCING] .s3vig,.s3ov[data-s=PRESENTING] .s3vig{opacity:1}" +
-        ".s3plates{position:absolute;left:4%;right:4%;top:12%;display:flex;gap:1.2%;justify-content:center}" +
+        ".s3plates{position:absolute;left:4%;right:4%;top:19%;display:flex;gap:1.2%;justify-content:center}" +
         ".s3pl{flex:1 1 0;max-width:46%;background:rgba(26,10,58,.9);border:2px solid #ff7ac8;border-radius:14px;box-shadow:0 0 18px rgba(255,90,190,.55),0 8px 22px rgba(0,0,0,.5);color:#fff;padding:.45em .45em;text-align:center;font-size:clamp(8px,1.3vw,16px);line-height:1.3;opacity:0;transform:translateY(-14px) scale(.9);transition:opacity .5s,transform .5s cubic-bezier(.2,1.4,.4,1)}" +
         ".s3pl.on{opacity:1;transform:none}.s3pl .t{font:700 1.08em 'Playfair Display',serif;color:#ffd0ec}.s3pl .n{font-weight:800;color:#fff}" +
         ".s3pl .p,.s3pl .q{font-weight:700;color:#ffe9a6;transition:opacity .5s}.s3pl .p{display:none;opacity:0}.s3pl .p img{height:1.5em!important;vertical-align:middle}.s3pl .q{color:#c9b8f0;font-style:italic}" +
@@ -256,7 +284,7 @@ var W20Stage3D = (function () {
     }
     function clearCur() {
       if (!cur) return;
-      cur.items.forEach(function (it) { [it.man, it.girl, it.gift].forEach(function (o) { S.remove(o); o.traverse(function (c) { if (c.geometry) c.geometry.dispose(); if (c.material && c.material.dispose && !c.material.map) c.material.dispose(); }); }); });
+      cur.items.forEach(function (it) { [it.man, it.girl, it.gift, it.fx].forEach(function (o) { S.remove(o); o.traverse(function (c) { if (c.geometry) c.geometry.dispose(); if (c.material && c.material.dispose && !c.material.map) c.material.dispose(); }); }); });
       cur = null; platesEl.innerHTML = ""; wishEl.classList.remove("on"); wishEl.textContent = ""; STATE = "WAITING"; ov.setAttribute("data-s", "WAITING");
     }
     var lastMan = -1;
@@ -272,8 +300,9 @@ var W20Stage3D = (function () {
         man.scale.setScalar(scl); girl.scale.setScalar(scl); gift.scale.setScalar(scl * 1.15);
         man.position.set(-12, 0, .6); girl.position.set(12, 0, .6); S.add(man, girl, gift);
         var cx = -6.3 + slot * (k + .5), d = Math.min(1.2, slot * .26);
-        return { k: k, name: e.name, prize: e.prize, title: title, style: (nextStyle++) % STYLES.length, man: man, girl: girl, gift: gift, cx: cx, d: d, sc: scl, burst: 0 };
+        return { k: k, name: e.name, prize: e.prize, title: title, style: (nextStyle++) % STYLES.length, man: man, girl: girl, gift: gift, fx: makeFx(k), cx: cx, d: d, sc: scl, burst: 0 };
       });
+      items.forEach(function (it) { S.add(it.fx); });
       cur = { items: items, t0: now, n: n, batch: batch, replay: !!isReplay };
       platesEl.innerHTML = items.map(function (it) {
         var pz = it.prize || {}, ic = typeof w20IconHTML === "function" ? w20IconHTML(pz.icon, 20) : esc(pz.icon || "");
@@ -334,6 +363,9 @@ var W20Stage3D = (function () {
         if (!it.burst) { it.burst = 1; platesEl.children[it.k] && platesEl.children[it.k].classList.add("rev"); try { if (RM) throw 0; var rc = cv.getBoundingClientRect(), v = new T.Vector3(gx, 1.6, 0).project(CAM); FX.burst(rc.left + (v.x + 1) / 2 * rc.width, rc.top + (1 - v.y) / 2 * rc.height, cur.n > 2 ? 70 : 130); if (it.k === 0) FX.rain(); } catch (er) {} }
       }
       m.position.set(mx, 0, .6); g.position.set(gx, 0, .6);
+      var onP = !walking, cel = after;
+      if (onP && !RM) { var wig = Math.sin(now / 170 + it.k) * (cel ? .05 : .025); mu.torso.rotation.z += wig; mu.head.material.rotation = wig * .8; gu.torso.rotation.z += -wig * .6; } /* nghiêng đầu đáng yêu */
+      updFx(it, mx, gx, t, tt, after, onP && !after, now);
       m.updateMatrixWorld(true); g.updateMatrixWorld(true);
       /* quà: luôn nằm trong tay người cầm */
       var mh = handPos(mu.A[1]), gp;
@@ -371,7 +403,6 @@ var W20Stage3D = (function () {
         rimGlow.material.opacity = .2 + Math.sin(ts * 2) * .06;
         var cp = cgeo.attributes.position, dt = 1 / 30; for (var q = 0; q < CN; q++) { var y = cp.getY(q) - cspd[q] * dt; if (y < -.3) y = 9 + Math.random(); cp.setY(q, y); cp.setX(q, cp.getX(q) + Math.sin(ts * 1.3 + q) * .004); } cp.needsUpdate = true;
       }
-      waitEl.style.opacity = (cur || Q.length) ? "0" : "";
       if (cur) {
         var t = now - cur.t0;
         setState(t < ANN ? "ANNOUNCING" : t < ANN + T2 ? "PRESENTING" : t < ANN + T2 + CEL ? "CELEBRATING" : "COMPLETED");
