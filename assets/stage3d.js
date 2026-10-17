@@ -24,7 +24,7 @@ var W20Stage3D = (function () {
   function make(cv, opt) {
     opt = opt || {};
     var wrap = cv.parentNode, W0 = 960, H0 = 540;
-    var R = new T.WebGLRenderer({ canvas: cv, antialias: true, alpha: false });
+    var R = new T.WebGLRenderer({ canvas: cv, antialias: true, alpha: false, preserveDrawingBuffer: true });
     R.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
     R.outputEncoding = T.sRGBEncoding; R.shadowMap.enabled = true; R.shadowMap.type = T.PCFSoftShadowMap;
     R.toneMapping = T.ACESFilmicToneMapping; R.toneMappingExposure = 1.05;
@@ -214,23 +214,27 @@ var W20Stage3D = (function () {
       var mx = lerp(-11, mxT, k1), gx = lerp(11, gxT, k1);
       var walking = t < T1, u = walking ? 0 : clamp01((t - T1) / (T2 - T1)), after = t >= T2, tt = t - T2;
       /* đặt lại tư thế */
-      mu.body.position.y = 0; mu.body.rotation.x = 0; mu.torso.rotation.x = 0; gu.body.position.y = 0;
+      mu.body.position.y = 0; mu.body.rotation.x = 0; mu.torso.rotation.x = 0; gu.body.position.y = 0; gu.body.rotation.set(0, 0, 0); gu.torso.rotation.set(0, 0, 0);
       mu.A.forEach(function (a) { a.rotation.set(0, 0, 0); }); gu.A.forEach(function (a) { a.rotation.set(0, 0, 0); });
       mu.L.forEach(function (l) { l.rotation.set(0, 0, 0); }); gu.L.forEach(function (l) { l.rotation.set(0, 0, 0); });
-      m.rotation.y = walking ? 1.2 : .55; g.rotation.y = walking ? -1.2 : -.55;
+      m.rotation.y = walking ? 1.2 : .55; g.rotation.y = walking ? -.75 : -.55;
       if (walking) {
-        var ph = now / 120 + it.k; setWalk(m, ph, .6); setWalk(g, ph + 1, .45);
-        mu.body.position.y = Math.abs(Math.sin(ph)) * .06; gu.body.position.y = Math.abs(Math.sin(ph + 1)) * .05;
-        mu.A[0].rotation.x = -Math.sin(ph) * .5; mu.A[1].rotation.x = -1.1; gu.A[0].rotation.x = Math.sin(ph) * .4; gu.A[1].rotation.x = -Math.sin(ph) * .4;
+        var ph = now / 120 + it.k; setWalk(m, ph, .6);
+        mu.body.position.y = Math.abs(Math.sin(ph)) * .06;
+        mu.A[0].rotation.x = -Math.sin(ph) * .5; mu.A[1].rotation.x = -1.1;
+        /* chị bước vào kiểu công chúa: lướt nhẹ, váy đung đưa, một tay vẫy kiểu hoàng gia, tay kia chống eo */
+        var pp = now / 260 + it.k; setWalk(g, pp, .12); gu.body.position.y = .03 + Math.sin(pp * 2) * .025; gu.body.rotation.z = Math.sin(pp) * .07; gu.torso.rotation.y = Math.sin(pp) * .15;
+        gu.A[1].rotation.z = 2.3 + Math.sin(now / 170 + it.k) * .3; gu.A[1].rotation.x = -.3; gu.A[0].rotation.z = -.75; gu.A[0].rotation.x = .25;
       }
       var reach = 0, two = false, holdGirl = false;
       if (!walking && !after) {
+        if (u < .3) { var cs = Math.sin(u / .3 * Math.PI); gu.body.position.y = -.12 * cs; gu.torso.rotation.x = .25 * cs; gu.A[0].rotation.z = -.6 * cs; gu.A[1].rotation.z = .6 * cs; } /* nhún chào kiểu công chúa */
         if (st === 0) { reach = ease(u); two = true; }
         else if (st === 1) { var dn = ease(clamp01(u * 3)) * (1 - ease(clamp01((u - .72) / .28))); mu.body.position.y = -.3 * dn; mu.L[0].rotation.x = -1.4 * dn; mu.L[1].rotation.x = .9 * dn; reach = ease(clamp01(u * 1.5)); two = true; }
         else if (st === 2) { mu.body.rotation.x = .38 * Math.sin(u * Math.PI); reach = ease(u); }
         else if (st === 3) { reach = ease(u); }
         else { mx = mxT + .3 * sc * ease(u); reach = ease(u); }
-        mu.A[1].rotation.x = -1.1 - .45 * reach; if (two) mu.A[0].rotation.x = -1.1 - .45 * reach, mu.A[0].rotation.z = -.25 * reach, mu.A[1].rotation.z = .25 * reach;
+        mu.A[1].rotation.x = -1.1 - .45 * reach; if (two) mu.A[0].rotation.x = -1.1 - .45 * reach, mu.A[0].rotation.z = .25 * reach, mu.A[1].rotation.z = -.25 * reach;
         if (u > .4) { var gr = ease((u - .4) / .6); gu.A[0].rotation.x = -1.3 * gr; gu.A[1].rotation.x = -1.3 * gr; }
         holdGirl = u > .72;
       }
@@ -241,7 +245,7 @@ var W20Stage3D = (function () {
         } else if (st === 3 && tt < 2600) {
           mu.A[1].rotation.z = 2.6 + Math.sin(tt / 120) * .35; gu.A[0].rotation.z = -2.0; gu.A[1].rotation.x = -1.2; gu.body.position.y = Math.abs(Math.sin(tt / 260)) * .25;
         } else {
-          var cl = Math.sin(tt / 95 + it.k); mu.A[0].rotation.x = -1.25; mu.A[1].rotation.x = -1.25; mu.A[0].rotation.z = -.35 - cl * .25; mu.A[1].rotation.z = .35 + cl * .25;
+          var cl = Math.sin(tt / 95 + it.k); mu.A[0].rotation.x = -1.25; mu.A[1].rotation.x = -1.25; var cz = .62 + (cl + 1) * .07; mu.A[0].rotation.z = cz; mu.A[1].rotation.z = -cz; /* hai bàn tay chạm nhau trước ngực */
           mu.body.position.y = Math.abs(Math.sin(tt / 200 + it.k)) * .08;
           gu.A[0].rotation.z = -2.0 + Math.sin(tt / 140 + it.k) * .3; gu.A[1].rotation.x = -1.2; gu.body.position.y = Math.abs(Math.sin(tt / 260 + it.k)) * .28;
         }
