@@ -108,7 +108,7 @@ var W20Stage3D = (function () {
     function limb(r, len, col) { var g0 = new T.Group(), m = new T.Mesh(new T.CylinderGeometry(r, r * .92, len, 12), mat(col, { roughness: .7 })); m.position.y = -len / 2; m.castShadow = true; g0.add(m); var hnd = new T.Mesh(new T.SphereGeometry(r * 1.15, 12, 10), mat(SKIN, { roughness: .6 })); hnd.position.y = -len - r * .4; g0.add(hnd); g0.userData.hand = hnd; return g0; }
     function leg(r, len, col, shoe) { var g0 = new T.Group(), m = new T.Mesh(new T.CylinderGeometry(r, r, len, 12), mat(col, { roughness: .7 })); m.position.y = -len / 2; m.castShadow = true; g0.add(m); var sh = new T.Mesh(new T.BoxGeometry(r * 2.2, r * 1.1, r * 3.2), mat(shoe, { roughness: .4 })); sh.position.set(0, -len, r * .7); sh.castShadow = true; g0.add(sh); return g0; }
     function faceSprite(map, w) { var sp = new T.Sprite(new T.SpriteMaterial({ map: map, transparent: true, depthWrite: true, alphaTest: .05 })); sp.scale.set(w, w * 1.15, 1); sp.userData.w = w; return sp; }
-    function fitFace(sp) { var im = sp.material.map && sp.material.map.image; var hH = 1.45; if (im && im.width) sp.scale.set(hH * im.width / im.height, hH, 1); /* mọi mặt cao bằng nhau */ sp.position.y = sp.userData.base + sp.scale.y / 2 - .2; }
+    function fitFace(sp) { var im = sp.material.map && sp.material.map.image; var hH = 1.45; if (im && im.width) sp.scale.set(hH * im.width / im.height, hH, 1); /* mọi mặt cao bằng nhau */ sp.position.y = sp.userData.base + sp.scale.y / 2 - .14; sp.position.z = .05; }
     function makeMan(img) {
       var root = new T.Group(), body = new T.Group(); root.add(body);
       var L1 = leg(.12, .55, PANTS, "#15151c"), L2 = leg(.12, .55, PANTS, "#15151c"); L1.position.set(-.15, .6, 0); L2.position.set(.15, .6, 0); body.add(L1, L2);
@@ -117,10 +117,15 @@ var W20Stage3D = (function () {
       var shirt = new T.Mesh(new T.ConeGeometry(.15, .36, 3), mat("#ffffff")); shirt.rotation.x = Math.PI; shirt.position.set(0, .5, .27); shirt.scale.z = .3; torso.add(shirt);
       var tie = new T.Mesh(new T.BoxGeometry(.08, .34, .03), mat("#4a66b0", { roughness: .4 })); tie.position.set(0, .45, .33); tie.rotation.x = -.15; torso.add(tie);
       var knot = new T.Mesh(new T.BoxGeometry(.1, .07, .04), tie.material); knot.position.set(0, .63, .3); torso.add(knot);
+      /* vai tròn, ve áo, cúc áo, khăn túi ngực cho com lê đẹp hơn */
+      [-1, 1].forEach(function (d) { var sh = new T.Mesh(new T.SphereGeometry(.13, 16, 12), mat(NAVY, { roughness: .55 })); sh.position.set(d * .33, .6, 0); sh.castShadow = true; torso.add(sh);
+        var lp = new T.Mesh(new T.BoxGeometry(.09, .3, .02), mat("#1a2850", { roughness: .4 })); lp.position.set(d * .1, .5, .3); lp.rotation.z = d * .35; torso.add(lp); });
+      var top = new T.Mesh(new T.SphereGeometry(.3, 20, 10, 0, Math.PI * 2, 0, Math.PI / 2), mat(NAVY, { roughness: .6 })); top.position.y = .66; top.scale.y = .35; torso.add(top);
+      [.22, .1].forEach(function (y) { var bt = new T.Mesh(new T.SphereGeometry(.025, 10, 8), mat("#d4af37", { metalness: .8, roughness: .3 })); bt.position.set(.06, y, .36); torso.add(bt); });
+      var pk = new T.Mesh(new T.BoxGeometry(.08, .05, .02), mat("#ff6f96")); pk.position.set(-.2, .5, .31); pk.rotation.y = -.3; torso.add(pk);
+      var belt = new T.Mesh(new T.CylinderGeometry(.375, .375, .05, 20), mat("#141a33", { roughness: .4 })); belt.position.y = .02; torso.add(belt);
       var A1 = limb(.085, .48, NAVY), A2 = limb(.085, .48, NAVY); A1.position.set(-.38, .6, 0); A2.position.set(.38, .6, 0); torso.add(A1, A2);
-      var neck = new T.Mesh(new T.CylinderGeometry(.11, .13, .2, 14), mat(SKIN, { roughness: .6 })); neck.position.y = .72; torso.add(neck);
-      var collar = new T.Mesh(new T.TorusGeometry(.14, .045, 8, 20), mat("#ffffff", { roughness: .5 })); collar.rotation.x = Math.PI / 2; collar.position.y = .66; torso.add(collar);
-      var head = faceSprite(tex(img), 1.3); head.userData.base = .74; torso.add(head);
+      var head = faceSprite(tex(img), 1.3); head.userData.base = .66; torso.add(head);
       root.userData = { body: body, torso: torso, L: [L1, L2], A: [A1, A2], head: head }; return root;
     }
     function makeGirl(img, fb, pal) {
@@ -133,10 +138,15 @@ var W20Stage3D = (function () {
       var bod = new T.Mesh(new T.CylinderGeometry(.19, .22, .36, 20), new T.MeshStandardMaterial({ color: c1, roughness: .35, metalness: .25 })); bod.position.y = .1; bod.castShadow = true; torso.add(bod);
       var sash = new T.Mesh(new T.BoxGeometry(.1, .62, .03), mat("#fff3c4", { metalness: .5, roughness: .3, emissive: "#6a5000", emissiveIntensity: .3 })); sash.position.set(0, .02, .22); sash.rotation.z = .72; torso.add(sash);
       var sp = new T.Points(new T.BufferGeometry().setFromPoints(Array.from({ length: 60 }, function (_, i) { var a = i * 2.4, yy = .32 + (i * 37 % 60) / 60 * .82, rr = lerp(.78, .2, (yy - .28) / .9) + .02; return new T.Vector3(Math.cos(a) * rr, yy, Math.sin(a) * rr); })), new T.PointsMaterial({ color: "#ffffff", size: .05, transparent: true, opacity: .9 })); body.add(sp);
+      /* tay áo bồng, nơ eo */
+      [-1, 1].forEach(function (d) { var pf = new T.Mesh(new T.SphereGeometry(.1, 16, 12), new T.MeshStandardMaterial({ color: c1, roughness: .35, metalness: .2 })); pf.position.set(d * .24, .25, 0); pf.scale.set(1, .85, 1); torso.add(pf); });
+      var top2 = new T.Mesh(new T.SphereGeometry(.2, 20, 10, 0, Math.PI * 2, 0, Math.PI / 2), new T.MeshStandardMaterial({ color: c1, roughness: .35, metalness: .25 })); top2.position.y = .27; top2.scale.y = .3; torso.add(top2);
+      var bow = new T.Group(), bm2 = mat("#ffffff", { roughness: .35, metalness: .3 });
+      [-1, 1].forEach(function (d) { var lb = new T.Mesh(new T.SphereGeometry(.07, 12, 10), bm2); lb.scale.set(1.3, .8, .5); lb.position.set(d * .08, 0, 0); bow.add(lb); });
+      var bc = new T.Mesh(new T.SphereGeometry(.035, 10, 8), bm2); bow.add(bc); bow.position.set(0, -.08, .21); torso.add(bow);
+      var waist = new T.Mesh(new T.TorusGeometry(.215, .025, 8, 24), bm2); waist.rotation.x = Math.PI / 2; waist.position.y = -.08; torso.add(waist);
       var A1 = limb(.065, .42, SKIN), A2 = limb(.065, .42, SKIN); A1.position.set(-.26, .26, 0); A2.position.set(.26, .26, 0); torso.add(A1, A2);
-      var neck = new T.Mesh(new T.CylinderGeometry(.08, .1, .18, 14), mat(SKIN, { roughness: .6 })); neck.position.y = .34; torso.add(neck);
-      var lace = new T.Mesh(new T.TorusGeometry(.105, .022, 8, 24), mat("#fff3c4", { metalness: .7, roughness: .2, emissive: "#6a5000", emissiveIntensity: .3 })); lace.rotation.x = Math.PI / 2.4; lace.position.set(0, .29, .02); torso.add(lace);
-      var head = faceSprite(tex(img, fb), 1.3); head.userData.base = .36; torso.add(head);
+      var head = faceSprite(tex(img, fb), 1.3); head.userData.base = .28; torso.add(head);
       var crown = new T.Group(), gold = mat("#ffd24a", { metalness: .9, roughness: .2, emissive: "#6a4a00", emissiveIntensity: .4 });
       var band = new T.Mesh(new T.CylinderGeometry(.22, .22, .08, 20, 1, true), gold); crown.add(band);
       for (var i = 0; i < 5; i++) { var a = i / 5 * Math.PI * 2, pk = new T.Mesh(new T.ConeGeometry(.05, .16 + (i === 0 ? .06 : 0), 6), gold); pk.position.set(Math.sin(a) * .22, .1, Math.cos(a) * .22); crown.add(pk); }
