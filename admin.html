@@ -106,7 +106,7 @@ code{background:rgba(0,0,0,.25);border-radius:6px;padding:1px 6px;font-size:.92e
       </div>
       <details class="aw-test noprint"><summary>🧪 Chạy thử (không tính vào dữ liệu)</summary>
         <div><button class="mcb" id="sdemo" type="button">▶ Thử 1 chị</button><button class="mcb" id="sdemo5" type="button">▶▶ Thử 5 chị cùng lúc</button></div>
-        <p class="muted" style="margin:8px 0 0">Phím tắt: N = trao tiếp · S = bỏ qua · R = phát lại · P = tạm dừng/tiếp tục · F = toàn màn hình.</p>
+        <p class="muted aw-hint" style="margin:8px 0 0">Phím tắt: N = trao tiếp · S = bỏ qua · R = phát lại · P = tạm dừng/tiếp tục · F = toàn màn hình.</p>
       </details>
     </div>
     <div class="panel"><h3>🎁 Chị em đã nhận quà</h3><p class="muted" id="slogcnt"></p><div class="list" id="slog"></div></div>
@@ -187,8 +187,6 @@ code{background:rgba(0,0,0,.25);border-radius:6px;padding:1px 6px;font-size:.92e
 <script src="assets/flowers.js?v=20261013"></script>
 <script src="assets/modules.js?v=20261090"></script>
 <script src="assets/stage.js?v=23"></script>
-<script src="assets/three.min.js?v=128"></script>
-<script src="assets/stage3d.js?v=21"></script>
 <script>
 (function () {
   var $ = function (s) { return document.querySelector(s); };
@@ -238,10 +236,11 @@ code{background:rgba(0,0,0,.25);border-radius:6px;padding:1px 6px;font-size:.92e
     $("#awq").textContent = sv.queue; mcCounts(sv);
     var ctl = !!(STG && STG.is3d);
     $("#mcrun").textContent = sv.running ? "⏸ Tạm dừng" : "▶ Bắt đầu / Tiếp tục"; $("#mcrun").setAttribute("aria-pressed", String(!!sv.running));
+    ["#mcrun", "#mcnext", "#mcskip", "#mcreplay", "#mcsound"].forEach(function (i) { $(i).hidden = !ctl; }); $("#awstate").style.display = ctl ? "" : "none"; $(".aw-hint").hidden = !ctl; /* bản 2D chỉ có nút toàn màn hình */
     $("#mcrun").disabled = !ctl; $("#mcnext").disabled = !ctl || sv.busy || !sv.queue; $("#mcskip").disabled = !ctl || !sv.busy; $("#mcreplay").disabled = !ctl || sv.busy || !sv.canReplay; $("#mcsound").disabled = !ctl;
     $("#mcsound").textContent = sv.sound ? "🔊 Âm thanh: Bật" : "🔇 Âm thanh: Tắt"; $("#mcsound").setAttribute("aria-pressed", String(!!sv.sound));
   }
-  var gotCount = 0; function mcCounts(sv) { var q = sv ? sv.size : 0; $("#awtotal").textContent = W20P.length; $("#awdone").textContent = Math.max(0, gotCount - q); $("#awbar").style.width = (W20P.length ? Math.max(0, Math.min(100, (gotCount - q) / W20P.length * 100)) : 0) + "%"; }
+  var gotCount = 0; function mcCounts(sv) { var q = STG && STG.size ? STG.size() : 0; $("#awtotal").textContent = W20P.length; $("#awdone").textContent = Math.max(0, gotCount - q); $("#awbar").style.width = (W20P.length ? Math.max(0, Math.min(100, (gotCount - q) / W20P.length * 100)) : 0) + "%"; }
   function stage() {
     if (!STG) {
       var cb = { onChange: mcRefresh };
