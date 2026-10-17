@@ -28,8 +28,8 @@ var W20Stage3D = (function () {
     var R = new T.WebGLRenderer({ canvas: cv, antialias: true, alpha: false, powerPreference: "high-performance" });
     R.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.75));
     R.outputEncoding = T.sRGBEncoding; R.shadowMap.enabled = true; R.shadowMap.type = T.PCFSoftShadowMap;
-    R.toneMapping = T.ACESFilmicToneMapping; R.toneMappingExposure = 1.05;
-    var S = new T.Scene(); S.background = new T.Color("#05231d"); S.fog = new T.Fog("#05231d", 18, 34);
+    R.toneMapping = T.ACESFilmicToneMapping; R.toneMappingExposure = .85;
+    var S = new T.Scene(); S.background = new T.Color("#120a2c"); S.fog = new T.Fog("#120a2c", 22, 40);
     var CAM = new T.PerspectiveCamera(38, W0 / H0, .1, 100);
     var TEX = {}, PH = null;
     /* ảnh thay thế khi thiếu/lỗi ảnh mặt: bóng người trên nền champagne, không làm vỡ bố cục */
@@ -50,95 +50,86 @@ var W20Stage3D = (function () {
     }
     function pastel(h, a) { return "#" + new T.Color(h).lerp(new T.Color("#ffffff"), a).getHexString(); }
     function lc(c) { return new T.Color(c).convertSRGBToLinear(); }
-    function mat(c, o) { o = o || {}; o.color = lc(c); if (o.emissive) o.emissive = lc(o.emissive); return new T.MeshStandardMaterial(o); }
+    var GL = false; /* GL=true: vật liệu bóng như đồ chơi nhựa (nhân vật) */
+    function mat(c, o) { o = o || {}; o.color = lc(c); if (o.emissive) o.emissive = lc(o.emissive); if (GL) { o.clearcoat = .7; o.clearcoatRoughness = .22; o.roughness = Math.min(o.roughness == null ? .5 : o.roughness, .4); return new T.MeshPhysicalMaterial(o); } return new T.MeshStandardMaterial(o); }
     function cvTex(w, h, fn) { var c = document.createElement("canvas"); c.width = w; c.height = h; fn(c.getContext("2d"), w, h); var t = new T.CanvasTexture(c); t.encoding = T.sRGBEncoding; return t; }
 
-    /* ---------- ánh sáng ---------- */
-    S.add(new T.AmbientLight("#fff0d6", .38));
-    S.add(new T.HemisphereLight("#fff4dc", "#0a3a30", .45));
-    var key = new T.DirectionalLight("#fff4e0", 1.0); key.position.set(3, 9, 8); key.castShadow = true;
+    /* ---------- ánh sáng: tông tím-hồng-xanh neon, đèn rọi vàng ấm ---------- */
+    S.add(new T.AmbientLight("#c9b8ff", .4));
+    S.add(new T.HemisphereLight("#ffd9f0", "#1a1050", .55));
+    var key = new T.DirectionalLight("#fff0e0", .95); key.position.set(2, 9, 8); key.castShadow = true;
     key.shadow.mapSize.set(1024, 1024); var sc0 = key.shadow.camera; sc0.left = -10; sc0.right = 10; sc0.top = 8; sc0.bottom = -3; sc0.near = 1; sc0.far = 30; key.shadow.bias = -.0008; S.add(key);
+    var rimL = new T.PointLight("#ff4fb0", .9, 16); rimL.position.set(-6.5, 3, 1); S.add(rimL);
+    var rimR = new T.PointLight("#4f9bff", .9, 16); rimR.position.set(6.5, 3, 1); S.add(rimR);
     var spots = [];
-    [["#ffe6a8", -5], ["#fff4d0", 0], ["#c9f0e6", 5]].forEach(function (s, i) {
-      var sp = new T.SpotLight(s[0], .9, 26, .3, .6, 1.2); sp.position.set(s[1] * .8, 9.5, 5); sp.target.position.set(s[1] * .4, 0, 0); S.add(sp); S.add(sp.target);
-      var beam = new T.Mesh(new T.ConeGeometry(1.6, 9.5, 24, 1, true), new T.MeshBasicMaterial({ color: s[0], transparent: true, opacity: .045, side: T.DoubleSide, depthWrite: false, blending: T.AdditiveBlending }));
-      beam.position.set(s[1] * .6, 4.9, 2.5); S.add(beam); spots.push({ l: sp, b: beam, x: s[1], i: i });
+    [["#ffcf8a", 0, .8], ["#ff7ac8", -6, .6], ["#7ab8ff", 6, .6]].forEach(function (c, i) {
+      var sp = new T.SpotLight(c[0], c[2], 28, .34, .7, 1.2); sp.position.set(c[1] * .8, 10, 5); sp.target.position.set(c[1] * .4, 0, 0); S.add(sp); S.add(sp.target);
+      var beam = new T.Mesh(new T.ConeGeometry(i ? 1.5 : 3.2, 10, 28, 1, true), new T.MeshBasicMaterial({ color: c[0], transparent: true, opacity: i ? .04 : .05, side: T.DoubleSide, depthWrite: false, blending: T.AdditiveBlending }));
+      beam.position.set(c[1] * .6, 5, 2.5); S.add(beam); spots.push({ l: sp, b: beam, x: c[1], i: i });
     });
 
-    /* ---------- sân khấu ---------- */
-    var floorTex = cvTex(512, 256, function (g, w, h) {
-      var gr = g.createLinearGradient(0, 0, 0, h); gr.addColorStop(0, "#d79a5a"); gr.addColorStop(1, "#8a5428"); g.fillStyle = gr; g.fillRect(0, 0, w, h);
-      g.strokeStyle = "rgba(70,35,10,.35)"; g.lineWidth = 3; for (var y = 0; y < h; y += 32) { g.beginPath(); g.moveTo(0, y); g.lineTo(w, y); g.stroke(); for (var x = (y / 32 % 2) * 64; x < w; x += 128) { g.beginPath(); g.moveTo(x, y); g.lineTo(x, y + 32); g.stroke(); } }
-    });
-    var floor = new T.Mesh(new T.BoxGeometry(22, .4, 9), mat("#ffffff", { map: floorTex, roughness: .45, metalness: .05 })); floor.position.set(0, -.2, -1); floor.receiveShadow = true; S.add(floor);
-    var edge = new T.Mesh(new T.BoxGeometry(22, .08, .12), mat("#f3c969", { metalness: .7, roughness: .3, emissive: "#5a3a00" })); edge.position.set(0, .02, 3.5); S.add(edge);
-    var carpet = new T.Mesh(new T.PlaneGeometry(5.2, 9), mat("#0c5c49", { roughness: .9 })); carpet.rotation.x = -Math.PI / 2; carpet.position.set(0, .012, -1); carpet.receiveShadow = true; S.add(carpet);
-    [-2.6, 2.6].forEach(function (x) { var l = new T.Mesh(new T.PlaneGeometry(.08, 9), mat("#f3c969", { emissive: "#6a4a00" })); l.rotation.x = -Math.PI / 2; l.position.set(x, .015, -1); S.add(l); });
-    /* phông sau */
+    /* ---------- sân khấu: bục tròn phát sáng + nền neon ---------- */
+    var gloss = new T.Mesh(new T.PlaneGeometry(60, 40), mat("#150a34", { roughness: .25, metalness: .4 })); gloss.rotation.x = -Math.PI / 2; gloss.position.set(0, -.42, -4); gloss.receiveShadow = true; S.add(gloss);
+    var podTex = cvTex(512, 512, function (g, w, h) { var r = g.createRadialGradient(w / 2, h / 2, 20, w / 2, h / 2, w / 2); r.addColorStop(0, "#f2a8d4"); r.addColorStop(.7, "#e277b8"); r.addColorStop(1, "#c8509c"); g.fillStyle = r; g.fillRect(0, 0, w, h); });
+    var podium = new T.Group(); podium.position.set(0, 0, .3); podium.scale.set(1, 1, .45); S.add(podium);
+    var pTop = new T.Mesh(new T.CylinderGeometry(7.4, 7.6, .4, 72), [mat("#ffb6dc", { roughness: .3, metalness: .15 }), new T.MeshStandardMaterial({ map: podTex, roughness: .28, metalness: .1 }), mat("#ffb6dc", { roughness: .3 })]); pTop.position.y = -.2; pTop.receiveShadow = true; podium.add(pTop);
+    var rim = new T.Mesh(new T.TorusGeometry(7.45, .09, 12, 120), new T.MeshBasicMaterial({ color: "#ff6cc4" })); rim.rotation.x = Math.PI / 2; rim.position.y = .01; podium.add(rim);
+    var rimGlow = new T.Mesh(new T.TorusGeometry(7.45, .34, 12, 120), new T.MeshBasicMaterial({ color: "#ff3fa8", transparent: true, opacity: .22, blending: T.AdditiveBlending, depthWrite: false })); rimGlow.rotation.x = Math.PI / 2; rimGlow.position.y = .01; podium.add(rimGlow);
+    var rim2 = new T.Mesh(new T.TorusGeometry(6.8, .05, 10, 120), new T.MeshBasicMaterial({ color: "#7ab8ff", transparent: true, opacity: .8 })); rim2.rotation.x = Math.PI / 2; rim2.position.y = .012; podium.add(rim2);
     var back = cvTex(1024, 512, function (g, w, h) {
-      var gr = g.createRadialGradient(w / 2, h * .45, 30, w / 2, h * .45, w * .55); gr.addColorStop(0, "#26b39a"); gr.addColorStop(.55, "#0d6556"); gr.addColorStop(1, "#04221c"); g.fillStyle = gr; g.fillRect(0, 0, w, h);
-      for (var i = 0; i < 160; i++) { g.fillStyle = "rgba(255,236,190," + (.25 + Math.random() * .7) + ")"; g.beginPath(); g.arc(Math.random() * w, Math.random() * h * .85, .6 + Math.random() * 1.8, 0, 6.283); g.fill(); }
+      var gr = g.createLinearGradient(0, 0, w, 0); gr.addColorStop(0, "#c02a86"); gr.addColorStop(.35, "#6a2f86"); gr.addColorStop(.5, "#8a4a78"); gr.addColorStop(.65, "#33409e"); gr.addColorStop(1, "#1f2fb0"); g.fillStyle = gr; g.fillRect(0, 0, w, h);
+      var vg = g.createRadialGradient(w / 2, h * .5, h * .15, w / 2, h * .5, w * .62); vg.addColorStop(0, "rgba(255,170,110,.18)"); vg.addColorStop(.5, "rgba(120,40,110,.0)"); vg.addColorStop(1, "rgba(10,4,30,.65)"); g.fillStyle = vg; g.fillRect(0, 0, w, h);
     });
-    var wall = new T.Mesh(new T.PlaneGeometry(26, 12), new T.MeshBasicMaterial({ map: back })); wall.position.set(0, 5, -5.4); S.add(wall);
-    /* băng rôn */
-    var banTex = cvTex(1024, 128, function (g, w, h) {
-      var gr = g.createLinearGradient(0, 0, 0, h); gr.addColorStop(0, "#ffefb0"); gr.addColorStop(1, "#e0a100"); g.fillStyle = gr;
-      g.beginPath(); g.moveTo(0, 6); g.lineTo(w, 6); g.lineTo(w - 40, h / 2); g.lineTo(w, h - 6); g.lineTo(0, h - 6); g.lineTo(40, h / 2); g.closePath(); g.fill();
-      g.fillStyle = "#0a4a3b"; g.font = "700 62px 'Playfair Display',Georgia,serif"; g.textAlign = "center"; g.textBaseline = "middle"; g.fillText("✦ PTSPBL AWARDS | 20.10 ✦", w / 2, h / 2 + 3);
-    });
-    var banner = new T.Mesh(new T.PlaneGeometry(8.4, 1.05), new T.MeshBasicMaterial({ map: banTex, transparent: true })); banner.position.set(0, 6.55, -3.2); S.add(banner);
-    /* rèm hai bên */
-    var curMat = mat("#0d5c48", { roughness: .7, metalness: .05 });
-    [-1, 1].forEach(function (sd) {
-      for (var i = 0; i < 9; i++) { var cy = new T.Mesh(new T.CylinderGeometry(.34, .4, 10.5, 12), curMat); cy.position.set(sd * (8.4 - i * .42), 5.1, -1.6 + Math.sin(i) * .25); cy.castShadow = true; S.add(cy); }
-      
-    });
-    var val = new T.Mesh(new T.BoxGeometry(22, 1.1, .6), curMat); val.position.set(0, 9.6, -1.5); S.add(val);
-    var valGold = new T.Mesh(new T.BoxGeometry(22, .12, .65), mat("#f3c969", { metalness: .8, roughness: .3 })); valGold.position.set(0, 9.03, -1.5); S.add(valGold);
-    /* bóng đèn viền */
-    var bulbs = [];
-    for (var b = 0; b < 26; b++) { var bm = new T.Mesh(new T.SphereGeometry(.09, 10, 8), new T.MeshBasicMaterial({ color: lc("#fff1c9") })); bm.position.set(-10.5 + b * .84, 8.85, -1.15); S.add(bm); bulbs.push(bm); }
-    /* vòm hoa */
-    var arch = new T.Mesh(new T.TorusGeometry(4.2, .07, 10, 80, Math.PI), mat("#f3c969", { metalness: .8, roughness: .3, emissive: "#3a2600" })); arch.position.set(0, 1.6, -3.3); S.add(arch);
-    [-4.2, 4.2].forEach(function (x) { var p = new T.Mesh(new T.CylinderGeometry(.07, .07, 1.6, 10), arch.material); p.position.set(x, .8, -3.3); S.add(p); });
-    var flowerCols = ["#ffc9dc", "#ffb0cc", "#fff4d6", "#ffe3ee", "#ffffff"];
-    for (var f = 0; f <= 40; f++) {
-      var a = Math.PI * f / 40, fl = new T.Mesh(new T.SphereGeometry(.17 + (f % 3) * .04, 12, 10), mat(flowerCols[f % 5], { roughness: .6 }));
-      fl.position.set(Math.cos(a) * 4.2, 1.6 + Math.sin(a) * 4.2, -3.25 + (f % 2) * .1); S.add(fl);
-      if (f % 3 === 0) { var lf = new T.Mesh(new T.SphereGeometry(.12, 8, 6), mat("#3aa66a")); lf.scale.set(1.6, .6, .6); lf.position.set(Math.cos(a) * 4.45, 1.6 + Math.sin(a) * 4.45, -3.3); S.add(lf); }
+    var wall = new T.Mesh(new T.PlaneGeometry(34, 16), new T.MeshBasicMaterial({ map: back })); wall.position.set(0, 6, -6); S.add(wall);
+    /* ống neon chéo (lõi sáng + quầng sáng) */
+    var neonGlow = glowTexN();
+    function glowTexN() { var c = document.createElement("canvas"); c.width = 32; c.height = 128; var g = c.getContext("2d"), gr = g.createLinearGradient(0, 0, 32, 0); gr.addColorStop(0, "rgba(255,255,255,0)"); gr.addColorStop(.5, "rgba(255,255,255,.9)"); gr.addColorStop(1, "rgba(255,255,255,0)"); g.fillStyle = gr; g.fillRect(0, 0, 32, 128); return new T.CanvasTexture(c); }
+    var neons = [];
+    function neon(x, y, len, rot, col) {
+      var g0 = new T.Group(), core = new T.Mesh(new T.CylinderGeometry(.07, .07, len, 10), new T.MeshBasicMaterial({ color: col })); g0.add(core);
+      var halo = new T.Mesh(new T.PlaneGeometry(1.1, len), new T.MeshBasicMaterial({ map: neonGlow, color: col, transparent: true, opacity: .55, blending: T.AdditiveBlending, depthWrite: false })); halo.position.z = .05; g0.add(halo);
+      g0.position.set(x, y, -5.2); g0.rotation.z = rot; S.add(g0); neons.push({ g: g0, m: halo.material }); return g0;
     }
-    /* bóng bay */
-    var balloons = [];
-    [[-5.4, 3.6, "#ffb3cd"], [-4.7, 4.3, "#f3dc9c"], [-6, 4.6, "#9fe3d0"], [5.4, 3.6, "#ffb3cd"], [4.7, 4.3, "#9fe3d0"], [6, 4.6, "#f3dc9c"]].forEach(function (d, i) {
-      var g0 = new T.Group(), bl = new T.Mesh(new T.SphereGeometry(.42, 24, 18), mat(d[2], { roughness: .25, metalness: .15, emissive: d[2], emissiveIntensity: .12 })); bl.scale.set(1, 1.2, 1); g0.add(bl);
-      var knot = new T.Mesh(new T.ConeGeometry(.07, .12, 8), bl.material); knot.position.y = -.55; knot.rotation.x = Math.PI; g0.add(knot);
-      var str = new T.Line(new T.BufferGeometry().setFromPoints([new T.Vector3(0, -.6, 0), new T.Vector3(.08, -1.4, 0), new T.Vector3(-.05, -2.4, 0)]), new T.LineBasicMaterial({ color: "#ffffff", transparent: true, opacity: .6 })); g0.add(str);
-      g0.position.set(d[0], d[1], -2.6); S.add(g0); balloons.push({ g: g0, y: d[1], i: i });
+    neon(-8.4, 7.2, 14, -.62, "#ff5cb8"); neon(-5.6, 8.6, 12, -.62, "#5cc8ff"); neon(-11, 4, 10, -.62, "#a05cff");
+    neon(8.4, 7.2, 14, .62, "#5cc8ff"); neon(5.6, 8.6, 12, .62, "#ff5cb8"); neon(11, 4, 10, .62, "#7a8cff");
+    /* biển neon tên chương trình */
+    var banTex = cvTex(1024, 160, function (g, w, h) {
+      g.fillStyle = "rgba(20,8,50,.9)"; g.beginPath(); g.moveTo(40, 12); g.lineTo(w - 40, 12); g.quadraticCurveTo(w - 6, h / 2, w - 40, h - 12); g.lineTo(40, h - 12); g.quadraticCurveTo(6, h / 2, 40, 12); g.fill();
+      g.strokeStyle = "#ff6cc4"; g.lineWidth = 6; g.shadowColor = "#ff3fa8"; g.shadowBlur = 22; g.stroke(); g.shadowBlur = 0;
+      g.fillStyle = "#fff4fb"; g.shadowColor = "#ff6cc4"; g.shadowBlur = 18; g.font = "800 70px 'Playfair Display',Georgia,serif"; g.textAlign = "center"; g.textBaseline = "middle"; g.fillText("PTSPBL AWARDS | 20.10", w / 2, h / 2 + 4);
     });
+    var banner = new T.Mesh(new T.PlaneGeometry(9.2, 1.44), new T.MeshBasicMaterial({ map: banTex, transparent: true })); banner.position.set(0, 7.3, -3.4); S.add(banner);
+    var bulbs = [], balloons = [];
+    /* pháo giấy 3D rơi nhẹ liên tục */
+    var CN = 140, cpos = new Float32Array(CN * 3), ccol = new Float32Array(CN * 3), cspd = new Float32Array(CN), cpal = ["#ff5cb8", "#5cc8ff", "#ffd45c", "#ffffff", "#a05cff", "#7affc8"];
+    for (var q = 0; q < CN; q++) { cpos[q * 3] = (Math.random() - .5) * 18; cpos[q * 3 + 1] = Math.random() * 10; cpos[q * 3 + 2] = -2 + Math.random() * 6; var cc = new T.Color(cpal[q % 6]); ccol[q * 3] = cc.r; ccol[q * 3 + 1] = cc.g; ccol[q * 3 + 2] = cc.b; cspd[q] = .4 + Math.random() * .8; }
+    var cgeo = new T.BufferGeometry(); cgeo.setAttribute("position", new T.BufferAttribute(cpos, 3)); cgeo.setAttribute("color", new T.BufferAttribute(ccol, 3));
+    var confetti = new T.Points(cgeo, new T.PointsMaterial({ size: .13, vertexColors: true, transparent: true, opacity: .9, depthWrite: false })); S.add(confetti);
 
     /* ---------- nhân vật ---------- */
-    var SKIN = "#f2c9a6", NAVY = "#243666", PANTS = "#1d2b55";
+    GL = true;
+    var SKIN = "#f6d2b0", NAVY = "#2a2540", PANTS = "#221d38";
     function limb(r, len, col) { var g0 = new T.Group(), m = new T.Mesh(new T.CylinderGeometry(r, r * .92, len, 12), mat(col, { roughness: .7 })); m.position.y = -len / 2; m.castShadow = true; g0.add(m); var hnd = new T.Mesh(new T.SphereGeometry(r * 1.15, 12, 10), mat(SKIN, { roughness: .6 })); hnd.position.y = -len - r * .4; g0.add(hnd); g0.userData.hand = hnd; return g0; }
     function leg(r, len, col, shoe) { var g0 = new T.Group(), m = new T.Mesh(new T.CylinderGeometry(r, r, len, 12), mat(col, { roughness: .7 })); m.position.y = -len / 2; m.castShadow = true; g0.add(m); var sh = new T.Mesh(new T.BoxGeometry(r * 2.2, r * 1.1, r * 3.2), mat(shoe, { roughness: .4 })); sh.position.set(0, -len, r * .7); sh.castShadow = true; g0.add(sh); return g0; }
     function faceSprite(map, w) { var sp = new T.Sprite(new T.SpriteMaterial({ map: map, transparent: true, depthWrite: true, alphaTest: .05 })); sp.scale.set(w, w * 1.15, 1); sp.userData.w = w; return sp; }
-    function fitFace(sp) { var im = sp.material.map && sp.material.map.image; var hH = 1.45; if (im && im.width) sp.scale.set(hH * im.width / im.height, hH, 1); /* mọi mặt cao bằng nhau */ sp.position.y = sp.userData.base + sp.scale.y / 2 - .14; sp.position.z = .05; }
+    function fitFace(sp) { var im = sp.material.map && sp.material.map.image; var hH = 1.75; if (im && im.width) sp.scale.set(hH * im.width / im.height, hH, 1); /* mọi mặt cao bằng nhau */ sp.position.y = sp.userData.base + sp.scale.y / 2 - .14; sp.position.z = .05; }
     function makeMan(img) {
       var root = new T.Group(), body = new T.Group(); root.add(body);
-      var L1 = leg(.12, .55, PANTS, "#15151c"), L2 = leg(.12, .55, PANTS, "#15151c"); L1.position.set(-.15, .6, 0); L2.position.set(.15, .6, 0); body.add(L1, L2);
-      var torso = new T.Group(); torso.position.y = .55; body.add(torso);
-      var jacket = new T.Mesh(new T.CylinderGeometry(.3, .37, .66, 20), mat(NAVY, { roughness: .6 })); jacket.position.y = .33; jacket.castShadow = true; torso.add(jacket);
-      var shirt = new T.Mesh(new T.ConeGeometry(.15, .36, 3), mat("#ffffff")); shirt.rotation.x = Math.PI; shirt.position.set(0, .5, .27); shirt.scale.z = .3; torso.add(shirt);
-      var tie = new T.Mesh(new T.BoxGeometry(.08, .34, .03), mat("#4a66b0", { roughness: .4 })); tie.position.set(0, .45, .33); tie.rotation.x = -.15; torso.add(tie);
-      var knot = new T.Mesh(new T.BoxGeometry(.1, .07, .04), tie.material); knot.position.set(0, .63, .3); torso.add(knot);
+      var L1 = leg(.15, .42, PANTS, "#0f0f16"), L2 = leg(.15, .42, PANTS, "#0f0f16"); L1.position.set(-.17, .5, 0); L2.position.set(.17, .5, 0); body.add(L1, L2);
+      var torso = new T.Group(); torso.position.y = .45; body.add(torso);
+      var jacket = new T.Mesh(new T.SphereGeometry(.42, 28, 20), mat(NAVY, { roughness: .4 })); jacket.scale.set(1, .98, .82); jacket.position.y = .33; jacket.castShadow = true; torso.add(jacket);
+      var shirt = new T.Mesh(new T.ConeGeometry(.15, .36, 3), mat("#ffffff")); shirt.rotation.x = Math.PI; shirt.position.set(0, .5, .31); shirt.scale.z = .3; torso.add(shirt);
+      var tie = new T.Mesh(new T.BoxGeometry(.08, .34, .03), mat("#d62839", { roughness: .3 })); tie.position.set(0, .45, .345); tie.rotation.x = -.15; torso.add(tie);
+      var knot = new T.Mesh(new T.BoxGeometry(.1, .07, .04), tie.material); knot.position.set(0, .63, .31); torso.add(knot);
       /* vai tròn, ve áo, cúc áo, khăn túi ngực cho com lê đẹp hơn */
       [-1, 1].forEach(function (d) { var sh = new T.Mesh(new T.SphereGeometry(.13, 16, 12), mat(NAVY, { roughness: .55 })); sh.position.set(d * .33, .6, 0); sh.castShadow = true; torso.add(sh);
         var lp = new T.Mesh(new T.BoxGeometry(.09, .3, .02), mat("#1a2850", { roughness: .4 })); lp.position.set(d * .1, .5, .3); lp.rotation.z = d * .35; torso.add(lp); });
       var top = new T.Mesh(new T.SphereGeometry(.3, 20, 10, 0, Math.PI * 2, 0, Math.PI / 2), mat(NAVY, { roughness: .6 })); top.position.y = .66; top.scale.y = .35; torso.add(top);
       [.22, .1].forEach(function (y) { var bt = new T.Mesh(new T.SphereGeometry(.025, 10, 8), mat("#d4af37", { metalness: .8, roughness: .3 })); bt.position.set(.06, y, .36); torso.add(bt); });
       var pk = new T.Mesh(new T.BoxGeometry(.08, .05, .02), mat("#ff6f96")); pk.position.set(-.2, .5, .31); pk.rotation.y = -.3; torso.add(pk);
-      var belt = new T.Mesh(new T.CylinderGeometry(.375, .375, .05, 20), mat("#141a33", { roughness: .4 })); belt.position.y = .02; torso.add(belt);
-      var A1 = limb(.085, .48, NAVY), A2 = limb(.085, .48, NAVY); A1.position.set(-.38, .6, 0); A2.position.set(.38, .6, 0); torso.add(A1, A2);
-      var head = faceSprite(tex(img), 1.3); head.userData.base = .66; torso.add(head);
+      var belt = new T.Mesh(new T.CylinderGeometry(.27, .27, .05, 20), mat("#12101e", { roughness: .3 })); belt.position.y = -.02; torso.add(belt);
+      var A1 = limb(.105, .46, NAVY), A2 = limb(.105, .46, NAVY); A1.position.set(-.4, .6, 0); A2.position.set(.4, .6, 0); torso.add(A1, A2);
+      var head = faceSprite(tex(img), 1.3); head.userData.base = .6; torso.add(head);
       root.userData = { body: body, torso: torso, L: [L1, L2], A: [A1, A2], head: head }; return root;
     }
     function makeGirl(img, fb, pal) {
@@ -158,8 +149,8 @@ var W20Stage3D = (function () {
       [-1, 1].forEach(function (d) { var lb = new T.Mesh(new T.SphereGeometry(.07, 12, 10), bm2); lb.scale.set(1.3, .8, .5); lb.position.set(d * .08, 0, 0); bow.add(lb); });
       var bc = new T.Mesh(new T.SphereGeometry(.035, 10, 8), bm2); bow.add(bc); bow.position.set(0, -.08, .21); torso.add(bow);
       var waist = new T.Mesh(new T.TorusGeometry(.215, .025, 8, 24), bm2); waist.rotation.x = Math.PI / 2; waist.position.y = -.08; torso.add(waist);
-      var A1 = limb(.065, .42, SKIN), A2 = limb(.065, .42, SKIN); A1.position.set(-.26, .26, 0); A2.position.set(.26, .26, 0); torso.add(A1, A2);
-      var head = faceSprite(tex(img, fb), 1.3); head.userData.base = .28; torso.add(head);
+      var A1 = limb(.08, .4, SKIN), A2 = limb(.08, .4, SKIN); A1.position.set(-.26, .26, 0); A2.position.set(.26, .26, 0); torso.add(A1, A2);
+      var head = faceSprite(tex(img, fb), 1.3); head.userData.base = .3; torso.add(head);
       var crown = new T.Group(), gold = mat("#ffd24a", { metalness: .9, roughness: .2, emissive: "#6a4a00", emissiveIntensity: .4 });
       var band = new T.Mesh(new T.CylinderGeometry(.22, .22, .08, 20, 1, true), gold); crown.add(band);
       for (var i = 0; i < 5; i++) { var a = i / 5 * Math.PI * 2, pk = new T.Mesh(new T.ConeGeometry(.05, .16 + (i === 0 ? .06 : 0), 6), gold); pk.position.set(Math.sin(a) * .22, .1, Math.cos(a) * .22); crown.add(pk); }
@@ -169,6 +160,7 @@ var W20Stage3D = (function () {
     }
     var GLOW = null;
     function glowTex() { if (GLOW) return GLOW; var c = document.createElement("canvas"); c.width = c.height = 128; var g = c.getContext("2d"), r = g.createRadialGradient(64, 64, 4, 64, 64, 64); r.addColorStop(0, "rgba(255,246,205,1)"); r.addColorStop(.4, "rgba(255,226,150,.55)"); r.addColorStop(1, "rgba(255,226,150,0)"); g.fillStyle = r; g.fillRect(0, 0, 128, 128); GLOW = new T.CanvasTexture(c); return GLOW; }
+    GL = false;
     function makeGift() {
       var g0 = new T.Group(), bx = new T.Mesh(new T.BoxGeometry(.34, .3, .34), mat("#f4a6c4", { roughness: .4 })); bx.castShadow = true; g0.add(bx);
       var lidG = new T.Group(); lidG.position.set(-.19, .15, 0); g0.add(lidG);
@@ -194,9 +186,9 @@ var W20Stage3D = (function () {
       st.textContent = ".s3ov{position:absolute;inset:0;pointer-events:none;font-family:'Be Vietnam Pro',sans-serif}" +
         ".s3vig{position:absolute;inset:0;opacity:0;transition:opacity .6s;background:radial-gradient(ellipse at 50% 55%,rgba(0,0,0,0) 35%,rgba(0,22,18,.62) 100%)}.s3ov[data-s=ANNOUNCING] .s3vig,.s3ov[data-s=PRESENTING] .s3vig{opacity:1}" +
         ".s3plates{position:absolute;left:4%;right:4%;top:12%;display:flex;gap:1.2%;justify-content:center}" +
-        ".s3pl{flex:1 1 0;max-width:46%;background:rgba(255,248,226,.97);border:2px solid #e3c677;border-radius:14px;box-shadow:0 8px 22px rgba(0,0,0,.4);padding:.45em .45em;text-align:center;font-size:clamp(8px,1.3vw,16px);line-height:1.3;opacity:0;transform:translateY(-14px) scale(.9);transition:opacity .5s,transform .5s cubic-bezier(.2,1.4,.4,1)}" +
-        ".s3pl.on{opacity:1;transform:none}.s3pl .t{font:700 1.08em 'Playfair Display',serif;color:#0b5a47}.s3pl .n{font-weight:800;color:#a02a58}" +
-        ".s3pl .p,.s3pl .q{font-weight:700;color:#3b2a18;transition:opacity .5s}.s3pl .p{display:none;opacity:0}.s3pl .p img{height:1.5em!important;vertical-align:middle}.s3pl .q{color:#8a7a50;font-style:italic}" +
+        ".s3pl{flex:1 1 0;max-width:46%;background:rgba(26,10,58,.9);border:2px solid #ff7ac8;border-radius:14px;box-shadow:0 0 18px rgba(255,90,190,.55),0 8px 22px rgba(0,0,0,.5);color:#fff;padding:.45em .45em;text-align:center;font-size:clamp(8px,1.3vw,16px);line-height:1.3;opacity:0;transform:translateY(-14px) scale(.9);transition:opacity .5s,transform .5s cubic-bezier(.2,1.4,.4,1)}" +
+        ".s3pl.on{opacity:1;transform:none}.s3pl .t{font:700 1.08em 'Playfair Display',serif;color:#ffd0ec}.s3pl .n{font-weight:800;color:#fff}" +
+        ".s3pl .p,.s3pl .q{font-weight:700;color:#ffe9a6;transition:opacity .5s}.s3pl .p{display:none;opacity:0}.s3pl .p img{height:1.5em!important;vertical-align:middle}.s3pl .q{color:#c9b8f0;font-style:italic}" +
         ".s3pl.rev .p{display:block;opacity:1}.s3pl.rev .q{display:none}" +
         ".s3wait{position:absolute;left:50%;top:44%;transform:translate(-50%,-50%);background:rgba(4,34,28,.62);border:1px solid rgba(240,214,140,.5);border-radius:16px;padding:.8em 1.4em;text-align:center;color:#fff8e6;font-size:clamp(11px,1.8vw,20px);transition:opacity .4s}" +
         ".s3wait b{display:block;font:700 1.3em 'Playfair Display',serif}.s3wait small{color:#f3dc9c;font-weight:600}.s3ov:not([data-s=WAITING]) .s3wait{opacity:0}" +
@@ -237,7 +229,7 @@ var W20Stage3D = (function () {
     }
     function play(batch, isReplay) {
       var used = {}, n = batch.length, now = performance.now();
-      var scl = [1.42, 1.32, 1.22, 1.1, .98][n - 1], slot = 12.6 / n;
+      var scl = [1.55, 1.42, 1.3, 1.16, 1.02][n - 1], slot = 12.6 / n;
       var items = batch.map(function (e, k) {
         var ti = hash(e.id || e.name) % TITLES.length; while (used[ti]) ti = (ti + 1) % TITLES.length; used[ti] = 1;
         var mm = MEN.length ? MEN[nextMan++ % MEN.length] : { img: "" }, title = TITLES[ti];
@@ -341,8 +333,9 @@ var W20Stage3D = (function () {
       CAM.position.set(Math.sin(ts * .12) * 1.4, 2.9 + Math.sin(ts * .2) * .12, 11.4); CAM.lookAt(0, 2.6, 0);
       if (!RM) {
         spots.forEach(function (s) { var a = Math.sin(ts * .6 + s.i * 2) * 2.2, focus = cur && (STATE === "ANNOUNCING" || STATE === "PRESENTING"); if (focus) a *= .25; s.l.target.position.x = s.x * .4 + a; s.l.intensity = focus ? 1.5 : .9; s.b.rotation.z = -a * .07 + s.x * -.05; s.b.position.x = s.x * .6 + a * .55; });
-        bulbs.forEach(function (bm, i) { bm.material.color.copy(((Math.floor(ts * 2.5) + i) % 2) ? lc("#fff1c9") : lc("#f0c46a")); });
-        balloons.forEach(function (b) { b.g.position.y = b.y + Math.sin(ts * .9 + b.i * 1.7) * .18; b.g.rotation.z = Math.sin(ts * .7 + b.i) * .08; });
+        neons.forEach(function (n, i) { n.m.opacity = .5 + Math.sin(ts * 1.6 + i) * .12; });
+        rimGlow.material.opacity = .2 + Math.sin(ts * 2) * .06;
+        var cp = cgeo.attributes.position, dt = 1 / 30; for (var q = 0; q < CN; q++) { var y = cp.getY(q) - cspd[q] * dt; if (y < -.3) y = 9 + Math.random(); cp.setY(q, y); cp.setX(q, cp.getX(q) + Math.sin(ts * 1.3 + q) * .004); } cp.needsUpdate = true;
       }
       if (cur) {
         var t = now - cur.t0;
