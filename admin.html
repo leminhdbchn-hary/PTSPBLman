@@ -149,6 +149,8 @@ code{background:rgba(0,0,0,.25);border-radius:6px;padding:1px 6px;font-size:.92e
 <script src="assets/flowers.js?v=20261013"></script>
 <script src="assets/modules.js?v=20261090"></script>
 <script src="assets/stage.js?v=23"></script>
+<script src="assets/three.min.js?v=128"></script>
+<script src="assets/stage3d.js?v=10"></script>
 <script>
 (function () {
   var $ = function (s) { return document.querySelector(s); };
@@ -190,7 +192,7 @@ code{background:rgba(0,0,0,.25);border-radius:6px;padding:1px 6px;font-size:.92e
   function fmt(d) { return d ? d.toLocaleString("vi-VN", { hour: "2-digit", minute: "2-digit", day: "2-digit", month: "2-digit" }) : ""; }
   /* ---- Sân khấu trao quà ---- */
   var STG = null, stSeen = null, stLoaded = false;
-  function stage() { if (!STG && window.W20Stage) STG = W20Stage.make($("#stagecv"), {}); return STG; }
+  function stage() { if (!STG) { try { if (window.W20Stage3D && W20Stage3D.ok()) STG = W20Stage3D.make($("#stagecv"), {}); } catch (e) { STG = null; } if (!STG && window.W20Stage) STG = W20Stage.make($("#stagecv"), {}); } return STG; } /* 3D nếu máy hỗ trợ WebGL, không thì 2D */
   function stageFeed(rows) {
     var st = stage(); var got = rows.filter(function (r) { return r.pr; });
     if (stSeen === null) { stSeen = {}; got.forEach(function (r) { stSeen[r.p.id] = 1; }); }
