@@ -113,43 +113,71 @@ var W20Stage3D = (function () {
     function leg(r, len, col, shoe) { var g0 = new T.Group(), m = new T.Mesh(new T.CylinderGeometry(r, r, len, 12), mat(col, { roughness: .7 })); m.position.y = -len / 2; m.castShadow = true; g0.add(m); var sh = new T.Mesh(new T.BoxGeometry(r * 2.2, r * 1.1, r * 3.2), mat(shoe, { roughness: .4 })); sh.position.set(0, -len, r * .7); sh.castShadow = true; g0.add(sh); return g0; }
     function faceSprite(map, w) { var sp = new T.Sprite(new T.SpriteMaterial({ map: map, transparent: true, depthWrite: true, alphaTest: .05 })); sp.scale.set(w, w * 1.15, 1); sp.userData.w = w; return sp; }
     function fitFace(sp) { var im = sp.material.map && sp.material.map.image; var hH = 1.75; if (im && im.width) sp.scale.set(hH * im.width / im.height, hH, 1); /* mọi mặt cao bằng nhau */ sp.position.y = sp.userData.base + sp.scale.y / 2 - .14; sp.position.z = .05; }
-    function makeMan(img) {
-      var root = new T.Group(), body = new T.Group(); root.add(body);
-      var L1 = leg(.15, .42, PANTS, "#0f0f16"), L2 = leg(.15, .42, PANTS, "#0f0f16"); L1.position.set(-.17, .5, 0); L2.position.set(.17, .5, 0); body.add(L1, L2);
-      var torso = new T.Group(); torso.position.y = .45; body.add(torso);
-      var jacket = new T.Mesh(new T.SphereGeometry(.42, 28, 20), mat(NAVY, { roughness: .4 })); jacket.scale.set(1, .98, .82); jacket.position.y = .33; jacket.castShadow = true; torso.add(jacket);
-      var shirt = new T.Mesh(new T.ConeGeometry(.15, .36, 3), mat("#ffffff")); shirt.rotation.x = Math.PI; shirt.position.set(0, .5, .31); shirt.scale.z = .3; torso.add(shirt);
-      var tie = new T.Mesh(new T.BoxGeometry(.08, .34, .03), mat("#d62839", { roughness: .3 })); tie.position.set(0, .45, .345); tie.rotation.x = -.15; torso.add(tie);
-      var knot = new T.Mesh(new T.BoxGeometry(.1, .07, .04), tie.material); knot.position.set(0, .63, .31); torso.add(knot);
-      /* vai tròn, ve áo, cúc áo, khăn túi ngực cho com lê đẹp hơn */
-      [-1, 1].forEach(function (d) { var sh = new T.Mesh(new T.SphereGeometry(.13, 16, 12), mat(NAVY, { roughness: .55 })); sh.position.set(d * .33, .6, 0); sh.castShadow = true; torso.add(sh);
-        var lp = new T.Mesh(new T.BoxGeometry(.09, .3, .02), mat("#1a2850", { roughness: .4 })); lp.position.set(d * .1, .5, .3); lp.rotation.z = d * .35; torso.add(lp); });
-      var top = new T.Mesh(new T.SphereGeometry(.3, 20, 10, 0, Math.PI * 2, 0, Math.PI / 2), mat(NAVY, { roughness: .6 })); top.position.y = .66; top.scale.y = .35; torso.add(top);
-      [.22, .1].forEach(function (y) { var bt = new T.Mesh(new T.SphereGeometry(.025, 10, 8), mat("#d4af37", { metalness: .8, roughness: .3 })); bt.position.set(.06, y, .36); torso.add(bt); });
-      var pk = new T.Mesh(new T.BoxGeometry(.08, .05, .02), mat("#ff6f96")); pk.position.set(-.2, .5, .31); pk.rotation.y = -.3; torso.add(pk);
-      var belt = new T.Mesh(new T.CylinderGeometry(.27, .27, .05, 20), mat("#12101e", { roughness: .3 })); belt.position.y = -.02; torso.add(belt);
-      var A1 = limb(.105, .46, NAVY), A2 = limb(.105, .46, NAVY); A1.position.set(-.4, .6, 0); A2.position.set(.4, .6, 0); torso.add(A1, A2);
-      var head = faceSprite(tex(img), 1.3); head.userData.base = .6; torso.add(head);
+    /* 10 bộ trang phục hoàng tử lịch sự, mỗi anh một kiểu (theo thứ tự anh trong danh sách) */
+    var OUTFITS = [
+      { j: "#1d46a8", t: "#f3d27a", s: "#ffffff", n: "cravat", nc: "#ffffff", p: "#17213f", e: ["epaulet"] },
+      { j: "#7b1230", t: "#f3d27a", s: "#fff6ee", n: "bow", nc: "#14101a", p: "#26101c", e: ["brooch"] },
+      { j: "#0d6b52", t: "#f3d27a", s: "#ffffff", n: "tie", nc: "#f3d27a", p: "#0c2c26", e: ["sash:#f3d27a"] },
+      { j: "#f4efe4", t: "#d9b25a", s: "#ffffff", n: "cravat", nc: "#8fb8ff", p: "#d8d2c4", e: ["epaulet", "sash:#6fa4ff"] },
+      { j: "#15151e", t: "#ffffff", s: "#ffffff", n: "bow", nc: "#d62839", p: "#0c0c12", e: ["lapel:#3a3a4a"] },
+      { j: "#5a2f9e", t: "#e6e2f2", s: "#f5f0ff", n: "cravat", nc: "#cfc4f2", p: "#241a40", e: ["brooch", "epaulet:#e6e2f2"] },
+      { j: "#4a4d5c", t: "#ff9ac4", s: "#ffffff", n: "tie", nc: "#ff9ac4", p: "#2a2c36", e: ["flower"] },
+      { j: "#13244f", t: "#f3d27a", s: "#ffffff", n: "tie", nc: "#c0192d", p: "#0e1530", e: ["cape:#c0192d", "epaulet"] },
+      { j: "#0f7f86", t: "#f3d27a", s: "#ffffff", n: "bow", nc: "#f3d27a", p: "#0e3a3e", e: ["brooch", "sash:#ffffff"] },
+      { j: "#d8c08a", t: "#8a5a2a", s: "#fffaf0", n: "tie", nc: "#8a5a2a", p: "#6a5230", e: ["epaulet:#8a5a2a", "flower"] }
+    ];
+    function makeMan(img, oi) {
+      var O = OUTFITS[(oi || 0) % OUTFITS.length], J = O.j, root = new T.Group(), body = new T.Group(); root.add(body);
+      var L1 = leg(.1, .52, O.p, "#0f0f16"), L2 = leg(.1, .52, O.p, "#0f0f16"); L1.position.set(-.13, .62, 0); L2.position.set(.13, .62, 0); body.add(L1, L2);
+      var torso = new T.Group(); torso.position.y = .55; body.add(torso);
+      /* thân áo vest thon, vai rộng eo nhỏ (dáng thư sinh kiểu Hàn) */
+      var jacket = new T.Mesh(new T.CylinderGeometry(.27, .2, .74, 28), mat(J, { roughness: .4 })); jacket.position.y = .36; jacket.scale.z = .78; jacket.castShadow = true; torso.add(jacket);
+      var skirt = new T.Mesh(new T.CylinderGeometry(.2, .245, .2, 28), mat(J, { roughness: .4 })); skirt.position.y = .0; skirt.scale.z = .8; torso.add(skirt);
+      var shirt = new T.Mesh(new T.ConeGeometry(.12, .4, 3), mat(O.s)); shirt.rotation.x = Math.PI; shirt.position.set(0, .56, .17); shirt.scale.z = .3; torso.add(shirt);
+      [-1, 1].forEach(function (d) {
+        var sh = new T.Mesh(new T.SphereGeometry(.1, 16, 12), mat(J, { roughness: .45 })); sh.position.set(d * .27, .68, 0); sh.castShadow = true; torso.add(sh);
+        var lp = new T.Mesh(new T.BoxGeometry(.07, .34, .02), mat(O.t, { metalness: .5, roughness: .3 })); lp.position.set(d * .09, .5, .205); lp.rotation.z = d * .32; torso.add(lp);
+      });
+      [.42, .28, .14].forEach(function (y) { var bt = new T.Mesh(new T.SphereGeometry(.02, 10, 8), mat(O.t, { metalness: .85, roughness: .25 })); bt.position.set(.05, y, .205); torso.add(bt); });
+      var belt = new T.Mesh(new T.CylinderGeometry(.205, .205, .035, 24), mat("#12101e", { roughness: .3 })); belt.position.y = .02; belt.scale.z = .8; torso.add(belt);
+      /* cổ áo / nơ / cà vạt theo từng bộ */
+      var nm = mat(O.nc, { roughness: .3 });
+      if (O.n === "tie") { var tie = new T.Mesh(new T.BoxGeometry(.06, .34, .02), nm); tie.position.set(0, .45, .215); torso.add(tie); var kn = new T.Mesh(new T.BoxGeometry(.075, .055, .03), nm); kn.position.set(0, .64, .2); torso.add(kn); }
+      else if (O.n === "bow") { [-1, 1].forEach(function (d) { var bw = new T.Mesh(new T.ConeGeometry(.055, .1, 4), nm); bw.rotation.z = d * -Math.PI / 2; bw.position.set(d * .06, .66, .2); torso.add(bw); }); var bk = new T.Mesh(new T.SphereGeometry(.03, 10, 8), nm); bk.position.set(0, .66, .21); torso.add(bk); }
+      else { var cv = new T.Mesh(new T.SphereGeometry(.09, 14, 10), nm); cv.scale.set(1.2, .8, .6); cv.position.set(0, .62, .2); torso.add(cv); var cv2 = new T.Mesh(new T.ConeGeometry(.06, .22, 8), nm); cv2.rotation.x = Math.PI; cv2.position.set(0, .5, .21); cv2.scale.z = .4; torso.add(cv2); }
+      /* phụ kiện hoàng tử */
+      O.e.forEach(function (ex) {
+        var pr = ex.split(":"), k = pr[0], col = pr[1] || O.t, em = mat(col, { metalness: .7, roughness: .3, emissive: col, emissiveIntensity: .15 });
+        if (k === "epaulet") [-1, 1].forEach(function (d) { var ep = new T.Mesh(new T.BoxGeometry(.19, .04, .13), em); ep.position.set(d * .28, .78, 0); ep.rotation.z = d * -.25; torso.add(ep);
+          for (var f = 0; f < 5; f++) { var fr = new T.Mesh(new T.CylinderGeometry(.01, .01, .09, 5), em); fr.position.set(d * (.34 + f * .001) + (f - 2) * .0, .73, (f - 2) * .026); fr.rotation.z = d * -.25; torso.add(fr); } });
+        else if (k === "sash") { var sa = new T.Mesh(new T.BoxGeometry(.09, .78, .03), em); sa.position.set(0, .4, .2); sa.rotation.z = -.6; torso.add(sa); }
+        else if (k === "cape") { var cp = new T.Mesh(new T.BoxGeometry(.58, .95, .025), mat(col, { roughness: .6, side: T.DoubleSide })); cp.position.set(0, .3, -.2); cp.rotation.x = .1; cp.castShadow = true; torso.add(cp); var cl = new T.Mesh(new T.TorusGeometry(.11, .025, 8, 16, Math.PI), em); cl.position.set(0, .74, .02); cl.rotation.x = -.2; torso.add(cl); }
+        else if (k === "brooch") { var br = new T.Mesh(new T.SphereGeometry(.035, 12, 10), mat("#ffd24a", { metalness: .9, roughness: .2, emissive: "#6a4a00", emissiveIntensity: .35 })); br.position.set(-.15, .5, .22); torso.add(br); var gm = new T.Mesh(new T.SphereGeometry(.018, 10, 8), mat(O.nc, { emissive: O.nc, emissiveIntensity: .5 })); gm.position.set(-.15, .5, .25); torso.add(gm); }
+        else if (k === "flower") { var fl = new T.Mesh(new T.SphereGeometry(.04, 12, 10), mat("#ff7aa8", { roughness: .4 })); fl.position.set(-.15, .5, .22); torso.add(fl); var fl2 = new T.Mesh(new T.SphereGeometry(.022, 10, 8), mat("#fff1b8")); fl2.position.set(-.15, .5, .255); torso.add(fl2); }
+        else if (k === "lapel") { [-1, 1].forEach(function (d) { var ls = new T.Mesh(new T.BoxGeometry(.075, .36, .02), mat(col, { roughness: .2, metalness: .3 })); ls.position.set(d * .1, .5, .21); ls.rotation.z = d * .32; torso.add(ls); }); }
+      });
+      var A1 = limb(.075, .5, J), A2 = limb(.075, .5, J); A1.position.set(-.33, .68, 0); A2.position.set(.33, .68, 0); torso.add(A1, A2);
+      var head = faceSprite(tex(img), 1.3); head.userData.base = .72; torso.add(head);
       root.userData = { body: body, torso: torso, L: [L1, L2], A: [A1, A2], head: head }; return root;
     }
     function makeGirl(img, fb, pal) {
       var root = new T.Group(), body = new T.Group(); root.add(body);
       var L1 = leg(.07, .28, SKIN, "#7a1a3a"), L2 = leg(.07, .28, SKIN, "#7a1a3a"); L1.position.set(-.12, .3, 0); L2.position.set(.12, .3, 0); body.add(L1, L2);
       var c1 = lc(pastel(pal[0], .22)), c2 = lc(pastel(pal[1], .18));
-      var dress = new T.Mesh(new T.CylinderGeometry(.2, .78, .9, 36, 1, true), new T.MeshStandardMaterial({ color: c2, roughness: .35, metalness: .25, side: T.DoubleSide, emissive: c2, emissiveIntensity: .12 })); dress.position.y = .72; dress.castShadow = true; body.add(dress);
-      var hem = new T.Mesh(new T.TorusGeometry(.77, .04, 8, 40), mat("#ffffff", { roughness: .3, metalness: .4 })); hem.rotation.x = Math.PI / 2; hem.position.y = .28; body.add(hem);
+      var dress = new T.Mesh(new T.CylinderGeometry(.15, .52, .92, 36, 1, true), new T.MeshStandardMaterial({ color: c2, roughness: .35, metalness: .25, side: T.DoubleSide, emissive: c2, emissiveIntensity: .12 })); dress.position.y = .72; dress.castShadow = true; body.add(dress);
+      var hem = new T.Mesh(new T.TorusGeometry(.51, .035, 8, 40), mat("#ffffff", { roughness: .3, metalness: .4 })); hem.rotation.x = Math.PI / 2; hem.position.y = .28; body.add(hem);
       var torso = new T.Group(); torso.position.y = 1.1; body.add(torso);
-      var bod = new T.Mesh(new T.CylinderGeometry(.19, .22, .36, 20), new T.MeshStandardMaterial({ color: c1, roughness: .35, metalness: .25 })); bod.position.y = .1; bod.castShadow = true; torso.add(bod);
-      var sash = new T.Mesh(new T.BoxGeometry(.1, .62, .03), mat("#fff3c4", { metalness: .5, roughness: .3, emissive: "#6a5000", emissiveIntensity: .3 })); sash.position.set(0, .02, .22); sash.rotation.z = .72; torso.add(sash);
-      var sp = new T.Points(new T.BufferGeometry().setFromPoints(Array.from({ length: 60 }, function (_, i) { var a = i * 2.4, yy = .32 + (i * 37 % 60) / 60 * .82, rr = lerp(.78, .2, (yy - .28) / .9) + .02; return new T.Vector3(Math.cos(a) * rr, yy, Math.sin(a) * rr); })), new T.PointsMaterial({ color: "#ffffff", size: .05, transparent: true, opacity: .9 })); body.add(sp);
+      var bod = new T.Mesh(new T.CylinderGeometry(.16, .125, .36, 20), new T.MeshStandardMaterial({ color: c1, roughness: .35, metalness: .25 })); bod.position.y = .1; bod.castShadow = true; torso.add(bod);
+      var sash = new T.Mesh(new T.BoxGeometry(.08, .5, .03), mat("#fff3c4", { metalness: .5, roughness: .3, emissive: "#6a5000", emissiveIntensity: .3 })); sash.position.set(0, .04, .14); sash.rotation.z = .72; torso.add(sash);
+      var sp = new T.Points(new T.BufferGeometry().setFromPoints(Array.from({ length: 60 }, function (_, i) { var a = i * 2.4, yy = .32 + (i * 37 % 60) / 60 * .82, rr = lerp(.52, .15, (yy - .28) / .9) + .02; return new T.Vector3(Math.cos(a) * rr, yy, Math.sin(a) * rr); })), new T.PointsMaterial({ color: "#ffffff", size: .05, transparent: true, opacity: .9 })); body.add(sp);
       /* tay áo bồng, nơ eo */
-      [-1, 1].forEach(function (d) { var pf = new T.Mesh(new T.SphereGeometry(.1, 16, 12), new T.MeshStandardMaterial({ color: c1, roughness: .35, metalness: .2 })); pf.position.set(d * .24, .25, 0); pf.scale.set(1, .85, 1); torso.add(pf); });
-      var top2 = new T.Mesh(new T.SphereGeometry(.2, 20, 10, 0, Math.PI * 2, 0, Math.PI / 2), new T.MeshStandardMaterial({ color: c1, roughness: .35, metalness: .25 })); top2.position.y = .27; top2.scale.y = .3; torso.add(top2);
+      [-1, 1].forEach(function (d) { var pf = new T.Mesh(new T.SphereGeometry(.1, 16, 12), new T.MeshStandardMaterial({ color: c1, roughness: .35, metalness: .2 })); pf.position.set(d * .19, .24, 0); pf.scale.set(.75, .7, .75); torso.add(pf); });
+      var top2 = new T.Mesh(new T.SphereGeometry(.16, 20, 10, 0, Math.PI * 2, 0, Math.PI / 2), new T.MeshStandardMaterial({ color: c1, roughness: .35, metalness: .25 })); top2.position.y = .27; top2.scale.y = .3; torso.add(top2);
       var bow = new T.Group(), bm2 = mat("#ffffff", { roughness: .35, metalness: .3 });
       [-1, 1].forEach(function (d) { var lb = new T.Mesh(new T.SphereGeometry(.07, 12, 10), bm2); lb.scale.set(1.3, .8, .5); lb.position.set(d * .08, 0, 0); bow.add(lb); });
-      var bc = new T.Mesh(new T.SphereGeometry(.035, 10, 8), bm2); bow.add(bc); bow.position.set(0, -.08, .21); torso.add(bow);
-      var waist = new T.Mesh(new T.TorusGeometry(.215, .025, 8, 24), bm2); waist.rotation.x = Math.PI / 2; waist.position.y = -.08; torso.add(waist);
-      var A1 = limb(.08, .4, SKIN), A2 = limb(.08, .4, SKIN); A1.position.set(-.26, .26, 0); A2.position.set(.26, .26, 0); torso.add(A1, A2);
+      var bc = new T.Mesh(new T.SphereGeometry(.035, 10, 8), bm2); bow.add(bc); bow.position.set(0, -.08, .14); torso.add(bow);
+      var waist = new T.Mesh(new T.TorusGeometry(.13, .022, 8, 24), bm2); waist.rotation.x = Math.PI / 2; waist.position.y = -.08; torso.add(waist);
+      var A1 = limb(.08, .4, SKIN), A2 = limb(.08, .4, SKIN); A1.position.set(-.2, .26, 0); A2.position.set(.2, .26, 0); torso.add(A1, A2);
       var head = faceSprite(tex(img, fb), 1.3); head.userData.base = .3; torso.add(head);
       var crown = new T.Group(), gold = mat("#ffd24a", { metalness: .9, roughness: .2, emissive: "#6a4a00", emissiveIntensity: .4 });
       var band = new T.Mesh(new T.CylinderGeometry(.22, .22, .08, 20, 1, true), gold); crown.add(band);
@@ -178,9 +206,9 @@ var W20Stage3D = (function () {
 
     /* ---------- lớp chữ: bảng công bố, lời chúc, chữ chờ ---------- */
     var ov = document.createElement("div"); ov.className = "s3ov"; ov.setAttribute("data-s", "WAITING");
-    ov.innerHTML = '<div class="s3vig"></div><div class="s3plates" aria-live="polite"></div><div class="s3wait"><b>Đang chờ chị em quay quà…</b><small>Chị em quay xong là anh em lên trao quà ngay!</small></div><div class="s3wish"></div>';
+    ov.innerHTML = '<div class="s3vig"></div><div class="s3plates" aria-live="polite"></div><div class="s3wait"><b>Đang chờ chị em quay quà…</b><small>Chị em quay xong là anh em lên trao quà ngay!</small></div><div class="s3wish"></div><div class="s3next"></div>';
     wrap.style.position = "relative"; wrap.appendChild(ov);
-    var platesEl = ov.querySelector(".s3plates"), waitEl = ov.querySelector(".s3wait"), wishEl = ov.querySelector(".s3wish");
+    var platesEl = ov.querySelector(".s3plates"), waitEl = ov.querySelector(".s3wait"), wishEl = ov.querySelector(".s3wish"), nextEl = ov.querySelector(".s3next");
     if (!document.getElementById("s3css")) {
       var st = document.createElement("style"); st.id = "s3css";
       st.textContent = ".s3ov{position:absolute;inset:0;pointer-events:none;font-family:'Be Vietnam Pro',sans-serif}" +
@@ -193,17 +221,21 @@ var W20Stage3D = (function () {
         ".s3wait{position:absolute;left:50%;top:44%;transform:translate(-50%,-50%);background:rgba(4,34,28,.62);border:1px solid rgba(240,214,140,.5);border-radius:16px;padding:.8em 1.4em;text-align:center;color:#fff8e6;font-size:clamp(11px,1.8vw,20px);transition:opacity .4s}" +
         ".s3wait b{display:block;font:700 1.3em 'Playfair Display',serif}.s3wait small{color:#f3dc9c;font-weight:600}.s3ov:not([data-s=WAITING]) .s3wait{opacity:0}" +
         ".s3wish{position:absolute;left:50%;bottom:3.5%;width:max-content;max-width:88%;transform:translateX(-50%) translateY(8px);padding:.35em 1.1em;border-radius:99px;background:rgba(4,34,28,.72);border:1px solid rgba(240,214,140,.55);text-align:center;color:#fff8e6;font:700 clamp(11px,1.7vw,22px)/1.35 'Playfair Display',serif;opacity:0;transform:translateY(8px);transition:all .6s}.s3wish.on{opacity:1;transform:translateX(-50%)}" +
-        ".stagewrap:fullscreen .s3pl{font-size:clamp(12px,1.6vw,26px)}";
+        ".s3next{position:absolute;left:1.6%;top:30%;width:19%;font-size:clamp(9px,1.15vw,15px);color:#fff;background:rgba(18,8,48,.72);border:1.5px solid #5cc8ff;border-radius:12px;padding:.5em .6em;box-shadow:0 0 14px rgba(92,200,255,.4);transition:opacity .3s}.s3next:empty{opacity:0}.s3next b{display:block;color:#bfe9ff;letter-spacing:.05em;font-size:.9em;margin-bottom:.25em}.s3next div{display:flex;gap:.45em;align-items:baseline;line-height:1.35;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.s3next i{font-style:normal;font-weight:800;color:#ffd45c;min-width:1.1em}.s3next div:first-of-type span{font-weight:800;color:#ffe9a6}.s3next small{color:#c9b8f0}" +
+        ".stagewrap:fullscreen .s3pl{font-size:clamp(12px,1.6vw,26px)}.stagewrap:fullscreen .s3next{font-size:clamp(13px,1.5vw,24px)}";
       document.head.appendChild(st);
     }
 
     /* ---------- máy trạng thái: WAITING → ANNOUNCING → PRESENTING → CELEBRATING → COMPLETED ---------- */
     var MEN = (typeof W20CFG !== "undefined" && W20CFG.men) || [], Q = [], cur = null, last = null, nextMan = 0, nextStyle = 0, SEEN = {}, played = 0;
-    var T1 = 2300, T2 = 3900, ANN = 1800, CEL = 4800, COMP = 2600, STATE = "WAITING", running = true, soundOn = false, stopped = false, wishT = 0;
+    var T1 = 1400, T2 = 2400, ANN = 600, CEL = 2600, COMP = 400, /* mỗi người đúng 6 giây (0,6+2,4+2,6+0,4) */  STATE = "WAITING", running = true, soundOn = false, stopped = false, wishT = 0;
     var WISHES = ["Chúc {n} luôn xinh đẹp, rạng rỡ như ánh đèn sân khấu!", "Chúc {n} 20/10 thật vui, thật xinh và thật… ít việc!", "Chúc {n} luôn là ngôi sao sáng nhất Phòng PTSPBL!", "Chúc {n} cười thật tươi, deadline thật nhẹ!"];
     function callName(nm) { var w = String(nm || "").trim().split(/\s+/); return w.length > 1 ? w[0] + " " + w[w.length - 1] : (w[0] || "chị em"); }
     function status() { return { state: STATE, queue: Q.length, busy: !!cur, running: running, played: played, size: Q.length + (cur ? cur.items.length : 0), canReplay: !!last, sound: soundOn }; }
-    function changed() { try { opt.onChange && opt.onChange(status()); } catch (e) {} }
+    function drawNext() {
+      var L = Q.slice(0, 5); nextEl.innerHTML = L.length ? "<b>SẮP LÊN NHẬN QUÀ (" + Q.length + " chờ)</b>" + L.map(function (e, i) { return "<div><i>" + (i + 1) + "</i><span>" + esc(shortName(e.name)) + "</span></div>"; }).join("") : "";
+    }
+    function changed() { drawNext(); try { opt.onChange && opt.onChange(status()); } catch (e) {} }
 
     /* âm thanh: chỉ phát sau khi người dùng bật bằng nút (cần thao tác của người dùng); tổng hợp bằng WebAudio, không cần tệp âm thanh */
     var AC = null;
@@ -227,14 +259,16 @@ var W20Stage3D = (function () {
       cur.items.forEach(function (it) { [it.man, it.girl, it.gift].forEach(function (o) { S.remove(o); o.traverse(function (c) { if (c.geometry) c.geometry.dispose(); if (c.material && c.material.dispose && !c.material.map) c.material.dispose(); }); }); });
       cur = null; platesEl.innerHTML = ""; wishEl.classList.remove("on"); wishEl.textContent = ""; STATE = "WAITING"; ov.setAttribute("data-s", "WAITING");
     }
+    var lastMan = -1;
+    function pickMan() { if (!MEN.length) return 0; var k, g = 0; do { k = Math.floor(Math.random() * MEN.length); } while (MEN.length > 1 && k === lastMan && ++g < 20); lastMan = k; return k; }
     function play(batch, isReplay) {
       var used = {}, n = batch.length, now = performance.now();
-      var scl = [1.55, 1.42, 1.3, 1.16, 1.02][n - 1], slot = 12.6 / n;
+      var scl = [1.38, 1.42, 1.3, 1.16, 1.02][n - 1], slot = 12.6 / n;
       var items = batch.map(function (e, k) {
         var ti = hash(e.id || e.name) % TITLES.length; while (used[ti]) ti = (ti + 1) % TITLES.length; used[ti] = 1;
-        var mm = MEN.length ? MEN[nextMan++ % MEN.length] : { img: "" }, title = TITLES[ti];
+        var mi = pickMan(), mm = MEN.length ? MEN[mi] : { img: "" }, title = TITLES[ti];
         var fb = "assets/women/r" + (1 + hash(e.id || e.name) % 6) + ".webp";
-        var man = makeMan(mm.img), girl = makeGirl(e.id ? "assets/women/" + e.id + ".webp" : fb, fb, title[1]), gift = makeGift();
+        var man = makeMan(mm.img, mi), girl = makeGirl(e.id ? "assets/women/" + e.id + ".webp" : fb, fb, title[1]), gift = makeGift();
         man.scale.setScalar(scl); girl.scale.setScalar(scl); gift.scale.setScalar(scl * 1.15);
         man.position.set(-12, 0, .6); girl.position.set(12, 0, .6); S.add(man, girl, gift);
         var cx = -6.3 + slot * (k + .5), d = Math.min(1.2, slot * .26);
@@ -252,8 +286,8 @@ var W20Stage3D = (function () {
     /* force = true: MC bấm "Trao tiếp" nên bỏ qua thời gian chờ gom người và bỏ qua trạng thái tạm dừng */
     function pump(force) {
       if (stopped || cur || !Q.length) return false; var now = performance.now();
-      if (!force && (!running || (Q.length < 5 && now - Q[0].at < 1500))) return false;
-      var batch = Q.splice(0, 5); last = batch.map(function (e) { return { id: e.id, name: e.name, prize: e.prize, demo: e.demo }; });
+      if (!force && !running) return false;
+      var batch = Q.splice(0, 1); /* trao lần lượt từng người một */ last = batch.map(function (e) { return { id: e.id, name: e.name, prize: e.prize, demo: e.demo }; });
       play(batch, false); changed(); return true;
     }
     function animPair(it, t, now) {
@@ -311,7 +345,7 @@ var W20Stage3D = (function () {
         if (!after && u < .9) { gp = mh.clone().lerp(gh, ease((u - .72) / .18)); } else gp = gh;
       }
       it.gift.position.copy(gp); it.gift.position.y += (holdGirl ? -.3 : .1) * sc; if (holdGirl) it.gift.position.z += .25 * sc; it.gift.rotation.y = after ? .35 : now / 1200;
-      var gd = it.gift.userData; if (gd) { var op = after ? ease((tt - 500) / 900) : 0; gd.lid.rotation.z = -op * 1.5; gd.lid.position.y = .15 + op * .05; gd.glow.material.opacity = op * (.75 + Math.sin(now / 160) * .15); gd.glow.scale.setScalar(.01 + op * .85); }
+      var gd = it.gift.userData; if (gd) { var op = after ? ease((tt - 200) / 700) : 0; gd.lid.rotation.z = -op * 1.5; gd.lid.position.y = .15 + op * .05; gd.glow.material.opacity = op * (.75 + Math.sin(now / 160) * .15); gd.glow.scale.setScalar(.01 + op * .85); }
       fitFace(mu.head); fitFace(gu.head);
       var hh = gu.head.scale.y; gu.crown.position.y = gu.head.position.y + hh / 2 - .06; gu.crown.position.z = 0; gu.crown.renderOrder = 2; gu.crown.traverse(function (o) { if (o.material) { o.material.depthTest = false; o.renderOrder = 3; } });
     }
@@ -337,11 +371,12 @@ var W20Stage3D = (function () {
         rimGlow.material.opacity = .2 + Math.sin(ts * 2) * .06;
         var cp = cgeo.attributes.position, dt = 1 / 30; for (var q = 0; q < CN; q++) { var y = cp.getY(q) - cspd[q] * dt; if (y < -.3) y = 9 + Math.random(); cp.setY(q, y); cp.setX(q, cp.getX(q) + Math.sin(ts * 1.3 + q) * .004); } cp.needsUpdate = true;
       }
+      waitEl.style.opacity = (cur || Q.length) ? "0" : "";
       if (cur) {
         var t = now - cur.t0;
         setState(t < ANN ? "ANNOUNCING" : t < ANN + T2 ? "PRESENTING" : t < ANN + T2 + CEL ? "CELEBRATING" : "COMPLETED");
         cur.items.forEach(function (it) { animPair(it, Math.max(0, t - ANN - it.k * 260), now); });
-        if (t > ANN + T2 + CEL + COMP + cur.n * 260) { var e = cur; if (!e.replay) played += e.n; clearCur(); changed(); try { opt.onEnd && opt.onEnd(e); } catch (er) {} }
+        if (t > ANN + T2 + CEL + COMP) { var e = cur; if (!e.replay) played += e.n; clearCur(); changed(); try { opt.onEnd && opt.onEnd(e); } catch (er) {} }
       } else if (Q.length) pump(false);
       R.render(S, CAM);
     }
@@ -353,15 +388,17 @@ var W20Stage3D = (function () {
         if (stopped || !e) return false; var key = e.id || e.name;
         if (!e.demo && key && SEEN[key]) return false;
         if (key && !e.demo) SEEN[key] = 1;
-        e.at = performance.now(); Q.push(e);
+        e.at = performance.now();
+        if (e.ts) { var ix = Q.length; while (ix > 0 && Q[ix - 1].ts && Q[ix - 1].ts > e.ts) ix--; Q.splice(ix, 0, e); } else Q.push(e); /* ai quay trước thì lên trước */
         if (e.id) tex("assets/women/" + e.id + ".webp", "assets/women/r" + (1 + hash(key) % 6) + ".webp"); /* tải trước ảnh cho lượt sắp tới */
         changed(); return true;
       },
       size: function () { return Q.length + (cur ? cur.items.length : 0); },
       status: status,
+      peek: function (n) { return Q.slice(0, n || 5).map(function (e) { return { id: e.id, name: e.name, prize: e.prize, ts: e.ts }; }); },
       next: function () { return pump(true); },                 /* MC: trao tiếp ngay */
       replay: function () { if (stopped || cur || !last) return false; play(last.map(function (e) { var o = {}; for (var k in e) o[k] = e[k]; return o; }), true); changed(); return true; }, /* phát lại, không đụng dữ liệu */
-      skip: function () { if (!cur) return false; cur.t0 = Math.min(cur.t0, performance.now() - (ANN + T2 + CEL + COMP + cur.n * 260 + 50)); return true; },
+      skip: function () { if (!cur) return false; cur.t0 = Math.min(cur.t0, performance.now() - (ANN + T2 + CEL + COMP + 50)); return true; },
       setRunning: function (b) { running = !!b; changed(); },
       setSound: function (b) { soundOn = !!b; if (soundOn) { if (ac()) { tone(880, .25, "triangle", .08); tone(1320, .4, "triangle", .08, .12); } } changed(); },
       stop: function () {

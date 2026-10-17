@@ -21,6 +21,12 @@
 .aw-stat small{display:block;font:600 11px "Be Vietnam Pro",sans-serif;color:#b9d9cf;letter-spacing:.04em}.aw-stat b{font:800 22px "Playfair Display",serif;color:#fff8e6}.aw-stat b span{color:#b9d9cf;font-size:16px}.aw-stat em{font-style:normal}
 .aw-src span{font-size:12px}.aw-prog{height:8px;border-radius:99px;background:rgba(255,255,255,.12);overflow:hidden;min-width:80px}.aw-prog i{display:block;height:100%;width:0;border-radius:99px;background:linear-gradient(90deg,#d9b25a,#f7e3a5);transition:width .6s}
 @media (max-width:720px){.aw-stats{grid-template-columns:1fr 1fr}.aw-prog{grid-column:1/-1;order:5}}
+.aw-next{margin-top:12px;padding:12px 14px;border-radius:14px;background:rgba(92,200,255,.08);border:1.5px solid rgba(92,200,255,.5)}
+.aw-next-h{font:800 15px "Be Vietnam Pro",sans-serif;color:#bfe9ff;margin-bottom:6px}.aw-next-h small{font-weight:600;color:#9fbcd0}
+.aw-next ol{list-style:none;margin:0;padding:0;display:grid;gap:6px}.aw-next li{display:flex;align-items:center;gap:12px;padding:8px 12px;border-radius:10px;background:rgba(255,255,255,.06);font:700 clamp(16px,2.2vw,24px)/1.2 "Playfair Display",serif;color:#fff8e6}
+.aw-next li:first-child{background:linear-gradient(90deg,rgba(247,227,165,.28),rgba(247,227,165,.08));border:1px solid #f3dc9c;font-size:clamp(20px,2.8vw,30px)}
+.aw-next li i{font:800 15px "Be Vietnam Pro",sans-serif;font-style:normal;color:#3a2a00;background:#f3dc9c;border-radius:99px;min-width:1.9em;text-align:center;padding:.2em .4em}.aw-next li span{flex:1}.aw-next li small{font:600 14px "Be Vietnam Pro",sans-serif;color:#c9d9e6}
+.aw-next .empty{color:#9fbcd0;font:600 14px "Be Vietnam Pro",sans-serif;padding:4px 2px}
 .aw-mc{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;padding:10px;border-radius:14px;background:rgba(0,0,0,.28);border:1px solid rgba(240,214,140,.25)}
 .mcb{appearance:none;font:700 14px "Be Vietnam Pro",sans-serif;color:#fff8e6;background:rgba(255,248,226,.09);border:1.5px solid rgba(240,214,140,.45);border-radius:12px;padding:11px 16px;cursor:pointer;transition:transform .15s,background .15s}
 .mcb:hover:not(:disabled){background:rgba(255,248,226,.2);transform:translateY(-1px)}.mcb:focus-visible{outline:3px solid #f3dc9c;outline-offset:2px}.mcb:disabled{opacity:.4;cursor:not-allowed}
@@ -96,6 +102,7 @@ code{background:rgba(0,0,0,.25);border-radius:6px;padding:1px 6px;font-size:.92e
         <div class="aw-stat aw-src"><small>Kết nối</small><span id="sstat" class="muted">Đang kết nối Firebase…</span></div>
       </div>
       <div class="stagewrap"><canvas id="stagecv" aria-label="Sân khấu trao quà"></canvas></div>
+      <div class="aw-next" id="awnext" aria-live="polite"><div class="aw-next-h">📣 5 chị sắp lên nhận quà <small>(theo thứ tự đã quay trước)</small></div><ol id="awnextl"></ol></div>
       <div class="aw-mc noprint" role="toolbar" aria-label="Bảng điều khiển MC">
         <button class="mcb mcb-main" id="mcrun" type="button" aria-pressed="true">⏸ Tạm dừng</button>
         <button class="mcb" id="mcnext" type="button" title="Phím N">⏭ Trao quà tiếp theo</button>
@@ -105,7 +112,7 @@ code{background:rgba(0,0,0,.25);border-radius:6px;padding:1px 6px;font-size:.92e
         <button class="mcb" id="sfull" type="button" title="Phím F">⛶ Toàn màn hình</button>
       </div>
       <details class="aw-test noprint"><summary>🧪 Chạy thử (không tính vào dữ liệu)</summary>
-        <div><button class="mcb" id="sdemo" type="button">▶ Thử 1 chị</button><button class="mcb" id="sdemo5" type="button">▶▶ Thử 5 chị cùng lúc</button></div>
+        <div><button class="mcb" id="sdemo" type="button">▶ Thử 1 chị</button><button class="mcb" id="sdemo5" type="button">▶▶ Thử 5 chị liên tiếp</button></div>
         <p class="muted aw-hint" style="margin:8px 0 0">Phím tắt: N = trao tiếp · S = bỏ qua · R = phát lại · P = tạm dừng/tiếp tục · F = toàn màn hình.</p>
       </details>
     </div>
@@ -188,7 +195,7 @@ code{background:rgba(0,0,0,.25);border-radius:6px;padding:1px 6px;font-size:.92e
 <script src="assets/modules.js?v=20261090"></script>
 <script src="assets/stage.js?v=23"></script>
 <script src="assets/three.min.js?v=128"></script>
-<script src="assets/stage3d.js?v=32"></script>
+<script src="assets/stage3d.js?v=41"></script>
 <script>
 (function () {
   var $ = function (s) { return document.querySelector(s); };
@@ -236,6 +243,8 @@ code{background:rgba(0,0,0,.25);border-radius:6px;padding:1px 6px;font-size:.92e
     sv = sv || (STG && STG.status ? STG.status() : { state: "WAITING", queue: 0, busy: false, running: true, canReplay: false, sound: false });
     var pill = $("#awstate"); pill.setAttribute("data-s", sv.state); pill.querySelector("span").textContent = STATE_LABEL[sv.state] || sv.state;
     $("#awq").textContent = sv.queue; mcCounts(sv);
+    var nx = STG && STG.peek ? STG.peek(5) : [];
+    $("#awnextl").innerHTML = nx.length ? nx.map(function (e, i) { var pz = e.prize || {}; return "<li><i>" + (i + 1) + "</i><span>" + esc(e.name) + "</span><small>" + (pz.name ? esc(pz.name) : "") + "</small></li>"; }).join("") : '<li class="empty">Chưa có ai trong hàng chờ.</li>';
     var ctl = !!(STG && STG.is3d);
     $("#mcrun").textContent = sv.running ? "⏸ Tạm dừng" : "▶ Bắt đầu / Tiếp tục"; $("#mcrun").setAttribute("aria-pressed", String(!!sv.running));
     ["#mcrun", "#mcnext", "#mcskip", "#mcreplay", "#mcsound"].forEach(function (i) { $(i).hidden = !ctl; }); $("#awstate").style.display = ctl ? "" : "none"; $(".aw-hint").hidden = !ctl; /* bản 2D chỉ có nút toàn màn hình */
@@ -257,7 +266,8 @@ code{background:rgba(0,0,0,.25);border-radius:6px;padding:1px 6px;font-size:.92e
   function stageFeed(rows) {
     var st = stage(); var got = rows.filter(function (r) { return r.pr; }); gotCount = got.length;
     if (stSeen === null) { stSeen = {}; got.forEach(function (r) { stSeen[r.p.id] = 1; }); }
-    else got.forEach(function (r) { if (!stSeen[r.p.id]) { stSeen[r.p.id] = 1; if (st) st.queue({ id: r.p.id, name: (r.p.x || "Chị") + " " + r.p.n, prize: r.pr }); } });
+    else got.filter(function (r) { return !stSeen[r.p.id]; }).sort(function (a, b) { return (a.o && a.o.at ? a.o.at.getTime() : 0) - (b.o && b.o.at ? b.o.at.getTime() : 0); }) /* ai quay trước thì lên trước */
+      .forEach(function (r) { stSeen[r.p.id] = 1; if (st) st.queue({ id: r.p.id, name: (r.p.x || "Chị") + " " + r.p.n, prize: r.pr, ts: r.o && r.o.at ? r.o.at.getTime() : 0 }); });
     mcRefresh();
     $("#sstat").textContent = W20P.length ? "🔴 Trực tiếp · chị em quay xong là lên sân khấu" : "⚠ Chưa có danh sách chị em";
     var L = got.slice().sort(function (a, b) { return (b.o && b.o.at ? b.o.at.getTime() : 0) - (a.o && a.o.at ? a.o.at.getTime() : 0); });
