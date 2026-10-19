@@ -179,7 +179,7 @@ var W20Stage3D = (function () {
       var waist = new T.Mesh(new T.TorusGeometry(.13, .022, 8, 24), bm2); waist.rotation.x = Math.PI / 2; waist.position.y = -.08; torso.add(waist);
       var A1 = limb(.08, .4, SKIN), A2 = limb(.08, .4, SKIN); A1.position.set(-.2, .26, 0); A2.position.set(.2, .26, 0); torso.add(A1, A2);
       var head = faceSprite(tex(img, fb), 1.3); head.userData.base = .3; torso.add(head);
-      var crown = new T.Group(), CW = [296 / 480, 291 / 480][ci || 0]; /* 2 kiểu vương miện bằng ảnh (assets/crowns/c1, c2): mỗi chị đội một kiểu */
+      var crown = new T.Group(), CW = [232 / 480, 228 / 480][ci || 0]; /* 2 kiểu vương miện bằng ảnh (assets/crowns/c1, c2): mỗi chị đội một kiểu */
       var cs0 = new T.Sprite(new T.SpriteMaterial({ map: tex("assets/crowns/c" + ((ci || 0) + 1) + ".webp"), transparent: true, depthTest: false, depthWrite: false })); cs0.scale.set(1.12, 1.12 * CW, 1); cs0.renderOrder = 3; crown.add(cs0);
       torso.add(crown);
       root.userData = { body: body, torso: torso, L: [L1, L2], A: [A1, A2], head: head, crown: crown }; return root;
@@ -368,7 +368,7 @@ var W20Stage3D = (function () {
       g.updateMatrixWorld(true); var gh = handPos(gu.A[1]);
       it.gift.scale.setScalar(cs * 1.15); it.gift.position.copy(gh); it.gift.position.y += -.3 * cs; it.gift.position.z += .25 * cs; it.gift.rotation.y = .35;
       var gd = it.gift.userData; if (gd) { gd.lid.rotation.z = -1.5; gd.lid.position.y = .2; gd.glow.material.opacity = .55; gd.glow.scale.setScalar(.8); }
-      fitFace(gu.head); var hh = gu.head.scale.y; gu.crown.position.y = gu.head.position.y + hh / 2 + .08; gu.crown.position.z = 0;
+      fitFace(gu.head); var hh = gu.head.scale.y; gu.crown.position.y = gu.head.position.y + hh / 2 + .03; gu.crown.position.z = 0;
       if (it.lbl) { var v = new T.Vector3(g.position.x, 0, g.position.z).project(CAM); it.lbl.style.left = (v.x + 1) / 2 * 100 + "%"; it.lbl.style.top = ((1 - v.y) / 2 * 100 + .6) + "%"; }
     }
     function animPair(it, t, now) {
@@ -437,7 +437,7 @@ var W20Stage3D = (function () {
       it.gift.position.copy(gp); it.gift.scale.setScalar(cs * 1.15); it.gift.position.y += (holdGirl ? -.3 : .1) * cs; if (holdGirl) it.gift.position.z += .25 * cs; it.gift.rotation.y = after ? .35 : now / 1200;
       var gd = it.gift.userData; if (gd) { var op = after ? ease((tt - 200) / 700) : 0; gd.lid.rotation.z = -op * 1.5; gd.lid.position.y = .15 + op * .05; gd.glow.material.opacity = op * (.75 + Math.sin(now / 160) * .15); gd.glow.scale.setScalar(.01 + op * .85); }
       fitFace(mu.head); fitFace(gu.head);
-      var hh = gu.head.scale.y; gu.crown.position.y = gu.head.position.y + hh / 2 + .08; gu.crown.position.z = 0; gu.crown.renderOrder = 2; gu.crown.traverse(function (o) { if (o.material) { o.material.depthTest = false; o.renderOrder = 3; } });
+      var hh = gu.head.scale.y; gu.crown.position.y = gu.head.position.y + hh / 2 + .03; gu.crown.position.z = 0; gu.crown.renderOrder = 2; gu.crown.traverse(function (o) { if (o.material) { o.material.depthTest = false; o.renderOrder = 3; } });
     }
 
     /* ---------- vòng lặp ---------- */
