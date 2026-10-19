@@ -31,7 +31,7 @@
 .mcb{appearance:none;font:700 14px "Be Vietnam Pro",sans-serif;color:#fff8e6;background:rgba(255,248,226,.09);border:1.5px solid rgba(240,214,140,.45);border-radius:12px;padding:11px 16px;cursor:pointer;transition:transform .15s,background .15s}
 .mcb:hover:not(:disabled){background:rgba(255,248,226,.2);transform:translateY(-1px)}.mcb:focus-visible{outline:3px solid #f3dc9c;outline-offset:2px}.mcb:disabled{opacity:.4;cursor:not-allowed}
 .mcb-main{background:linear-gradient(180deg,#f7e3a5,#d9b25a);color:#3a2a00;border-color:#f3dc9c}.mcb[aria-pressed=true].snd{background:rgba(127,216,190,.25)}
-.aw-test{margin-top:10px;font:600 13px "Be Vietnam Pro",sans-serif;color:#b9d9cf}.aw-test summary{cursor:pointer;padding:6px 2px}.aw-test .mcb{margin:6px 8px 0 0}
+.agrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(112px,1fr));gap:8px;margin:10px 0}.agrid[hidden]{display:none}.agrid .ag{background:rgba(255,255,255,.08);border:1px solid rgba(255,215,106,.35);border-radius:10px;padding:6px;text-align:center;font:600 12px/1.25 "Be Vietnam Pro",sans-serif;color:#fff}.agrid .ag img{display:block;width:100%;height:96px;object-fit:contain;background:#ffd6e2;border-radius:8px;margin-bottom:4px}.agrid .ag small{display:block;color:#ffe9a6;font-weight:500}.aw-test{margin-top:10px;font:600 13px "Be Vietnam Pro",sans-serif;color:#b9d9cf}.aw-test summary{cursor:pointer;padding:6px 2px}.aw-test .mcb{margin:6px 8px 0 0}
 .stagewrap:fullscreen{background:#05231d}
 .aw-batch{display:flex;flex-wrap:wrap;gap:10px 18px;align-items:center;margin:10px 0 2px;font-size:14px}.aw-batch input[type=number]{width:54px;padding:5px 6px;border-radius:8px;border:1px solid rgba(255,215,106,.5);background:rgba(0,0,0,.25);color:inherit;font:inherit;text-align:center}.aw-bcnt{font-weight:800;color:#ffe08a}.aw-pre{display:inline-flex;align-items:center;gap:6px;flex-wrap:wrap}.aw-pre .mcb{min-width:40px;padding:6px 10px}
 .aw-call{margin:12px 0 4px;padding:12px 14px;border-radius:14px;border:1.5px solid rgba(92,200,255,.55);background:rgba(18,8,48,.45)}.aw-call-h{font-weight:800;margin-bottom:8px}.aw-call-h small{font-weight:600;opacity:.8}.aw-call-r{display:flex;flex-wrap:wrap;gap:8px}.aw-call select{flex:1 1 230px;min-width:0;padding:9px 10px;border-radius:10px;border:1px solid rgba(255,215,106,.5);background:rgba(0,0,0,.3);color:inherit;font:inherit}.aw-hint2{margin:8px 0 0;font-size:13px}
@@ -128,7 +128,8 @@ code{background:rgba(0,0,0,.25);border-radius:6px;padding:1px 6px;font-size:.92e
         <p class="muted aw-hint2">Người được mời sẽ lên sân khấu ngay (ưu tiên trước hàng chờ) với món quà đã chia sẵn cho họ. Nhớ dặn họ <b>không quay lại trên điện thoại</b> để khỏi nhận quà hai lần.</p>
       </div>
       <details class="aw-test noprint" open><summary>🧪 Chạy thử (không tính vào dữ liệu thật)</summary>
-        <div><button class="mcb" id="sdemo" type="button">▶ Thử 1 chị</button><button class="mcb" id="sdemo20" type="button">▶▶ Chạy thử 20 chị (4 vòng × 5)</button><button class="mcb" id="sreset" type="button">🧹 Làm mới sân khấu</button></div>
+        <div><button class="mcb" id="sdemo" type="button">▶ Thử 1 chị</button><button class="mcb" id="sdemo20" type="button">▶▶ Chạy thử 20 chị (4 vòng × 5)</button><button class="mcb" id="sdemo52" type="button">▶▶▶ Chạy thử cả 52 chị</button><button class="mcb" id="sgrid" type="button">🖼 Xem ảnh &amp; tên 52 chị</button><button class="mcb" id="sreset" type="button">🧹 Làm mới sân khấu</button></div>
+        <div class="agrid" id="agrid" hidden></div>
         <p class="muted aw-hint" style="margin:8px 0 0">Cách chạy thử: bấm <b>Chạy thử 20 chị</b> → các chị tự lên nhận quà từng người rồi đứng hàng bên trái → đủ 5 chị sân khấu dừng để chụp ảnh → bấm <b>▶ Tiếp tục mời … lên</b> (phím N). Phím tắt: N = mời / tiếp tục · C = chụp ảnh ngay · S = bỏ qua hiệu ứng · P = bật/tắt tự động · F = toàn màn hình.</p>
       </details>
     </div>
@@ -328,6 +329,11 @@ code{background:rgba(0,0,0,.25);border-radius:6px;padding:1px 6px;font-size:.92e
   function demoEv(id, i) { var p = W20P.filter(function (x) { return x.id === id; })[0] || W20TEST[0]; return { id: id, name: (p.x || "Chị") + " " + p.n, prize: W20CFG.prizes[(i || 0) % W20CFG.prizes.length], demo: true }; }
   $("#sdemo").onclick = function () { var st = stage(); if (st) st.queue(demoEv("test01", (Math.random() * 4) | 0)); };
   $("#sdemo20").onclick = function () { var st = stage(); if (!st) return; ["test01"].concat(W20P.slice(0, 19).map(function (p) { return p.id; })).forEach(function (id, i) { st.queue(demoEv(id, i)); }); };
+  $("#sdemo52").onclick = function () { var st = stage(); if (!st) return; W20P.forEach(function (p, i) { st.queue(demoEv(p.id, i)); }); };
+  $("#sgrid").onclick = function () {
+    var g = $("#agrid"); if (!g.hidden) { g.hidden = true; return; }
+    g.innerHTML = W20P.map(function (p) { return '<div class="ag"><img src="assets/women/' + p.id + '.webp" alt="" loading="lazy"><b>' + esc((p.x || "Chị") + " " + p.n) + "</b><small>" + esc(p.id) + "</small></div>"; }).join(""); g.hidden = false;
+  };
   $("#sreset").onclick = function () { var st = stage(); if (st && st.reset) { st.reset(); mcRefresh(); } };
   $("#mcphoto").onclick = function () { mcDo(function (st) { st.photoNow(); }); };
   /* mời người chưa nhận quà lên sân khấu */
