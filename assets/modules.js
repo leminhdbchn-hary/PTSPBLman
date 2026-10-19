@@ -303,12 +303,12 @@ function w20Wavy(g, x1, x2, y, col) { g.save(); g.strokeStyle = col; g.lineWidth
 /* ===== 10 mẫu thiệp: nền, khung, hoa màu nước thật (tách từ ảnh gốc) đổi tông/đổi chỗ, hạt lấp lánh, ren, bướm… Mẫu 0 = hoa hồng gốc (mặc định) ===== */
 /* ===== 6 mẫu thiệp: nền là ảnh thiệp (assets/cards), đã xoá lời chúc gốc; chữ riêng từng người được vẽ lên khung "blk" ===== */
 var W20THEMES = [
-  { name: "Bó hồng trên bàn", file: "t1", w: 1536, h: 1024, blk: { x: 205, y: 500, w: 500, h: 280 }, ink: "#4a3036", acc: "#d81b60", em: "🌹" },
-  { name: "Hoa hồng nắng sớm", file: "t2", w: 2000, h: 1493, blk: { x: 170, y: 856, w: 850, h: 330 }, ink: "#4a3036", acc: "#d81b60", em: "🌸" },
-  { name: "Trời xanh mây hồng", file: "t3", w: 2000, h: 1493, blk: { x: 250, y: 990, w: 790, h: 470 }, ink: "#274a43", acc: "#b8305c", em: "🌷" },
+  { name: "Bó hồng trên bàn", file: "t1", w: 1536, h: 1024, blk: { x: 190, y: 496, w: 520, h: 340 }, ink: "#4a3036", acc: "#d81b60", em: "🌹" },
+  { name: "Hoa hồng nắng sớm", file: "t2", w: 2000, h: 1493, blk: { x: 130, y: 862, w: 930, h: 430 }, ink: "#4a3036", acc: "#d81b60", em: "🌸" },
+  { name: "Trời xanh mây hồng", file: "t3", w: 2000, h: 1493, blk: { x: 110, y: 990, w: 1050, h: 450 }, ink: "#274a43", acc: "#b8305c", em: "🌷" },
   { name: "Tulip trên giấy", file: "t4", w: 2000, h: 1493, blk: { x: 880, y: 730, w: 640, h: 540 }, ink: "#4a3a3a", acc: "#c43563", em: "💌" },
-  { name: "Cúc hoạ mi và sách", file: "t5", w: 2000, h: 1493, blk: { x: 380, y: 690, w: 760, h: 300 }, ink: "#37483f", acc: "#e0245e", em: "📚" },
-  { name: "Quý cô và hoa", file: "t6", w: 2000, h: 1493, blk: { x: 250, y: 850, w: 700, h: 480 }, ink: "#6a1f3a", acc: "#b02a58", em: "👒" }
+  { name: "Cúc hoạ mi và sách", file: "t5", w: 2000, h: 1493, blk: { x: 250, y: 690, w: 950, h: 430 }, ink: "#37483f", acc: "#e0245e", em: "📚" },
+  { name: "Quý cô và hoa", file: "t6", w: 2000, h: 1493, blk: { x: 230, y: 850, w: 770, h: 520 }, ink: "#6a1f3a", acc: "#b02a58", em: "👒" }
 ];
 W20THEMES.forEach(function (t) { t.pv = "url(assets/cards/" + t.file + ".webp) center/cover"; });
 function w20Hex2rgba(h, a) { var n = parseInt(h.slice(1), 16); return "rgba(" + (n >> 16) + "," + ((n >> 8) & 255) + "," + (n & 255) + "," + a + ")"; }
@@ -334,9 +334,18 @@ function w20DrawCard(g, o) {
     return { P: P, h: h };
   }
   var L = null, s;
-  for (s = 1; s >= .3 && !L; s -= .03) { var r = build(s); if (r.h <= b.h) L = r; }
-  if (!L) L = build(.3);
+  for (s = 1; s >= .16 && !L; s -= .02) { var r = build(s); if (r.h <= b.h) L = r; }
+  if (!L) L = build(.16);
   var y0 = b.y + Math.max(0, (b.h - L.h) * .5);
+  /* tấm nền sáng mờ phía sau lời chúc cho dễ đọc; luôn nằm gọn trong thiệp */
+  var wfz = L.P.length > 3 ? L.P[2].f : L.P[1].f, pad = Math.max(24, wfz * .85), bw = 0, tp = 1e9, bt = -1e9;
+  L.P.forEach(function (p) { var f = p.f; g.font = f + "px " + W20HW; var w = g.measureText(p.t).width + (p.heart ? f * 1.2 : 0); bw = Math.max(bw, w); tp = Math.min(tp, p.y - f * .86); bt = Math.max(bt, p.y + f * .34); });
+  var py = y0 + tp - pad * .8, ph = bt - tp + pad * 1.6, px = cx - bw / 2 - pad * 1.15, pw = bw + pad * 2.3, mg = Math.max(14, W * .012);
+  if (py + ph > H - mg) { var sh = py + ph - (H - mg); y0 -= sh; py -= sh; } if (py < mg) { y0 += mg - py; py = mg; }
+  px = Math.max(mg, Math.min(px, W - mg - pw));
+  window.W20CARDBOX = { x: px, y: py, w: pw, h: ph, W: W, H: H };
+  g.save(); var rd = Math.min(pad * 1.1, ph / 4, pw / 4); g.beginPath(); g.moveTo(px + rd, py); g.arcTo(px + pw, py, px + pw, py + ph, rd); g.arcTo(px + pw, py + ph, px, py + ph, rd); g.arcTo(px, py + ph, px, py, rd); g.arcTo(px, py, px + pw, py, rd); g.closePath();
+  g.shadowColor = "rgba(90,40,50,.28)"; g.shadowBlur = pad * .9; g.shadowOffsetY = pad * .25; g.fillStyle = "rgba(255,252,247,.80)"; g.fill(); g.shadowColor = "transparent"; g.lineWidth = Math.max(2, pad * .09); g.strokeStyle = "rgba(255,255,255,.95)"; g.stroke(); g.restore();
   L.P.forEach(function (p) {
     var f = p.f; if (p.fit) { g.font = f + "px " + W20HW; while (g.measureText(p.t).width > b.w && f > 16) { f -= 2; g.font = f + "px " + W20HW; } }
     var save = W20INK; W20INK = p.col; w20Ink(g, p.t, cx, y0 + p.y, f, p.bold); W20INK = save;
