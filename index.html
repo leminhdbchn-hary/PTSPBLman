@@ -129,7 +129,7 @@
 <script src="assets/stock.js?v=202610190154"></script>
 <script src="assets/firebase-sync.js?v=202610190204"></script>
 <script src="assets/people.js?v=202610160350"></script>
-<script src="assets/common.js?v=202610190204"></script>
+<script src="assets/common.js?v=202610192250"></script>
 <script src="assets/flowers.js?v=20261013"></script>
 <script src="assets/modules.js?v=202610192230"></script>
 <script src="assets/boxflow.js?v=202610160731"></script>
@@ -311,7 +311,7 @@
     var c = $("#card"), TT = W20THEMES[ST.theme >= 0 && ST.theme < W20THEMES.length ? ST.theme : 0]; if (ST.mseed == null) { ST.mseed = 1 + Math.floor(Math.random() * 1e6); save(); }
     if (c.width !== TT.w || c.height !== TT.h) { c.width = TT.w; c.height = TT.h; } c.style.setProperty("--ar", (TT.w / TT.h).toFixed(3));
     var g = c.getContext("2d"), pk = [];
-    w20DrawCard(g, { mode: "chi", greet: "Thân gửi:", name: S.full ? S.x + " " + S.full : "Các chị em Phòng PTSPBL", sub: w20Sub(S.title), role: role(),
+    w20DrawCard(g, { mode: "chi", greet: "Thân gửi:", name: S.full ? w20CardName(S.x, S.full) : "Các chị em Phòng PTSPBL", sub: w20Sub(S.title), role: role(),
       wish: ST.cw ? ST.cw : w20Wish(wishIdx(), S.full ? S.x.toLowerCase() : "chị em"), bd: S.bd, prizes: pk, from: S.f, bq: ST.bq, theme: ST.theme || 0, men: ST.men === 1 ? w20PickMen(ST.mseed, 6) : null });
   }
   W20THEMES.forEach(function (t) { var im = w20Img("assets/cards/" + t.file + ".webp"); if (!im.complete) im.addEventListener("load", function () { card(); }); }); /* nền thiệp tải xong thì vẽ lại */
