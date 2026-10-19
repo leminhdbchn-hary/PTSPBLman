@@ -33,7 +33,7 @@
 .mcb-main{background:linear-gradient(180deg,#f7e3a5,#d9b25a);color:#3a2a00;border-color:#f3dc9c}.mcb[aria-pressed=true].snd{background:rgba(127,216,190,.25)}
 .agrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(112px,1fr));gap:8px;margin:10px 0}.agrid[hidden]{display:none}.agrid .ag{background:rgba(255,255,255,.08);border:1px solid rgba(255,215,106,.35);border-radius:10px;padding:6px;text-align:center;font:600 12px/1.25 "Be Vietnam Pro",sans-serif;color:#fff}.agrid .ag img{display:block;width:100%;height:96px;object-fit:contain;background:#ffd6e2;border-radius:8px;margin-bottom:4px}.agrid .ag small{display:block;color:#ffe9a6;font-weight:500}.aw-test{margin-top:10px;font:600 13px "Be Vietnam Pro",sans-serif;color:#b9d9cf}.aw-test summary{cursor:pointer;padding:6px 2px}.aw-test .mcb{margin:6px 8px 0 0}
 .stagewrap:fullscreen{background:#05231d}
-.aw-batch{display:flex;flex-wrap:wrap;gap:10px 18px;align-items:center;margin:10px 0 2px;font-size:14px}.aw-batch input[type=number]{width:54px;padding:5px 6px;border-radius:8px;border:1px solid rgba(255,215,106,.5);background:rgba(0,0,0,.25);color:inherit;font:inherit;text-align:center}.aw-bcnt{font-weight:800;color:#ffe08a}.aw-pre{display:inline-flex;align-items:center;gap:6px;flex-wrap:wrap}.aw-pre .mcb{min-width:40px;padding:6px 10px}
+.aw-batch{display:flex;flex-wrap:wrap;gap:10px 18px;align-items:center;margin:10px 0 2px;font-size:14px}.aw-batch input[type=number]{width:54px;padding:5px 6px;border-radius:8px;border:1px solid rgba(255,215,106,.5);background:rgba(0,0,0,.25);color:inherit;font:inherit;text-align:center}.aw-bcnt{font-weight:800;color:#ffe08a}.aw-spd{display:inline-flex;align-items:center;gap:6px;flex-wrap:wrap;font-weight:700}.aw-spd .mcb{min-width:46px;padding:6px 10px}.aw-spd .mcb.on{background:linear-gradient(180deg,#ffe58a,#ffb93d);color:#3a2200;border-color:#fff3c4}.aw-pre{display:inline-flex;align-items:center;gap:6px;flex-wrap:wrap}.aw-pre .mcb{min-width:40px;padding:6px 10px}
 .aw-call{margin:12px 0 4px;padding:12px 14px;border-radius:14px;border:1.5px solid rgba(92,200,255,.55);background:rgba(18,8,48,.45)}.aw-call-h{font-weight:800;margin-bottom:8px}.aw-call-h small{font-weight:600;opacity:.8}.aw-call-r{display:flex;flex-wrap:wrap;gap:8px}.aw-call select{flex:1 1 230px;min-width:0;padding:9px 10px;border-radius:10px;border:1px solid rgba(255,215,106,.5);background:rgba(0,0,0,.3);color:inherit;font:inherit}.aw-hint2{margin:8px 0 0;font-size:13px}
 @media (prefers-reduced-motion:reduce){.aw-pill i,.aw-prog i{animation:none!important;transition:none!important}}
 .stagewrap{border-radius:16px;overflow:hidden;box-shadow:0 12px 34px rgba(0,0,0,.5);border:2px solid rgba(255,215,106,.5);background:#05231d}.stagewrap canvas{display:block;width:100%;height:auto}.stagewrap:fullscreen{display:flex;align-items:center;background:#000}
@@ -116,6 +116,7 @@ code{background:rgba(0,0,0,.25);border-radius:6px;padding:1px 6px;font-size:.92e
       </div>
       <div class="aw-batch noprint" id="awbatch">
         <label>Cứ <input type="number" id="mcbn" value="5" min="1" max="6" inputmode="numeric"> chị đứng thành hàng thì sân khấu <b>dừng để chụp ảnh</b>; bấm <b>▶ Tiếp tục mời … lên</b> để mời lượt kế tiếp.</label>
+        <span class="aw-spd" id="awspd">⏩ Tua nhanh: <button class="mcb" data-v="1" type="button">1×</button><button class="mcb" data-v="1.3" type="button">1,3×</button><button class="mcb" data-v="1.5" type="button">1,5×</button><button class="mcb" data-v="2" type="button">2×</button></span>
         <span class="aw-bcnt" id="awbcnt"></span>
       </div>
       <div class="aw-call noprint" id="awcall">
@@ -212,7 +213,7 @@ code{background:rgba(0,0,0,.25);border-radius:6px;padding:1px 6px;font-size:.92e
 <script src="assets/modules.js?v=20261090"></script>
 <script src="assets/stage.js?v=23"></script>
 <script src="assets/three.min.js?v=128"></script>
-<script src="assets/stage3d.js?v=54"></script>
+<script src="assets/stage3d.js?v=58"></script>
 <script>
 (function () {
   var $ = function (s) { return document.querySelector(s); };
@@ -268,6 +269,7 @@ code{background:rgba(0,0,0,.25);border-radius:6px;padding:1px 6px;font-size:.92e
     $("#mcnext").textContent = sv.photo ? "▶ Tiếp tục mời " + B + " chị tiếp theo lên" : "▶ Mời chị tiếp theo lên";
     $("#awbcnt").textContent = !ctl ? "" : sv.photo ? "📸 Đủ " + sv.lineN + " chị đang đứng chụp ảnh · còn " + sv.queue + " chị chờ" : "Hàng đứng chờ: " + sv.lineN + "/" + B + " chị" + (sv.busy ? " · 🎬 đang nhận quà" : "") + " · " + sv.queue + " chị chờ";
     $("#mcphoto").disabled = !ctl || sv.photo || !(sv.lineN > 0);
+    [].forEach.call(document.querySelectorAll("#awspd button"), function (b) { b.classList.toggle("on", Math.abs(+b.getAttribute("data-v") - (sv.speed || 1)) < .01); b.disabled = !ctl; });
     $("#awbatch").hidden = !ctl; $("#awcall").hidden = !ctl; try { fillPick(); } catch (e) {} $("#mcrun").setAttribute("aria-pressed", String(!!sv.running));
     ["#mcrun", "#mcnext", "#mcphoto", "#mcskip", "#mcsound"].forEach(function (i) { $(i).hidden = !ctl; }); $("#awstate").style.display = ctl ? "" : "none"; $(".aw-hint").hidden = !ctl; /* bản 2D chỉ có nút toàn màn hình */
     $("#mcrun").disabled = !ctl; $("#mcnext").disabled = !ctl || sv.busy || (!sv.photo && !sv.queue); $("#mcskip").disabled = !ctl || !sv.busy; $("#mcreplay").disabled = !ctl || sv.busy || !sv.canReplay; $("#mcsound").disabled = !ctl;
@@ -356,6 +358,7 @@ code{background:rgba(0,0,0,.25);border-radius:6px;padding:1px 6px;font-size:.92e
   $("#mcrand").onclick = function () { var L = notYet(); if (L.length) callPerson(L[Math.floor(Math.random() * L.length)].p.id); };
   function applyBatch() { var st = STG; if (st && st.setBatch) st.setBatch($("#mcbn").value); try { localStorage.setItem("w20batch", String($("#mcbn").value)); } catch (e) {} mcRefresh(); }
   $("#mcbn").onchange = $("#mcbn").oninput = applyBatch;
+  [].forEach.call(document.querySelectorAll("#awspd button"), function (b) { b.onclick = function () { mcDo(function (st) { st.setSpeed(+b.getAttribute("data-v")); }); }; });
     try { var bs = Number(localStorage.getItem("w20batch")); if (bs >= 1 && bs <= 5) $("#mcbn").value = bs; } catch (e) {}
   function fullscreen() { var w = document.querySelector(".stagewrap"); try { if (document.fullscreenElement) document.exitFullscreen(); else (w.requestFullscreen || w.webkitRequestFullscreen).call(w); } catch (e) {} }
   $("#sfull").onclick = fullscreen;
