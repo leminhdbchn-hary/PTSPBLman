@@ -164,44 +164,23 @@ var W20Stage3D = (function () {
     function crownTex() {
       if (CROWN) return CROWN;
       var c = document.createElement("canvas"); c.width = 512; c.height = 448; var g = c.getContext("2d");
+      var Y = "#f7c948", YD = "#e2a52e", PK = "#f06c80", PKD = "#d9546a";
       g.lineJoin = "round"; g.lineCap = "round";
-      function lin(x0, y0, x1, y1, st) { var l = g.createLinearGradient(x0, y0, x1, y1); st.forEach(function (q) { l.addColorStop(q[0], q[1]); }); return l; }
-      var GOLD = [[0, "#fff4bd"], [.22, "#f7d35f"], [.5, "#d89f2c"], [.74, "#f1c548"], [1, "#a8741a"]], GDK = [[0, "#d9a53a"], [.5, "#a8741a"], [1, "#6f470c"]];
-      function sphere(cx, cy, r, st) { /* viên bi bóng: ánh sáng từ trên-trái, điểm sáng nhỏ */
-        var rg = g.createRadialGradient(cx - r * .35, cy - r * .4, r * .08, cx, cy, r); st.forEach(function (q) { rg.addColorStop(q[0], q[1]); });
-        g.beginPath(); g.arc(cx, cy, r, 0, 6.283); g.fillStyle = rg; g.fill(); g.lineWidth = 2.2; g.strokeStyle = "rgba(90,55,8,.85)"; g.stroke();
-        g.beginPath(); g.ellipse(cx - r * .36, cy - r * .42, r * .24, r * .14, -.6, 0, 6.283); g.fillStyle = "rgba(255,255,255,.9)"; g.fill();
-      }
-      var BALL = [[0, "#fffbe2"], [.3, "#f8d96d"], [.7, "#d29a2a"], [1, "#8a5810"]], PEARL = [[0, "#ffffff"], [.5, "#f3ead8"], [1, "#b9a98a"]], RUBY = [[0, "#ffd3dc"], [.35, "#f0587a"], [.8, "#b5223f"], [1, "#7c1228"]];
-      /* lớp sau: thân tối có bóng đổ nhẹ */
+      /* thân vương miện (lớp sau, vàng đậm) */
       var P = [[60, 350], [66, 140], [108, 232], [150, 100], [205, 236], [256, 70], [307, 236], [362, 100], [405, 232], [446, 140], [452, 350]];
-      g.save(); g.shadowColor = "rgba(60,30,0,.5)"; g.shadowBlur = 12; g.shadowOffsetY = 6;
-      g.beginPath(); P.forEach(function (q, i) { i ? g.lineTo(q[0], q[1]) : g.moveTo(q[0], q[1]); }); g.closePath(); g.fillStyle = lin(60, 70, 452, 350, GDK); g.fill(); g.strokeStyle = "#8a5a14"; g.lineWidth = 24; g.stroke(); g.restore();
-      /* lớp trước: vàng kim loại, viền sáng phía trên */
-      g.beginPath(); g.moveTo(70, 352); g.lineTo(78, 190); g.quadraticCurveTo(256, 98, 434, 190); g.lineTo(442, 352); g.closePath();
-      g.fillStyle = lin(70, 110, 442, 352, GOLD); g.fill(); g.strokeStyle = lin(70, 110, 442, 352, GOLD); g.lineWidth = 16; g.stroke();
-      g.beginPath(); g.moveTo(88, 196); g.quadraticCurveTo(256, 112, 424, 196); g.strokeStyle = "rgba(255,250,215,.85)"; g.lineWidth = 4; g.stroke();
-      g.beginPath(); g.moveTo(96, 300); g.quadraticCurveTo(256, 220, 416, 300); g.strokeStyle = "rgba(120,75,10,.35)"; g.lineWidth = 3; g.stroke();
-      /* hoa văn chạm khắc nhẹ */
-      [[150, 262], [362, 262]].forEach(function (q) { g.beginPath(); g.arc(q[0], q[1], 22, 0, 6.283); g.strokeStyle = "rgba(120,75,10,.45)"; g.lineWidth = 3; g.stroke(); g.beginPath(); g.arc(q[0], q[1], 9, 0, 6.283); g.fillStyle = "rgba(255,243,190,.55)"; g.fill(); });
-      /* bi tròn trên các đầu nhọn */
-      [[66, 120, 27], [150, 84, 27], [256, 52, 38], [362, 84, 27], [446, 120, 27]].forEach(function (b) { sphere(b[0], b[1], b[2], BALL); });
-      /* ngọc trai ở các khe */
-      [[108, 238, 12], [205, 242, 12], [307, 242, 12], [405, 238, 12]].forEach(function (q) { sphere(q[0], q[1], q[2], PEARL); });
-      /* dải đế kim loại */
-      var bp = function () { g.beginPath(); g.moveTo(76, 334); g.lineTo(436, 334); g.quadraticCurveTo(468, 334, 468, 366); g.lineTo(468, 382); g.quadraticCurveTo(468, 414, 436, 414); g.lineTo(76, 414); g.quadraticCurveTo(44, 414, 44, 382); g.lineTo(44, 366); g.quadraticCurveTo(44, 334, 76, 334); g.closePath(); };
-      bp(); g.fillStyle = lin(0, 334, 0, 414, [[0, "#fff0a8"], [.3, "#f3c84a"], [.62, "#d29a28"], [1, "#8f5c10"]]); g.fill(); g.strokeStyle = "#7a4d10"; g.lineWidth = 3; g.stroke();
-      g.beginPath(); g.moveTo(66, 344); g.lineTo(446, 344); g.strokeStyle = "rgba(255,252,220,.9)"; g.lineWidth = 3; g.stroke();
-      g.beginPath(); g.moveTo(60, 402); g.lineTo(452, 402); g.strokeStyle = "rgba(90,55,8,.45)"; g.lineWidth = 3; g.stroke();
-      [92, 174, 256, 338, 420].forEach(function (x) { sphere(x, 374, 17, BALL); sphere(x, 374, 10.5, RUBY); });
-      /* ngọc hồng lục giác nhiều mặt */
-      function hexPts(cx, cy, r) { var a = []; for (var i = 0; i < 6; i++) { var t = Math.PI / 6 + i * Math.PI / 3; a.push([cx + r * Math.cos(t), cy + r * Math.sin(t)]); } return a; }
-      var H0 = hexPts(256, 246, 56); g.beginPath(); H0.forEach(function (q, i) { i ? g.lineTo(q[0], q[1]) : g.moveTo(q[0], q[1]); }); g.closePath(); g.fillStyle = lin(200, 190, 312, 302, GOLD); g.fill(); g.strokeStyle = "#7a4d10"; g.lineWidth = 3; g.stroke();
-      var H1 = hexPts(256, 246, 43), fc = ["#ffb3c3", "#f0617f", "#c92c4b", "#ff8aa3", "#a8203f", "#f7728d"];
-      for (var i = 0; i < 6; i++) { g.beginPath(); g.moveTo(256, 246); g.lineTo(H1[i][0], H1[i][1]); g.lineTo(H1[(i + 1) % 6][0], H1[(i + 1) % 6][1]); g.closePath(); g.fillStyle = fc[i]; g.fill(); }
-      var H2 = hexPts(256, 246, 20); g.beginPath(); H2.forEach(function (q, i) { i ? g.lineTo(q[0], q[1]) : g.moveTo(q[0], q[1]); }); g.closePath(); g.fillStyle = "rgba(255,225,232,.55)"; g.fill();
-      g.beginPath(); g.moveTo(236, 224); g.lineTo(262, 218); g.lineTo(250, 238); g.closePath(); g.fillStyle = "rgba(255,255,255,.8)"; g.fill();
-      CROWN = new T.CanvasTexture(c); CROWN.encoding = T.sRGBEncoding; CROWN.anisotropy = 4; return CROWN;
+      g.beginPath(); P.forEach(function (q, i) { i ? g.lineTo(q[0], q[1]) : g.moveTo(q[0], q[1]); }); g.closePath(); g.fillStyle = YD; g.fill(); g.strokeStyle = YD; g.lineWidth = 26; g.stroke();
+      /* lớp trước vàng sáng */
+      g.beginPath(); g.moveTo(70, 350); g.lineTo(78, 190); g.quadraticCurveTo(256, 100, 434, 190); g.lineTo(442, 350); g.closePath(); g.fillStyle = Y; g.fill(); g.strokeStyle = Y; g.lineWidth = 18; g.stroke();
+      /* viên bi tròn trên đầu nhọn */
+      [[66, 120, 27, Y], [150, 84, 27, YD], [256, 52, 37, Y], [362, 84, 27, YD], [446, 120, 27, Y]].forEach(function (b) { g.beginPath(); g.arc(b[0], b[1], b[2], 0, 6.283); g.fillStyle = b[3]; g.fill(); });
+      /* dải đế */
+      g.beginPath(); g.moveTo(76, 336); g.lineTo(436, 336); g.quadraticCurveTo(466, 336, 466, 366); g.lineTo(466, 380); g.quadraticCurveTo(466, 412, 436, 412); g.lineTo(76, 412); g.quadraticCurveTo(46, 412, 46, 380); g.lineTo(46, 366); g.quadraticCurveTo(46, 336, 76, 336); g.closePath(); g.fillStyle = Y; g.fill();
+      g.beginPath(); g.moveTo(52, 392); g.lineTo(460, 392); g.quadraticCurveTo(452, 412, 436, 412); g.lineTo(76, 412); g.quadraticCurveTo(60, 412, 52, 392); g.closePath(); g.fillStyle = YD; g.fill();
+      [100, 178, 256, 334, 412].forEach(function (x) { g.beginPath(); g.arc(x, 372, 11, 0, 6.283); g.fillStyle = PK; g.fill(); });
+      /* ngọc lục giác hồng ở giữa */
+      function hex(cx, cy, r, col) { g.beginPath(); for (var i = 0; i < 6; i++) { var a = Math.PI / 6 + i * Math.PI / 3; g.lineTo(cx + r * Math.cos(a), cy + r * Math.sin(a)); } g.closePath(); g.fillStyle = col; g.fill(); }
+      hex(256, 250, 44, PKD); hex(256, 250, 36, PK);
+      CROWN = new T.CanvasTexture(c); CROWN.encoding = T.sRGBEncoding; return CROWN;
     }
     function makeGirl(img, fb, pal) {
       var root = new T.Group(), body = new T.Group(); root.add(body);
