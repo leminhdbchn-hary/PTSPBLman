@@ -136,7 +136,7 @@
 <script src="assets/flowers.js?v=20261013"></script>
 <script src="assets/modules.js?v=202610160421"></script>
 <script src="assets/boxflow.js?v=202610160731"></script>
-<script src="assets/intro.js?v=5"></script>
+<script src="assets/intro.js?v=7"></script>
 <script src="assets/firebase-sync.js?v=202610190204"></script>
 <script>
 (function () {
@@ -192,8 +192,8 @@
     };
     /* cảnh mở đầu: chibi Sếp mặc áo dài đi tới Vietcombank, lá thư có cánh rơi xuống tay, đọc xong vào cảnh phê duyệt */
     if (S.to && window.W20Intro && !INTRO) {
-      $("#openbox").style.display = "none"; var fid = me ? me.id : "";
-      INTRO = W20Intro.mount($("#vcbscene"), { kind: "sep", id: me ? me.id : "", face: fid ? "assets/women/" + fid + ".webp?v=" + W20Intro.ver : "", fb: "", hint: $("#tapme"),
+      $("#openbox").style.display = "none"; $("#tapme").style.display = "none"; var fid = me ? me.id : ""; /* câu thông báo nằm ở dòng trên cùng */
+      INTRO = W20Intro.mount($("#vcbscene"), { kind: "sep", id: me ? me.id : "", face: fid ? "assets/women/" + fid + ".webp?v=" + W20Intro.ver : "", fb: "", hint: $("#hello"), keepClass: true,
         onOpen: function () { PS.opened = 1; savePS(); FL.show(0, false); } });
     }
     $("#openbox").onclick = function () { PS.opened = 1; savePS(); FL.unbox(0); };
