@@ -316,11 +316,25 @@ function w20Rnd(k) { var x = Math.sin(k * 127.1 + 311.7) * 43758.5453; return x 
 /* chọn ngẫu nhiên (cố định theo seed) n anh em trong số các anh */
 function w20PickMen(seed, n) { var a = [], i, j, t, N = (W20CFG.men || []).length; for (i = 0; i < N; i++) a.push(i); for (i = N - 1; i > 0; i--) { j = Math.floor(w20Rnd(seed * 31 + i * 7 + 1) * (i + 1)); t = a[i]; a[i] = a[j]; a[j] = t; } return a.slice(0, n); }
 /* o: {theme, greet, name, sub, role, wish, from, bd, bq:[...], men:[chỉ số các anh] | null} */
+function w20Panel(g, px, py, pw, ph, pad) { /* tấm nền sáng mờ bo góc dùng cho khối chữ và hàng anh em */
+  var rd = Math.min(pad * 1.1, ph / 4, pw / 4); g.save(); g.beginPath(); g.moveTo(px + rd, py); g.arcTo(px + pw, py, px + pw, py + ph, rd); g.arcTo(px + pw, py + ph, px, py + ph, rd); g.arcTo(px, py + ph, px, py, rd); g.arcTo(px, py, px + pw, py, rd); g.closePath();
+  g.shadowColor = "rgba(90,40,50,.28)"; g.shadowBlur = pad * .9; g.shadowOffsetY = pad * .25; g.fillStyle = "rgba(255,252,247,.80)"; g.fill(); g.shadowColor = "transparent"; g.lineWidth = Math.max(2, pad * .09); g.strokeStyle = "rgba(255,255,255,.95)"; g.stroke(); g.restore();
+}
 function w20DrawCard(g, o) {
   var T = W20THEMES[o.theme >= 0 && o.theme < W20THEMES.length ? o.theme : 0], W = T.w, H = T.h, b = T.blk, cx = b.x + b.w / 2, i;
   W20INK = T.ink; g.save(); g.textBaseline = "alphabetic"; g.textAlign = "center";
   var bg = w20Img("assets/cards/" + T.file + ".webp");
   if (bg.complete && bg.naturalWidth) g.drawImage(bg, 0, 0, W, H); else { g.fillStyle = "#fdf0ee"; g.fillRect(0, 0, W, H); }
+  var MENL = (typeof W20CFG !== "undefined" && W20CFG.men) || [], mids = (o.men || []).filter(function (id) { return MENL[id]; }), mz = null;
+  if (mids.length) { /* hàng anh em: góc phải phía dưới, thẳng hàng */
+    var msc = Math.max(.55, W * .00048), mdx = W * .057, chw = 112 * msc, mpx = chw * .5, mpt = msc * 24, mpb = msc * 22, mmg = Math.max(14, W * .012), gw = (mids.length - 1) * mdx + chw, mph = 190 * msc + mpt + mpb, mpw = gw + mpx * 2;
+    mz = { sc: msc, dx: mdx, x: W - mmg - mpw, y: H - mmg - mph, w: mpw, h: mph, cx0: W - mmg - mpw + mpx + chw / 2, gy: H - mmg - mpb, pad: Math.max(24, msc * 34) };
+    /* khối chữ nằm đè lên hàng anh em theo chiều ngang thì chỉ được dùng phần phía trên hàng anh em */
+    if (b.x + b.w + 70 * msc > mz.x && b.x - 70 * msc < mz.x + mz.w) {
+      var nw = mz.x - 64 * msc - b.x; /* ưu tiên thu hẹp bề ngang; chỉ khi mất quá nhiều chỗ mới hạ chiều cao */
+      b = nw >= b.w * .86 ? { x: b.x, y: b.y, w: Math.min(b.w, nw), h: b.h } : { x: b.x, y: b.y, w: b.w, h: Math.max(160, Math.min(b.h, mz.y - 70 * msc - b.y)) }; cx = b.x + b.w / 2;
+    }
+  }
   var nm = o.name || "Chị em Phòng PTSPBL", sg = "Thương mến, " + (o.from || ""), wish = o.wish || "", greet = o.greet || "Thân gửi:";
   /* bố cục thoáng: lời chào, tên, lời chúc, rồi chữ ký ở dưới cùng cách xa lời chúc */
   function build(s) {
@@ -343,17 +357,22 @@ function w20DrawCard(g, o) {
   var py = y0 + tp - pad * .8, ph = bt - tp + pad * 1.6, px = cx - bw / 2 - pad * 1.15, pw = bw + pad * 2.3, mg = Math.max(14, W * .012);
   if (py + ph > H - mg) { var sh = py + ph - (H - mg); y0 -= sh; py -= sh; } if (py < mg) { y0 += mg - py; py = mg; }
   px = Math.max(mg, Math.min(px, W - mg - pw));
+  if (mz && px < mz.x + mz.w && px + pw > mz.x && py < mz.y + mz.h && py + ph > mz.y) { /* hai tấm nền chạm nhau: dời khối chữ sang trái, hết chỗ thì dời lên */
+    var sx = px + pw - mz.x + 12; if (px - sx >= mg) { px -= sx; cx -= sx; } else { var sy = py + ph - mz.y + 12; py -= sy; y0 -= sy; }
+  }
   window.W20CARDBOX = { x: px, y: py, w: pw, h: ph, W: W, H: H };
-  g.save(); var rd = Math.min(pad * 1.1, ph / 4, pw / 4); g.beginPath(); g.moveTo(px + rd, py); g.arcTo(px + pw, py, px + pw, py + ph, rd); g.arcTo(px + pw, py + ph, px, py + ph, rd); g.arcTo(px, py + ph, px, py, rd); g.arcTo(px, py, px + pw, py, rd); g.closePath();
-  if (o.panel !== false) { /* o.panel === false: bỏ nền, chữ nằm thẳng trên ảnh thiệp như ban đầu */ g.shadowColor = "rgba(90,40,50,.28)"; g.shadowBlur = pad * .9; g.shadowOffsetY = pad * .25; g.fillStyle = "rgba(255,252,247,.80)"; g.fill(); g.shadowColor = "transparent"; g.lineWidth = Math.max(2, pad * .09); g.strokeStyle = "rgba(255,255,255,.95)"; g.stroke(); } g.restore();
+  if (o.panel !== false) w20Panel(g, px, py, pw, ph, pad); /* o.panel === false: bỏ nền, chữ nằm thẳng trên ảnh thiệp */
   L.P.forEach(function (p) {
     var f = p.f; if (p.fit) { g.font = f + "px " + W20HW; while (g.measureText(p.t).width > b.w && f > 16) { f -= 2; g.font = f + "px " + W20HW; } }
     var save = W20INK; W20INK = p.col; w20Ink(g, p.t, cx, y0 + p.y, f, p.bold); W20INK = save;
     if (p.heart) { var w2 = g.measureText(p.t).width; g.save(); g.fillStyle = T.acc; g.textAlign = "left"; g.font = f + "px " + W20HW; g.fillText("♥", cx + w2 / 2 + 8, y0 + p.y); g.restore(); }
   });
-  /* anh em com lê cà vạt xếp hàng dưới thiệp (tuỳ chọn) */
-  var MEN = (typeof W20CFG !== "undefined" && W20CFG.men) || [], sc = Math.max(.42, W * .00036), dx = W * .075, x0 = W * .36;
-  (o.men || []).forEach(function (id, k) { var m = MEN[id]; if (!m) return; w20Chibi(g, x0 + k * dx, H - 12, sc, { img: w20Img(m.img), dir: 1, step: 1.6, up: k % 2 ? 0 : .85, lift: 0 }); });
+  /* anh em com lê cà vạt đứng một hàng ở góc phải phía dưới thiệp (tuỳ chọn), có tấm nền để không hoà vào nền thiệp */
+  if (mz) {
+    if (o.panel !== false) w20Panel(g, mz.x, mz.y, mz.w, mz.h, mz.pad);
+    mids.forEach(function (id, k) { var m = MENL[id]; w20Chibi(g, mz.cx0 + k * mz.dx, mz.gy, mz.sc, { img: w20Img(m.img), dir: 1, step: 1.6, up: k % 2 ? 0 : .85, lift: 0 }); });
+    window.W20MENBOX = { x: mz.x, y: mz.y, w: mz.w, h: mz.h };
+  } else window.W20MENBOX = null;
   g.restore();
 }
 
