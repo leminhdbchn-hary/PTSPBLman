@@ -160,6 +160,40 @@ var W20Stage3D = (function () {
       var head = faceSprite(tex(img), 1.3); head.userData.base = .72; torso.add(head);
       root.userData = { body: body, torso: torso, L: [L1, L2], A: [A1, A2], head: head }; return root;
     }
+    var CROWN = null;
+    function crownTex() {
+      if (CROWN) return CROWN;
+      var c = document.createElement("canvas"); c.width = 512; c.height = 224; var g = c.getContext("2d"), yb = 150;
+      var cg = g.createLinearGradient(0, 60, 0, 224); cg.addColorStop(0, "#fff0b8"); cg.addColorStop(.35, "#f2c25a"); cg.addColorStop(.7, "#c98a33"); cg.addColorStop(1, "#8a521a");
+      var dk = "#7a4a18", ln = "#fff3c4";
+      /* cung hoa văn lượn giữa các đầu nhọn */
+      var X = [58, 157, 256, 355, 454];
+      g.lineCap = "round"; g.lineJoin = "round";
+      for (var i = 0; i < 4; i++) {
+        var x0 = X[i], x1 = X[i + 1], mx = (x0 + x1) / 2;
+        g.beginPath(); g.moveTo(x0, yb - 8); g.quadraticCurveTo(mx - 22, 66, mx, 96); g.quadraticCurveTo(mx + 22, 66, x1, yb - 8);
+        g.strokeStyle = dk; g.lineWidth = 11; g.stroke(); g.strokeStyle = cg; g.lineWidth = 6; g.stroke();
+        g.beginPath(); g.arc(mx, 100, 7, 0, 6.283); g.fillStyle = cg; g.fill(); g.strokeStyle = dk; g.lineWidth = 2.5; g.stroke();
+        var pr = g.createRadialGradient(mx - 3, 98, 1, mx, 102, 9); pr.addColorStop(0, "#fff8e0"); pr.addColorStop(1, "#d6924a");
+        g.beginPath(); g.arc(mx, 80, 8.5, 0, 6.283); g.fillStyle = pr; g.fill(); g.strokeStyle = dk; g.lineWidth = 2; g.stroke();
+      }
+      /* các đầu nhọn + ngọc trai */
+      var T0 = [88, 52, 20, 52, 88], R = [13, 15, 18, 15, 13];
+      for (i = 0; i < 5; i++) {
+        var x = X[i], yt = T0[i];
+        g.beginPath(); g.moveTo(x - 17, yb + 4); g.quadraticCurveTo(x - 5, yb - 36, x, yt + R[i]); g.quadraticCurveTo(x + 5, yb - 36, x + 17, yb + 4); g.closePath();
+        g.fillStyle = cg; g.fill(); g.strokeStyle = dk; g.lineWidth = 3; g.stroke();
+        var pg = g.createRadialGradient(x - R[i] * .35, yt - R[i] * .35, 1, x, yt, R[i]); pg.addColorStop(0, "#fffbe8"); pg.addColorStop(.55, "#f1b765"); pg.addColorStop(1, "#b8722a");
+        g.beginPath(); g.arc(x, yt, R[i], 0, 6.283); g.fillStyle = pg; g.fill(); g.strokeStyle = dk; g.lineWidth = 2.5; g.stroke();
+      }
+      /* dải đế cong */
+      g.beginPath(); g.moveTo(14, yb + 8); g.quadraticCurveTo(256, yb - 22, 498, yb + 8); g.lineTo(504, yb + 52); g.quadraticCurveTo(256, yb + 78, 8, yb + 52); g.closePath();
+      g.fillStyle = cg; g.fill(); g.strokeStyle = dk; g.lineWidth = 4; g.stroke();
+      g.beginPath(); g.moveTo(24, yb + 16); g.quadraticCurveTo(256, yb - 12, 488, yb + 16); g.strokeStyle = ln; g.lineWidth = 3; g.globalAlpha = .75; g.stroke(); g.globalAlpha = 1;
+      for (i = 0; i < 17; i++) { var t = i / 16, bx = 30 + t * 452, by = yb + 32 + 8 * Math.sin(t * Math.PI) + 0; g.beginPath(); g.arc(bx, by, 5, 0, 6.283); g.fillStyle = "#fff0c2"; g.fill(); g.strokeStyle = dk; g.lineWidth = 1.6; g.stroke(); }
+      g.beginPath(); g.moveTo(10, yb + 54); g.quadraticCurveTo(256, yb + 80, 502, yb + 54); g.strokeStyle = "#5e3610"; g.lineWidth = 3; g.stroke();
+      CROWN = new T.CanvasTexture(c); CROWN.encoding = T.sRGBEncoding; return CROWN;
+    }
     function makeGirl(img, fb, pal) {
       var root = new T.Group(), body = new T.Group(); root.add(body);
       var L1 = leg(.07, .28, SKIN, "#7a1a3a"), L2 = leg(.07, .28, SKIN, "#7a1a3a"); L1.position.set(-.12, .3, 0); L2.position.set(.12, .3, 0); body.add(L1, L2);
@@ -179,12 +213,8 @@ var W20Stage3D = (function () {
       var waist = new T.Mesh(new T.TorusGeometry(.13, .022, 8, 24), bm2); waist.rotation.x = Math.PI / 2; waist.position.y = -.08; torso.add(waist);
       var A1 = limb(.08, .4, SKIN), A2 = limb(.08, .4, SKIN); A1.position.set(-.2, .26, 0); A2.position.set(.2, .26, 0); torso.add(A1, A2);
       var head = faceSprite(tex(img, fb), 1.3); head.userData.base = .3; torso.add(head);
-      var crown = new T.Group(), gold = mat("#ffd24a", { metalness: .9, roughness: .2, emissive: "#6a4a00", emissiveIntensity: .4 });
-      var band = new T.Mesh(new T.CylinderGeometry(.22, .22, .08, 20, 1, true), gold); crown.add(band);
-      var pearl = mat("#ffffff", { emissive: "#fff0c0", emissiveIntensity: .8 });
-      for (var i = 0; i < 5; i++) { var a = i / 5 * Math.PI * 2, ph = .2 + (i === 0 ? .1 : 0), pk = new T.Mesh(new T.ConeGeometry(.055, ph, 6), gold); pk.position.set(Math.sin(a) * .22, .04 + ph / 2, Math.cos(a) * .22); crown.add(pk); var pl = new T.Mesh(new T.SphereGeometry(.036, 10, 8), pearl); pl.position.set(Math.sin(a) * .22, .06 + ph, Math.cos(a) * .22); crown.add(pl); }
-      var gem = new T.Mesh(new T.SphereGeometry(.04, 10, 8), mat("#ff4f86", { emissive: "#ff4f86", emissiveIntensity: .6 })); gem.position.set(0, .05, .23); crown.add(gem);
-      crown.scale.setScalar(2.1); /* vương miện to hơn để nhìn rõ trên sân khấu */
+      var crown = new T.Group(); /* vương miện vẽ bằng canvas theo mẫu: dải đồng-vàng, hoa văn cuốn, đầu nhọn gắn ngọc trai */
+      var cs0 = new T.Sprite(new T.SpriteMaterial({ map: crownTex(), transparent: true, depthTest: false, depthWrite: false })); cs0.scale.set(1.12, 1.12 * 224 / 512, 1); cs0.renderOrder = 3; crown.add(cs0);
       torso.add(crown);
       root.userData = { body: body, torso: torso, L: [L1, L2], A: [A1, A2], head: head, crown: crown }; return root;
     }
@@ -372,7 +402,7 @@ var W20Stage3D = (function () {
       g.updateMatrixWorld(true); var gh = handPos(gu.A[1]);
       it.gift.scale.setScalar(cs * 1.15); it.gift.position.copy(gh); it.gift.position.y += -.3 * cs; it.gift.position.z += .25 * cs; it.gift.rotation.y = .35;
       var gd = it.gift.userData; if (gd) { gd.lid.rotation.z = -1.5; gd.lid.position.y = .2; gd.glow.material.opacity = .55; gd.glow.scale.setScalar(.8); }
-      fitFace(gu.head); var hh = gu.head.scale.y; gu.crown.position.y = gu.head.position.y + hh / 2 + .3; gu.crown.position.z = 0;
+      fitFace(gu.head); var hh = gu.head.scale.y; gu.crown.position.y = gu.head.position.y + hh / 2 - .1; gu.crown.position.z = 0;
       if (it.lbl) { var v = new T.Vector3(g.position.x, 0, g.position.z).project(CAM); it.lbl.style.left = (v.x + 1) / 2 * 100 + "%"; it.lbl.style.top = ((1 - v.y) / 2 * 100 + .6) + "%"; }
     }
     function animPair(it, t, now) {
@@ -441,7 +471,7 @@ var W20Stage3D = (function () {
       it.gift.position.copy(gp); it.gift.scale.setScalar(cs * 1.15); it.gift.position.y += (holdGirl ? -.3 : .1) * cs; if (holdGirl) it.gift.position.z += .25 * cs; it.gift.rotation.y = after ? .35 : now / 1200;
       var gd = it.gift.userData; if (gd) { var op = after ? ease((tt - 200) / 700) : 0; gd.lid.rotation.z = -op * 1.5; gd.lid.position.y = .15 + op * .05; gd.glow.material.opacity = op * (.75 + Math.sin(now / 160) * .15); gd.glow.scale.setScalar(.01 + op * .85); }
       fitFace(mu.head); fitFace(gu.head);
-      var hh = gu.head.scale.y; gu.crown.position.y = gu.head.position.y + hh / 2 + .3; gu.crown.position.z = 0; gu.crown.renderOrder = 2; gu.crown.traverse(function (o) { if (o.material) { o.material.depthTest = false; o.renderOrder = 3; } });
+      var hh = gu.head.scale.y; gu.crown.position.y = gu.head.position.y + hh / 2 - .1; gu.crown.position.z = 0; gu.crown.renderOrder = 2; gu.crown.traverse(function (o) { if (o.material) { o.material.depthTest = false; o.renderOrder = 3; } });
     }
 
     /* ---------- vòng lặp ---------- */
