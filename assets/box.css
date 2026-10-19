@@ -66,8 +66,7 @@ body.bx:before{background:radial-gradient(900px 600px at 80% -10%,rgba(255,93,15
 .scene .bqinfo{color:var(--rose);font-weight:700;font-size:14px}
 .scene .bqstage{background:radial-gradient(circle at 50% 40%,rgba(168,50,79,.1),transparent 70%)}
 .scene .prize{color:var(--rose)}
-.scene .pzrow{background:rgba(168,50,79,.08);border-color:rgba(168,50,79,.35);margin-top:8px}
-.scene .pzrow small{color:var(--ink)}.scene .pzrow b{color:var(--ink)}
+.scene .pzrow{margin-top:8px}
 .scene .reqbox{background:rgba(255,255,255,.7);border:2px solid var(--rose2)}
 .scene .reqbox b{color:var(--rose)}
 .scene .reqbox textarea,.scene .cwbox textarea{color:var(--ink)!important;background:#fff!important;border:2px solid rgba(168,50,79,.4)!important}
@@ -375,3 +374,10 @@ body.wh #s4 .gate,body.wh #p5 .gate{color:#ffe9a6}
   body.wh #s4 .wheelbox,body.wh #p5 .wheelbox{width:min(62vh,540px)}
 }
 @media (prefers-reduced-motion:reduce){body.wh .wheelbox,body.wh #spin,body.wh .wheelbox:before,body.wh #s4.scene:before,body.wh #p5.scene:before,body.wh #s4.scene:after,body.wh #p5.scene:after{animation:none!important}}
+
+/* Ô "Quà của bạn" và nút "Đã quay rồi": nền sáng, chữ đậm to để đọc rõ trên nền tím của vòng quay */
+.scene .pzrow{background:linear-gradient(180deg,#fffef6,#ffeeb9);border:2px solid #ffd45a;border-radius:20px;padding:12px 18px;max-width:440px;box-shadow:0 0 0 3px rgba(255,212,90,.35),0 10px 26px rgba(0,0,0,.35),0 0 28px rgba(255,220,120,.55);gap:14px;opacity:1}
+.scene .pzrow .pz{font-size:46px;filter:drop-shadow(0 2px 3px rgba(0,0,0,.25))}
+.scene .pzrow small{color:#8a4a00;font-size:14px;font-weight:800;opacity:1;letter-spacing:.02em}
+.scene .pzrow b{color:#2d1500;font-size:24px;font-weight:800;line-height:1.25;text-shadow:none}
+body.wh .btn:disabled,.scene .btn:disabled{filter:none;opacity:1;color:#fff;background:linear-gradient(180deg,#f06aa0,#c0306f);text-shadow:0 1px 2px rgba(0,0,0,.35);box-shadow:0 6px 16px rgba(0,0,0,.3)}
