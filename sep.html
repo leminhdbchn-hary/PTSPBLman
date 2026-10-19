@@ -136,7 +136,7 @@
 <script src="assets/flowers.js?v=20261013"></script>
 <script src="assets/modules.js?v=202610160421"></script>
 <script src="assets/boxflow.js?v=202610160731"></script>
-<script src="assets/intro.js?v=1"></script>
+<script src="assets/intro.js?v=2"></script>
 <script src="assets/firebase-sync.js?v=202610190204"></script>
 <script>
 (function () {
@@ -194,7 +194,6 @@
     if (S.to && window.W20Intro && !INTRO) {
       $("#openbox").style.display = "none"; var fid = me ? me.id : "";
       INTRO = W20Intro.mount($("#vcbscene"), { kind: "sep", face: fid ? "assets/women/" + fid + ".webp?v=" + W20Intro.ver : "", fb: "", hint: $("#tapme"),
-        lines: ["<b>V/v:</b> Xin phép được chúc mừng " + esc(who()) + " nhân ngày Phụ nữ Việt Nam 20/10.", "<b>Kính trình:</b> " + esc(who()) + ".", "<b>Căn cứ:</b> sự tận tâm của Sếp và tấm lòng của anh em.", "<b>Đề xuất:</b> Cho phép anh em được chúc và tặng hoa Sếp ạ ✍️"],
         onOpen: function () { PS.opened = 1; savePS(); FL.show(0, false); } });
     }
     $("#openbox").onclick = function () { PS.opened = 1; savePS(); FL.unbox(0); };

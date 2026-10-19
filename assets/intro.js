@@ -131,11 +131,7 @@ var W20Intro = (function () {
     function skip() { T.forEach(clearTimeout); T = []; box.classList.add("skip", "go", "arr", "drop", "hold"); setReady(); setTimeout(function () { box.classList.remove("skip"); }, 60); }
     function open() {
       if (opened) return; opened = true; state = "open"; box.classList.add("open");
-      if (kind === "sep") {
-        var L = o.lines || [], ltr = box.querySelector(".ltr");
-        ltr.innerHTML = '<div class="paper"><h4>' + (o.title || "TỜ TRÌNH") + '</h4>' + L.map(function (t) { return "<p>" + t + "</p>"; }).join("") + "</div>";
-        box.classList.add("read"); hint("Sếp đang đọc thư… 📖");
-        at(3400, function () { o.onOpen && o.onOpen(); });
+      if (kind === "sep") { hint("Sếp đang mở thư… ✉️"); at(750, function () { o.onOpen && o.onOpen(); }); /* thư bung ra rồi vào thẳng tờ trình */
       } else { at(380, function () { o.onOpen && o.onOpen(); }); }
     }
     function tap() { if (state === "walk" || state === "drop" || state === "idle") { skip(); return; } if (state === "ready") open(); }
