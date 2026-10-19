@@ -62,8 +62,10 @@ var W20Intro = (function () {
       '<g><ellipse cx="0" cy="-158" rx="46" ry="50" fill="#2a2230"/><ellipse cx="0" cy="-152" rx="40" ry="44" fill="#ffe2d1"/><path d="M-42 -160 Q-40 -204 0 -204 Q40 -204 42 -160 Q28 -184 8 -178 Q-14 -172 -42 -160Z" fill="#2a2230"/><ellipse cx="-15" cy="-150" rx="5" ry="7" fill="#2a2230"/><ellipse cx="15" cy="-150" rx="5" ry="7" fill="#2a2230"/><circle cx="-26" cy="-138" r="7" fill="#ff9db3" opacity=".6"/><circle cx="26" cy="-138" r="7" fill="#ff9db3" opacity=".6"/><path d="M-7 -133 Q0 -126 7 -133" fill="none" stroke="#c2455f" stroke-width="3" stroke-linecap="round"/></g>';
   }
 
-  function chibi(kind, face) {
-    var SKIN = "#ffe2d1", staff = kind !== "sep", body, sleeve = staff ? "#ffffff" : "#17a589", arm = staff ? 22 : 34;
+  var AD = [["#e8458a", "#c22d6d", "#ffd0e2"], ["#8e63d2", "#6a43ad", "#e4d3ff"], ["#f2a23a", "#d4811a", "#ffe3b3"], ["#2aa5d6", "#1b82b0", "#c9eefc"], ["#e5505b", "#bf3640", "#ffd0d4"], ["#3cb878", "#26935a", "#cdf5df"], ["#f0cf3c", "#cfa91c", "#fff3b0"], ["#ff8a65", "#e0623e", "#ffd9cb"], ["#17a589", "#0f7d68", "#7fe0c8"], ["#4f7de0", "#3459b8", "#d3e0ff"]];
+  function adIdx(id) { var h = 0, t = String(id || "x"); for (var i = 0; i < t.length; i++) h = (h * 31 + t.charCodeAt(i)) >>> 0; return h % AD.length; }
+  function chibi(kind, face, id) {
+    var SKIN = "#ffe2d1", staff = false, body, CL = AD[adIdx(id)], sleeve = CL[0], arm = 34; /* tất cả đều mặc áo dài, mỗi người một màu */
     var legs = staff ?
       '<g transform="translate(-9,-36)"><g class="lg l"><rect x="-5.5" y="0" width="11" height="32" rx="5" fill="' + SKIN + '"/><ellipse cx="0" cy="33" rx="10" ry="5" fill="#20242b"/></g></g><g transform="translate(9,-36)"><g class="lg r"><rect x="-5.5" y="0" width="11" height="32" rx="5" fill="' + SKIN + '"/><ellipse cx="0" cy="33" rx="10" ry="5" fill="#20242b"/></g></g>' :
       '<g transform="translate(-9,-36)"><g class="lg l"><rect x="-8" y="0" width="16" height="34" rx="5" fill="#fffdf8" stroke="#e5e0d2"/><ellipse cx="0" cy="35" rx="10.5" ry="5" fill="#f4d6a0"/></g></g><g transform="translate(9,-36)"><g class="lg r"><rect x="-8" y="0" width="16" height="34" rx="5" fill="#fffdf8" stroke="#e5e0d2"/><ellipse cx="0" cy="35" rx="10.5" ry="5" fill="#f4d6a0"/></g></g>';
@@ -72,12 +74,12 @@ var W20Intro = (function () {
       '<path d="M-26 -101 Q0 -109 26 -101 L20 -72 L-20 -72Z" fill="#ffffff" stroke="#d3dae4" stroke-width="1.5"/><path d="M-9 -104 L0 -89 L9 -104 L3 -106 L0 -98 L-3 -106Z" fill="#eef2f7" stroke="#d3dae4"/>' +
       '<path d="M-6 -103 L0 -80 L6 -103" fill="none" stroke="#0b8a4a" stroke-width="2"/><rect x="-6.5" y="-82" width="13" height="16" rx="2" fill="#fff" stroke="#0b8a4a" stroke-width="1.5"/><rect x="-6.5" y="-82" width="13" height="5" rx="1.5" fill="#0b8a4a"/><rect x="-3.5" y="-72" width="7" height="2" fill="#9bb3a6"/>';
     else body =
-      '<path d="M-18 -72 L-27 -26 L-35 -30 L-22 -74Z" fill="#12846c"/><path d="M18 -72 L27 -26 L35 -30 L22 -74Z" fill="#12846c"/>' +
-      '<path d="M-26 -101 Q0 -109 26 -101 L19 -72 L26 -24 L-26 -24 L-19 -72Z" fill="#17a589"/><path d="M-19 -72 L19 -72" stroke="#0f7d68" stroke-width="2"/>' +
-      '<g fill="#7fe0c8" opacity=".75"><circle cx="-9" cy="-92" r="2.6"/><circle cx="8" cy="-84" r="2.6"/><circle cx="-4" cy="-62" r="2.6"/><circle cx="10" cy="-48" r="2.6"/><circle cx="-12" cy="-40" r="2.6"/></g>' +
-      '<rect x="-9" y="-109" width="18" height="8" rx="3" fill="#0f7d68"/>';
-    var arms = '<g transform="translate(-26,-98)"><g class="ar l"><rect x="-5" y="0" width="10" height="' + arm + '" rx="5" fill="' + sleeve + '" stroke="' + (staff ? "#d3dae4" : "#0f7d68") + '" stroke-width="1"/>' + (staff ? '<rect x="-4" y="' + (arm - 6) + '" width="8" height="18" rx="4" fill="' + SKIN + '"/>' : '') + '<circle cx="0" cy="' + (arm + 12) + '" r="6" fill="' + SKIN + '"/></g></g>' +
-      '<g transform="translate(26,-98)"><g class="ar r"><rect x="-5" y="0" width="10" height="' + arm + '" rx="5" fill="' + sleeve + '" stroke="' + (staff ? "#d3dae4" : "#0f7d68") + '" stroke-width="1"/>' + (staff ? '<rect x="-4" y="' + (arm - 6) + '" width="8" height="18" rx="4" fill="' + SKIN + '"/>' : '') + '<circle cx="0" cy="' + (arm + 12) + '" r="6" fill="' + SKIN + '"/></g></g>';
+      '<path d="M-18 -72 L-27 -26 L-35 -30 L-22 -74Z" fill="'+CL[1]+'"/><path d="M18 -72 L27 -26 L35 -30 L22 -74Z" fill="'+CL[1]+'"/>' +
+      '<path d="M-26 -101 Q0 -109 26 -101 L19 -72 L26 -24 L-26 -24 L-19 -72Z" fill="'+CL[0]+'"/><path d="M-19 -72 L19 -72" stroke="'+CL[1]+'" stroke-width="2"/>' +
+      '<g fill="'+CL[2]+'" opacity=".75"><circle cx="-9" cy="-92" r="2.6"/><circle cx="8" cy="-84" r="2.6"/><circle cx="-4" cy="-62" r="2.6"/><circle cx="10" cy="-48" r="2.6"/><circle cx="-12" cy="-40" r="2.6"/></g>' +
+      '<rect x="-9" y="-109" width="18" height="8" rx="3" fill="'+CL[1]+'"/>';
+    var arms = '<g transform="translate(-26,-98)"><g class="ar l"><rect x="-5" y="0" width="10" height="' + arm + '" rx="5" fill="' + sleeve + '" stroke="' + CL[1] + '" stroke-width="1"/>' + (staff ? '<rect x="-4" y="' + (arm - 6) + '" width="8" height="18" rx="4" fill="' + SKIN + '"/>' : '') + '<circle cx="0" cy="' + (arm + 12) + '" r="6" fill="' + SKIN + '"/></g></g>' +
+      '<g transform="translate(26,-98)"><g class="ar r"><rect x="-5" y="0" width="10" height="' + arm + '" rx="5" fill="' + sleeve + '" stroke="' + CL[1] + '" stroke-width="1"/>' + (staff ? '<rect x="-4" y="' + (arm - 6) + '" width="8" height="18" rx="4" fill="' + SKIN + '"/>' : '') + '<circle cx="0" cy="' + (arm + 12) + '" r="6" fill="' + SKIN + '"/></g></g>';
     return '<g class="walk"><g transform="translate(150,314) scale(.82)"><ellipse cx="0" cy="3" rx="34" ry="7" fill="rgba(0,0,0,.2)"/><g class="bob">' + legs + body + arms + head(face) + '</g></g></g>';
   }
 
@@ -113,7 +115,7 @@ var W20Intro = (function () {
     box.setAttribute("aria-label", kind === "sep" ? "Lá thư có cánh rơi xuống tay Sếp, chạm để đọc" : "Món quà có cánh rơi xuống tay, chạm để mở");
     var face = o.face || "";
     box.innerHTML = '<svg viewBox="0 0 400 360" xmlns="http://www.w3.org/2000/svg" role="img" aria-hidden="true">' + DEFS + building() +
-      '<g transform="translate(0,0)">' + chibi(kind, face) + '</g></svg><div class="ltr"></div>';
+      '<g transform="translate(0,0)">' + chibi(kind, face, o.id) + '</g></svg><div class="ltr"></div>';
     host.innerHTML = ""; host.appendChild(box);
     var svg = box.querySelector("svg"), chg = svg.querySelector(".walk > g > .bob");
     var holder = document.createElementNS("http://www.w3.org/2000/svg", "g"); holder.setAttribute("transform", "translate(150,314) scale(.82)"); holder.innerHTML = kind === "sep" ? letter() : gift(); svg.appendChild(holder);
