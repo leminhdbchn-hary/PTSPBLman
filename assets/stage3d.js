@@ -234,14 +234,14 @@ var W20Stage3D = (function () {
 
     /* ---------- lớp chữ: bảng công bố, lời chúc, chữ chờ ---------- */
     var ov = document.createElement("div"); ov.className = "s3ov"; ov.setAttribute("data-s", "WAITING");
-    ov.innerHTML = '<div class="s3vig"></div><div class="s3plates" aria-live="polite"></div><div class="s3wish"></div><div class="s3next"></div><div class="s3hold"></div>';
+    ov.innerHTML = '<div class="s3vig"></div><div class="s3plates" aria-live="polite"></div><div class="s3wish"></div><div class="s3next"></div><div class="s3lbls"></div><div class="s3hold"></div>';
     wrap.style.position = "relative"; wrap.appendChild(ov);
-    var platesEl = ov.querySelector(".s3plates"), wishEl = ov.querySelector(".s3wish"), nextEl = ov.querySelector(".s3next"), holdEl = ov.querySelector(".s3hold");
+    var platesEl = ov.querySelector(".s3plates"), wishEl = ov.querySelector(".s3wish"), nextEl = ov.querySelector(".s3next"), holdEl = ov.querySelector(".s3hold"), lblEl = ov.querySelector(".s3lbls");
     if (!document.getElementById("s3css")) {
       var st = document.createElement("style"); st.id = "s3css";
       st.textContent = ".s3ov{position:absolute;inset:0;pointer-events:none;font-family:'Be Vietnam Pro',sans-serif}" +
         ".s3vig{position:absolute;inset:0;opacity:0;transition:opacity .6s;background:radial-gradient(ellipse at 50% 55%,rgba(0,0,0,0) 35%,rgba(0,22,18,.62) 100%)}.s3ov[data-s=ANNOUNCING] .s3vig,.s3ov[data-s=PRESENTING] .s3vig{opacity:1}" +
-        ".s3plates{position:absolute;left:4%;right:4%;top:19%;display:flex;gap:1.2%;justify-content:center}" +
+        ".s3plates{position:absolute;left:46%;right:2%;top:15%;display:flex;gap:1.2%;justify-content:center}" +
         ".s3pl{flex:1 1 0;max-width:46%;background:rgba(26,10,58,.9);border:2px solid #ff7ac8;border-radius:14px;box-shadow:0 0 18px rgba(255,90,190,.55),0 8px 22px rgba(0,0,0,.5);color:#fff;padding:.45em .45em;text-align:center;font-size:clamp(8px,1.3vw,16px);line-height:1.3;opacity:0;transform:translateY(-14px) scale(.9);transition:opacity .5s,transform .5s cubic-bezier(.2,1.4,.4,1)}" +
         ".s3pl.on{opacity:1;transform:none}.s3pl .t{font:700 1.08em 'Playfair Display',serif;color:#ffd0ec}.s3pl .n{font-weight:800;color:#fff}" +
         ".s3pl .p,.s3pl .q{font-weight:700;color:#ffe9a6;transition:opacity .5s}.s3pl .p{display:none;opacity:0}.s3pl .p img{height:1.5em!important;vertical-align:middle}.s3pl .q{color:#c9b8f0;font-style:italic}" +
@@ -250,10 +250,11 @@ var W20Stage3D = (function () {
         ".s3wait b{display:block;font:700 1.3em 'Playfair Display',serif}.s3wait small{color:#f3dc9c;font-weight:600}.s3ov:not([data-s=WAITING]) .s3wait{opacity:0}" +
         ".s3wish{position:absolute;left:50%;bottom:3.5%;width:max-content;max-width:88%;transform:translateX(-50%) translateY(8px);padding:.35em 1.1em;border-radius:99px;background:rgba(4,34,28,.72);border:1px solid rgba(240,214,140,.55);text-align:center;color:#fff8e6;font:700 clamp(11px,1.7vw,22px)/1.35 'Playfair Display',serif;opacity:0;transform:translateY(8px);transition:all .6s}.s3wish.on{opacity:1;transform:translateX(-50%)}" +
         ".s3next{position:absolute;left:1.6%;top:30%;width:19%;font-size:clamp(9px,1.15vw,15px);color:#fff;background:rgba(18,8,48,.72);border:1.5px solid #5cc8ff;border-radius:12px;padding:.5em .6em;box-shadow:0 0 14px rgba(92,200,255,.4);transition:opacity .3s}.s3next:empty{opacity:0}.s3next b{display:block;color:#bfe9ff;letter-spacing:.05em;font-size:.9em;margin-bottom:.25em}.s3next div{display:flex;gap:.45em;align-items:baseline;line-height:1.35;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.s3next i{font-style:normal;font-weight:800;color:#ffd45c;min-width:1.1em}.s3next div:first-of-type span{font-weight:800;color:#ffe9a6}.s3next small{color:#c9b8f0}" +
-        ".s3hold{display:none;position:absolute;left:50%;top:47%;transform:translate(-50%,-50%);width:80%;max-height:88%;overflow:hidden;background:rgba(14,6,40,.9);border:2px solid #ffd76a;border-radius:18px;padding:.7em 1em .9em;text-align:center;color:#fff;box-shadow:0 0 26px rgba(255,215,106,.5),0 10px 30px rgba(0,0,0,.6);font-size:clamp(8px,1.12vw,15px)}" +
+        ".s3hold{display:none;position:absolute;left:50%;top:17%;transform:translateX(-50%);width:84%;overflow:hidden;background:rgba(14,6,40,.9);border:2px solid #ffd76a;border-radius:16px;padding:.5em .9em .6em;text-align:center;color:#fff;box-shadow:0 0 24px rgba(255,215,106,.5),0 8px 24px rgba(0,0,0,.55);font-size:clamp(8px,1.12vw,15px)}" +
+        ".s3lbls{position:absolute;inset:0;pointer-events:none}.s3lbl{position:absolute;transform:translateX(-50%);background:rgba(26,10,58,.9);border:1.5px solid #ff7ac8;border-radius:10px;padding:.15em .6em;color:#fff;font-weight:800;font-size:clamp(8px,1.05vw,14px);text-align:center;white-space:nowrap;box-shadow:0 0 10px rgba(255,90,190,.5)}.s3lbl small{display:block;color:#ffe9a6;font-weight:600}" +
         ".s3ov.holding .s3hold{display:block}.s3ov.holding .s3next,.s3ov:not([data-s=WAITING]) .s3next{display:none}" +
         ".s3hold .h1{font:800 1.45em 'Be Vietnam Pro',sans-serif;color:#ffe08a;letter-spacing:.02em;margin-bottom:.35em}.s3hold .h2{font:800 1.05em 'Be Vietnam Pro',sans-serif;color:#7fd6ff;margin:.7em 0 .35em;letter-spacing:.04em}" +
-        ".s3hold .row{display:flex;flex-wrap:wrap;gap:.5em;justify-content:center}.s3hold .c{background:rgba(255,255,255,.1);border:1.5px solid rgba(255,122,200,.7);border-radius:12px;padding:.35em .7em;min-width:9.5em}.s3hold .nx .c{border-color:rgba(92,200,255,.75)}.s3hold .c b{display:block;font-weight:800}.s3hold .c small{color:#ffe9a6;font-weight:600}.s3hold .c i{font-style:normal;color:#ffd76a;font-weight:800;margin-right:.3em}" +
+        ".s3hold .row{display:flex;flex-wrap:nowrap;gap:.4em;justify-content:center}.s3hold .c{flex:1 1 0;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;background:rgba(255,255,255,.1);border:1.5px solid rgba(255,122,200,.7);border-radius:12px;padding:.3em .5em}.s3hold .nx .c{border-color:rgba(92,200,255,.75)}.s3hold .c b{display:block;font-weight:800}.s3hold .c small{color:#ffe9a6;font-weight:600}.s3hold .c i{font-style:normal;color:#ffd76a;font-weight:800;margin-right:.3em}" +
         ".stagewrap:fullscreen .s3hold{font-size:clamp(11px,1.35vw,24px)}" +
         ".stagewrap:fullscreen .s3pl{font-size:clamp(12px,1.6vw,26px)}.stagewrap:fullscreen .s3next{font-size:clamp(13px,1.5vw,24px)}";
       document.head.appendChild(st);
@@ -261,21 +262,24 @@ var W20Stage3D = (function () {
 
     /* ---------- máy trạng thái: WAITING → ANNOUNCING → PRESENTING → CELEBRATING → COMPLETED ---------- */
     var MEN = (typeof W20CFG !== "undefined" && W20CFG.men) || [], Q = [], cur = null, last = null, nextMan = 0, nextStyle = 0, SEEN = {}, played = 0, BATCH = 5, since = [];
-    var T1 = 1400, T2 = 2400, ANN = 600, CEL = 7500, COMP = 500, /* mỗi lượt khoảng 11 giây (0,6+2,4+7,5+0,5) */  STATE = "WAITING", running = false, soundOn = false, stopped = false, wishT = 0;
+    var PX = 3.5, PZ = 1.5, LZ = -.2, LSC = .95, PSC = 1.12, EXIT = 1300, line = [], departing = [], photo = false, wantPhoto = false;
+    function leftX(i) { return -6.2 + i * 1.45; } function photoX(i, n) { return (i - (n - 1) / 2) * 1.9; }
+    var T1 = 1400, T2 = 2400, ANN = 600, CEL = 1700, COMP = 100, /* mỗi người ~6 giây: công bố 0,6 + nhận quà 2,4 + ăn mừng 1,7 + đi sang đứng hàng 1,3 */  STATE = "WAITING", running = true, soundOn = false, stopped = false, wishT = 0;
     var WISHES = ["Chúc {n} luôn xinh đẹp, rạng rỡ như ánh đèn sân khấu!", "Chúc {n} 20/10 thật vui, thật xinh và thật… ít việc!", "Chúc {n} luôn là ngôi sao sáng nhất Phòng PTSPBL!", "Chúc {n} cười thật tươi, deadline thật nhẹ!"];
     function callName(nm) { var w = String(nm || "").trim().split(/\s+/); return w.length > 1 ? w[0] + " " + w[w.length - 1] : (w[0] || "chị em"); }
-    function status() { return { state: STATE, queue: Q.length, busy: !!cur, running: running, holding: !cur, auto: running, since: since.length, batch: BATCH, played: played, size: Q.length + (cur ? cur.items.length : 0), canReplay: !!last, sound: soundOn }; }
+    function holdOn() { return !cur && (photo || !running || !Q.length); }
+    function status() { return { state: STATE, queue: Q.length, busy: !!cur, running: running, holding: holdOn(), photo: photo, lineN: line.length, batch: BATCH, played: played, size: Q.length + (cur ? cur.items.length : 0), canReplay: false, sound: soundOn }; }
     function drawNext() {
-      var L = Q.slice(0, 5); nextEl.innerHTML = L.length ? "<b>SẮP LÊN NHẬN QUÀ (" + Q.length + " chờ)</b>" + L.map(function (e, i) { return "<div><i>" + (i + 1) + "</i><span>" + esc(shortName(e.name)) + "</span></div>"; }).join("") : "";
+      var L = Q.slice(0, 5); nextEl.innerHTML = L.length ? "<b>SẮP LÊN NHẬN QUÀ (" + Q.length + " chờ)</b>" + L.map(function (e, i) { return "<div><i>" + (i + 1) + "</i><span>" + esc(callName(e.name)) + "</span></div>"; }).join("") : "";
     }
     function drawHold() {
-      var on = !cur; ov.classList.toggle("holding", on); if (!on) return;
-      var full = since.length > 0, nx = Q.slice(0, 5);
-      var chip = function (e, i, n) { var pz = e.prize || {}, ic = typeof w20IconHTML === "function" && pz.icon ? w20IconHTML(pz.icon, 18) : ""; return '<div class="c"><b>' + (n ? "<i>" + (i + 1) + "</i>" : "") + esc(shortName(e.name)) + "</b><small>" + ic + " " + esc(pz.name || "") + "</small></div>"; };
-      holdEl.innerHTML = '<div class="h1">' + (full ? "📸 MỜI " + since.length + " CHỊ ĐỨNG LÊN NHẬN QUÀ &amp; CHỤP ẢNH" : "⏳ ĐANG CHỜ MC MỜI LƯỢT ĐẦU TIÊN") + "</div>" +
-        (since.length ? '<div class="row">' + since.map(function (e, i) { return chip(e, i, 0); }).join("") + "</div>" : "") +
-        '<div class="h2">⏭ ' + (nx.length ? nx.length + " NGƯỜI TIẾP THEO" : "CHƯA CÓ AI TRONG HÀNG CHỜ") + (Q.length > 5 ? " (còn " + Q.length + " chờ)" : "") + "</div>" +
-        (nx.length ? '<div class="row nx">' + nx.map(function (e, i) { return chip(e, i, 1); }).join("") + "</div>" : "");
+      var on = holdOn(); ov.classList.toggle("holding", on); if (!on) return;
+      var nx = Q.slice(0, 5), n = line.length;
+      var chip = function (e, i) { var pz = e.prize || {}, ic = typeof w20IconHTML === "function" && pz.icon ? w20IconHTML(pz.icon, 16) : ""; return '<div class="c"><b><i>' + (i + 1) + "</i>" + esc(callName(e.name)) + " " + ic + "</b></div>"; };
+      var title = photo ? "📸 ĐỦ " + n + " CHỊ · MỜI CÁC CHỊ ĐỨNG LẠI CHỤP ẢNH" : !running ? "⏸ ĐANG TẠM DỪNG" + (n ? " · " + n + "/" + BATCH + " chị đang đứng chờ" : "") : "⏳ ĐANG CHỜ CHỊ EM QUAY QUÀ…" + (n ? " (" + n + "/" + BATCH + " chị đang đứng chờ)" : "");
+      holdEl.innerHTML = '<div class="h1">' + title + "</div>" +
+        '<div class="h2">⏭ ' + (nx.length ? nx.length + " NGƯỜI TIẾP THEO" + (Q.length > 5 ? " (còn " + Q.length + " chờ)" : "") : "CHƯA CÓ AI TRONG HÀNG CHỜ") + "</div>" +
+        (nx.length ? '<div class="row nx">' + nx.map(chip).join("") + "</div>" : "");
     }
     function changed() { drawNext(); drawHold(); try { opt.onChange && opt.onChange(status()); } catch (e) {} }
 
@@ -305,34 +309,60 @@ var W20Stage3D = (function () {
     function pickMan() { if (!MEN.length) return 0; var k, g = 0; do { k = Math.floor(Math.random() * MEN.length); } while (MEN.length > 1 && k === lastMan && ++g < 20); lastMan = k; return k; }
     function play(batch, isReplay) {
       var used = {}, n = batch.length, now = performance.now();
-      var scl = [1.38, 1.42, 1.3, 1.16, 1.02][n - 1], slot = 12.6 / n;
+      var scl = 1.05, slot = 12.6;
       var items = batch.map(function (e, k) {
         var ti = hash(e.id || e.name) % TITLES.length; while (used[ti]) ti = (ti + 1) % TITLES.length; used[ti] = 1;
         var mi = pickMan(), mm = MEN.length ? MEN[mi] : { img: "" }, title = TITLES[ti];
         var fb = "assets/women/r" + (1 + hash(e.id || e.name) % 6) + ".webp";
         var man = makeMan(mm.img, mi), girl = makeGirl(e.id ? "assets/women/" + e.id + ".webp" : fb, fb, title[1]), gift = makeGift();
         man.scale.setScalar(scl); girl.scale.setScalar(scl); gift.scale.setScalar(scl * 1.15);
-        man.position.set(-12, 0, .6); girl.position.set(12, 0, .6); S.add(man, girl, gift);
-        var cx = -6.3 + slot * (k + .5), d = Math.min(1.2, slot * .26);
-        return { k: k, id: e.id, name: e.name, prize: e.prize, title: title, style: (nextStyle++) % STYLES.length, man: man, girl: girl, gift: gift, fx: makeFx(k), cx: cx, d: d, sc: scl, burst: 0 };
+        man.position.set(-12, 0, PZ); girl.position.set(12, 0, PZ); S.add(man, girl, gift);
+        var cx = PX, d = 1.15;
+        return { k: k, id: e.id, name: e.name, prize: e.prize, title: title, style: (nextStyle++) % STYLES.length, man: man, girl: girl, gift: gift, fx: makeFx(k), cx: cx, d: d, sc: scl, lx: leftX(line.length), burst: 0 };
       });
       items.forEach(function (it) { S.add(it.fx); });
       cur = { items: items, t0: now, n: n, batch: batch, replay: !!isReplay };
       platesEl.innerHTML = items.map(function (it) {
         var pz = it.prize || {}, ic = typeof w20IconHTML === "function" ? w20IconHTML(pz.icon, 20) : esc(pz.icon || "");
-        return '<div class="s3pl"><div class="t">' + esc(it.title[0]) + '</div><div class="n">' + esc(shortName(it.name)) + '</div><div class="q">Đang mở quà bí mật…</div><div class="p">' + ic + " " + esc(pz.name || "Quà bí mật") + "</div></div>";
+        return '<div class="s3pl"><div class="t">' + esc(it.title[0]) + '</div><div class="n">' + esc(callName(it.name)) + '</div><div class="q">Đang mở quà bí mật…</div><div class="p">' + ic + " " + esc(pz.name || "Quà bí mật") + "</div></div>";
       }).join("");
       wishEl.textContent = n === 1 ? WISHES[hash(batch[0].id || batch[0].name) % WISHES.length].replace("{n}", callName(batch[0].name)) : "Chúc các chị em Phòng PTSPBL một ngày 20/10 thật rực rỡ!";
       STATE = "WAITING"; setState("ANNOUNCING");
       opt.onStart && opt.onStart(batch);
     }
     /* force = true: MC bấm "Trao tiếp" nên bỏ qua thời gian chờ gom người và bỏ qua trạng thái tạm dừng */
-    function pump(force, cnt) {
-      if (stopped || cur || !Q.length) return false;
-      if (!force && !(running && Q.length >= BATCH)) return false; /* chế độ tự động: chỉ khi đủ một lượt */
-      var batch = Q.splice(0, Math.max(1, Math.min(cnt || BATCH, 5, Q.length))); /* một lượt, nhiều người lên cùng lúc */
+    function pump(force) {
+      if (stopped || cur || photo || !Q.length) return false;
+      if (!force && !running) return false;
+      var batch = Q.splice(0, 1); /* mỗi lần chỉ mời một người lên nhận quà */
       last = batch.map(function (e) { return { id: e.id, name: e.name, prize: e.prize, demo: e.demo }; });
       play(batch, false); changed(); return true;
+    }
+    function drop(o) { try { S.remove(o); o.traverse(function (c) { if (c.geometry) c.geometry.dispose(); if (c.material && c.material.dispose && !c.material.map) c.material.dispose(); }); } catch (e) {} }
+    /* nhận quà xong: chị đứng lại trong hàng, anh em và hiệu ứng rời sân khấu */
+    function finishCur() {
+      var e = cur, it = e.items[0]; drop(it.man); drop(it.fx);
+      var lb = document.createElement("div"); lb.className = "s3lbl"; var pz = it.prize || {}, ic = typeof w20IconHTML === "function" && pz.icon ? w20IconHTML(pz.icon, 14) : "";
+      lb.innerHTML = esc(callName(it.name)) + " " + ic; lblEl.appendChild(lb);
+      line.push({ id: it.id, name: it.name, prize: it.prize, girl: it.girl, gift: it.gift, lbl: lb });
+      cur = null; platesEl.innerHTML = ""; wishEl.classList.remove("on"); wishEl.textContent = ""; STATE = "WAITING"; ov.setAttribute("data-s", "WAITING");
+      played += 1; if (line.length >= BATCH || wantPhoto) { photo = true; wantPhoto = false; }
+      changed(); try { opt.onEnd && opt.onEnd(e); } catch (er) {}
+    }
+    /* MC bấm tiếp tục: hàng chị đứng chụp ảnh đi khỏi sân khấu, mời lượt mới */
+    function proceed() { if (cur || (!photo && !line.length)) return false; photo = false; wantPhoto = false; departing = departing.concat(line); line = []; changed(); return true; }
+    function animLine(it, i, n, now, leaving) {
+      var g = it.girl, gu = g.userData, tx = leaving ? -16 : photo ? photoX(i, n) : leftX(i), tsc = photo && !leaving ? PSC : LSC, tz = photo && !leaving ? .6 : LZ;
+      var dx = tx - g.position.x, mv = Math.abs(dx) > .05;
+      g.position.x += dx * (leaving ? .07 : .1); g.position.z += (tz - g.position.z) * .1; var cs = g.scale.x + (tsc - g.scale.x) * .1; g.scale.setScalar(cs);
+      gu.body.position.y = 0; gu.torso.rotation.set(0, 0, 0); gu.body.rotation.set(0, 0, 0);
+      gu.A[0].rotation.set(-1.3, 0, 0); gu.A[1].rotation.set(-1.2, 0, 0); setWalk(g, now / 130, mv ? .5 : 0);
+      if (!mv && !RM) gu.torso.rotation.z = Math.sin(now / 900 + i) * .02;
+      g.updateMatrixWorld(true); var gh = handPos(gu.A[1]);
+      it.gift.scale.setScalar(cs * 1.15); it.gift.position.copy(gh); it.gift.position.y += -.3 * cs; it.gift.position.z += .25 * cs; it.gift.rotation.y = .35;
+      var gd = it.gift.userData; if (gd) { gd.lid.rotation.z = -1.5; gd.lid.position.y = .2; gd.glow.material.opacity = .55; gd.glow.scale.setScalar(.8); }
+      fitFace(gu.head); var hh = gu.head.scale.y; gu.crown.position.y = gu.head.position.y + hh / 2 - .06; gu.crown.position.z = 0;
+      if (it.lbl) { var v = new T.Vector3(g.position.x, 0, g.position.z).project(CAM); it.lbl.style.left = (v.x + 1) / 2 * 100 + "%"; it.lbl.style.top = ((1 - v.y) / 2 * 100 + .6) + "%"; }
     }
     function animPair(it, t, now) {
       var m = it.man, g = it.girl, mu = m.userData, gu = g.userData, st = it.style, sc = it.sc;
@@ -377,10 +407,16 @@ var W20Stage3D = (function () {
         }
         if (!it.burst) { it.burst = 1; platesEl.children[it.k] && platesEl.children[it.k].classList.add("rev"); try { if (RM) throw 0; var rc = cv.getBoundingClientRect(), v = new T.Vector3(gx, 1.6, 0).project(CAM); FX.burst(rc.left + (v.x + 1) / 2 * rc.width, rc.top + (1 - v.y) / 2 * rc.height, cur.n > 2 ? 70 : 130); if (it.k === 0) FX.rain(); } catch (er) {} }
       }
-      m.position.set(mx, 0, .6); g.position.set(gx, 0, .6);
+      var ex = clamp01((t - T2 - CEL) / EXIT), gz = PZ, cs = sc;
+      if (ex > 0) { /* nhận quà xong: anh em đi ra, chị cầm quà đi sang đứng vào hàng bên trái */
+        var eE = ease(ex); mx = lerp(mxT + (st === 4 ? .3 * sc : 0), -13, eE); gx = lerp(gxT, it.lx, eE); gz = lerp(PZ, LZ, eE); cs = lerp(sc, LSC, eE); holdGirl = true;
+        mu.body.position.y = 0; mu.body.rotation.x = 0; mu.torso.rotation.set(0, 0, 0); mu.A.forEach(function (a) { a.rotation.set(0, 0, 0); }); setWalk(m, now / 110, .7);
+        gu.body.position.y = 0; gu.torso.rotation.set(0, 0, 0); gu.A[0].rotation.set(-1.3, 0, 0); gu.A[1].rotation.set(-1.2, 0, 0); setWalk(g, now / 130, ex < 1 ? .5 : 0);
+      }
+      m.position.set(mx, 0, PZ); g.position.set(gx, 0, gz); g.scale.setScalar(cs);
       var onP = !walking, cel = after;
       if (onP && !RM) { var wg = Math.sin(now / 170 + it.k), wm = wg * (cel ? .015 : .008), wig = wg * (cel ? .05 : .025); mu.torso.rotation.z += wm; mu.head.material.rotation = wm * .8; gu.torso.rotation.z += -wig * .6; } /* nghiêng đầu đáng yêu */
-      updFx(it, mx, gx, t, tt, after, onP && !after, now);
+      updFx(it, mx, gx, t, tt, after && ex <= 0, onP && !after && ex <= 0, now);
       m.updateMatrixWorld(true); g.updateMatrixWorld(true);
       /* quà: luôn nằm trong tay người cầm */
       var mh = handPos(mu.A[1]), gp;
@@ -391,7 +427,7 @@ var W20Stage3D = (function () {
         if (after) gh = handPos(gu.A[1]);
         if (!after && u < .9) { gp = mh.clone().lerp(gh, ease((u - .72) / .18)); } else gp = gh;
       }
-      it.gift.position.copy(gp); it.gift.position.y += (holdGirl ? -.3 : .1) * sc; if (holdGirl) it.gift.position.z += .25 * sc; it.gift.rotation.y = after ? .35 : now / 1200;
+      it.gift.position.copy(gp); it.gift.scale.setScalar(cs * 1.15); it.gift.position.y += (holdGirl ? -.3 : .1) * cs; if (holdGirl) it.gift.position.z += .25 * cs; it.gift.rotation.y = after ? .35 : now / 1200;
       var gd = it.gift.userData; if (gd) { var op = after ? ease((tt - 200) / 700) : 0; gd.lid.rotation.z = -op * 1.5; gd.lid.position.y = .15 + op * .05; gd.glow.material.opacity = op * (.75 + Math.sin(now / 160) * .15); gd.glow.scale.setScalar(.01 + op * .85); }
       fitFace(mu.head); fitFace(gu.head);
       var hh = gu.head.scale.y; gu.crown.position.y = gu.head.position.y + hh / 2 - .06; gu.crown.position.z = 0; gu.crown.renderOrder = 2; gu.crown.traverse(function (o) { if (o.material) { o.material.depthTest = false; o.renderOrder = 3; } });
@@ -409,7 +445,7 @@ var W20Stage3D = (function () {
     function frame(now) {
       if (stopped) return; raf = requestAnimationFrame(frame);
       if (document.hidden || !visible) return; /* tab ẩn hoặc sân khấu ngoài màn hình: không vẽ */
-      if (!cur && now - lastR < 33) return; /* lúc chờ chỉ vẽ ~30 khung/giây */
+      if (!cur && !line.length && !departing.length && now - lastR < 33) return; /* lúc chờ chỉ vẽ ~30 khung/giây */
       lastR = now; var ts = RM ? 0 : (now - t00) / 1000;
       CAM.position.set(Math.sin(ts * .12) * 1.4, 2.9 + Math.sin(ts * .2) * .12, 11.4); CAM.lookAt(0, 2.6, 0);
       if (!RM) {
@@ -422,8 +458,10 @@ var W20Stage3D = (function () {
         var t = now - cur.t0;
         setState(t < ANN ? "ANNOUNCING" : t < ANN + T2 ? "PRESENTING" : t < ANN + T2 + CEL ? "CELEBRATING" : "COMPLETED");
         cur.items.forEach(function (it) { animPair(it, Math.max(0, t - ANN - it.k * 260), now); });
-        if (t > ANN + T2 + CEL + COMP) { var e = cur; if (!e.replay) { played += e.n; since = e.items.map(function (it) { return { id: it.id, name: it.name, prize: it.prize }; }); } clearCur(); changed(); try { opt.onEnd && opt.onEnd(e); } catch (er) {} }
+        if (t > ANN + T2 + CEL + EXIT + COMP) finishCur();
       } else if (Q.length) pump(false);
+      line.forEach(function (it, i) { animLine(it, i, line.length, now, false); });
+      if (departing.length) { departing.forEach(function (it) { animLine(it, 0, 1, now, true); }); departing = departing.filter(function (it) { if (it.girl.position.x < -13) { drop(it.girl); drop(it.gift); try { it.lbl.remove(); } catch (e) {} return false; } return true; }); }
       R.render(S, CAM);
     }
     raf = requestAnimationFrame(frame);
@@ -442,15 +480,18 @@ var W20Stage3D = (function () {
       size: function () { return Q.length + (cur ? cur.items.length : 0); },
       status: status,
       peek: function (n) { return Q.slice(0, n || 5).map(function (e) { return { id: e.id, name: e.name, prize: e.prize, ts: e.ts }; }); },
-      next: function (n) { return pump(true, n); },            /* MC: mời lượt tiếp theo (n người, mặc định = số người mỗi lượt) */
-      replay: function () { if (stopped || cur || !last) return false; play(last.map(function (e) { var o = {}; for (var k in e) o[k] = e[k]; return o; }), true); changed(); return true; }, /* phát lại, không đụng dữ liệu */
-      skip: function () { if (!cur) return false; cur.t0 = Math.min(cur.t0, performance.now() - (ANN + T2 + CEL + COMP + 50)); return true; },
+      next: function () { return photo ? proceed() : pump(true); }, /* MC: đang chụp ảnh thì mời lượt mới, không thì mời chị tiếp theo */
+      proceed: proceed,
+      photoNow: function () { if (cur) { wantPhoto = true; return true; } if (!line.length) return false; photo = true; changed(); return true; }, /* chốt hàng ngay dù chưa đủ người */
+      reset: function () { clearCur(); Q = []; line.concat(departing).forEach(function (it) { drop(it.girl); drop(it.gift); try { it.lbl.remove(); } catch (e) {} }); line = []; departing = []; photo = false; wantPhoto = false; changed(); },
+      replay: function () { return false; },
+      skip: function () { if (!cur) return false; cur.t0 = Math.min(cur.t0, performance.now() - (ANN + T2 + CEL - 100)); return true; },
       setRunning: function (b) { running = !!b; changed(); },
-      setBatch: function (n) { n = Math.round(Number(n)); BATCH = n >= 1 && n <= 5 ? n : 5; changed(); },
+      setBatch: function (n) { n = Math.round(Number(n)); BATCH = n >= 1 && n <= 6 ? n : 5; if (line.length >= BATCH && !cur) photo = true; changed(); },
       setSound: function (b) { soundOn = !!b; if (soundOn) { if (ac()) { tone(880, .25, "triangle", .08); tone(1320, .4, "triangle", .08, .12); } } changed(); },
       stop: function () {
         stopped = true; cancelAnimationFrame(raf); window.removeEventListener("resize", resize); document.removeEventListener("fullscreenchange", onFs);
-        if (io) io.disconnect(); clearCur(); try { ov.remove(); } catch (e) {} try { if (AC) AC.close(); } catch (e) {} R.dispose();
+        if (io) io.disconnect(); clearCur(); line.concat(departing).forEach(function (it) { drop(it.girl); drop(it.gift); }); try { ov.remove(); } catch (e) {} try { if (AC) AC.close(); } catch (e) {} R.dispose();
       },
       titles: TITLES, styles: STYLES, is3d: true, states: ["WAITING", "ANNOUNCING", "PRESENTING", "CELEBRATING", "COMPLETED"]
     };

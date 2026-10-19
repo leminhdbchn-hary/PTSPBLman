@@ -106,16 +106,16 @@ code{background:rgba(0,0,0,.25);border-radius:6px;padding:1px 6px;font-size:.92e
       <div class="stagewrap"><canvas id="stagecv" aria-label="Sân khấu trao quà"></canvas></div>
       <div class="aw-next" id="awnext" aria-live="polite"><div class="aw-next-h">📣 5 chị sắp lên nhận quà <small>(theo thứ tự đã quay trước)</small></div><ol id="awnextl"></ol></div>
       <div class="aw-mc noprint" role="toolbar" aria-label="Bảng điều khiển MC">
-        <button class="mcb mcb-main" id="mcnext" type="button" title="Phím N">▶ Mời 5 người tiếp theo</button>
-        <button class="mcb" id="mcrun" type="button" aria-pressed="false" title="Phím P">🔁 Tự động lượt kế: Tắt</button>
-        <button class="mcb" id="mcskip" type="button" title="Phím S">⏩ Kết thúc lượt này</button>
-        <button class="mcb" id="mcreplay" type="button" title="Phím R">🔁 Phát lại</button>
+        <button class="mcb mcb-main" id="mcnext" type="button" title="Phím N">▶ Mời chị tiếp theo lên</button>
+        <button class="mcb" id="mcphoto" type="button" title="Phím C">📸 Chụp ảnh ngay (chốt hàng)</button>
+        <button class="mcb" id="mcrun" type="button" aria-pressed="true" title="Phím P">⏸ Tạm dừng tự động</button>
+        <button class="mcb" id="mcskip" type="button" title="Phím S">⏩ Bỏ qua hiệu ứng</button>
+        <button class="mcb" id="mcreplay" type="button" hidden>🔁 Phát lại</button>
         <button class="mcb" id="mcsound" type="button" aria-pressed="false">🔇 Âm thanh: Tắt</button>
         <button class="mcb" id="sfull" type="button" title="Phím F">⛶ Toàn màn hình</button>
       </div>
       <div class="aw-batch noprint" id="awbatch">
-        <label>Mỗi lượt mời <input type="number" id="mcbn" value="5" min="1" max="5" inputmode="numeric"> người lên cùng lúc · sau mỗi lượt sân khấu <b>dừng</b> để mời chụp ảnh, bấm <b>▶ Mời … người tiếp theo</b> khi sẵn sàng</label>
-        <span class="aw-pre" id="awpre">Mời ngay: <button class="mcb" data-n="1" type="button">1</button><button class="mcb" data-n="2" type="button">2</button><button class="mcb" data-n="3" type="button">3</button><button class="mcb" data-n="4" type="button">4</button><button class="mcb" data-n="5" type="button">5</button> người</span>
+        <label>Cứ <input type="number" id="mcbn" value="5" min="1" max="6" inputmode="numeric"> chị đứng thành hàng thì sân khấu <b>dừng để chụp ảnh</b>; bấm <b>▶ Tiếp tục mời … lên</b> để mời lượt kế tiếp.</label>
         <span class="aw-bcnt" id="awbcnt"></span>
       </div>
       <div class="aw-call noprint" id="awcall">
@@ -127,9 +127,9 @@ code{background:rgba(0,0,0,.25);border-radius:6px;padding:1px 6px;font-size:.92e
         </div>
         <p class="muted aw-hint2">Người được mời sẽ lên sân khấu ngay (ưu tiên trước hàng chờ) với món quà đã chia sẵn cho họ. Nhớ dặn họ <b>không quay lại trên điện thoại</b> để khỏi nhận quà hai lần.</p>
       </div>
-      <details class="aw-test noprint"><summary>🧪 Chạy thử (không tính vào dữ liệu)</summary>
-        <div><button class="mcb" id="sdemo" type="button">▶ Thử 1 chị</button><button class="mcb" id="sdemo5" type="button">▶▶ Thử 5 chị liên tiếp</button></div>
-        <p class="muted aw-hint" style="margin:8px 0 0">Phím tắt: N = mời lượt tiếp theo · S = kết thúc lượt · R = phát lại · P = bật/tắt tự động · F = toàn màn hình.</p>
+      <details class="aw-test noprint" open><summary>🧪 Chạy thử (không tính vào dữ liệu thật)</summary>
+        <div><button class="mcb" id="sdemo" type="button">▶ Thử 1 chị</button><button class="mcb" id="sdemo20" type="button">▶▶ Chạy thử 20 chị (4 vòng × 5)</button><button class="mcb" id="sreset" type="button">🧹 Làm mới sân khấu</button></div>
+        <p class="muted aw-hint" style="margin:8px 0 0">Cách chạy thử: bấm <b>Chạy thử 20 chị</b> → các chị tự lên nhận quà từng người rồi đứng hàng bên trái → đủ 5 chị sân khấu dừng để chụp ảnh → bấm <b>▶ Tiếp tục mời … lên</b> (phím N). Phím tắt: N = mời / tiếp tục · C = chụp ảnh ngay · S = bỏ qua hiệu ứng · P = bật/tắt tự động · F = toàn màn hình.</p>
       </details>
     </div>
     <div class="panel"><h3>🎁 Chị em đã nhận quà</h3><p class="muted" id="slogcnt"></p><div class="list" id="slog"></div></div>
@@ -211,7 +211,7 @@ code{background:rgba(0,0,0,.25);border-radius:6px;padding:1px 6px;font-size:.92e
 <script src="assets/modules.js?v=20261090"></script>
 <script src="assets/stage.js?v=23"></script>
 <script src="assets/three.min.js?v=128"></script>
-<script src="assets/stage3d.js?v=45"></script>
+<script src="assets/stage3d.js?v=49"></script>
 <script>
 (function () {
   var $ = function (s) { return document.querySelector(s); };
@@ -262,14 +262,14 @@ code{background:rgba(0,0,0,.25);border-radius:6px;padding:1px 6px;font-size:.92e
     var nx = STG && STG.peek ? STG.peek(5) : [];
     $("#awnextl").innerHTML = nx.length ? nx.map(function (e, i) { var pz = e.prize || {}; return "<li><i>" + (i + 1) + "</i><span>" + esc(e.name) + "</span><small>" + (pz.name ? esc(pz.name) : "") + "</small></li>"; }).join("") : '<li class="empty">Chưa có ai trong hàng chờ.</li>';
     var ctl = !!(STG && STG.is3d);
-    var nn = Math.min(sv.batch || 5, sv.queue || 0);
-    $("#mcrun").textContent = sv.auto ? "🔁 Tự động lượt kế: Bật" : "🔁 Tự động lượt kế: Tắt"; $("#mcrun").setAttribute("aria-pressed", String(!!sv.auto));
-    $("#mcnext").textContent = "▶ Mời " + (nn || (sv.batch || 5)) + " người tiếp theo";
-    $("#awbcnt").textContent = !ctl ? "" : sv.busy ? "🎬 Đang trên sân khấu · còn " + sv.queue + " người chờ" : (sv.since ? "📸 Lượt vừa rồi " + sv.since + " người · " : "") + (sv.queue ? "sẵn sàng mời " + nn + " người tiếp theo" : "chưa có ai trong hàng chờ");
-    [].forEach.call(document.querySelectorAll("#awpre button"), function (b) { var n = +b.getAttribute("data-n"); b.hidden = n > sv.queue; b.disabled = !ctl || sv.busy; });
+    var B = sv.batch || 5;
+    $("#mcrun").textContent = sv.running ? "⏸ Tạm dừng tự động" : "▶ Bật tự động"; $("#mcrun").setAttribute("aria-pressed", String(!!sv.running));
+    $("#mcnext").textContent = sv.photo ? "▶ Tiếp tục mời " + B + " chị tiếp theo lên" : "▶ Mời chị tiếp theo lên";
+    $("#awbcnt").textContent = !ctl ? "" : sv.photo ? "📸 Đủ " + sv.lineN + " chị đang đứng chụp ảnh · còn " + sv.queue + " chị chờ" : "Hàng đứng chờ: " + sv.lineN + "/" + B + " chị" + (sv.busy ? " · 🎬 đang nhận quà" : "") + " · " + sv.queue + " chị chờ";
+    $("#mcphoto").disabled = !ctl || sv.photo || !(sv.lineN > 0);
     $("#awbatch").hidden = !ctl; $("#awcall").hidden = !ctl; try { fillPick(); } catch (e) {} $("#mcrun").setAttribute("aria-pressed", String(!!sv.running));
-    ["#mcrun", "#mcnext", "#mcskip", "#mcreplay", "#mcsound"].forEach(function (i) { $(i).hidden = !ctl; }); $("#awstate").style.display = ctl ? "" : "none"; $(".aw-hint").hidden = !ctl; /* bản 2D chỉ có nút toàn màn hình */
-    $("#mcrun").disabled = !ctl; $("#mcnext").disabled = !ctl || sv.busy || !sv.queue; $("#mcskip").disabled = !ctl || !sv.busy; $("#mcreplay").disabled = !ctl || sv.busy || !sv.canReplay; $("#mcsound").disabled = !ctl;
+    ["#mcrun", "#mcnext", "#mcphoto", "#mcskip", "#mcsound"].forEach(function (i) { $(i).hidden = !ctl; }); $("#awstate").style.display = ctl ? "" : "none"; $(".aw-hint").hidden = !ctl; /* bản 2D chỉ có nút toàn màn hình */
+    $("#mcrun").disabled = !ctl; $("#mcnext").disabled = !ctl || sv.busy || (!sv.photo && !sv.queue); $("#mcskip").disabled = !ctl || !sv.busy; $("#mcreplay").disabled = !ctl || sv.busy || !sv.canReplay; $("#mcsound").disabled = !ctl;
     $("#mcsound").textContent = sv.sound ? "🔊 Âm thanh: Bật" : "🔇 Âm thanh: Tắt"; $("#mcsound").setAttribute("aria-pressed", String(!!sv.sound));
   }
   var gotCount = 0; function mcCounts(sv) { var q = STG && STG.size ? STG.size() : 0; $("#awtotal").textContent = W20P.length; $("#awdone").textContent = Math.max(0, gotCount - q); $("#awbar").style.width = (W20P.length ? Math.max(0, Math.min(100, (gotCount - q) / W20P.length * 100)) : 0) + "%"; }
@@ -327,7 +327,9 @@ code{background:rgba(0,0,0,.25);border-radius:6px;padding:1px 6px;font-size:.92e
   $("#q3").oninput = renderLive;
   function demoEv(id, i) { var p = W20P.filter(function (x) { return x.id === id; })[0] || W20TEST[0]; return { id: id, name: (p.x || "Chị") + " " + p.n, prize: W20CFG.prizes[(i || 0) % W20CFG.prizes.length], demo: true }; }
   $("#sdemo").onclick = function () { var st = stage(); if (st) st.queue(demoEv("test01", (Math.random() * 4) | 0)); };
-  $("#sdemo5").onclick = function () { var st = stage(); if (!st) return; ["test01"].concat(W20P.slice(6, 10).map(function (p) { return p.id; })).forEach(function (id, i) { st.queue(demoEv(id, i)); }); };
+  $("#sdemo20").onclick = function () { var st = stage(); if (!st) return; ["test01"].concat(W20P.slice(0, 19).map(function (p) { return p.id; })).forEach(function (id, i) { st.queue(demoEv(id, i)); }); };
+  $("#sreset").onclick = function () { var st = stage(); if (st && st.reset) { st.reset(); mcRefresh(); } };
+  $("#mcphoto").onclick = function () { mcDo(function (st) { st.photoNow(); }); };
   /* mời người chưa nhận quà lên sân khấu */
   function notYet() { return LASTROWS.filter(function (r) { return !r.pr && !CALLED[r.p.id]; }); }
   function fillPick() {
@@ -342,25 +344,24 @@ code{background:rgba(0,0,0,.25);border-radius:6px;padding:1px 6px;font-size:.92e
     var pl = plan(), idx = pl.map ? pl.map[id] : null; if (idx == null) { var a = w20MyPrize(id); idx = a ? a[0] : 0; }
     var pz = W20CFG.prizes[idx] || W20CFG.prizes[0];
     CALLED[id] = 1; st.queue({ id: id, name: (r.p.x || "Chị") + " " + r.p.n, prize: pz, ts: 0 }, { front: true });
-    if (!st.status().busy) st.next(1); pickSig = ""; mcRefresh();
+    if (!st.status().busy) st.next(); pickSig = ""; mcRefresh();
   }
   $("#mccall").onclick = function () { callPerson($("#mcpick").value); };
   $("#mcrand").onclick = function () { var L = notYet(); if (L.length) callPerson(L[Math.floor(Math.random() * L.length)].p.id); };
   function applyBatch() { var st = STG; if (st && st.setBatch) st.setBatch($("#mcbn").value); try { localStorage.setItem("w20batch", String($("#mcbn").value)); } catch (e) {} mcRefresh(); }
   $("#mcbn").onchange = $("#mcbn").oninput = applyBatch;
-  [].forEach.call(document.querySelectorAll("#awpre button"), function (b) { b.onclick = function () { var n = +b.getAttribute("data-n"); mcDo(function (st) { st.next(n); }); }; });
-  try { var bs = Number(localStorage.getItem("w20batch")); if (bs >= 1 && bs <= 5) $("#mcbn").value = bs; } catch (e) {}
+    try { var bs = Number(localStorage.getItem("w20batch")); if (bs >= 1 && bs <= 5) $("#mcbn").value = bs; } catch (e) {}
   function fullscreen() { var w = document.querySelector(".stagewrap"); try { if (document.fullscreenElement) document.exitFullscreen(); else (w.requestFullscreen || w.webkitRequestFullscreen).call(w); } catch (e) {} }
   $("#sfull").onclick = fullscreen;
   function mcDo(fn) { var st = stage(); if (st && st.is3d) { try { fn(st); } catch (e) {} mcRefresh(); } }
-  $("#mcrun").onclick = function () { mcDo(function (st) { st.setRunning(!st.status().auto); }); };
+  $("#mcrun").onclick = function () { mcDo(function (st) { st.setRunning(!st.status().running); }); };
   $("#mcnext").onclick = function () { mcDo(function (st) { st.next(); }); };
   $("#mcskip").onclick = function () { mcDo(function (st) { st.skip(); }); };
   $("#mcreplay").onclick = function () { mcDo(function (st) { st.replay(); }); };
   $("#mcsound").onclick = function () { mcDo(function (st) { st.setSound(!st.status().sound); }); };
   document.addEventListener("keydown", function (e) {
     if (e.ctrlKey || e.metaKey || e.altKey || $("#tstage").hidden || $("#main").hidden) return; var tg = e.target && e.target.tagName; if (tg === "INPUT" || tg === "TEXTAREA" || tg === "SELECT") return;
-    var k = String(e.key).toLowerCase(), m = { n: "#mcnext", s: "#mcskip", r: "#mcreplay", p: "#mcrun", f: "#sfull" }[k]; if (m && !$(m).disabled) { e.preventDefault(); $(m).click(); }
+    var k = String(e.key).toLowerCase(), m = { n: "#mcnext", s: "#mcskip", c: "#mcphoto", p: "#mcrun", f: "#sfull" }[k]; if (m && !$(m).disabled) { e.preventDefault(); $(m).click(); }
   });
 
   /* ---- Link ---- */
