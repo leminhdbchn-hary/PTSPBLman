@@ -253,8 +253,8 @@ function w20SepWish(i, x) {
 /* ===== Danh sách người nhận (assets/people.js) và chia quà ===== */
 function w20Person(id) { if (!id || typeof W20P === "undefined") return null; var i; for (i = 0; i < W20P.length; i++) if (W20P[i].id === id) return W20P[i]; if (typeof W20TEST !== "undefined") for (i = 0; i < W20TEST.length; i++) if (W20TEST[i].id === id) return W20TEST[i]; return null; }
 function w20Short(n) { var a = String(n || "").trim().split(/\s+/); return a[a.length - 1] || ""; }
-/* Tên ghi trên thiệp: danh xưng + tên gọi (Chị Hạnh, Chị Phương); tên có "Anh" thì viết tắt chữ đệm (Chị V.Anh) cho khỏi nhầm "Chị Anh" */
-function w20CardName(x, full) { var w = String(full || "").trim().split(/\s+/), n = w.length; if (!n || !w[0]) return ""; var t = w[n - 1]; if (n > 2 && t === "Anh" && !/^(Thị|Văn|Thi)$/.test(w[n - 2])) t = w[n - 2].charAt(0).toUpperCase() + ".Anh"; return (x ? x + " " : "") + t; }
+/* Tên ghi trên thiệp: danh xưng + tên gọi (Chị Hạnh, Chị Phương); tên có "Anh" thì ghi đủ chữ đệm + Anh (Chị Vân Anh, Chị Quỳnh Anh) cho khỏi nhầm "Chị Anh" */
+function w20CardName(x, full) { var w = String(full || "").trim().split(/\s+/), n = w.length; if (!n || !w[0]) return ""; var t = w[n - 1]; if (n > 2 && t === "Anh" && !/^(Thị|Văn|Thi)$/.test(w[n - 2])) t = w[n - 2] + " Anh"; return (x ? x + " " : "") + t; }
 function w20Fold(s) { return String(s || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/đ/g, "d").replace(/Đ/g, "D").toLowerCase(); }
 /* Chia quà ngẫu nhiên nhưng cố định: mỗi người 1 món, theo số lượng ở assets/stock.js (tổng = số người).
    Không ai chọn sẵn: thứ tự do "seed" xáo trộn. Cùng dữ liệu luôn cho cùng kết quả, nên quay ở máy nào cũng ra đúng món đã chia.
