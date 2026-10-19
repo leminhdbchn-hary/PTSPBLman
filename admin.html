@@ -213,7 +213,7 @@ code{background:rgba(0,0,0,.25);border-radius:6px;padding:1px 6px;font-size:.92e
 <script src="assets/modules.js?v=20261090"></script>
 <script src="assets/stage.js?v=23"></script>
 <script src="assets/three.min.js?v=128"></script>
-<script src="assets/stage3d.js?v=61"></script>
+<script src="assets/stage3d.js?v=63"></script>
 <script>
 (function () {
   var $ = function (s) { return document.querySelector(s); };
@@ -334,7 +334,7 @@ code{background:rgba(0,0,0,.25);border-radius:6px;padding:1px 6px;font-size:.92e
   $("#sdemo52").onclick = function () { var st = stage(); if (!st) return; W20P.forEach(function (p, i) { st.queue(demoEv(p.id, i)); }); };
   $("#sgrid").onclick = function () {
     var g = $("#agrid"); if (!g.hidden) { g.hidden = true; return; }
-    g.innerHTML = W20P.map(function (p) { return '<div class="ag"><img src="assets/women/' + p.id + '.webp" alt="" loading="lazy"><b>' + esc((p.x || "Chị") + " " + p.n) + "</b><small>" + esc(p.id) + "</small></div>"; }).join(""); g.hidden = false;
+    g.innerHTML = W20P.map(function (p) { return '<div class="ag"><img src="assets/women/' + p.id + '.webp?v=' + ((window.W20Stage3D && W20Stage3D.ver) || Date.now()) + '" alt="" loading="lazy"><b>' + esc((p.x || "Chị") + " " + p.n) + "</b><small>" + esc(p.id) + "</small></div>"; }).join(""); g.hidden = false;
   };
   $("#sreset").onclick = function () { var st = stage(); if (st && st.reset) { st.reset(); mcRefresh(); } };
   $("#mcphoto").onclick = function () { mcDo(function (st) { st.photoNow(); }); };
