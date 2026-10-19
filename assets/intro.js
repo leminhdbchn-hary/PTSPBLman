@@ -145,15 +145,22 @@ var W20Intro = (function () {
     function chime(t0) { if (!ctx) return; var t = (t0 || ctx.currentTime) + .02; [783.99, 987.77, 1318.51, 1567.98].forEach(function (f, i) { note(f, t + i * .11, .12, 1.4); }); }
     function rustle() { if (!ctx || !windBuf) return; var s = ctx.createBufferSource(), g = ctx.createGain(), f = ctx.createBiquadFilter(); s.buffer = windBuf; f.type = "highpass"; f.frequency.value = 2600; g.gain.setValueAtTime(0, ctx.currentTime); g.gain.linearRampToValueAtTime(.35, ctx.currentTime + .05); g.gain.exponentialRampToValueAtTime(.001, ctx.currentTime + .5); s.connect(f); f.connect(g); g.connect(master); s.start(); s.stop(ctx.currentTime + .6); }
     return {
-      muted: function () { return pref === "0"; }, on: function () { return on; },
+      muted: function () { return pref === "0"; }, on: function () { return on && !!ctx && ctx.state === "running"; },
       /* gọi khi người dùng chạm: tạo/ tiếp tục ngữ cảnh âm thanh */
       enable: function (phase) {
         if (pref === "0" || on) return on; if (!ac()) return false; try { if (ctx.state === "suspended") ctx.resume(); } catch (e) {}
         on = true; master.gain.cancelScheduledValues(0); master.gain.setTargetAtTime(.9, ctx.currentTime, .3); startWind(); nextT = ctx.currentTime + .1; step = 0; sched(); tm = setInterval(sched, 250);
         music(.6); windLevel(phase === "ready" ? 0 : phase === "drop" ? .22 : .13, .5); return true; },
+      /* mặc định BẬT: thử phát ngay; trình duyệt chặn thì phát ở lần chạm đầu tiên ở bất kỳ đâu trên trang */
+      auto: function (getPhase, refresh) {
+        if (pref === "0") return; Snd.enable(getPhase()); if (!ctx) return;
+        ctx.onstatechange = function () { refresh && refresh(); };
+        var ev = ["pointerdown", "touchstart", "mousedown", "keydown", "click"], go = function () { if (pref === "0") return; try { if (ctx && ctx.state !== "running") { ctx.resume().then(function () { refresh && refresh(); }, function () {}); } } catch (e) {} if (ctx && ctx.state === "running") { ev.forEach(function (n) { document.removeEventListener(n, go, true); }); } refresh && refresh(); };
+        ev.forEach(function (n) { document.addEventListener(n, go, true); });
+        try { ctx.resume().then(function () { refresh && refresh(); }, function () {}); } catch (e) {} },
       mute: function () { pref = "0"; try { localStorage.setItem("w20isnd", "0"); } catch (e) {} Snd.stop(true); },
       unmute: function (phase) { pref = "1"; try { localStorage.setItem("w20isnd", "1"); } catch (e) {} return Snd.enable(phase); },
-      phase: function (p) { if (!on) return; if (p === "walk") windLevel(.13, .5); else if (p === "drop") windLevel(.24, .5); else if (p === "ready") { windLevel(0, .9); chime(); music(.55); } else if (p === "open") { rustle(); chime(); music(0); windLevel(0, .3); } },
+      phase: function (p) { if (!on || !ctx) return; if (ctx.state !== "running" && (p === "ready" || p === "open")) { windLevel(0, .3); return; } if (p === "walk") windLevel(.13, .5); else if (p === "drop") windLevel(.24, .5); else if (p === "ready") { windLevel(0, .9); chime(); music(.55); } else if (p === "open") { rustle(); chime(); music(0); windLevel(0, .3); } },
       stop: function (quick) { if (!ctx) return; on = false; clearInterval(tm); try { master.gain.setTargetAtTime(0, ctx.currentTime, quick ? .12 : .5); } catch (e) {} },
       close: function () { Snd.stop(); setTimeout(function () { try { ctx && ctx.close(); } catch (e) {} ctx = null; wg = null; }, 1600); },
       analyser: function () { return an; }
@@ -190,10 +197,10 @@ var W20Intro = (function () {
     }
     function tap() { if (state === "walk" || state === "drop" || state === "idle") { skip(); return; } if (state === "ready") open(); }
     var sb = box.querySelector(".snd");
-    function sbRefresh() { var on = Snd.on(); sb.className = "snd" + (on ? "" : " off"); sb.textContent = on ? "🔊 Âm thanh" : (Snd.muted() ? "🔇 Âm thanh: Tắt" : "🔇 Chạm để bật âm thanh"); }
+    function sbRefresh() { var on = Snd.on(); sb.className = "snd" + (on ? "" : " off"); sb.textContent = on ? "🔊 Âm thanh" : (Snd.muted() ? "🔇 Âm thanh: Tắt" : "🔇 Chạm để nghe nhạc"); }
     sb.addEventListener("click", function (e) { e.stopPropagation(); if (Snd.on()) Snd.mute(); else Snd.unmute(state); sbRefresh(); });
     box.addEventListener("pointerdown", function (e) { if (e.target === sb) return; if (!Snd.on() && !Snd.muted() && !opened) { Snd.enable(state); sbRefresh(); } }, true);
-    sbRefresh();
+    sbRefresh(); Snd.auto(function () { return state; }, sbRefresh);
     box.addEventListener("click", tap);
     box.addEventListener("keydown", function (e) { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); tap(); } });
     run();
