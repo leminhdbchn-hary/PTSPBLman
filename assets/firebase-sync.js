@@ -72,6 +72,15 @@ var W20DB = (function () {
         catch (e) { err && err(e); }
       });
     },
+    /* Cấu hình số lượng quà ở vòng quay (settings/stock): { qty, seed, map:{id: món}, at }. cb(null) nếu lỗi/quá 4 giây */
+    getStock: function (cb) {
+      var fin = false, t = setTimeout(function () { end(null); }, 4000);
+      function end(v) { if (fin) return; fin = true; clearTimeout(t); try { cb(v); } catch (e) {} }
+      ready(function () { db.collection("settings").doc("stock").get().then(function (d) { end(d.exists ? d.data() : null); }, function () { end(null); }); });
+    },
+    setStock: function (o, ok, fail) {
+      ready(function () { db.collection("settings").doc("stock").set({ qty: o.qty, seed: String(o.seed), map: o.map, at: firebase.firestore.FieldValue.serverTimestamp() }).then(function () { ok && ok(); }, function (e) { fail && fail(e); }); });
+    },
     /* Lưu “Thẻ nhờ việc” để anh em xem tập trung */
     request: function (id, who, text) {
       ready(function () { db.collection("requests").add({ id: key(id), who: String(who).slice(0, 100), text: String(text).slice(0, 300), at: firebase.firestore.FieldValue.serverTimestamp() }).catch(function () {}); });

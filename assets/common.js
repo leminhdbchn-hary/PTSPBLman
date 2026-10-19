@@ -272,6 +272,29 @@ function w20Assign(stock) {
   return out;
 }
 
+/* Chia quà có giữ nguyên quà của người ĐÃ quay (fixed = {id: món}): chỉ chia phần còn lại cho người chưa quay,
+   để tổng mỗi món luôn đúng số lượng đã đặt. Trả về { map:{id: món}, over:[món bị đặt ít hơn số đã trao] }. */
+function w20AssignFixed(stock, fixed) {
+  fixed = fixed || {}; var P = W20CFG.prizes, ppl = (typeof W20P === "undefined" ? [] : W20P), seed = String(stock.seed || "2010"), i, j;
+  var q = P.map(function (p, x) { return Math.max(0, parseInt((stock.qty || [])[x], 10) || 0); }), map = {}, over = [];
+  ppl.forEach(function (p) { var f = fixed[p.id]; if (f != null && f >= 0 && f < P.length) { map[p.id] = f; q[f]--; } });
+  q.forEach(function (v, x) { if (v < 0) { over.push(x); q[x] = 0; } });
+  var rest = ppl.filter(function (p) { return map[p.id] == null; }).sort(function (a, b) { return w20Hash(a.id + "|" + seed) - w20Hash(b.id + "|" + seed); });
+  var slots = []; q.forEach(function (v, x) { for (var k = 0; k < v; k++) slots.push(x); });
+  for (i = slots.length - 1; i > 0; i--) { j = w20Hash(seed + "#" + i) % (i + 1); var t0 = slots[i]; slots[i] = slots[j]; slots[j] = t0; }
+  rest.forEach(function (p, k) { map[p.id] = k < slots.length ? slots[k] : k % P.length; });
+  return { map: map, over: over };
+}
+/* Đọc cấu hình quà admin đã lưu trên Firebase (tối đa ~4 giây), rồi gọi cb. Không có/lỗi thì dùng assets/stock.js */
+var W20MAP = null;
+function w20LoadStock(cb) {
+  var done = false; function fin() { if (done) return; done = true; try { cb(); } catch (e) { setTimeout(function () { throw e; }); } }
+  try { W20DB.getStock(function (v) { if (v && v.qty && v.qty.length) { W20STOCK.qty = v.qty.slice(); W20STOCK.seed = String(v.seed); if (v.map) W20MAP = v.map; } fin(); }); } catch (e) { fin(); }
+  setTimeout(fin, 4500);
+}
+/* Món đã chia sẵn cho 1 người: ưu tiên bảng admin đã lưu, không có thì tự tính từ số lượng */
+function w20MyPrize(id) { if (W20MAP && W20MAP[id] != null) return [W20MAP[id]]; var a = w20Assign()[id]; return a; }
+
 /* Cố định màn hình trên điện thoại: không thu phóng bằng 2 ngón hay chạm đúp */
 (function () {
   var stop = function (e) { e.preventDefault(); };

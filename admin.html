@@ -153,11 +153,11 @@ code{background:rgba(0,0,0,.25);border-radius:6px;padding:1px 6px;font-size:.92e
       <div class="acts2 noprint">
         <button class="btn ghost" id="reset" type="button">↺ Gợi ý ban đầu</button>
         <button class="btn ghost" id="shuffle" type="button">🎲 Xáo lại (ai nhận món nào)</button>
-        <button class="btn pink" id="save" type="button">💾 Lưu lên GitHub</button>
+        <button class="btn pink" id="save" type="button">💾 Lưu & áp dụng cho chị em</button>
         <button class="btn ghost" id="copycfg" type="button">📋 Sao chép cấu hình</button>
       </div>
       <div class="msg" id="smsg" role="status"></div>
-      <details class="tok noprint">
+      <details class="tok noprint" hidden>
         <summary>🔑 Để nút “Lưu lên GitHub” chạy (làm một lần)</summary>
         <ol>
           <li>Vào GitHub → ảnh đại diện → <b>Settings</b> → <b>Developer settings</b> → <b>Personal access tokens</b> → <b>Fine-grained tokens</b> → <b>Generate new token</b>.</li>
@@ -189,8 +189,8 @@ code{background:rgba(0,0,0,.25);border-radius:6px;padding:1px 6px;font-size:.92e
 <script src="assets/config.js?v=202610190154"></script>
 <script src="assets/stock.js?v=202610190154"></script>
 <script src="assets/people.js?v=202610160350"></script>
-<script src="assets/common.js?v=20261024"></script>
-<script src="assets/firebase-sync.js?v=20261013"></script>
+<script src="assets/common.js?v=202610190204"></script>
+<script src="assets/firebase-sync.js?v=202610190204"></script>
 <script src="assets/flowers.js?v=20261013"></script>
 <script src="assets/modules.js?v=20261090"></script>
 <script src="assets/stage.js?v=23"></script>
@@ -229,7 +229,7 @@ code{background:rgba(0,0,0,.25);border-radius:6px;padding:1px 6px;font-size:.92e
   function startLive() {
     if (liveOn) return; liveOn = true; $("#lstat").textContent = "Đang kết nối Firebase…";
     var fail = function (e) { $("#lstat").innerHTML = "⚠ Không đọc được dữ liệu Firebase" + (e && e.code ? " (" + esc(e.code) + ")" : "") + ". Kiểm tra quy tắc (rules) Firestore cho phép đọc <code>progress</code> và <code>requests</code>, xem hướng dẫn trong file <code>firestore.rules</code>."; };
-    W20DB.watch("progress", function (rows) { LIVE.prog = rows; liveGot = true; liveAt = Date.now(); renderLive(); }, fail);
+    W20DB.watch("progress", function (rows) { var first = !liveGot; LIVE.prog = rows; liveGot = true; if (first) try { renderStock(); } catch (e) {} liveAt = Date.now(); renderLive(); }, fail);
     W20DB.watch("requests", function (rows) { LIVE.req = rows; liveGot = true; liveAt = Date.now(); renderLive(); }, fail);
     setTimeout(function () { if (!liveGot) $("#lstat").innerHTML = "⏳ Chưa nhận được dữ liệu. Nếu mạng ổn mà vẫn trống, kiểm tra rules Firestore (xem <code>firestore.rules</code>)."; }, 9000);
   }
@@ -352,8 +352,9 @@ code{background:rgba(0,0,0,.25);border-radius:6px;padding:1px 6px;font-size:.92e
     var t = total(), ok = valid();
     $("#sumchip").className = "chip " + (ok ? "ok" : "bad"); $("#sumchip").textContent = (ok ? "✔ " : "⚠ ") + "Tổng " + t + "/" + NEED + " suất";
     $("#diff").textContent = ok ? (dirty() ? "Đã đủ. Bấm Lưu để áp dụng cho chị em." : "Đang áp dụng đúng như thế này.") : (t < NEED ? "Còn thiếu " + (NEED - t) + " suất." : "Đang dư " + (t - NEED) + " suất.");
+    var pl = ok ? plan() : null; if (pl && pl.over.length) { $("#diff").textContent = "⚠ " + pl.over.map(function (x) { return PR[x].name + " đã trao " + pl.given[x] + " suất"; }).join(", ") + ", không thể đặt ít hơn."; ok = false; }
     $("#save").disabled = !ok || !dirty(); $("#copycfg").disabled = !ok;
-    A = valid() ? w20Assign(draft) : A; renderDetail();
+    A = valid() ? plan().A : A; renderDetail();
   }
   $("#prows").addEventListener("click", function (e) { var b = e.target.closest("button[data-d]"); if (!b) return; var i = +b.getAttribute("data-i"); draft.qty[i] = Math.max(0, Math.min(N, draft.qty[i] + (+b.getAttribute("data-d")))); renderStock(); });
   $("#prows").addEventListener("change", function (e) { var t = e.target; if (t.tagName !== "INPUT") return; draft.qty[+t.getAttribute("data-i")] = Math.max(0, Math.min(N, parseInt(t.value, 10) || 0)); renderStock(); });
@@ -365,7 +366,26 @@ code{background:rgba(0,0,0,.25);border-radius:6px;padding:1px 6px;font-size:.92e
   try { $("#tok").value = localStorage.getItem("w20tok") || ""; } catch (e) {}
   function say(t, cls) { var m = $("#smsg"); m.textContent = t; m.className = "msg " + (cls || ""); }
   function b64(str) { var u = new TextEncoder().encode(str), s = ""; for (var i = 0; i < u.length; i++) s += String.fromCharCode(u[i]); return btoa(s); }
+  /* quà của những người ĐÃ quay (đọc từ dữ liệu trực tiếp): giữ nguyên khi chia lại */
+  function spunMap() {
+    var by = {}; LIVE.prog.forEach(function (r) { var m = /^w20(v4|sep3):(.+)_([A-Za-z0-9]+)$/.exec(r.__id || ""); if (!m) return; var u0 = ts(r.updated); if (!u0 || u0.getTime() < Date.parse("2026-10-13T12:25:00Z")) return; var d = r.data || {}, pz = Array.isArray(d) ? d : d.prizes; if (pz && pz.length && by[m[2]] == null) by[m[2]] = pz[0]; });
+    var out = {}; W20P.forEach(function (p) { if (by[p.id] != null) out[p.id] = by[p.id]; }); return out;
+  }
+  function plan() { var fx = spunMap(), r = w20AssignFixed(draft, fx), A2 = {}, given = PR.map(function () { return 0; }); Object.keys(fx).forEach(function (id) { given[fx[id]]++; }); Object.keys(r.map).forEach(function (id) { A2[id] = [r.map[id]]; }); return { A: A2, map: r.map, over: r.over, given: given, fixed: fx }; }
+  /* tải cấu hình đang áp dụng trên Firebase */
+  W20DB.getStock(function (v) { if (v && v.qty && v.qty.length === PR.length) { W20STOCK.qty = v.qty.slice(); W20STOCK.seed = String(v.seed); draft = { qty: v.qty.slice(), seed: String(v.seed) }; renderStock(); } });
   $("#save").onclick = function () {
+    if (!liveGot) { say("⏳ Đang tải dữ liệu chị em đã quay, đợi vài giây rồi bấm lại nha.", "err"); startLive(); return; }
+    var pl = plan(); if (pl.over.length || !valid()) { say("⚠ Số lượng chưa hợp lệ.", "err"); return; }
+    var cnt = PR.map(function () { return 0; }); Object.keys(pl.map).forEach(function (id) { cnt[pl.map[id]]++; });
+    if (cnt.join() !== draft.qty.join()) { say("⚠ Kiểm tra lại: chia ra " + cnt.join("/") + " khác số đặt " + draft.qty.join("/") + ". Chưa lưu.", "err"); return; }
+    say("Đang lưu lên Firebase…"); $("#save").disabled = true;
+    W20DB.setStock({ qty: draft.qty.slice(), seed: draft.seed, map: pl.map }, function () {
+      W20STOCK.qty = draft.qty.slice(); W20STOCK.seed = draft.seed; renderStock();
+      say("✔ Đã lưu & áp dụng ngay cho chị em (" + Object.keys(pl.fixed).length + " người đã quay được giữ nguyên quà). Kiểm tra: " + PR.map(function (p, i) { return p.name + " " + cnt[i]; }).join(" · "), "ok");
+    }, function (e) { renderStock(); say("⚠ Không lưu được lên Firebase" + (e && e.code ? " (" + e.code + ")" : "") + ".", "err"); });
+  };
+  function saveGithubOld() {
     var tok = $("#tok").value.trim(); if (!tok) { say("Chưa có token. Mở mục “Để nút Lưu chạy” bên dưới để làm một lần, hoặc dùng “Sao chép cấu hình”.", "err"); $("details.tok").open = true; return; }
     try { localStorage.setItem("w20tok", tok); } catch (e) {}
     say("Đang lưu lên GitHub…");

@@ -126,9 +126,9 @@
 
 <script src="assets/config.js?v=202610190154"></script>
 <script src="assets/stock.js?v=202610190154"></script>
-<script src="assets/firebase-sync.js?v=20261030"></script>
+<script src="assets/firebase-sync.js?v=202610190204"></script>
 <script src="assets/people.js?v=202610160350"></script>
-<script src="assets/common.js?v=202610160349"></script>
+<script src="assets/common.js?v=202610190204"></script>
 <script src="assets/flowers.js?v=20261013"></script>
 <script src="assets/modules.js?v=202610160421"></script>
 <script src="assets/boxflow.js?v=202610160731"></script>
@@ -277,7 +277,7 @@
 
   /* ---------- 5. Vòng quay 1 lượt, quà đã chia sẵn ---------- */
   function wheel() {
-    var prizes = W20CFG.prizes, assigned = me ? (me.test ? null : w20Assign()[me.id]) : [w20Hash("guest|" + KEY) % prizes.length]; /* mỗi người 1 quà cố định: quay lại ở máy khác vẫn ra đúng quà đó */
+    var prizes = W20CFG.prizes, assigned = me ? (me.test ? null : w20MyPrize(me.id)) : [w20Hash("guest|" + KEY) % prizes.length]; /* mỗi người 1 quà cố định: quay lại ở máy khác vẫn ra đúng quà đó */
     function showReq() { var has = ST.prizes.some(function (i) { return prizes[i] && prizes[i].key === "nho"; }); if (has) { $("#reqbox").classList.add("show"); if (ST.req) $("#reqtxt").value = ST.req; } }
     w20Wheel2({ cv: $("#wcv"), btn: $("#spin"), out: $("#prize"), prizes: prizes, slots: W20CFG.wheelSlots, assigned: assigned, got: ST.prizes,
       onGot: function (l) { ST.prizes = l; save(); },
@@ -340,7 +340,7 @@
   $("#rnd").onclick = function (e) { S.w = (wishIdx() + 1 + ((Math.random() * (W20.wishes.length - 1)) | 0)) % W20.wishes.length; ST.w = S.w; delete ST.cw; save(); cwEl.value = curWish(); card(); FX.burst(e.clientX, e.clientY, 50); toast("Đổi lời chúc rồi nè 🎲"); };
 
   /* ---------- khởi động ---------- */
-  FX.init(); hero(); notes(); atm(); scratch(); flowers(); wheel(); card();
+  FX.init(); hero(); notes(); atm(); scratch(); flowers(); w20LoadStock(wheel); card();
   loading = false;
   if (me && !TEST && !ST.opened && !(ST.step > 0)) { /* máy này chưa có tiến độ: thử lấy lại tiến độ vừa chơi gần đây của đúng người này (VD vừa chuyển từ Zalo sang Safari) */
     try { W20DB.restore(KEY, 48 * 3600 * 1000, function (rv) { if (!rv || ST.opened || ST.step > 0 || !(rv.opened || rv.step > 0)) return; ST = rv; norm(); try { localStorage.setItem(KEY, JSON.stringify(ST)); } catch (e) {} loading = true; notes(); atm(); scratch(); flowers(); wheel(); card(); loading = false; show(Math.min(ST.step, N - 1), false); }); } catch (e) {}

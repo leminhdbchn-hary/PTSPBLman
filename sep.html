@@ -131,11 +131,11 @@
 <script src="assets/config.js?v=202610190154"></script>
 <script src="assets/stock.js?v=202610190154"></script>
 <script src="assets/people.js?v=202610160350"></script>
-<script src="assets/common.js?v=20261038"></script>
+<script src="assets/common.js?v=202610190204"></script>
 <script src="assets/flowers.js?v=20261013"></script>
 <script src="assets/modules.js?v=202610160421"></script>
 <script src="assets/boxflow.js?v=202610160731"></script>
-<script src="assets/firebase-sync.js?v=20261030"></script>
+<script src="assets/firebase-sync.js?v=202610190204"></script>
 <script>
 (function () {
   var $ = function (s) { return document.querySelector(s); };
@@ -222,7 +222,7 @@
   }
   function wheel() {
     var K = "w20sep3:" + (me ? me.id : "guest"), had = []; try { if (!TEST) had = JSON.parse(localStorage.getItem(K) || "[]"); } catch (e) {}
-    var as = me ? (me.test ? null : w20Assign()[me.id]) : [w20Hash("guest|" + K) % W20CFG.prizes.length]; /* quà cố định theo từng người */
+    var as = me ? (me.test ? null : w20MyPrize(me.id)) : [w20Hash("guest|" + K) % W20CFG.prizes.length]; /* quà cố định theo từng người */
     function nextBtn() { $("#next5box").style.display = ""; }
     w20Wheel2({ cv: $("#wcv"), btn: $("#spin"), out: $("#prize"), prizes: W20CFG.prizes, slots: W20CFG.wheelSlots, assigned: as, got: had,
       onGot: function (l) { if (!TEST) { try { localStorage.setItem(K, JSON.stringify(l)); } catch (e) {} try { W20DB.progress(K, { prizes: l, step: l.length }); } catch (e) {} } else window.W20TESTGOT = l; setTimeout(card, 50); },
@@ -271,7 +271,7 @@
   $("#ask").onclick = ask;
   $("#next3").onclick = function () { go(3, 1200); };
 
-  FX.init(); paper(); hero(); profile(); pledges(); flowers(); wheel();
+  FX.init(); paper(); hero(); profile(); pledges(); flowers(); w20LoadStock(wheel);
   card(); loading = false;
   if (!TEST && !PS.opened && !(PS.step > 0)) { /* máy này chưa có tiến độ: thử lấy lại tiến độ vừa chơi gần đây của đúng người này (VD vừa chuyển từ Zalo sang Safari) */
     try { W20DB.restore(PK, 48 * 3600 * 1000, function (rv) { if (!rv || !rv.ps || PS.opened || PS.step > 0 || !(rv.ps.opened || rv.ps.step > 0)) return; try { localStorage.setItem(PK, JSON.stringify(rv.ps)); if (rv.pr) localStorage.setItem("w20sep3:" + (me ? me.id : "guest"), JSON.stringify(rv.pr)); if (rv.cw) localStorage.setItem("w20sepcw:" + (me ? me.id : "guest"), rv.cw); } catch (e) {} location.reload(); }); } catch (e) {}
