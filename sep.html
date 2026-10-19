@@ -25,8 +25,9 @@
         <input id="nameinp" placeholder="Tên của Sếp (VD: Lan)" maxlength="40" aria-label="Tên Sếp">
         <button class="btn pink" style="padding:10px 18px;font-size:16px" type="submit">OK</button>
       </form>
+      <div id="vcbscene"></div>
       <button class="giftbtn" id="openbox" type="button" aria-label="Mở hộp quà"></button>
-      <p class="tapme">Chạm vào hộp quà để mở 🎁</p>
+      <p class="tapme" id="tapme">Chạm vào hộp quà để mở 🎁</p>
     </div>
   </section>
 
@@ -135,6 +136,7 @@
 <script src="assets/flowers.js?v=20261013"></script>
 <script src="assets/modules.js?v=202610160421"></script>
 <script src="assets/boxflow.js?v=202610160731"></script>
+<script src="assets/intro.js?v=1"></script>
 <script src="assets/firebase-sync.js?v=202610190204"></script>
 <script>
 (function () {
@@ -176,6 +178,7 @@
       go(0, 2700);
     };
   }
+  var INTRO = null;
   function hero() {
     var ob = $("#openbox"); if (!ob.firstChild) ob.innerHTML = FL.boxHTML(0);
     if (S.to) { $("#hello").textContent = "Kính gửi " + who() + ", anh em có quà dành cho " + xw().toLowerCase() + "!"; $("#nameform").style.display = "none"; }
@@ -187,6 +190,13 @@
       try { history.replaceState(null, "", w20Link(location.pathname, { to: S.to, x: S.x, f: S.f === W20CFG.from ? "" : S.f })); } catch (er) {}
       hero(); paper(); profile(); card(); FX.burst(innerWidth / 2, innerHeight / 3, 90);
     };
+    /* cảnh mở đầu: chibi Sếp mặc áo dài đi tới Vietcombank, lá thư có cánh rơi xuống tay, đọc xong vào cảnh phê duyệt */
+    if (S.to && window.W20Intro && !INTRO) {
+      $("#openbox").style.display = "none"; var fid = me ? me.id : "";
+      INTRO = W20Intro.mount($("#vcbscene"), { kind: "sep", face: fid ? "assets/women/" + fid + ".webp?v=" + W20Intro.ver : "", fb: "", hint: $("#tapme"),
+        lines: ["<b>V/v:</b> Xin phép được chúc mừng " + esc(who()) + " nhân ngày Phụ nữ Việt Nam 20/10.", "<b>Kính trình:</b> " + esc(who()) + ".", "<b>Căn cứ:</b> sự tận tâm của Sếp và tấm lòng của anh em.", "<b>Đề xuất:</b> Cho phép anh em được chúc và tặng hoa Sếp ạ ✍️"],
+        onOpen: function () { PS.opened = 1; savePS(); FL.show(0, false); } });
+    }
     $("#openbox").onclick = function () { PS.opened = 1; savePS(); FL.unbox(0); };
   }
   function profile() {

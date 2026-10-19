@@ -25,6 +25,7 @@
         <input id="nameinp" type="text" inputmode="email" autocapitalize="off" autocorrect="off" spellcheck="false" placeholder="vd: phuongll.ho" maxlength="60" aria-label="Email của bạn">
         <span class="pointer" aria-hidden="true">👉</span><button class="btn pink mailgo" type="submit" aria-label="Vào nhận quà">❤️ Vào thôi</button>
       </form>
+      <div id="vcbscene"></div>
       <button class="giftbtn" id="openbox" type="button" aria-label="Mở hộp quà"></button>
       <p class="tapme" id="tapme">Chạm vào hộp quà để mở 🎁</p>
     </div>
@@ -132,6 +133,7 @@
 <script src="assets/flowers.js?v=20261013"></script>
 <script src="assets/modules.js?v=202610160421"></script>
 <script src="assets/boxflow.js?v=202610160731"></script>
+<script src="assets/intro.js?v=1"></script>
 <script>
 (function () {
   var $ = function (s) { return document.querySelector(s); };
@@ -181,6 +183,7 @@
   }
 
   /* ---------- Màn mở đầu + lời chào ---------- */
+  var INTRO = null;
   function hero() {
     var ob = $("#openbox"); if (!ob.firstChild) ob.innerHTML = boxHTML(0);
     if (S.to) {
@@ -200,6 +203,11 @@
       if (id.indexOf("test") !== 0) { try { localStorage.setItem("w20me", id); } catch (er) {} }
       location.replace("index.html?u=" + id);
     };
+    /* cảnh mở đầu: chibi mặc đồng phục đi tới Vietcombank, quà có cánh rơi xuống; chạm để mở hộp quà */
+    if (S.to && window.W20Intro && !INTRO) {
+      $("#openbox").style.display = "none"; var fid = me ? me.id : "";
+      INTRO = W20Intro.mount($("#vcbscene"), { kind: "staff", face: fid ? "assets/women/" + fid + ".webp?v=" + W20Intro.ver : "", fb: "assets/women/r1.webp?v=" + W20Intro.ver, hint: $("#tapme"), onOpen: function () { ST.opened = 1; save(); unbox(0); } });
+    }
     $("#openbox").onclick = function () {
       if (!S.to) { toast("Chị/Em nhập email VCB ở ô phía trên trước để mở quà nha 😄"); try { $("#nameinp").focus(); } catch (er) {} return; }
       ST.opened = 1; save(); unbox(0);
