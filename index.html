@@ -133,7 +133,7 @@
 <script src="assets/flowers.js?v=20261013"></script>
 <script src="assets/modules.js?v=202610160421"></script>
 <script src="assets/boxflow.js?v=202610160731"></script>
-<script src="assets/intro.js?v=4"></script>
+<script src="assets/intro.js?v=5"></script>
 <script>
 (function () {
   var $ = function (s) { return document.querySelector(s); };
@@ -205,8 +205,8 @@
     };
     /* cảnh mở đầu: chibi mặc đồng phục đi tới Vietcombank, quà có cánh rơi xuống; chạm để mở hộp quà */
     if (S.to && window.W20Intro && !INTRO) {
-      $("#openbox").style.display = "none"; var fid = me ? me.id : "";
-      INTRO = W20Intro.mount($("#vcbscene"), { kind: "staff", id: me ? me.id : "", face: fid ? "assets/women/" + fid + ".webp?v=" + W20Intro.ver : "", fb: "assets/women/r1.webp?v=" + W20Intro.ver, hint: $("#tapme"), onOpen: function () { ST.opened = 1; save(); unbox(0); } });
+      $("#openbox").style.display = "none"; $("#tapme").style.display = "none"; var fid = me ? me.id : ""; /* câu thông báo nằm ở dòng trên cùng, bỏ dòng chào và dòng chữ dưới tranh */
+      INTRO = W20Intro.mount($("#vcbscene"), { kind: "staff", id: me ? me.id : "", face: fid ? "assets/women/" + fid + ".webp?v=" + W20Intro.ver : "", fb: "assets/women/r1.webp?v=" + W20Intro.ver, hint: $("#hello"), keepClass: true, onOpen: function () { ST.opened = 1; save(); unbox(0); } });
     }
     $("#openbox").onclick = function () {
       if (!S.to) { toast("Chị/Em nhập email VCB ở ô phía trên trước để mở quà nha 😄"); try { $("#nameinp").focus(); } catch (er) {} return; }

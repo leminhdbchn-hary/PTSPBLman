@@ -120,7 +120,7 @@ var W20Intro = (function () {
     var svg = box.querySelector("svg"), chg = svg.querySelector(".walk > g > .bob");
     var holder = document.createElementNS("http://www.w3.org/2000/svg", "g"); holder.setAttribute("transform", "translate(150,314) scale(.82)"); holder.innerHTML = kind === "sep" ? letter() : gift(); svg.appendChild(holder);
     if (face && o.fb) { var im = new Image(); im.onerror = function () { var h = svg.querySelector("image.hd"); if (h) h.setAttribute("href", o.fb); }; im.src = face; }
-    function hint(t) { if (o.hint) { o.hint.className = "tapme"; o.hint.innerHTML = t; o.hint.style.display = ""; } }
+    function hint(t) { if (o.hint) { if (!o.keepClass) o.hint.className = "tapme"; o.hint.innerHTML = t; o.hint.style.display = ""; } }
     function at(ms, f) { T.push(setTimeout(f, ms)); }
     function setReady() { state = "ready"; box.classList.add("drop", "arr", "hold", "ready"); hint(kind === "sep" ? "Lá thư có cánh từ trên trời rơi xuống! Chạm để đọc ✉️" : "Một món quà bất ngờ rơi xuống! Chạm để mở 🎁"); }
     function run() {
