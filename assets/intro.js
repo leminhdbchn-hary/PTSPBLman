@@ -1,5 +1,5 @@
 /* Cảnh mở đầu của trang chị em / trang Sếp: chibi (đầu = ảnh cắt assets/women/<mã>.webp) đi tới cơ quan Vietcombank.
-   kind "staff": đồng phục áo trắng, váy xanh đen; một món quà có cánh từ trên trời rơi xuống tay, chạm để mở.
+   kind "staff": đồng phục áo trắng, váy xanh đen; một món quà bất ngờ rơi xuống tay, chạm để mở.
    kind "sep": áo dài; một lá thư rơi xuống tay, chạm để đọc rồi vào cảnh phê duyệt.
    W20Intro.mount(host, { kind, face, hint, lines, onOpen }) → { skip(), destroy() } */
 var W20Intro = (function () {
@@ -112,7 +112,7 @@ var W20Intro = (function () {
   function mount(host, o) {
     css(); o = o || {}; var kind = o.kind === "sep" ? "sep" : "staff", T = [], state = "idle", opened = false;
     var box = document.createElement("div"); box.className = "w20i"; box.setAttribute("role", "button"); box.setAttribute("tabindex", "0");
-    box.setAttribute("aria-label", kind === "sep" ? "Lá thư có cánh rơi xuống tay Sếp, chạm để đọc" : "Món quà có cánh rơi xuống tay, chạm để mở");
+    box.setAttribute("aria-label", kind === "sep" ? "Lá thư có cánh rơi xuống tay Sếp, chạm để đọc" : "Một món quà bất ngờ rơi xuống tay, chạm để mở");
     var face = o.face || "";
     box.innerHTML = '<svg viewBox="0 0 400 360" xmlns="http://www.w3.org/2000/svg" role="img" aria-hidden="true">' + DEFS + building() +
       '<g transform="translate(0,0)">' + chibi(kind, face, o.id) + '</g></svg><div class="ltr"></div>';
@@ -122,12 +122,12 @@ var W20Intro = (function () {
     if (face && o.fb) { var im = new Image(); im.onerror = function () { var h = svg.querySelector("image.hd"); if (h) h.setAttribute("href", o.fb); }; im.src = face; }
     function hint(t) { if (o.hint) { o.hint.className = "tapme"; o.hint.innerHTML = t; o.hint.style.display = ""; } }
     function at(ms, f) { T.push(setTimeout(f, ms)); }
-    function setReady() { state = "ready"; box.classList.add("drop", "arr", "hold", "ready"); hint(kind === "sep" ? "Lá thư có cánh từ trên trời rơi xuống! Chạm để đọc ✉️" : "Quà từ trên trời rơi xuống! Chạm để mở 🎁"); }
+    function setReady() { state = "ready"; box.classList.add("drop", "arr", "hold", "ready"); hint(kind === "sep" ? "Lá thư có cánh từ trên trời rơi xuống! Chạm để đọc ✉️" : "Một món quà bất ngờ rơi xuống! Chạm để mở 🎁"); }
     function run() {
       if (RM) { box.classList.add("go", "skip"); setReady(); return; }
       state = "walk"; hint(kind === "sep" ? "Sếp đang đến cơ quan…" : "Đang đến cơ quan…"); box.classList.add("go");
       at(WALK, function () { box.classList.add("arr"); });
-      at(WALK + 250, function () { state = "drop"; box.classList.add("drop", "hold"); hint(kind === "sep" ? "Ơ, có lá thư có cánh bay xuống kìa… ✉️" : "Ơ, có gì từ trên trời rơi xuống kìa… ✨"); });
+      at(WALK + 250, function () { state = "drop"; box.classList.add("drop", "hold"); hint(kind === "sep" ? "Ơ, có lá thư có cánh bay xuống kìa… ✉️" : "Một món quà bất ngờ rơi xuống… ✨"); });
       at(WALK + 250 + DROP, setReady);
     }
     function skip() { T.forEach(clearTimeout); T = []; box.classList.add("skip", "go", "arr", "drop", "hold"); setReady(); setTimeout(function () { box.classList.remove("skip"); }, 60); }
