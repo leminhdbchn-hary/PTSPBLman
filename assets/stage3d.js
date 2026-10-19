@@ -264,7 +264,10 @@ var W20Stage3D = (function () {
     /* ---------- máy trạng thái: WAITING → ANNOUNCING → PRESENTING → CELEBRATING → COMPLETED ---------- */
     var MEN = (typeof W20CFG !== "undefined" && W20CFG.men) || [], Q = [], cur = null, last = null, nextMan = 0, nextStyle = 0, SEEN = {}, played = 0, BATCH = 5, since = [];
     var PX = 3.5, PZ = 1.5, LZ = -.2, LSC = .95, PSC = 1.12, EXIT = 1300, line = [], departing = [], photo = false, wantPhoto = false;
-    function leftX(i) { return -6.2 + i * 1.45; } function photoX(i, n) { return (i - (n - 1) / 2) * 1.9; }
+    /* K: co người + vị trí theo bề ngang khung hình thật (toàn màn hình có thể hẹp hơn 16:9) để không ai bị mất khỏi mép */
+    var K = 1;
+    function updK() { var tn = Math.tan(CAM.fov * Math.PI / 360) * CAM.aspect, h1 = tn * (CAM.position.z - LZ) - .55, h2 = tn * (CAM.position.z - PZ) - .55; K = Math.max(.35, Math.min(1, h1 / 7.1, h2 / 5.9)); }
+    function leftX(i) { return (-6.2 + i * 1.45) * K; } function photoX(i, n) { return (i - (n - 1) / 2) * 1.9 * K; }
     var T1 = 1400, T2 = 2400, ANN = 600, CEL = 1700, COMP = 100, /* mỗi người ~6 giây: công bố 0,6 + nhận quà 2,4 + ăn mừng 1,7 + đi sang đứng hàng 1,3 */  STATE = "WAITING", running = true, soundOn = false, stopped = false, wishT = 0;
     var WISHES = ["Chúc {n} luôn xinh đẹp, rạng rỡ như ánh đèn sân khấu!", "Chúc {n} 20/10 thật vui, thật xinh và thật… ít việc!", "Chúc {n} luôn là ngôi sao sáng nhất Phòng PTSPBL!", "Chúc {n} cười thật tươi, deadline thật nhẹ!"];
     function callName(nm) { var w = String(nm || "").trim().split(/\s+/); return w.length > 1 ? w[0] + " " + w[w.length - 1] : (w[0] || "chị em"); }
@@ -310,7 +313,7 @@ var W20Stage3D = (function () {
     function pickMan() { if (!MEN.length) return 0; var k, g = 0; do { k = Math.floor(Math.random() * MEN.length); } while (MEN.length > 1 && k === lastMan && ++g < 20); lastMan = k; return k; }
     function play(batch, isReplay) {
       var used = {}, n = batch.length, now = performance.now();
-      var scl = 1.05, slot = 12.6;
+      updK(); var scl = 1.05 * K, slot = 12.6;
       var items = batch.map(function (e, k) {
         var ti = hash(e.id || e.name) % TITLES.length; while (used[ti]) ti = (ti + 1) % TITLES.length; used[ti] = 1;
         var mi = pickMan(), mm = MEN.length ? MEN[mi] : { img: "" }, title = TITLES[ti];
@@ -318,7 +321,7 @@ var W20Stage3D = (function () {
         var man = makeMan(mm.img, mi), girl = makeGirl(e.id ? "assets/women/" + e.id + ".webp" : fb, fb, title[1]), gift = makeGift();
         man.scale.setScalar(scl); girl.scale.setScalar(scl); gift.scale.setScalar(scl * 1.15);
         man.position.set(-12, 0, PZ); girl.position.set(12, 0, PZ); S.add(man, girl, gift);
-        var cx = PX, d = 1.15;
+        var cx = PX * K, d = 1.15 * K;
         return { k: k, id: e.id, name: e.name, prize: e.prize, title: title, style: (nextStyle++) % STYLES.length, man: man, girl: girl, gift: gift, fx: makeFx(k), cx: cx, d: d, sc: scl, lx: leftX(line.length), burst: 0 };
       });
       items.forEach(function (it) { S.add(it.fx); });
@@ -354,7 +357,7 @@ var W20Stage3D = (function () {
     goEl.addEventListener("click", function (e) { e.stopPropagation(); proceed(); });
     function proceed() { if (cur || (!photo && !line.length)) return false; photo = false; wantPhoto = false; departing = departing.concat(line); line = []; changed(); return true; }
     function animLine(it, i, n, now, leaving) {
-      var g = it.girl, gu = g.userData, tx = leaving ? -16 : photo ? photoX(i, n) : leftX(i), tsc = photo && !leaving ? PSC : LSC, tz = photo && !leaving ? .6 : LZ;
+      var g = it.girl, gu = g.userData, tx = leaving ? -16 : photo ? photoX(i, n) : leftX(i), tsc = (photo && !leaving ? PSC : LSC) * K, tz = photo && !leaving ? .6 : LZ;
       var dx = tx - g.position.x, mv = Math.abs(dx) > .05;
       g.position.x += dx * (leaving ? .07 : .1); g.position.z += (tz - g.position.z) * .1; var cs = g.scale.x + (tsc - g.scale.x) * .1; g.scale.setScalar(cs);
       gu.body.position.y = 0; gu.torso.rotation.set(0, 0, 0); gu.body.rotation.set(0, 0, 0);
@@ -411,7 +414,7 @@ var W20Stage3D = (function () {
       }
       var ex = clamp01((t - T2 - CEL) / EXIT), gz = PZ, cs = sc;
       if (ex > 0) { /* nhận quà xong: anh em đi ra, chị cầm quà đi sang đứng vào hàng bên trái */
-        var eE = ease(ex); mx = lerp(mxT + (st === 4 ? .3 * sc : 0), -13, eE); gx = lerp(gxT, it.lx, eE); gz = lerp(PZ, LZ, eE); cs = lerp(sc, LSC, eE); holdGirl = true;
+        var eE = ease(ex); mx = lerp(mxT + (st === 4 ? .3 * sc : 0), -13, eE); gx = lerp(gxT, it.lx, eE); gz = lerp(PZ, LZ, eE); cs = lerp(sc, LSC * K, eE); holdGirl = true;
         mu.body.position.y = 0; mu.body.rotation.x = 0; mu.torso.rotation.set(0, 0, 0); mu.A.forEach(function (a) { a.rotation.set(0, 0, 0); }); setWalk(m, now / 110, .7);
         gu.body.position.y = 0; gu.torso.rotation.set(0, 0, 0); gu.A[0].rotation.set(-1.3, 0, 0); gu.A[1].rotation.set(-1.2, 0, 0); setWalk(g, now / 130, ex < 1 ? .5 : 0);
       }
@@ -449,7 +452,7 @@ var W20Stage3D = (function () {
       if (document.hidden || !visible) return; /* tab ẩn hoặc sân khấu ngoài màn hình: không vẽ */
       if (!cur && !line.length && !departing.length && now - lastR < 33) return; /* lúc chờ chỉ vẽ ~30 khung/giây */
       lastR = now; var ts = RM ? 0 : (now - t00) / 1000;
-      CAM.position.set(Math.sin(ts * .12) * 1.4, 2.9 + Math.sin(ts * .2) * .12, 11.4); CAM.lookAt(0, 2.6, 0);
+      updK(); CAM.position.set(Math.sin(ts * .12) * .5, 2.9 + Math.sin(ts * .2) * .12, 11.4); CAM.lookAt(0, 2.6, 0);
       if (!RM) {
         spots.forEach(function (s) { var a = Math.sin(ts * .6 + s.i * 2) * 2.2, focus = cur && (STATE === "ANNOUNCING" || STATE === "PRESENTING"); if (focus) a *= .25; s.l.target.position.x = s.x * .4 + a; s.l.intensity = focus ? 1.5 : .9; s.b.rotation.z = -a * .07 + s.x * -.05; s.b.position.x = s.x * .6 + a * .55; });
         neons.forEach(function (n, i) { n.m.opacity = .5 + Math.sin(ts * 1.6 + i) * .12; });
