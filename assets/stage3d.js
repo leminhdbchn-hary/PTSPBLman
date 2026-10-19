@@ -160,29 +160,7 @@ var W20Stage3D = (function () {
       var head = faceSprite(tex(img), 1.3); head.userData.base = .84; head.userData.hH = 1.5; torso.add(head); /* đầu các anh nhỏ lại và cao hơn một chút */
       root.userData = { body: body, torso: torso, L: [L1, L2], A: [A1, A2], head: head }; return root;
     }
-    var CROWN = null;
-    function crownTex() {
-      if (CROWN) return CROWN;
-      var c = document.createElement("canvas"); c.width = 512; c.height = 448; var g = c.getContext("2d");
-      var Y = "#f7c948", YD = "#e2a52e", PK = "#f06c80", PKD = "#d9546a";
-      g.lineJoin = "round"; g.lineCap = "round";
-      /* thân vương miện (lớp sau, vàng đậm) */
-      var P = [[60, 350], [66, 140], [108, 232], [150, 100], [205, 236], [256, 70], [307, 236], [362, 100], [405, 232], [446, 140], [452, 350]];
-      g.beginPath(); P.forEach(function (q, i) { i ? g.lineTo(q[0], q[1]) : g.moveTo(q[0], q[1]); }); g.closePath(); g.fillStyle = YD; g.fill(); g.strokeStyle = YD; g.lineWidth = 26; g.stroke();
-      /* lớp trước vàng sáng */
-      g.beginPath(); g.moveTo(70, 350); g.lineTo(78, 190); g.quadraticCurveTo(256, 100, 434, 190); g.lineTo(442, 350); g.closePath(); g.fillStyle = Y; g.fill(); g.strokeStyle = Y; g.lineWidth = 18; g.stroke();
-      /* viên bi tròn trên đầu nhọn */
-      [[66, 120, 27, Y], [150, 84, 27, YD], [256, 52, 37, Y], [362, 84, 27, YD], [446, 120, 27, Y]].forEach(function (b) { g.beginPath(); g.arc(b[0], b[1], b[2], 0, 6.283); g.fillStyle = b[3]; g.fill(); });
-      /* dải đế */
-      g.beginPath(); g.moveTo(76, 336); g.lineTo(436, 336); g.quadraticCurveTo(466, 336, 466, 366); g.lineTo(466, 380); g.quadraticCurveTo(466, 412, 436, 412); g.lineTo(76, 412); g.quadraticCurveTo(46, 412, 46, 380); g.lineTo(46, 366); g.quadraticCurveTo(46, 336, 76, 336); g.closePath(); g.fillStyle = Y; g.fill();
-      g.beginPath(); g.moveTo(52, 392); g.lineTo(460, 392); g.quadraticCurveTo(452, 412, 436, 412); g.lineTo(76, 412); g.quadraticCurveTo(60, 412, 52, 392); g.closePath(); g.fillStyle = YD; g.fill();
-      [100, 178, 256, 334, 412].forEach(function (x) { g.beginPath(); g.arc(x, 372, 11, 0, 6.283); g.fillStyle = PK; g.fill(); });
-      /* ngọc lục giác hồng ở giữa */
-      function hex(cx, cy, r, col) { g.beginPath(); for (var i = 0; i < 6; i++) { var a = Math.PI / 6 + i * Math.PI / 3; g.lineTo(cx + r * Math.cos(a), cy + r * Math.sin(a)); } g.closePath(); g.fillStyle = col; g.fill(); }
-      hex(256, 250, 44, PKD); hex(256, 250, 36, PK);
-      CROWN = new T.CanvasTexture(c); CROWN.encoding = T.sRGBEncoding; return CROWN;
-    }
-    function makeGirl(img, fb, pal) {
+    function makeGirl(img, fb, pal, ci) {
       var root = new T.Group(), body = new T.Group(); root.add(body);
       var L1 = leg(.07, .28, SKIN, "#7a1a3a"), L2 = leg(.07, .28, SKIN, "#7a1a3a"); L1.position.set(-.12, .3, 0); L2.position.set(.12, .3, 0); body.add(L1, L2);
       var c1 = lc(pastel(pal[0], .22)), c2 = lc(pastel(pal[1], .18));
@@ -201,8 +179,8 @@ var W20Stage3D = (function () {
       var waist = new T.Mesh(new T.TorusGeometry(.13, .022, 8, 24), bm2); waist.rotation.x = Math.PI / 2; waist.position.y = -.08; torso.add(waist);
       var A1 = limb(.08, .4, SKIN), A2 = limb(.08, .4, SKIN); A1.position.set(-.2, .26, 0); A2.position.set(.2, .26, 0); torso.add(A1, A2);
       var head = faceSprite(tex(img, fb), 1.3); head.userData.base = .3; torso.add(head);
-      var crown = new T.Group(); /* vương miện vẽ bằng canvas theo mẫu: dải đồng-vàng, hoa văn cuốn, đầu nhọn gắn ngọc trai */
-      var cs0 = new T.Sprite(new T.SpriteMaterial({ map: crownTex(), transparent: true, depthTest: false, depthWrite: false })); cs0.scale.set(.9, .9 * 448 / 512, 1); cs0.renderOrder = 3; crown.add(cs0);
+      var crown = new T.Group(), CW = [296 / 480, 291 / 480][ci || 0]; /* 2 kiểu vương miện bằng ảnh (assets/crowns/c1, c2): mỗi chị đội một kiểu */
+      var cs0 = new T.Sprite(new T.SpriteMaterial({ map: tex("assets/crowns/c" + ((ci || 0) + 1) + ".webp"), transparent: true, depthTest: false, depthWrite: false })); cs0.scale.set(1.12, 1.12 * CW, 1); cs0.renderOrder = 3; crown.add(cs0);
       torso.add(crown);
       root.userData = { body: body, torso: torso, L: [L1, L2], A: [A1, A2], head: head, crown: crown }; return root;
     }
@@ -342,7 +320,7 @@ var W20Stage3D = (function () {
         var ti = hash(e.id || e.name) % TITLES.length; while (used[ti]) ti = (ti + 1) % TITLES.length; used[ti] = 1;
         var mi = pickMan(), mm = MEN.length ? MEN[mi] : { img: "" }, title = TITLES[ti];
         var fb = "assets/women/r" + (1 + hash(e.id || e.name) % 6) + ".webp";
-        var man = makeMan(mm.img, mi), girl = makeGirl(e.id ? "assets/women/" + e.id + ".webp" : fb, fb, title[1]), gift = makeGift();
+        var man = makeMan(mm.img, mi), girl = makeGirl(e.id ? "assets/women/" + e.id + ".webp" : fb, fb, title[1], hash(e.id || e.name) % 2), gift = makeGift();
         man.scale.setScalar(scl); girl.scale.setScalar(scl); gift.scale.setScalar(scl * 1.15);
         man.position.set(-12, 0, PZ); girl.position.set(12, 0, PZ); S.add(man, girl, gift);
         var cx = PX * K, d = 1.15 * K;
@@ -390,7 +368,7 @@ var W20Stage3D = (function () {
       g.updateMatrixWorld(true); var gh = handPos(gu.A[1]);
       it.gift.scale.setScalar(cs * 1.15); it.gift.position.copy(gh); it.gift.position.y += -.3 * cs; it.gift.position.z += .25 * cs; it.gift.rotation.y = .35;
       var gd = it.gift.userData; if (gd) { gd.lid.rotation.z = -1.5; gd.lid.position.y = .2; gd.glow.material.opacity = .55; gd.glow.scale.setScalar(.8); }
-      fitFace(gu.head); var hh = gu.head.scale.y; gu.crown.position.y = gu.head.position.y + hh / 2 - .02; gu.crown.position.z = 0;
+      fitFace(gu.head); var hh = gu.head.scale.y; gu.crown.position.y = gu.head.position.y + hh / 2 + .08; gu.crown.position.z = 0;
       if (it.lbl) { var v = new T.Vector3(g.position.x, 0, g.position.z).project(CAM); it.lbl.style.left = (v.x + 1) / 2 * 100 + "%"; it.lbl.style.top = ((1 - v.y) / 2 * 100 + .6) + "%"; }
     }
     function animPair(it, t, now) {
@@ -459,7 +437,7 @@ var W20Stage3D = (function () {
       it.gift.position.copy(gp); it.gift.scale.setScalar(cs * 1.15); it.gift.position.y += (holdGirl ? -.3 : .1) * cs; if (holdGirl) it.gift.position.z += .25 * cs; it.gift.rotation.y = after ? .35 : now / 1200;
       var gd = it.gift.userData; if (gd) { var op = after ? ease((tt - 200) / 700) : 0; gd.lid.rotation.z = -op * 1.5; gd.lid.position.y = .15 + op * .05; gd.glow.material.opacity = op * (.75 + Math.sin(now / 160) * .15); gd.glow.scale.setScalar(.01 + op * .85); }
       fitFace(mu.head); fitFace(gu.head);
-      var hh = gu.head.scale.y; gu.crown.position.y = gu.head.position.y + hh / 2 - .02; gu.crown.position.z = 0; gu.crown.renderOrder = 2; gu.crown.traverse(function (o) { if (o.material) { o.material.depthTest = false; o.renderOrder = 3; } });
+      var hh = gu.head.scale.y; gu.crown.position.y = gu.head.position.y + hh / 2 + .08; gu.crown.position.z = 0; gu.crown.renderOrder = 2; gu.crown.traverse(function (o) { if (o.material) { o.material.depthTest = false; o.renderOrder = 3; } });
     }
 
     /* ---------- vòng lặp ---------- */
@@ -495,7 +473,7 @@ var W20Stage3D = (function () {
       R.render(S, CAM);
     }
     raf = requestAnimationFrame(frame);
-    MEN.forEach(function (m) { tex(m.img); });
+    MEN.forEach(function (m) { tex(m.img); }); tex("assets/crowns/c1.webp"); tex("assets/crowns/c2.webp");
     return {
       /* e: {id, name, prize, demo?}. Không nhận lại cùng một người (trừ khi demo) để không trao quà hai lần */
       queue: function (e, opt2) {
