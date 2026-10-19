@@ -107,7 +107,7 @@
         <canvas id="card" class="land" width="1536" height="1024"></canvas>
         <div class="side">
           <div class="themes" id="themes" role="group" aria-label="Chọn mẫu thiệp"></div>
-        <div class="cardopts"><button type="button" class="btn ghost" id="optMen"></button><button type="button" class="btn ghost" id="optMenRnd">🎲 Đổi anh em</button></div>
+        <div class="cardopts"><button type="button" class="btn ghost" id="optPn"></button><button type="button" class="btn ghost" id="optMen"></button><button type="button" class="btn ghost" id="optMenRnd">🎲 Đổi anh em</button></div>
         <div class="acts">
             <button class="btn" id="dl" type="button">⬇️ Tải thiệp về máy</button>
             <button class="btn pink" id="shr" type="button">📤 Chia sẻ</button>
@@ -134,7 +134,7 @@
 <script src="assets/people.js?v=202610160350"></script>
 <script src="assets/common.js?v=202610192310"></script>
 <script src="assets/flowers.js?v=20261013"></script>
-<script src="assets/modules.js?v=202610192230"></script>
+<script src="assets/modules.js?v=202610192330"></script>
 <script src="assets/boxflow.js?v=202610160731"></script>
 <script src="assets/intro.js?v=8"></script>
 <script src="assets/firebase-sync.js?v=202610190204"></script>
@@ -245,7 +245,7 @@
     if (c.width !== TT.w || c.height !== TT.h) { c.width = TT.w; c.height = TT.h; } c.style.setProperty("--ar", (TT.w / TT.h).toFixed(3));
     var g = c.getContext("2d");
     var got = []; try { got = (me && me.test) ? (window.W20TESTGOT || []) : JSON.parse(localStorage.getItem("w20sep3:" + (me ? me.id : "guest")) || "[]"); } catch (e) {}
-    w20DrawCard(g, { mode: "sep", greet: "Thân gửi:", name: S.to ? "Chị " + S.to : "Các chị lãnh đạo của Phòng", sub: me ? w20Sub(me.t) : "", role: W20.sep.roles[ri()], wish: CW ? CW : w20SepWish(wi(), "chị"), prizes: got.map(function (i) { return W20CFG.prizes[i]; }).filter(Boolean), from: S.f, bq: S.bq, theme: TH, men: OP.men === 1 ? w20PickMen(OP.seed, 6) : null });
+    w20DrawCard(g, { mode: "sep", greet: "Thân gửi:", name: S.to ? "Chị " + S.to : "Các chị lãnh đạo của Phòng", sub: me ? w20Sub(me.t) : "", role: W20.sep.roles[ri()], wish: CW ? CW : w20SepWish(wi(), "chị"), prizes: got.map(function (i) { return W20CFG.prizes[i]; }).filter(Boolean), from: S.f, bq: S.bq, theme: TH, panel: OP.nopn !== 1, men: OP.men === 1 ? w20PickMen(OP.seed, 6) : null });
   }
   W20CFG.men.forEach(function (m) { var im = w20Img(m.img); if (!im.complete) im.addEventListener("load", function () { card(); }); }); /* ảnh các anh tải xong thì vẽ lại thiệp */
   /* 10 mẫu thiệp (mẫu 1 hồng phấn là mặc định), nhớ lựa chọn trên máy */
@@ -257,7 +257,8 @@
     box.onclick = function (e) { var b = e.target.closest(".thm"); if (!b) return; TH = +b.getAttribute("data-i"); try { if (!TEST) localStorage.setItem("w20septh:" + (me ? me.id : "guest"), String(TH)); } catch (er) {} card(); [].forEach.call(box.children, function (x) { x.classList.toggle("on", x === b); }); };
   }
   themeUI();
-  function optUI() { $("#optMen").textContent = OP.men === 1 ? "🧑‍🤝‍🧑 Ẩn anh em" : "🧑‍🤝‍🧑 Hiện anh em"; $("#optMenRnd").style.display = OP.men === 1 ? "" : "none"; }
+  function optUI() { $("#optPn").textContent = OP.nopn === 1 ? "🪄 Nền lời chúc: Tắt" : "🪄 Nền lời chúc: Bật"; $("#optMen").textContent = OP.men === 1 ? "🧑‍🤝‍🧑 Ẩn anh em" : "🧑‍🤝‍🧑 Hiện anh em"; $("#optMenRnd").style.display = OP.men === 1 ? "" : "none"; }
+  $("#optPn").onclick = function () { OP.nopn = OP.nopn === 1 ? 0 : 1; saveOP(); optUI(); card(); };
   $("#optMen").onclick = function () { OP.men = OP.men === 1 ? 0 : 1; saveOP(); optUI(); card(); };
   $("#optMenRnd").onclick = function () { OP.seed = 1 + Math.floor(Math.random() * 1e6); saveOP(); card(); };
   optUI();

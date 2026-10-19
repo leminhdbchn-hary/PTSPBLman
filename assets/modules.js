@@ -345,7 +345,7 @@ function w20DrawCard(g, o) {
   px = Math.max(mg, Math.min(px, W - mg - pw));
   window.W20CARDBOX = { x: px, y: py, w: pw, h: ph, W: W, H: H };
   g.save(); var rd = Math.min(pad * 1.1, ph / 4, pw / 4); g.beginPath(); g.moveTo(px + rd, py); g.arcTo(px + pw, py, px + pw, py + ph, rd); g.arcTo(px + pw, py + ph, px, py + ph, rd); g.arcTo(px, py + ph, px, py, rd); g.arcTo(px, py, px + pw, py, rd); g.closePath();
-  g.shadowColor = "rgba(90,40,50,.28)"; g.shadowBlur = pad * .9; g.shadowOffsetY = pad * .25; g.fillStyle = "rgba(255,252,247,.80)"; g.fill(); g.shadowColor = "transparent"; g.lineWidth = Math.max(2, pad * .09); g.strokeStyle = "rgba(255,255,255,.95)"; g.stroke(); g.restore();
+  if (o.panel !== false) { /* o.panel === false: bỏ nền, chữ nằm thẳng trên ảnh thiệp như ban đầu */ g.shadowColor = "rgba(90,40,50,.28)"; g.shadowBlur = pad * .9; g.shadowOffsetY = pad * .25; g.fillStyle = "rgba(255,252,247,.80)"; g.fill(); g.shadowColor = "transparent"; g.lineWidth = Math.max(2, pad * .09); g.strokeStyle = "rgba(255,255,255,.95)"; g.stroke(); } g.restore();
   L.P.forEach(function (p) {
     var f = p.f; if (p.fit) { g.font = f + "px " + W20HW; while (g.measureText(p.t).width > b.w && f > 16) { f -= 2; g.font = f + "px " + W20HW; } }
     var save = W20INK; W20INK = p.col; w20Ink(g, p.t, cx, y0 + p.y, f, p.bold); W20INK = save;
