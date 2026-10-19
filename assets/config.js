@@ -27,13 +27,13 @@ var W20CFG = {
      Số lượng từng món chỉnh ở trang admin.html (tab "Chia quà"). key "nho" = thẻ nhờ việc. */
   prizes: [
     { icon: "🍫", name: "KitKat" },
-    { icon: "☕", name: "Cà phê/Trà sữa" },
+    { icon: "assets/prize-nuocep.webp", name: "Nước ép" },
     { icon: "🙋", name: "KitKat và nhờ ae giúp 1 việc vặt", key: "nho" },
     { icon: "assets/prize-kem.webp", name: "Kem dưỡng da tay" }
   ],
 
   /* Vòng quay có 16 ô: mỗi món quà chiếm 3 ô (xen kẽ), thêm 4 ô “Chúc bạn may mắn” (-1) mà người chơi không bao giờ quay trúng.
-     Số trong mảng = thứ tự món ở danh sách prizes phía trên (0 = KitKat, 1 = Cà phê/Trà sữa, 2 = KitKat + việc vặt, 3 = Kem dưỡng da tay). */
+     Số trong mảng = thứ tự món ở danh sách prizes phía trên (0 = KitKat, 1 = Nước ép, 2 = KitKat + việc vặt, 3 = Kem dưỡng da tay). */
   wheelSlots: [0, 1, 2, -1, 3, 0, 1, -1, 2, 3, 0, -1, 1, 2, 3, -1],
 
   /* (Không bắt buộc) Nhận "Thẻ nhờ việc" qua Google Form để anh em xem tập trung trong Google Sheet.
