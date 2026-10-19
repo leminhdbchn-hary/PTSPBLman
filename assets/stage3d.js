@@ -112,7 +112,7 @@ var W20Stage3D = (function () {
     function limb(r, len, col) { var g0 = new T.Group(), m = new T.Mesh(new T.CylinderGeometry(r, r * .92, len, 12), mat(col, { roughness: .7 })); m.position.y = -len / 2; m.castShadow = true; g0.add(m); var hnd = new T.Mesh(new T.SphereGeometry(r * 1.15, 12, 10), mat(SKIN, { roughness: .6 })); hnd.position.y = -len - r * .4; g0.add(hnd); g0.userData.hand = hnd; return g0; }
     function leg(r, len, col, shoe) { var g0 = new T.Group(), m = new T.Mesh(new T.CylinderGeometry(r, r, len, 12), mat(col, { roughness: .7 })); m.position.y = -len / 2; m.castShadow = true; g0.add(m); var sh = new T.Mesh(new T.BoxGeometry(r * 2.2, r * 1.1, r * 3.2), mat(shoe, { roughness: .4 })); sh.position.set(0, -len, r * .7); sh.castShadow = true; g0.add(sh); return g0; }
     function faceSprite(map, w) { var sp = new T.Sprite(new T.SpriteMaterial({ map: map, transparent: true, depthWrite: true, alphaTest: .05 })); sp.scale.set(w, w * 1.15, 1); sp.userData.w = w; return sp; }
-    function fitFace(sp) { var im = sp.material.map && sp.material.map.image; var hH = 1.75; if (im && im.width) sp.scale.set(hH * im.width / im.height, hH, 1); /* mọi mặt cao bằng nhau */ sp.position.y = sp.userData.base + sp.scale.y / 2 - .14; sp.position.z = .05; }
+    function fitFace(sp) { var im = sp.material.map && sp.material.map.image; var hH = sp.userData.hH || 1.75; if (im && im.width) sp.scale.set(hH * im.width / im.height, hH, 1); /* mọi mặt cao bằng nhau */ sp.position.y = sp.userData.base + sp.scale.y / 2 - .14; sp.position.z = .05; }
     /* 10 bộ trang phục hoàng tử lịch sự, mỗi anh một kiểu (theo thứ tự anh trong danh sách) */
     var OUTFITS = [
       { j: "#1d46a8", t: "#f3d27a", s: "#ffffff", n: "cravat", nc: "#ffffff", p: "#17213f", e: ["epaulet"] },
@@ -157,7 +157,7 @@ var W20Stage3D = (function () {
         else if (k === "lapel") { [-1, 1].forEach(function (d) { var ls = new T.Mesh(new T.BoxGeometry(.075, .36, .02), mat(col, { roughness: .2, metalness: .3 })); ls.position.set(d * .1, .5, .21); ls.rotation.z = d * .32; torso.add(ls); }); }
       });
       var A1 = limb(.075, .5, J), A2 = limb(.075, .5, J); A1.position.set(-.33, .68, 0); A2.position.set(.33, .68, 0); torso.add(A1, A2);
-      var head = faceSprite(tex(img), 1.3); head.userData.base = .72; torso.add(head);
+      var head = faceSprite(tex(img), 1.3); head.userData.base = .84; head.userData.hH = 1.5; torso.add(head); /* đầu các anh nhỏ lại và cao hơn một chút */
       root.userData = { body: body, torso: torso, L: [L1, L2], A: [A1, A2], head: head }; return root;
     }
     var CROWN = null;
