@@ -234,9 +234,9 @@ var W20Stage3D = (function () {
 
     /* ---------- lớp chữ: bảng công bố, lời chúc, chữ chờ ---------- */
     var ov = document.createElement("div"); ov.className = "s3ov"; ov.setAttribute("data-s", "WAITING");
-    ov.innerHTML = '<div class="s3vig"></div><div class="s3plates" aria-live="polite"></div><div class="s3wish"></div><div class="s3next"></div>';
+    ov.innerHTML = '<div class="s3vig"></div><div class="s3plates" aria-live="polite"></div><div class="s3wish"></div><div class="s3next"></div><div class="s3hold"></div>';
     wrap.style.position = "relative"; wrap.appendChild(ov);
-    var platesEl = ov.querySelector(".s3plates"), wishEl = ov.querySelector(".s3wish"), nextEl = ov.querySelector(".s3next");
+    var platesEl = ov.querySelector(".s3plates"), wishEl = ov.querySelector(".s3wish"), nextEl = ov.querySelector(".s3next"), holdEl = ov.querySelector(".s3hold");
     if (!document.getElementById("s3css")) {
       var st = document.createElement("style"); st.id = "s3css";
       st.textContent = ".s3ov{position:absolute;inset:0;pointer-events:none;font-family:'Be Vietnam Pro',sans-serif}" +
@@ -250,20 +250,34 @@ var W20Stage3D = (function () {
         ".s3wait b{display:block;font:700 1.3em 'Playfair Display',serif}.s3wait small{color:#f3dc9c;font-weight:600}.s3ov:not([data-s=WAITING]) .s3wait{opacity:0}" +
         ".s3wish{position:absolute;left:50%;bottom:3.5%;width:max-content;max-width:88%;transform:translateX(-50%) translateY(8px);padding:.35em 1.1em;border-radius:99px;background:rgba(4,34,28,.72);border:1px solid rgba(240,214,140,.55);text-align:center;color:#fff8e6;font:700 clamp(11px,1.7vw,22px)/1.35 'Playfair Display',serif;opacity:0;transform:translateY(8px);transition:all .6s}.s3wish.on{opacity:1;transform:translateX(-50%)}" +
         ".s3next{position:absolute;left:1.6%;top:30%;width:19%;font-size:clamp(9px,1.15vw,15px);color:#fff;background:rgba(18,8,48,.72);border:1.5px solid #5cc8ff;border-radius:12px;padding:.5em .6em;box-shadow:0 0 14px rgba(92,200,255,.4);transition:opacity .3s}.s3next:empty{opacity:0}.s3next b{display:block;color:#bfe9ff;letter-spacing:.05em;font-size:.9em;margin-bottom:.25em}.s3next div{display:flex;gap:.45em;align-items:baseline;line-height:1.35;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.s3next i{font-style:normal;font-weight:800;color:#ffd45c;min-width:1.1em}.s3next div:first-of-type span{font-weight:800;color:#ffe9a6}.s3next small{color:#c9b8f0}" +
+        ".s3hold{display:none;position:absolute;left:50%;top:44%;transform:translate(-50%,-50%);width:78%;max-height:80%;overflow:hidden;background:rgba(14,6,40,.9);border:2px solid #ffd76a;border-radius:18px;padding:.7em 1em .9em;text-align:center;color:#fff;box-shadow:0 0 26px rgba(255,215,106,.5),0 10px 30px rgba(0,0,0,.6);font-size:clamp(9px,1.4vw,18px)}" +
+        ".s3ov.holding .s3hold{display:block}.s3ov.holding .s3next{display:none}" +
+        ".s3hold .h1{font:800 1.45em 'Be Vietnam Pro',sans-serif;color:#ffe08a;letter-spacing:.02em;margin-bottom:.35em}.s3hold .h2{font:800 1.05em 'Be Vietnam Pro',sans-serif;color:#7fd6ff;margin:.7em 0 .35em;letter-spacing:.04em}" +
+        ".s3hold .row{display:flex;flex-wrap:wrap;gap:.5em;justify-content:center}.s3hold .c{background:rgba(255,255,255,.1);border:1.5px solid rgba(255,122,200,.7);border-radius:12px;padding:.35em .7em;min-width:9.5em}.s3hold .nx .c{border-color:rgba(92,200,255,.75)}.s3hold .c b{display:block;font-weight:800}.s3hold .c small{color:#ffe9a6;font-weight:600}.s3hold .c i{font-style:normal;color:#ffd76a;font-weight:800;margin-right:.3em}" +
+        ".stagewrap:fullscreen .s3hold{font-size:clamp(13px,1.7vw,28px)}" +
         ".stagewrap:fullscreen .s3pl{font-size:clamp(12px,1.6vw,26px)}.stagewrap:fullscreen .s3next{font-size:clamp(13px,1.5vw,24px)}";
       document.head.appendChild(st);
     }
 
     /* ---------- máy trạng thái: WAITING → ANNOUNCING → PRESENTING → CELEBRATING → COMPLETED ---------- */
-    var MEN = (typeof W20CFG !== "undefined" && W20CFG.men) || [], Q = [], cur = null, last = null, nextMan = 0, nextStyle = 0, SEEN = {}, played = 0;
-    var T1 = 1400, T2 = 2400, ANN = 600, CEL = 2600, COMP = 400, /* mỗi người đúng 6 giây (0,6+2,4+2,6+0,4) */  STATE = "WAITING", running = true, soundOn = false, stopped = false, wishT = 0;
+    var MEN = (typeof W20CFG !== "undefined" && W20CFG.men) || [], Q = [], cur = null, last = null, nextMan = 0, nextStyle = 0, SEEN = {}, played = 0, BATCH = 5, since = [];
+    var T1 = 1400, T2 = 2400, ANN = 600, CEL = 7500, COMP = 500, /* mỗi lượt khoảng 11 giây (0,6+2,4+7,5+0,5) */  STATE = "WAITING", running = false, soundOn = false, stopped = false, wishT = 0;
     var WISHES = ["Chúc {n} luôn xinh đẹp, rạng rỡ như ánh đèn sân khấu!", "Chúc {n} 20/10 thật vui, thật xinh và thật… ít việc!", "Chúc {n} luôn là ngôi sao sáng nhất Phòng PTSPBL!", "Chúc {n} cười thật tươi, deadline thật nhẹ!"];
     function callName(nm) { var w = String(nm || "").trim().split(/\s+/); return w.length > 1 ? w[0] + " " + w[w.length - 1] : (w[0] || "chị em"); }
-    function status() { return { state: STATE, queue: Q.length, busy: !!cur, running: running, played: played, size: Q.length + (cur ? cur.items.length : 0), canReplay: !!last, sound: soundOn }; }
+    function status() { return { state: STATE, queue: Q.length, busy: !!cur, running: running, holding: !cur, auto: running, since: since.length, batch: BATCH, played: played, size: Q.length + (cur ? cur.items.length : 0), canReplay: !!last, sound: soundOn }; }
     function drawNext() {
       var L = Q.slice(0, 5); nextEl.innerHTML = L.length ? "<b>SẮP LÊN NHẬN QUÀ (" + Q.length + " chờ)</b>" + L.map(function (e, i) { return "<div><i>" + (i + 1) + "</i><span>" + esc(shortName(e.name)) + "</span></div>"; }).join("") : "";
     }
-    function changed() { drawNext(); try { opt.onChange && opt.onChange(status()); } catch (e) {} }
+    function drawHold() {
+      var on = !cur; ov.classList.toggle("holding", on); if (!on) return;
+      var full = since.length > 0, nx = Q.slice(0, 5);
+      var chip = function (e, i, n) { var pz = e.prize || {}, ic = typeof w20IconHTML === "function" && pz.icon ? w20IconHTML(pz.icon, 18) : ""; return '<div class="c"><b>' + (n ? "<i>" + (i + 1) + "</i>" : "") + esc(shortName(e.name)) + "</b><small>" + ic + " " + esc(pz.name || "") + "</small></div>"; };
+      holdEl.innerHTML = '<div class="h1">' + (full ? "📸 MỜI " + since.length + " CHỊ ĐỨNG LÊN NHẬN QUÀ &amp; CHỤP ẢNH" : "⏳ ĐANG CHỜ MC MỜI LƯỢT ĐẦU TIÊN") + "</div>" +
+        (since.length ? '<div class="row">' + since.map(function (e, i) { return chip(e, i, 0); }).join("") + "</div>" : "") +
+        '<div class="h2">⏭ ' + (nx.length ? nx.length + " NGƯỜI TIẾP THEO" : "CHƯA CÓ AI TRONG HÀNG CHỜ") + (Q.length > 5 ? " (còn " + Q.length + " chờ)" : "") + "</div>" +
+        (nx.length ? '<div class="row nx">' + nx.map(function (e, i) { return chip(e, i, 1); }).join("") + "</div>" : "");
+    }
+    function changed() { drawNext(); drawHold(); try { opt.onChange && opt.onChange(status()); } catch (e) {} }
 
     /* âm thanh: chỉ phát sau khi người dùng bật bằng nút (cần thao tác của người dùng); tổng hợp bằng WebAudio, không cần tệp âm thanh */
     var AC = null;
@@ -300,7 +314,7 @@ var W20Stage3D = (function () {
         man.scale.setScalar(scl); girl.scale.setScalar(scl); gift.scale.setScalar(scl * 1.15);
         man.position.set(-12, 0, .6); girl.position.set(12, 0, .6); S.add(man, girl, gift);
         var cx = -6.3 + slot * (k + .5), d = Math.min(1.2, slot * .26);
-        return { k: k, name: e.name, prize: e.prize, title: title, style: (nextStyle++) % STYLES.length, man: man, girl: girl, gift: gift, fx: makeFx(k), cx: cx, d: d, sc: scl, burst: 0 };
+        return { k: k, id: e.id, name: e.name, prize: e.prize, title: title, style: (nextStyle++) % STYLES.length, man: man, girl: girl, gift: gift, fx: makeFx(k), cx: cx, d: d, sc: scl, burst: 0 };
       });
       items.forEach(function (it) { S.add(it.fx); });
       cur = { items: items, t0: now, n: n, batch: batch, replay: !!isReplay };
@@ -313,10 +327,11 @@ var W20Stage3D = (function () {
       opt.onStart && opt.onStart(batch);
     }
     /* force = true: MC bấm "Trao tiếp" nên bỏ qua thời gian chờ gom người và bỏ qua trạng thái tạm dừng */
-    function pump(force) {
-      if (stopped || cur || !Q.length) return false; var now = performance.now();
-      if (!force && !running) return false;
-      var batch = Q.splice(0, 1); /* trao lần lượt từng người một */ last = batch.map(function (e) { return { id: e.id, name: e.name, prize: e.prize, demo: e.demo }; });
+    function pump(force, cnt) {
+      if (stopped || cur || !Q.length) return false;
+      if (!force && !(running && Q.length >= BATCH)) return false; /* chế độ tự động: chỉ khi đủ một lượt */
+      var batch = Q.splice(0, Math.max(1, Math.min(cnt || BATCH, 5, Q.length))); /* một lượt, nhiều người lên cùng lúc */
+      last = batch.map(function (e) { return { id: e.id, name: e.name, prize: e.prize, demo: e.demo }; });
       play(batch, false); changed(); return true;
     }
     function animPair(it, t, now) {
@@ -331,7 +346,7 @@ var W20Stage3D = (function () {
       m.rotation.y = walking ? 1.2 : .55; g.rotation.y = walking ? -.75 : -.55;
       if (walking) {
         var ph = now / 120 + it.k; setWalk(m, ph, .6);
-        mu.body.position.y = Math.abs(Math.sin(ph)) * .06;
+        mu.body.position.y = Math.abs(Math.sin(ph)) * .025;
         mu.A[0].rotation.x = -Math.sin(ph) * .5; mu.A[1].rotation.x = -1.1;
         /* chị bước vào kiểu công chúa: lướt nhẹ, váy đung đưa, một tay vẫy kiểu hoàng gia, tay kia chống eo */
         var pp = now / 260 + it.k; setWalk(g, pp, .12); gu.body.position.y = .03 + Math.sin(pp * 2) * .025; gu.body.rotation.z = Math.sin(pp) * .07; gu.torso.rotation.y = Math.sin(pp) * .15;
@@ -352,19 +367,19 @@ var W20Stage3D = (function () {
       if (after) {
         holdGirl = true;
         if (st === 4 && tt < 2600) {
-          mx = mxT + .3 * sc; var sh = Math.sin(tt / 110) * .18; mu.A[1].rotation.x = -1.35 + sh; gu.A[0].rotation.x = -1.35 + sh; gu.A[1].rotation.x = -1.2; mu.A[0].rotation.x = 0;
+          mx = mxT + .3 * sc; var sh = Math.sin(tt / 130) * .07; mu.A[1].rotation.x = -1.35 + sh; gu.A[0].rotation.x = -1.35 + sh; gu.A[1].rotation.x = -1.2; mu.A[0].rotation.x = 0;
         } else if (st === 3 && tt < 2600) {
-          mu.A[1].rotation.z = 2.6 + Math.sin(tt / 120) * .35; gu.A[0].rotation.z = -2.0; gu.A[1].rotation.x = -1.2; gu.body.position.y = Math.abs(Math.sin(tt / 260)) * .25;
+          mu.A[1].rotation.z = 2.6 + Math.sin(tt / 140) * .14; gu.A[0].rotation.z = -2.0; gu.A[1].rotation.x = -1.2; gu.body.position.y = Math.abs(Math.sin(tt / 260)) * .25;
         } else {
-          var cl = Math.sin(tt / 95 + it.k); mu.A[0].rotation.x = -1.25; mu.A[1].rotation.x = -1.25; var cz = .62 + (cl + 1) * .07; mu.A[0].rotation.z = cz; mu.A[1].rotation.z = -cz; /* hai bàn tay chạm nhau trước ngực */
-          mu.body.position.y = Math.abs(Math.sin(tt / 200 + it.k)) * .08;
+          var cl = Math.sin(tt / 95 + it.k); mu.A[0].rotation.x = -1.25; mu.A[1].rotation.x = -1.25; var cz = .62 + (cl + 1) * .03; mu.A[0].rotation.z = cz; mu.A[1].rotation.z = -cz; /* hai bàn tay chạm nhau trước ngực */
+          mu.body.position.y = Math.abs(Math.sin(tt / 240 + it.k)) * .025;
           gu.A[0].rotation.z = -2.0 + Math.sin(tt / 140 + it.k) * .3; gu.A[1].rotation.x = -1.2; gu.body.position.y = Math.abs(Math.sin(tt / 260 + it.k)) * .28;
         }
         if (!it.burst) { it.burst = 1; platesEl.children[it.k] && platesEl.children[it.k].classList.add("rev"); try { if (RM) throw 0; var rc = cv.getBoundingClientRect(), v = new T.Vector3(gx, 1.6, 0).project(CAM); FX.burst(rc.left + (v.x + 1) / 2 * rc.width, rc.top + (1 - v.y) / 2 * rc.height, cur.n > 2 ? 70 : 130); if (it.k === 0) FX.rain(); } catch (er) {} }
       }
       m.position.set(mx, 0, .6); g.position.set(gx, 0, .6);
       var onP = !walking, cel = after;
-      if (onP && !RM) { var wig = Math.sin(now / 170 + it.k) * (cel ? .05 : .025); mu.torso.rotation.z += wig; mu.head.material.rotation = wig * .8; gu.torso.rotation.z += -wig * .6; } /* nghiêng đầu đáng yêu */
+      if (onP && !RM) { var wg = Math.sin(now / 170 + it.k), wm = wg * (cel ? .015 : .008), wig = wg * (cel ? .05 : .025); mu.torso.rotation.z += wm; mu.head.material.rotation = wm * .8; gu.torso.rotation.z += -wig * .6; } /* nghiêng đầu đáng yêu */
       updFx(it, mx, gx, t, tt, after, onP && !after, now);
       m.updateMatrixWorld(true); g.updateMatrixWorld(true);
       /* quà: luôn nằm trong tay người cầm */
@@ -407,7 +422,7 @@ var W20Stage3D = (function () {
         var t = now - cur.t0;
         setState(t < ANN ? "ANNOUNCING" : t < ANN + T2 ? "PRESENTING" : t < ANN + T2 + CEL ? "CELEBRATING" : "COMPLETED");
         cur.items.forEach(function (it) { animPair(it, Math.max(0, t - ANN - it.k * 260), now); });
-        if (t > ANN + T2 + CEL + COMP) { var e = cur; if (!e.replay) played += e.n; clearCur(); changed(); try { opt.onEnd && opt.onEnd(e); } catch (er) {} }
+        if (t > ANN + T2 + CEL + COMP) { var e = cur; if (!e.replay) { played += e.n; since = e.items.map(function (it) { return { id: it.id, name: it.name, prize: it.prize }; }); } clearCur(); changed(); try { opt.onEnd && opt.onEnd(e); } catch (er) {} }
       } else if (Q.length) pump(false);
       R.render(S, CAM);
     }
@@ -415,22 +430,23 @@ var W20Stage3D = (function () {
     MEN.forEach(function (m) { tex(m.img); });
     return {
       /* e: {id, name, prize, demo?}. Không nhận lại cùng một người (trừ khi demo) để không trao quà hai lần */
-      queue: function (e) {
+      queue: function (e, opt2) {
         if (stopped || !e) return false; var key = e.id || e.name;
         if (!e.demo && key && SEEN[key]) return false;
         if (key && !e.demo) SEEN[key] = 1;
         e.at = performance.now();
-        if (e.ts) { var ix = Q.length; while (ix > 0 && Q[ix - 1].ts && Q[ix - 1].ts > e.ts) ix--; Q.splice(ix, 0, e); } else Q.push(e); /* ai quay trước thì lên trước */
+        if (opt2 && opt2.front) Q.unshift(e); else if (e.ts) { var ix = Q.length; while (ix > 0 && Q[ix - 1].ts && Q[ix - 1].ts > e.ts) ix--; Q.splice(ix, 0, e); } else Q.push(e); /* ai quay trước thì lên trước */
         if (e.id) tex("assets/women/" + e.id + ".webp", "assets/women/r" + (1 + hash(key) % 6) + ".webp"); /* tải trước ảnh cho lượt sắp tới */
         changed(); return true;
       },
       size: function () { return Q.length + (cur ? cur.items.length : 0); },
       status: status,
       peek: function (n) { return Q.slice(0, n || 5).map(function (e) { return { id: e.id, name: e.name, prize: e.prize, ts: e.ts }; }); },
-      next: function () { return pump(true); },                 /* MC: trao tiếp ngay */
+      next: function (n) { return pump(true, n); },            /* MC: mời lượt tiếp theo (n người, mặc định = số người mỗi lượt) */
       replay: function () { if (stopped || cur || !last) return false; play(last.map(function (e) { var o = {}; for (var k in e) o[k] = e[k]; return o; }), true); changed(); return true; }, /* phát lại, không đụng dữ liệu */
       skip: function () { if (!cur) return false; cur.t0 = Math.min(cur.t0, performance.now() - (ANN + T2 + CEL + COMP + 50)); return true; },
       setRunning: function (b) { running = !!b; changed(); },
+      setBatch: function (n) { n = Math.round(Number(n)); BATCH = n >= 1 && n <= 5 ? n : 5; changed(); },
       setSound: function (b) { soundOn = !!b; if (soundOn) { if (ac()) { tone(880, .25, "triangle", .08); tone(1320, .4, "triangle", .08, .12); } } changed(); },
       stop: function () {
         stopped = true; cancelAnimationFrame(raf); window.removeEventListener("resize", resize); document.removeEventListener("fullscreenchange", onFs);
