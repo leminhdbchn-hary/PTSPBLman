@@ -53,7 +53,8 @@ var W20P = [
   {"id": "d80a9c", "n": "Mai Thanh Thùy Linh", "t": "Chuyên viên Phòng PTSPBL", "x": "Em"},
   {"id": "e0bd72", "n": "Trần Thái Phương", "t": "Chuyên viên Phòng PTSPBL"},
   {"id": "bae0d6", "n": "Nguyễn Thị Thu Trang", "t": "Chuyên viên Phòng PTSPBL"},
-  {"id": "15c819", "n": "Nguyễn Thị Ngân Giang", "t": "Chuyên viên Phòng PTSPBL", "x": "Em"}
+  {"id": "15c819", "n": "Nguyễn Thị Ngân Giang", "t": "Chuyên viên Phòng PTSPBL", "x": "Em"},
+  {"id": "3a6025", "n": "Phạm Thu Trang", "t": "Chuyên viên Phòng PTSPBL"}
 ];
 
 /* 2 link thử (1 nhân viên nữ, 1 lãnh đạo phòng nữ): mở đi mở lại được, KHÔNG lưu tiến độ, KHÔNG tính vào chia quà/thống kê.
@@ -66,6 +67,7 @@ var W20TEST = [
 /* Đăng nhập bằng email: mỗi người điền email (phần trước @, vd thuda.ho) ở link chung, web tự mở đúng trang của người đó.
    Chỉ lưu dấu băm (SHA-256) của email, không để lộ email thật trong mã nguồn. */
 var W20MAIL = {
+ "53747dfcc01c8c46": "3a6025",
  "5f0bd5e3480f4f81": "f513a5",
  "e2bed3c1dee272e9": "533d4c",
  "8484d29a41edd8de": "e97542",

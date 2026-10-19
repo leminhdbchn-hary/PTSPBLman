@@ -23,7 +23,7 @@ Link trang: https://leminhdbchn-hary.github.io/PTSPBLman/
 
 ## Quà và vòng quay
 - Mỗi chị em quay **1 lần, nhận 1 món**, chia **ngẫu nhiên** (không ai chọn sẵn) theo số lượng trong `assets/stock.js`. Quay ở máy nào cũng ra đúng 2 món đó.
-- **Gợi ý số lượng (52 người → 52 suất):** KitKat 16 · nước ép 16 · KitKat + việc vặt 10 · kem dưỡng da tay 10 (52 suất, mỗi người quay 1 lần).
+- **Số lượng hiện tại (53 người → 53 suất):** KitKat 13 · nước ép 15 · KitKat + việc vặt 5 · kem dưỡng da tay 20 (53 suất, mỗi người quay 1 lần).
 - **Chia lại số lượng:** vào `admin.html` → tab **Chia quà & thống kê** → chỉnh số (tổng phải đúng 104) → **Lưu lên GitHub**. Nút Lưu cần một token GitHub (hướng dẫn ngay trong trang). Không muốn dùng token thì bấm **Sao chép cấu hình** rồi dán vào `assets/stock.js` trên GitHub. Nút **Xáo lại** đổi ai nhận món nào.
 - Chỉ chia lại **trước khi gửi link** (hoặc khi chưa ai quay): ai đã quay rồi vẫn giữ món cũ trên máy của họ.
 - Danh sách chi tiết ai nhận món gì ẩn mặc định, chỉ mở khi cần phát quà (có tải Excel, in).
