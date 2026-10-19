@@ -232,9 +232,9 @@ var W20Stage3D = (function () {
 
     /* ---------- lớp chữ: bảng công bố, lời chúc, chữ chờ ---------- */
     var ov = document.createElement("div"); ov.className = "s3ov"; ov.setAttribute("data-s", "WAITING");
-    ov.innerHTML = '<div class="s3vig"></div><div class="s3plates" aria-live="polite"></div><div class="s3wish"></div><div class="s3next"></div><div class="s3lbls"></div><div class="s3hold"></div><button type="button" class="s3go"></button><button type="button" class="s3spd" title="Tốc độ trao quà"></button>';
+    ov.innerHTML = '<div class="s3vig"></div><div class="s3plates" aria-live="polite"></div><div class="s3wish"></div><div class="s3next"></div><div class="s3lbls"></div><div class="s3hold"></div><button type="button" class="s3go"></button><button type="button" class="s3spd" title="Tốc độ trao quà"></button><button type="button" class="s3mus" title="Nhạc nền"></button>';
     wrap.style.position = "relative"; wrap.appendChild(ov);
-    var platesEl = ov.querySelector(".s3plates"), wishEl = ov.querySelector(".s3wish"), nextEl = ov.querySelector(".s3next"), holdEl = ov.querySelector(".s3hold"), lblEl = ov.querySelector(".s3lbls"), goEl = ov.querySelector(".s3go"), spdEl = ov.querySelector(".s3spd");
+    var platesEl = ov.querySelector(".s3plates"), wishEl = ov.querySelector(".s3wish"), nextEl = ov.querySelector(".s3next"), holdEl = ov.querySelector(".s3hold"), lblEl = ov.querySelector(".s3lbls"), goEl = ov.querySelector(".s3go"), spdEl = ov.querySelector(".s3spd"), musEl = ov.querySelector(".s3mus");
     if (!document.getElementById("s3css")) {
       var st = document.createElement("style"); st.id = "s3css";
       st.textContent = ".s3ov{position:absolute;inset:0;pointer-events:none;font-family:'Be Vietnam Pro',sans-serif}" +
@@ -251,6 +251,7 @@ var W20Stage3D = (function () {
         ".s3hold{display:none;position:absolute;left:50%;top:15.5%;transform:translateX(-50%);width:64%;overflow:hidden;background:rgba(14,6,40,.9);border:2px solid #ffd76a;border-radius:12px;padding:.35em .7em .45em;text-align:center;color:#fff;box-shadow:0 0 16px rgba(255,215,106,.45),0 6px 18px rgba(0,0,0,.5);font-size:clamp(7px,.82vw,11px)}" +
         ".s3go{display:none;position:absolute;left:50%;bottom:1%;transform:translateX(-50%);pointer-events:auto;cursor:pointer;border:2px solid #fff3c4;border-radius:99px;padding:.38em 1.4em;font:800 clamp(10px,1.3vw,18px) 'Be Vietnam Pro',sans-serif;color:#3a2200;background:linear-gradient(180deg,#ffe58a,#ffb93d);box-shadow:0 0 22px rgba(255,200,80,.85),0 6px 18px rgba(0,0,0,.5);animation:s3pulse 1.4s ease-in-out infinite;white-space:nowrap}.s3go:hover{filter:brightness(1.08)}.s3go:active{transform:translateX(-50%) scale(.97)}.s3ov.photo .s3go{display:block}@keyframes s3pulse{50%{box-shadow:0 0 34px rgba(255,200,80,1),0 6px 18px rgba(0,0,0,.5)}}" +
         ".s3spd{position:absolute;right:1.6%;bottom:2.2%;pointer-events:auto;cursor:pointer;border:1.5px solid rgba(255,255,255,.55);border-radius:99px;padding:.25em .8em;font:800 clamp(9px,1.05vw,15px) 'Be Vietnam Pro',sans-serif;color:#fff;background:rgba(20,8,50,.55);opacity:.45;transition:opacity .2s}.s3spd:hover{opacity:1}.s3spd.fast{opacity:.9;background:rgba(255,150,40,.8);color:#2a1500}" +
+        ".s3mus{position:absolute;right:9.2%;bottom:2.2%;pointer-events:auto;cursor:pointer;border:1.5px solid rgba(255,255,255,.55);border-radius:99px;padding:.25em .7em;font:800 clamp(9px,1.05vw,15px) 'Be Vietnam Pro',sans-serif;color:#fff;background:rgba(20,8,50,.55);opacity:.45;transition:opacity .2s}.s3mus:hover{opacity:1}.s3mus.on{opacity:.9;background:rgba(80,200,140,.85);color:#06281a}" +
         ".s3lbls{position:absolute;inset:0;pointer-events:none}.s3lbl{position:absolute;transform:translateX(-50%);background:rgba(26,10,58,.9);border:1.5px solid #ff7ac8;border-radius:10px;padding:.15em .6em;color:#fff;font-weight:800;font-size:clamp(8px,1.05vw,14px);text-align:center;white-space:nowrap;box-shadow:0 0 10px rgba(255,90,190,.5)}.s3lbl small{display:block;color:#ffe9a6;font-weight:600}" +
         ".s3ov.holding .s3hold{display:block}.s3ov.holding .s3next,.s3ov:not([data-s=WAITING]) .s3next{display:none}" +
         ".s3hold .h1{font:800 1.3em 'Be Vietnam Pro',sans-serif;color:#ffe08a;letter-spacing:.02em;margin-bottom:.35em}.s3hold .h2{font:800 1.05em 'Be Vietnam Pro',sans-serif;color:#7fd6ff;margin:.4em 0 .25em;letter-spacing:.04em}" +
@@ -262,6 +263,30 @@ var W20Stage3D = (function () {
 
     /* ---------- máy trạng thái: WAITING → ANNOUNCING → PRESENTING → CELEBRATING → COMPLETED ---------- */
     var MEN = (typeof W20CFG !== "undefined" && W20CFG.men) || [], Q = [], cur = null, last = null, nextMan = 0, nextStyle = 0, SEEN = {}, played = 0, BATCH = 5, since = [];
+    /* nhạc nền: assets/music/theme.mp3, lặp mượt (hai thẻ audio nối chồng 2,5 giây); lúc đang trao quà nhỏ xuống để nghe tiếng chuông, lúc chờ vừa phải, lúc chụp ảnh to lên */
+    var MU = { on: false, vol: .8, g: 0, A: [], k: 0, CF: 2.5 };
+    try { var mv0 = parseFloat(localStorage.getItem("w20mvol")); if (mv0 >= 0 && mv0 <= 1) MU.vol = mv0; } catch (e) {}
+    function musicLevel() { return photo && !cur ? 1 : cur ? .3 : .55; }
+    function mkAud() { var a = new Audio(); a.preload = "auto"; a.loop = false; a.volume = 0; a.src = "assets/music/theme.mp3?v=" + W20V; return { a: a, f: 0, live: false }; }
+    function musicStart() {
+      if (!MU.A.length) MU.A = [mkAud(), mkAud()];
+      var c = MU.A[MU.k], p = c.a.play(); c.live = true; if (p && p.catch) p.catch(function () { MU.on = false; changed(); }); /* trình duyệt chặn: cần bấm nút */
+    }
+    function musicTick() {
+      if (!MU.A.length) return;
+      var tgt = MU.on ? MU.vol * musicLevel() : 0; MU.g += (tgt - MU.g) * .18; if (Math.abs(tgt - MU.g) < .002) MU.g = tgt;
+      var c = MU.A[MU.k], o = MU.A[1 - MU.k], d = c.a.duration;
+      if (MU.on && c.live && d && isFinite(d) && c.a.currentTime > d - MU.CF && !o.live) { o.a.currentTime = 0; var pp = o.a.play(); if (pp && pp.catch) pp.catch(function () {}); o.live = true; o.f = 0; MU.k = 1 - MU.k; }
+      MU.A.forEach(function (x) {
+        if (!x.live) return;
+        var isCur = x === MU.A[MU.k], dd = x.a.duration, step = .1 / MU.CF;
+        if (isCur) x.f = Math.min(1, x.f + step); else x.f = Math.max(0, x.f - step);
+        x.a.volume = Math.max(0, Math.min(1, MU.g * x.f));
+        if (!isCur && x.f <= 0 || x.a.ended) { x.a.pause(); x.live = false; x.f = 0; }
+      });
+      if (!MU.on && MU.g <= .003) MU.A.forEach(function (x) { if (x.live) { x.a.pause(); x.live = false; } });
+    }
+    var muT = setInterval(musicTick, 100);
     var SPEED = 1; try { var sv0 = parseFloat(localStorage.getItem("w20spd")); if (sv0 >= 1 && sv0 <= 2) SPEED = sv0; } catch (e) {}
     var PX = 3.5, PZ = 1.5, LZ = -.2, LSC = .95, PSC = 1.12, EXIT = 1300, line = [], departing = [], photo = false, wantPhoto = false;
     /* K: co người + vị trí theo bề ngang khung hình thật (toàn màn hình có thể hẹp hơn 16:9) để không ai bị mất khỏi mép */
@@ -272,10 +297,12 @@ var W20Stage3D = (function () {
     var WISHES = ["Chúc {n} luôn xinh đẹp, rạng rỡ như ánh đèn sân khấu!", "Chúc {n} 20/10 thật vui, thật xinh và thật… ít việc!", "Chúc {n} luôn là ngôi sao sáng nhất Phòng PTSPBL!", "Chúc {n} cười thật tươi, deadline thật nhẹ!"];
     function callName(nm) { var w = String(nm || "").trim().split(/\s+/), n = w.length; if (n > 2 && w[n - 1] === "Anh" && !/^(Thị|Văn|Thi)$/.test(w[n - 2])) return w[0] + " " + w[n - 2].charAt(0).toUpperCase() + ".Anh"; /* Vân Anh → V.Anh, tránh gọi trơn "Chị Anh" */ return n > 1 ? w[0] + " " + w[n - 1] : (w[0] || "chị em"); }
     function holdOn() { return !cur && (photo || !running || !Q.length); }
-    function status() { return { state: STATE, queue: Q.length, busy: !!cur, running: running, holding: holdOn(), photo: photo, speed: SPEED, lineN: line.length, batch: BATCH, played: played, size: Q.length + (cur ? cur.items.length : 0), canReplay: false, sound: soundOn }; }
+    function status() { return { state: STATE, queue: Q.length, busy: !!cur, running: running, holding: holdOn(), photo: photo, speed: SPEED, music: MU.on, mvol: MU.vol, lineN: line.length, batch: BATCH, played: played, size: Q.length + (cur ? cur.items.length : 0), canReplay: false, sound: soundOn }; }
     function drawNext() {
       var L = Q.slice(0, 5); nextEl.innerHTML = L.length ? "<b>SẮP LÊN NHẬN QUÀ (" + Q.length + " chờ)</b>" + L.map(function (e, i) { return "<div><i>" + (i + 1) + "</i><span>" + esc(callName(e.name)) + "</span></div>"; }).join("") : "";
     }
+    function drawMus() { musEl.textContent = MU.on ? "🎵 Bật" : "🎵 Tắt"; musEl.classList.toggle("on", MU.on); }
+    musEl.addEventListener("click", function (e) { e.stopPropagation(); api.setMusic(!MU.on); });
     function drawSpd() { spdEl.textContent = "⏩ " + String(SPEED).replace(".", ",") + "×"; spdEl.classList.toggle("fast", SPEED > 1); }
     spdEl.addEventListener("click", function (e) { e.stopPropagation(); var L = [1, 1.3, 1.5, 2], i = L.indexOf(SPEED); SPEED = L[(i + 1) % L.length]; try { localStorage.setItem("w20spd", String(SPEED)); } catch (er) {} changed(); });
     function drawHold() {
@@ -287,7 +314,7 @@ var W20Stage3D = (function () {
         '<div class="h2">⏭ ' + (nx.length ? nx.length + " NGƯỜI TIẾP THEO" + (Q.length > 5 ? " (còn " + Q.length + " chờ)" : "") : "CHƯA CÓ AI TRONG HÀNG CHỜ") + "</div>" +
         (nx.length ? '<div class="row nx">' + nx.map(chip).join("") + "</div>" : "");
     }
-    function changed() { drawNext(); drawHold(); drawSpd(); try { opt.onChange && opt.onChange(status()); } catch (e) {} }
+    function changed() { drawNext(); drawHold(); drawSpd(); drawMus(); try { opt.onChange && opt.onChange(status()); } catch (e) {} }
 
     /* âm thanh: chỉ phát sau khi người dùng bật bằng nút (cần thao tác của người dùng); tổng hợp bằng WebAudio, không cần tệp âm thanh */
     var AC = null;
@@ -474,7 +501,7 @@ var W20Stage3D = (function () {
     }
     raf = requestAnimationFrame(frame);
     MEN.forEach(function (m) { tex(m.img); }); tex("assets/crowns/c1.webp"); tex("assets/crowns/c2.webp");
-    return {
+    var api = {
       /* e: {id, name, prize, demo?}. Không nhận lại cùng một người (trừ khi demo) để không trao quà hai lần */
       queue: function (e, opt2) {
         if (stopped || !e) return false; var key = e.id || e.name;
@@ -497,13 +524,16 @@ var W20Stage3D = (function () {
       skip: function () { if (!cur) return false; cur.el = Math.max(cur.el, ANN + T2 + CEL - 100); return true; },
       setRunning: function (b) { running = !!b; changed(); },
       setBatch: function (n) { n = Math.round(Number(n)); BATCH = n >= 1 && n <= 6 ? n : 5; if (line.length >= BATCH && !cur) photo = true; changed(); },
+      setMusic: function (b) { b = !!b; if (b === MU.on) return; MU.on = b; if (b) musicStart(); changed(); },
+      setMusicVol: function (v) { v = Math.max(0, Math.min(1, Number(v))); if (!isFinite(v)) return; MU.vol = v; try { localStorage.setItem("w20mvol", String(v)); } catch (e) {} changed(); },
       setSound: function (b) { soundOn = !!b; if (soundOn) { if (ac()) { tone(880, .25, "triangle", .08); tone(1320, .4, "triangle", .08, .12); } } changed(); },
       stop: function () {
-        stopped = true; cancelAnimationFrame(raf); window.removeEventListener("resize", resize); document.removeEventListener("fullscreenchange", onFs);
+        stopped = true; clearInterval(muT); MU.A.forEach(function (x) { try { x.a.pause(); x.a.src = ""; } catch (e) {} }); cancelAnimationFrame(raf); window.removeEventListener("resize", resize); document.removeEventListener("fullscreenchange", onFs);
         if (io) io.disconnect(); clearCur(); line.concat(departing).forEach(function (it) { drop(it.girl); drop(it.gift); }); try { ov.remove(); } catch (e) {} try { if (AC) AC.close(); } catch (e) {} R.dispose();
       },
       ver: W20V, titles: TITLES, styles: STYLES, is3d: true, states: ["WAITING", "ANNOUNCING", "PRESENTING", "CELEBRATING", "COMPLETED"]
     };
+    return api;
   }
   return { make: make, ok: ok, ver: W20V };
 })();

@@ -33,7 +33,7 @@
 .mcb-main{background:linear-gradient(180deg,#f7e3a5,#d9b25a);color:#3a2a00;border-color:#f3dc9c}.mcb[aria-pressed=true].snd{background:rgba(127,216,190,.25)}
 .agrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(112px,1fr));gap:8px;margin:10px 0}.agrid[hidden]{display:none}.agrid .ag{background:rgba(255,255,255,.08);border:1px solid rgba(255,215,106,.35);border-radius:10px;padding:6px;text-align:center;font:600 12px/1.25 "Be Vietnam Pro",sans-serif;color:#fff}.agrid .ag img{display:block;width:100%;height:96px;object-fit:contain;background:#ffd6e2;border-radius:8px;margin-bottom:4px}.agrid .ag small{display:block;color:#ffe9a6;font-weight:500}.aw-test{margin-top:10px;font:600 13px "Be Vietnam Pro",sans-serif;color:#b9d9cf}.aw-test summary{cursor:pointer;padding:6px 2px}.aw-test .mcb{margin:6px 8px 0 0}
 .stagewrap:fullscreen{background:#05231d}
-.aw-batch{display:flex;flex-wrap:wrap;gap:10px 18px;align-items:center;margin:10px 0 2px;font-size:14px}.aw-batch input[type=number]{width:54px;padding:5px 6px;border-radius:8px;border:1px solid rgba(255,215,106,.5);background:rgba(0,0,0,.25);color:inherit;font:inherit;text-align:center}.aw-bcnt{font-weight:800;color:#ffe08a}.aw-spd{display:inline-flex;align-items:center;gap:6px;flex-wrap:wrap;font-weight:700}.aw-spd .mcb{min-width:46px;padding:6px 10px}.aw-spd .mcb.on{background:linear-gradient(180deg,#ffe58a,#ffb93d);color:#3a2200;border-color:#fff3c4}.aw-pre{display:inline-flex;align-items:center;gap:6px;flex-wrap:wrap}.aw-pre .mcb{min-width:40px;padding:6px 10px}
+.aw-batch{display:flex;flex-wrap:wrap;gap:10px 18px;align-items:center;margin:10px 0 2px;font-size:14px}.aw-batch input[type=number]{width:54px;padding:5px 6px;border-radius:8px;border:1px solid rgba(255,215,106,.5);background:rgba(0,0,0,.25);color:inherit;font:inherit;text-align:center}.aw-bcnt{font-weight:800;color:#ffe08a}.mcvol{display:inline-flex;align-items:center;gap:6px;font-weight:700}.mcvol input{width:110px;accent-color:#ffb93d}.aw-spd{display:inline-flex;align-items:center;gap:6px;flex-wrap:wrap;font-weight:700}.aw-spd .mcb{min-width:46px;padding:6px 10px}.aw-spd .mcb.on{background:linear-gradient(180deg,#ffe58a,#ffb93d);color:#3a2200;border-color:#fff3c4}.aw-pre{display:inline-flex;align-items:center;gap:6px;flex-wrap:wrap}.aw-pre .mcb{min-width:40px;padding:6px 10px}
 .aw-call{margin:12px 0 4px;padding:12px 14px;border-radius:14px;border:1.5px solid rgba(92,200,255,.55);background:rgba(18,8,48,.45)}.aw-call-h{font-weight:800;margin-bottom:8px}.aw-call-h small{font-weight:600;opacity:.8}.aw-call-r{display:flex;flex-wrap:wrap;gap:8px}.aw-call select{flex:1 1 230px;min-width:0;padding:9px 10px;border-radius:10px;border:1px solid rgba(255,215,106,.5);background:rgba(0,0,0,.3);color:inherit;font:inherit}.aw-hint2{margin:8px 0 0;font-size:13px}
 @media (prefers-reduced-motion:reduce){.aw-pill i,.aw-prog i{animation:none!important;transition:none!important}}
 .stagewrap{border-radius:16px;overflow:hidden;box-shadow:0 12px 34px rgba(0,0,0,.5);border:2px solid rgba(255,215,106,.5);background:#05231d}.stagewrap canvas{display:block;width:100%;height:auto}.stagewrap:fullscreen{display:flex;align-items:center;background:#000}
@@ -112,6 +112,8 @@ code{background:rgba(0,0,0,.25);border-radius:6px;padding:1px 6px;font-size:.92e
         <button class="mcb" id="mcskip" type="button" title="Phím S">⏩ Bỏ qua hiệu ứng</button>
         <button class="mcb" id="mcreplay" type="button" hidden>🔁 Phát lại</button>
         <button class="mcb" id="mcsound" type="button" aria-pressed="false">🔇 Âm thanh: Tắt</button>
+        <button class="mcb" id="mcmusic" type="button" aria-pressed="false" title="Phím M">🎵 Nhạc nền: Tắt</button>
+        <label class="mcvol" id="mcvolw" title="Âm lượng nhạc nền">🔉 <input type="range" id="mcvol" min="0" max="100" value="80" aria-label="Âm lượng nhạc nền"></label>
         <button class="mcb" id="sfull" type="button" title="Phím F">⛶ Toàn màn hình</button>
       </div>
       <div class="aw-batch noprint" id="awbatch">
@@ -131,7 +133,7 @@ code{background:rgba(0,0,0,.25);border-radius:6px;padding:1px 6px;font-size:.92e
       <details class="aw-test noprint" open><summary>🧪 Chạy thử (không tính vào dữ liệu thật)</summary>
         <div><button class="mcb" id="sdemo" type="button">▶ Thử 1 chị</button><button class="mcb" id="sdemo20" type="button">▶▶ Chạy thử 20 chị (4 vòng × 5)</button><button class="mcb" id="sdemo52" type="button">▶▶▶ Chạy thử cả 52 chị</button><button class="mcb" id="sgrid" type="button">🖼 Xem ảnh &amp; tên 52 chị</button><button class="mcb" id="sreset" type="button">🧹 Làm mới sân khấu</button></div>
         <div class="agrid" id="agrid" hidden></div>
-        <p class="muted aw-hint" style="margin:8px 0 0">Cách chạy thử: bấm <b>Chạy thử 20 chị</b> → các chị tự lên nhận quà từng người rồi đứng hàng bên trái → đủ 5 chị sân khấu dừng để chụp ảnh → bấm <b>▶ Tiếp tục mời … lên</b> (phím N). Phím tắt: N = mời / tiếp tục · C = chụp ảnh ngay · S = bỏ qua hiệu ứng · P = bật/tắt tự động · F = toàn màn hình.</p>
+        <p class="muted aw-hint" style="margin:8px 0 0">Cách chạy thử: bấm <b>Chạy thử 20 chị</b> → các chị tự lên nhận quà từng người rồi đứng hàng bên trái → đủ 5 chị sân khấu dừng để chụp ảnh → bấm <b>▶ Tiếp tục mời … lên</b> (phím N). Nhạc nền: bấm 🎵 một lần để bật (trình duyệt yêu cầu). Phím tắt: M = bật/tắt nhạc · N = mời / tiếp tục · C = chụp ảnh ngay · S = bỏ qua hiệu ứng · P = bật/tắt tự động · F = toàn màn hình.</p>
       </details>
     </div>
     <div class="panel"><h3>🎁 Chị em đã nhận quà</h3><p class="muted" id="slogcnt"></p><div class="list" id="slog"></div></div>
@@ -213,7 +215,7 @@ code{background:rgba(0,0,0,.25);border-radius:6px;padding:1px 6px;font-size:.92e
 <script src="assets/modules.js?v=20261090"></script>
 <script src="assets/stage.js?v=23"></script>
 <script src="assets/three.min.js?v=128"></script>
-<script src="assets/stage3d.js?v=72"></script>
+<script src="assets/stage3d.js?v=80"></script>
 <script>
 (function () {
   var $ = function (s) { return document.querySelector(s); };
@@ -273,6 +275,7 @@ code{background:rgba(0,0,0,.25);border-radius:6px;padding:1px 6px;font-size:.92e
     $("#awbatch").hidden = !ctl; $("#awcall").hidden = !ctl; try { fillPick(); } catch (e) {} $("#mcrun").setAttribute("aria-pressed", String(!!sv.running));
     ["#mcrun", "#mcnext", "#mcphoto", "#mcskip", "#mcsound"].forEach(function (i) { $(i).hidden = !ctl; }); $("#awstate").style.display = ctl ? "" : "none"; $(".aw-hint").hidden = !ctl; /* bản 2D chỉ có nút toàn màn hình */
     $("#mcrun").disabled = !ctl; $("#mcnext").disabled = !ctl || sv.busy || (!sv.photo && !sv.queue); $("#mcskip").disabled = !ctl || !sv.busy; $("#mcreplay").disabled = !ctl || sv.busy || !sv.canReplay; $("#mcsound").disabled = !ctl;
+    $("#mcmusic").textContent = sv.music ? "🎵 Nhạc nền: Bật" : "🎵 Nhạc nền: Tắt"; $("#mcmusic").setAttribute("aria-pressed", String(!!sv.music)); $("#mcmusic").hidden = $("#mcvolw").hidden = !ctl; if (sv.mvol != null && document.activeElement !== $("#mcvol")) $("#mcvol").value = Math.round(sv.mvol * 100);
     $("#mcsound").textContent = sv.sound ? "🔊 Âm thanh: Bật" : "🔇 Âm thanh: Tắt"; $("#mcsound").setAttribute("aria-pressed", String(!!sv.sound));
   }
   var gotCount = 0; function mcCounts(sv) { var q = STG && STG.size ? STG.size() : 0; $("#awtotal").textContent = W20P.length; $("#awdone").textContent = Math.max(0, gotCount - q); $("#awbar").style.width = (W20P.length ? Math.max(0, Math.min(100, (gotCount - q) / W20P.length * 100)) : 0) + "%"; }
@@ -367,10 +370,12 @@ code{background:rgba(0,0,0,.25);border-radius:6px;padding:1px 6px;font-size:.92e
   $("#mcnext").onclick = function () { mcDo(function (st) { st.next(); }); };
   $("#mcskip").onclick = function () { mcDo(function (st) { st.skip(); }); };
   $("#mcreplay").onclick = function () { mcDo(function (st) { st.replay(); }); };
+  $("#mcmusic").onclick = function () { mcDo(function (st) { st.setMusic(!st.status().music); }); };
+  $("#mcvol").oninput = function () { mcDo(function (st) { st.setMusicVol($("#mcvol").value / 100); }); };
   $("#mcsound").onclick = function () { mcDo(function (st) { st.setSound(!st.status().sound); }); };
   document.addEventListener("keydown", function (e) {
     if (e.ctrlKey || e.metaKey || e.altKey || $("#tstage").hidden || $("#main").hidden) return; var tg = e.target && e.target.tagName; if (tg === "INPUT" || tg === "TEXTAREA" || tg === "SELECT") return;
-    var k = String(e.key).toLowerCase(), m = { n: "#mcnext", s: "#mcskip", c: "#mcphoto", p: "#mcrun", f: "#sfull" }[k]; if (m && !$(m).disabled) { e.preventDefault(); $(m).click(); }
+    var k = String(e.key).toLowerCase(), m = { n: "#mcnext", s: "#mcskip", c: "#mcphoto", p: "#mcrun", f: "#sfull", m: "#mcmusic" }[k]; if (m && !$(m).disabled) { e.preventDefault(); $(m).click(); }
   });
 
   /* ---- Link ---- */
