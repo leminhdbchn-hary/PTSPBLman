@@ -234,9 +234,9 @@ var W20Stage3D = (function () {
 
     /* ---------- lớp chữ: bảng công bố, lời chúc, chữ chờ ---------- */
     var ov = document.createElement("div"); ov.className = "s3ov"; ov.setAttribute("data-s", "WAITING");
-    ov.innerHTML = '<div class="s3vig"></div><div class="s3plates" aria-live="polite"></div><div class="s3wish"></div><div class="s3next"></div><div class="s3lbls"></div><div class="s3hold"></div>';
+    ov.innerHTML = '<div class="s3vig"></div><div class="s3plates" aria-live="polite"></div><div class="s3wish"></div><div class="s3next"></div><div class="s3lbls"></div><div class="s3hold"></div><button type="button" class="s3go"></button>';
     wrap.style.position = "relative"; wrap.appendChild(ov);
-    var platesEl = ov.querySelector(".s3plates"), wishEl = ov.querySelector(".s3wish"), nextEl = ov.querySelector(".s3next"), holdEl = ov.querySelector(".s3hold"), lblEl = ov.querySelector(".s3lbls");
+    var platesEl = ov.querySelector(".s3plates"), wishEl = ov.querySelector(".s3wish"), nextEl = ov.querySelector(".s3next"), holdEl = ov.querySelector(".s3hold"), lblEl = ov.querySelector(".s3lbls"), goEl = ov.querySelector(".s3go");
     if (!document.getElementById("s3css")) {
       var st = document.createElement("style"); st.id = "s3css";
       st.textContent = ".s3ov{position:absolute;inset:0;pointer-events:none;font-family:'Be Vietnam Pro',sans-serif}" +
@@ -251,6 +251,7 @@ var W20Stage3D = (function () {
         ".s3wish{position:absolute;left:50%;bottom:3.5%;width:max-content;max-width:88%;transform:translateX(-50%) translateY(8px);padding:.35em 1.1em;border-radius:99px;background:rgba(4,34,28,.72);border:1px solid rgba(240,214,140,.55);text-align:center;color:#fff8e6;font:700 clamp(11px,1.7vw,22px)/1.35 'Playfair Display',serif;opacity:0;transform:translateY(8px);transition:all .6s}.s3wish.on{opacity:1;transform:translateX(-50%)}" +
         ".s3next{position:absolute;left:1.6%;top:30%;width:19%;font-size:clamp(9px,1.15vw,15px);color:#fff;background:rgba(18,8,48,.72);border:1.5px solid #5cc8ff;border-radius:12px;padding:.5em .6em;box-shadow:0 0 14px rgba(92,200,255,.4);transition:opacity .3s}.s3next:empty{opacity:0}.s3next b{display:block;color:#bfe9ff;letter-spacing:.05em;font-size:.9em;margin-bottom:.25em}.s3next div{display:flex;gap:.45em;align-items:baseline;line-height:1.35;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.s3next i{font-style:normal;font-weight:800;color:#ffd45c;min-width:1.1em}.s3next div:first-of-type span{font-weight:800;color:#ffe9a6}.s3next small{color:#c9b8f0}" +
         ".s3hold{display:none;position:absolute;left:50%;top:17%;transform:translateX(-50%);width:84%;overflow:hidden;background:rgba(14,6,40,.9);border:2px solid #ffd76a;border-radius:16px;padding:.5em .9em .6em;text-align:center;color:#fff;box-shadow:0 0 24px rgba(255,215,106,.5),0 8px 24px rgba(0,0,0,.55);font-size:clamp(8px,1.12vw,15px)}" +
+        ".s3go{display:none;position:absolute;left:50%;bottom:1%;transform:translateX(-50%);pointer-events:auto;cursor:pointer;border:2px solid #fff3c4;border-radius:99px;padding:.38em 1.4em;font:800 clamp(10px,1.3vw,18px) 'Be Vietnam Pro',sans-serif;color:#3a2200;background:linear-gradient(180deg,#ffe58a,#ffb93d);box-shadow:0 0 22px rgba(255,200,80,.85),0 6px 18px rgba(0,0,0,.5);animation:s3pulse 1.4s ease-in-out infinite;white-space:nowrap}.s3go:hover{filter:brightness(1.08)}.s3go:active{transform:translateX(-50%) scale(.97)}.s3ov.photo .s3go{display:block}@keyframes s3pulse{50%{box-shadow:0 0 34px rgba(255,200,80,1),0 6px 18px rgba(0,0,0,.5)}}" +
         ".s3lbls{position:absolute;inset:0;pointer-events:none}.s3lbl{position:absolute;transform:translateX(-50%);background:rgba(26,10,58,.9);border:1.5px solid #ff7ac8;border-radius:10px;padding:.15em .6em;color:#fff;font-weight:800;font-size:clamp(8px,1.05vw,14px);text-align:center;white-space:nowrap;box-shadow:0 0 10px rgba(255,90,190,.5)}.s3lbl small{display:block;color:#ffe9a6;font-weight:600}" +
         ".s3ov.holding .s3hold{display:block}.s3ov.holding .s3next,.s3ov:not([data-s=WAITING]) .s3next{display:none}" +
         ".s3hold .h1{font:800 1.45em 'Be Vietnam Pro',sans-serif;color:#ffe08a;letter-spacing:.02em;margin-bottom:.35em}.s3hold .h2{font:800 1.05em 'Be Vietnam Pro',sans-serif;color:#7fd6ff;margin:.7em 0 .35em;letter-spacing:.04em}" +
@@ -273,7 +274,7 @@ var W20Stage3D = (function () {
       var L = Q.slice(0, 5); nextEl.innerHTML = L.length ? "<b>SẮP LÊN NHẬN QUÀ (" + Q.length + " chờ)</b>" + L.map(function (e, i) { return "<div><i>" + (i + 1) + "</i><span>" + esc(callName(e.name)) + "</span></div>"; }).join("") : "";
     }
     function drawHold() {
-      var on = holdOn(); ov.classList.toggle("holding", on); if (!on) return;
+      var on = holdOn(), ph = photo && !cur; ov.classList.toggle("photo", ph); if (ph) goEl.textContent = "▶ TIẾP TỤC · MỜI " + (Q.length ? Math.min(BATCH, Q.length) + " CHỊ TIẾP THEO" : "LƯỢT MỚI") + " LÊN"; ov.classList.toggle("holding", on); if (!on) return;
       var nx = Q.slice(0, 5), n = line.length;
       var chip = function (e, i) { var pz = e.prize || {}, ic = typeof w20IconHTML === "function" && pz.icon ? w20IconHTML(pz.icon, 16) : ""; return '<div class="c"><b><i>' + (i + 1) + "</i>" + esc(callName(e.name)) + " " + ic + "</b></div>"; };
       var title = photo ? "📸 ĐỦ " + n + " CHỊ · MỜI CÁC CHỊ ĐỨNG LẠI CHỤP ẢNH" : !running ? "⏸ ĐANG TẠM DỪNG" + (n ? " · " + n + "/" + BATCH + " chị đang đứng chờ" : "") : "⏳ ĐANG CHỜ CHỊ EM QUAY QUÀ…" + (n ? " (" + n + "/" + BATCH + " chị đang đứng chờ)" : "");
@@ -350,6 +351,7 @@ var W20Stage3D = (function () {
       changed(); try { opt.onEnd && opt.onEnd(e); } catch (er) {}
     }
     /* MC bấm tiếp tục: hàng chị đứng chụp ảnh đi khỏi sân khấu, mời lượt mới */
+    goEl.addEventListener("click", function (e) { e.stopPropagation(); proceed(); });
     function proceed() { if (cur || (!photo && !line.length)) return false; photo = false; wantPhoto = false; departing = departing.concat(line); line = []; changed(); return true; }
     function animLine(it, i, n, now, leaving) {
       var g = it.girl, gu = g.userData, tx = leaving ? -16 : photo ? photoX(i, n) : leftX(i), tsc = photo && !leaving ? PSC : LSC, tz = photo && !leaving ? .6 : LZ;
