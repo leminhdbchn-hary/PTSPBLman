@@ -194,9 +194,9 @@
     if (S.to && window.W20Intro && !INTRO) {
       $("#openbox").style.display = "none"; $("#tapme").style.display = "none"; var fid = me ? me.id : ""; /* câu thông báo nằm ở dòng trên cùng */
       INTRO = W20Intro.mount($("#vcbscene"), { kind: "sep", id: me ? me.id : "", face: fid ? "assets/women/" + fid + ".webp?v=" + W20Intro.ver : "", fb: "", hint: $("#hello"), keepClass: true,
-        onOpen: function () { PS.opened = 1; savePS(); FL.show(0, false); } });
+        onOpen: function () { PS.opened = 1; try { localStorage.removeItem(PK + ":rp"); } catch (e) {} savePS(); replayBtn(); FL.show(0, false); } });
     }
-    $("#openbox").onclick = function () { PS.opened = 1; savePS(); FL.unbox(0); };
+    $("#openbox").onclick = function () { PS.opened = 1; try { localStorage.removeItem(PK + ":rp"); } catch (e) {} savePS(); replayBtn(); FL.unbox(0); };
   }
   function profile() {
     var d = dv();
@@ -233,8 +233,8 @@
     var K = "w20sep3:" + (me ? me.id : "guest"), had = []; try { if (!TEST) had = JSON.parse(localStorage.getItem(K) || "[]"); } catch (e) {}
     var as = me ? (me.test ? null : w20MyPrize(me.id)) : [w20Hash("guest|" + K) % W20CFG.prizes.length]; /* quà cố định theo từng người */
     function nextBtn() { $("#next5box").style.display = ""; }
-    w20Wheel2({ cv: $("#wcv"), btn: $("#spin"), out: $("#prize"), prizes: W20CFG.prizes, slots: W20CFG.wheelSlots, assigned: as, got: had,
-      onGot: function (l) { if (!TEST) { try { localStorage.setItem(K, JSON.stringify(l)); } catch (e) {} try { W20DB.progress(K, { prizes: l, step: l.length }); } catch (e) {} } else window.W20TESTGOT = l; setTimeout(card, 50); },
+    w20Wheel2({ cv: $("#wcv"), btn: $("#spin"), out: $("#prize"), prizes: W20CFG.prizes, slots: W20CFG.wheelSlots, assigned: as, got: PS.replay ? [] : had,
+      onGot: function (l) { if (PS.replay) { setTimeout(card, 50); return; } /* chơi lại: quà đã nhận giữ nguyên */ if (!TEST) { try { localStorage.setItem(K, JSON.stringify(l)); } catch (e) {} try { W20DB.progress(K, { prizes: l, step: l.length }); } catch (e) {} } else window.W20TESTGOT = l; setTimeout(card, 50); },
       onShow: function (i, k, fresh) { if (fresh) { FX.burst(innerWidth / 2, innerHeight * .5, 130); FX.rain(); } },
       onAll: function (fresh) { nextBtn(); if (fresh) go(5, 4800); } });
     $("#next5").onclick = function () { go(5, 1200); };
@@ -283,9 +283,23 @@
 
   FX.init(); paper(); hero(); profile(); pledges(); flowers(); w20LoadStock(wheel);
   card(); loading = false;
-  if (!TEST && !PS.opened && !(PS.step > 0)) { /* máy này chưa có tiến độ: thử lấy lại tiến độ vừa chơi gần đây của đúng người này (VD vừa chuyển từ Zalo sang Safari) */
+  /* ---------- Chơi lại: mở lại link vẫn làm lại được mọi thao tác (quà đã nhận giữ nguyên) ---------- */
+  function rpFlag() { try { return !!localStorage.getItem(PK + ":rp"); } catch (e) { return false; } }
+  function replayBtn() {
+    if (!me || TEST || W20CFG.replay === false || $("#replay") || !(PS.opened || PS.step > 0)) return;
+    var b = document.createElement("button"); b.type = "button"; b.id = "replay"; b.className = "litebtn replaybtn"; b.textContent = "🔁 Chơi lại từ đầu";
+    b.onclick = function () {
+      if (!confirm("Chơi lại từ đầu nhé? Quà đã nhận của " + who() + " vẫn được giữ nguyên.")) return;
+      PS.step = 0; PS.opened = 0; PS.replay = 1;
+      try { localStorage.setItem(PK + ":rp", String(Date.now())); } catch (e) {}
+      savePS(); location.reload();
+    };
+    document.body.appendChild(b);
+  }
+  if (!TEST && !PS.opened && !(PS.step > 0) && !rpFlag()) { /* máy này chưa có tiến độ: thử lấy lại tiến độ vừa chơi gần đây của đúng người này (VD vừa chuyển từ Zalo sang Safari) */
     try { W20DB.restore(PK, 48 * 3600 * 1000, function (rv) { if (!rv || !rv.ps || PS.opened || PS.step > 0 || !(rv.ps.opened || rv.ps.step > 0)) return; try { localStorage.setItem(PK, JSON.stringify(rv.ps)); if (rv.pr) localStorage.setItem("w20sep3:" + (me ? me.id : "guest"), JSON.stringify(rv.pr)); if (rv.cw) localStorage.setItem("w20sepcw:" + (me ? me.id : "guest"), rv.cw); } catch (e) {} location.reload(); }); } catch (e) {}
   }
+  replayBtn();
   if (PS.opened || PS.step > 0) FL.show(Math.min(PS.step, N - 1), false); /* đã mở trước đó: vào lại đúng lớp đang dở */
   if (document.fonts && document.fonts.load) Promise.all(["700 80px 'Playfair Display'", "italic 700 80px 'Playfair Display'", "italic 500 40px 'Playfair Display'", "700 60px 'Dancing Script'", "58px 'Patrick Hand'", "600 28px 'Be Vietnam Pro'", "700 28px 'Be Vietnam Pro'", "500 28px 'Be Vietnam Pro'", "italic 600 26px 'Be Vietnam Pro'"].map(function (f) { return document.fonts.load(f, "Chị Hạnh ơi 20.10"); })).then(card, card);
 })();
