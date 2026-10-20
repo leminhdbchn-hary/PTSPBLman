@@ -3,6 +3,7 @@ var W20CFG = {
   publicBase: "https://ptspbl-man-2010.web.app/", /* địa chỉ chính thức gửi cho chị em/Sếp (đổi thành tên miền riêng nếu có) */
   /* Dòng ký tên cuối thiệp */
   from: "Anh em Phòng PTSPBL",
+  replay: true, /* true = chị em mở lại link vẫn bấm "🔁 Chơi lại từ đầu" để làm lại mọi thao tác (quà đã nhận giữ nguyên); false = tắt */
 
   /* Mã PIN để mở trang quản lý (admin.html): danh sách link + thống kê quà */
   adminPin: "2010",

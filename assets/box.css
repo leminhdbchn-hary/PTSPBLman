@@ -381,3 +381,7 @@ body.wh #s4 .gate,body.wh #p5 .gate{color:#ffe9a6}
 .scene .pzrow small{color:#8a4a00;font-size:14px;font-weight:800;opacity:1;letter-spacing:.02em}
 .scene .pzrow b{color:#2d1500;font-size:24px;font-weight:800;line-height:1.25;text-shadow:none}
 body.wh .btn:disabled,.scene .btn:disabled{filter:none;opacity:1;color:#fff;background:linear-gradient(180deg,#f06aa0,#c0306f);text-shadow:0 1px 2px rgba(0,0,0,.35);box-shadow:0 6px 16px rgba(0,0,0,.3)}
+
+/* nút chơi lại */
+.replaybtn{top:36px!important;opacity:.6!important;z-index:60}
+body.fin .replaybtn{color:#8a4a5e!important;background:rgba(255,255,255,.7)!important}

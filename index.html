@@ -10,7 +10,7 @@
 <meta name="theme-color" content="#00381f">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E🌹%3C/text%3E%3C/svg%3E">
 <link rel="stylesheet" href="assets/style.css?v=20261013">
-<link rel="stylesheet" href="assets/box.css?v=202610201000">
+<link rel="stylesheet" href="assets/box.css?v=202610201100">
 </head>
 <body class="bx">
 <canvas id="fx" aria-hidden="true"></canvas>
@@ -125,7 +125,7 @@
 </div>
 <div class="toast" id="toast" role="status"></div>
 
-<script src="assets/config.js?v=202610190154"></script>
+<script src="assets/config.js?v=202610201100"></script>
 <script src="assets/stock.js?v=202610190154"></script>
 <script src="assets/firebase-sync.js?v=202610190204"></script>
 <script src="assets/people.js?v=202610160350"></script>
@@ -206,11 +206,11 @@
     /* cảnh mở đầu: chibi mặc đồng phục đi tới Vietcombank, quà có cánh rơi xuống; chạm để mở hộp quà */
     if (S.to && window.W20Intro && !INTRO) {
       $("#openbox").style.display = "none"; $("#tapme").style.display = "none"; var fid = me ? me.id : ""; /* câu thông báo nằm ở dòng trên cùng, bỏ dòng chào và dòng chữ dưới tranh */
-      INTRO = W20Intro.mount($("#vcbscene"), { kind: "staff", id: me ? me.id : "", face: fid ? "assets/women/" + fid + ".webp?v=" + W20Intro.ver : "", fb: "assets/women/r1.webp?v=" + W20Intro.ver, hint: $("#hello"), keepClass: true, onOpen: function () { ST.opened = 1; save(); unbox(0); } });
+      INTRO = W20Intro.mount($("#vcbscene"), { kind: "staff", id: me ? me.id : "", face: fid ? "assets/women/" + fid + ".webp?v=" + W20Intro.ver : "", fb: "assets/women/r1.webp?v=" + W20Intro.ver, hint: $("#hello"), keepClass: true, onOpen: function () { ST.opened = 1; try { localStorage.removeItem(KEY + ":rp"); } catch (e) {} save(); replayBtn(); unbox(0); } });
     }
     $("#openbox").onclick = function () {
       if (!S.to) { toast("Chị/Em nhập email VCB ở ô phía trên trước để mở quà nha 😄"); try { $("#nameinp").focus(); } catch (er) {} return; }
-      ST.opened = 1; save(); unbox(0);
+      ST.opened = 1; try { localStorage.removeItem(KEY + ":rp"); } catch (e) {} save(); replayBtn(); unbox(0);
     };
   }
 
@@ -287,8 +287,8 @@
   function wheel() {
     var prizes = W20CFG.prizes, assigned = me ? (me.test ? null : w20MyPrize(me.id)) : [w20Hash("guest|" + KEY) % prizes.length]; /* mỗi người 1 quà cố định: quay lại ở máy khác vẫn ra đúng quà đó */
     function showReq() { var has = ST.prizes.some(function (i) { return prizes[i] && prizes[i].key === "nho"; }); if (has) { $("#reqbox").classList.add("show"); if (ST.req) $("#reqtxt").value = ST.req; } }
-    w20Wheel2({ cv: $("#wcv"), btn: $("#spin"), out: $("#prize"), prizes: prizes, slots: W20CFG.wheelSlots, assigned: assigned, got: ST.prizes,
-      onGot: function (l) { ST.prizes = l; save(); },
+    w20Wheel2({ cv: $("#wcv"), btn: $("#spin"), out: $("#prize"), prizes: prizes, slots: W20CFG.wheelSlots, assigned: assigned, got: ST.replay ? [] : ST.prizes,
+      onGot: function (l) { if (!ST.replay) ST.prizes = l; save(); }, /* chơi lại: quà đã nhận giữ nguyên, chỉ quay lại cho vui */
       onShow: function (idx, k, fresh) { showReq(); if (fresh) { FX.burst(innerWidth / 2, innerHeight * .5, 130); FX.rain(); } },
       onAll: function (fresh) { card(); done(4, 4800, !fresh); } });
     if (!ST.prizes.length) gate(4, "");
@@ -351,9 +351,23 @@
   /* ---------- khởi động ---------- */
   FX.init(); hero(); notes(); atm(); scratch(); flowers(); w20LoadStock(wheel); card();
   loading = false;
-  if (me && !TEST && !ST.opened && !(ST.step > 0)) { /* máy này chưa có tiến độ: thử lấy lại tiến độ vừa chơi gần đây của đúng người này (VD vừa chuyển từ Zalo sang Safari) */
+  /* ---------- Chơi lại: mở lại link vẫn làm lại được mọi thao tác (quà đã nhận giữ nguyên) ---------- */
+  function rpFlag() { try { return !!localStorage.getItem(KEY + ":rp"); } catch (e) { return false; } }
+  function replayBtn() {
+    if (!me || TEST || W20CFG.replay === false || $("#replay") || !(ST.opened || ST.step > 0)) return;
+    var b = document.createElement("button"); b.type = "button"; b.id = "replay"; b.className = "litebtn replaybtn"; b.textContent = "🔁 Chơi lại từ đầu";
+    b.onclick = function () {
+      if (!confirm("Chơi lại từ đầu nhé? Quà đã nhận của " + xw() + " vẫn được giữ nguyên.")) return;
+      ST.step = 0; ST.opened = 0; ST.notes = []; ST.bq = []; ST.bqDone = 0; ST.scratched = 0; ST.pulls = 0; ST.slips = []; delete ST.coupon; ST.replay = 1;
+      try { localStorage.setItem(KEY + ":rp", String(Date.now())); } catch (e) {}
+      save(); location.reload();
+    };
+    document.body.appendChild(b);
+  }
+  if (me && !TEST && !ST.opened && !(ST.step > 0) && !rpFlag()) { /* máy này chưa có tiến độ: thử lấy lại tiến độ vừa chơi gần đây của đúng người này (VD vừa chuyển từ Zalo sang Safari) */
     try { W20DB.restore(KEY, 48 * 3600 * 1000, function (rv) { if (!rv || ST.opened || ST.step > 0 || !(rv.opened || rv.step > 0)) return; ST = rv; norm(); try { localStorage.setItem(KEY, JSON.stringify(ST)); } catch (e) {} loading = true; notes(); atm(); scratch(); flowers(); wheel(); card(); loading = false; show(Math.min(ST.step, N - 1), false); }); } catch (e) {}
   }
+  replayBtn();
   if (me && (ST.opened || ST.step > 0)) show(Math.min(ST.step, N - 1), false); /* đã mở trước đó: vào lại đúng lớp đang dở */
   if (document.fonts && document.fonts.load) Promise.all(FONTS.map(function (f) { return document.fonts.load(f, "Chị Hạnh ơi 20.10"); })).then(card, card);
 })();
