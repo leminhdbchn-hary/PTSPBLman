@@ -10,7 +10,7 @@
 <meta name="theme-color" content="#00381f">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E🌹%3C/text%3E%3C/svg%3E">
 <link rel="stylesheet" href="assets/style.css?v=20261013">
-<link rel="stylesheet" href="assets/box.css?v=202610201100">
+<link rel="stylesheet" href="assets/box.css?v=202610201200">
 </head>
 <body class="bx">
 <canvas id="fx" aria-hidden="true"></canvas>
@@ -154,6 +154,9 @@
   function save() { if (TEST) return; try { localStorage.setItem(KEY, JSON.stringify(ST)); } catch (e) {} try { W20DB.progress(KEY, ST); } catch (e) {} w20SyncHash(); }
   function norm() { ST.step = ST.step || 0; ST.notes = ST.notes || []; ST.bq = ST.bq || []; ST.prizes = ST.prizes || []; }
   norm();
+  function freshStart() { ST.best = Math.max(ST.best || 0, ST.step || 0); ST.step = 0; ST.opened = 0; ST.notes = []; ST.bq = []; ST.bqDone = 0; ST.scratched = 0; ST.pulls = 0; ST.slips = []; delete ST.coupon; ST.replay = 1; } /* chơi lại: quà đã nhận giữ nguyên */
+  /* mở lại link (kể cả trên cùng một điện thoại) luôn bắt đầu lại từ đầu */
+  if (me && !TEST && W20CFG.replay !== false && (ST.opened || ST.step > 0)) freshStart();
 
   function toast(t) { var e = $("#toast"); e.textContent = t; e.className = "toast show"; clearTimeout(toast.t); toast.t = setTimeout(function () { e.className = "toast"; }, 2400); }
   function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); }
@@ -206,11 +209,11 @@
     /* cảnh mở đầu: chibi mặc đồng phục đi tới Vietcombank, quà có cánh rơi xuống; chạm để mở hộp quà */
     if (S.to && window.W20Intro && !INTRO) {
       $("#openbox").style.display = "none"; $("#tapme").style.display = "none"; var fid = me ? me.id : ""; /* câu thông báo nằm ở dòng trên cùng, bỏ dòng chào và dòng chữ dưới tranh */
-      INTRO = W20Intro.mount($("#vcbscene"), { kind: "staff", id: me ? me.id : "", face: fid ? "assets/women/" + fid + ".webp?v=" + W20Intro.ver : "", fb: "assets/women/r1.webp?v=" + W20Intro.ver, hint: $("#hello"), keepClass: true, onOpen: function () { ST.opened = 1; try { localStorage.removeItem(KEY + ":rp"); } catch (e) {} save(); replayBtn(); unbox(0); } });
+      INTRO = W20Intro.mount($("#vcbscene"), { kind: "staff", id: me ? me.id : "", face: fid ? "assets/women/" + fid + ".webp?v=" + W20Intro.ver : "", fb: "assets/women/r1.webp?v=" + W20Intro.ver, hint: $("#hello"), keepClass: true, onOpen: function () { ST.opened = 1; save(); replayBtn(); unbox(0); } });
     }
     $("#openbox").onclick = function () {
       if (!S.to) { toast("Chị/Em nhập email VCB ở ô phía trên trước để mở quà nha 😄"); try { $("#nameinp").focus(); } catch (er) {} return; }
-      ST.opened = 1; try { localStorage.removeItem(KEY + ":rp"); } catch (e) {} save(); replayBtn(); unbox(0);
+      ST.opened = 1; save(); replayBtn(); unbox(0);
     };
   }
 
@@ -352,19 +355,17 @@
   FX.init(); hero(); notes(); atm(); scratch(); flowers(); w20LoadStock(wheel); card();
   loading = false;
   /* ---------- Chơi lại: mở lại link vẫn làm lại được mọi thao tác (quà đã nhận giữ nguyên) ---------- */
-  function rpFlag() { try { return !!localStorage.getItem(KEY + ":rp"); } catch (e) { return false; } }
   function replayBtn() {
     if (!me || TEST || W20CFG.replay === false || $("#replay") || !(ST.opened || ST.step > 0)) return;
     var b = document.createElement("button"); b.type = "button"; b.id = "replay"; b.className = "litebtn replaybtn"; b.textContent = "🔁 Chơi lại từ đầu";
     b.onclick = function () {
       if (!confirm("Chơi lại từ đầu nhé? Quà đã nhận của " + xw() + " vẫn được giữ nguyên.")) return;
-      ST.step = 0; ST.opened = 0; ST.notes = []; ST.bq = []; ST.bqDone = 0; ST.scratched = 0; ST.pulls = 0; ST.slips = []; delete ST.coupon; ST.replay = 1;
-      try { localStorage.setItem(KEY + ":rp", String(Date.now())); } catch (e) {}
+      freshStart();
       save(); location.reload();
     };
     document.body.appendChild(b);
   }
-  if (me && !TEST && !ST.opened && !(ST.step > 0) && !rpFlag()) { /* máy này chưa có tiến độ: thử lấy lại tiến độ vừa chơi gần đây của đúng người này (VD vừa chuyển từ Zalo sang Safari) */
+  if (me && !TEST && !ST.opened && !(ST.step > 0) && W20CFG.replay === false) { /* bật chơi lại thì luôn bắt đầu từ đầu, không khôi phục tiến độ cũ */ /* máy này chưa có tiến độ: thử lấy lại tiến độ vừa chơi gần đây của đúng người này (VD vừa chuyển từ Zalo sang Safari) */
     try { W20DB.restore(KEY, 48 * 3600 * 1000, function (rv) { if (!rv || ST.opened || ST.step > 0 || !(rv.opened || rv.step > 0)) return; ST = rv; norm(); try { localStorage.setItem(KEY, JSON.stringify(ST)); } catch (e) {} loading = true; notes(); atm(); scratch(); flowers(); wheel(); card(); loading = false; show(Math.min(ST.step, N - 1), false); }); } catch (e) {}
   }
   replayBtn();

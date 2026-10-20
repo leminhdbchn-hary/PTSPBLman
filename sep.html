@@ -10,7 +10,7 @@
 <meta name="theme-color" content="#00381f">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E💐%3C/text%3E%3C/svg%3E">
 <link rel="stylesheet" href="assets/style.css?v=20261013">
-<link rel="stylesheet" href="assets/box.css?v=202610201100">
+<link rel="stylesheet" href="assets/box.css?v=202610201200">
 </head>
 <body class="bx">
 <canvas id="fx" aria-hidden="true"></canvas>
@@ -160,6 +160,8 @@
   window.W20EXPORT = function () { return JSON.stringify(window.W20EXPORT_OBJ()); };
   try { if (!TEST) PS = JSON.parse(localStorage.getItem(PK) || "{}") || {}; } catch (e) { PS = {}; }
   PS.step = PS.step || 0;
+  /* mở lại link (kể cả trên cùng một điện thoại) luôn bắt đầu lại từ đầu; quà đã nhận giữ nguyên */
+  if (me && !TEST && W20CFG.replay !== false && (PS.opened || PS.step > 0)) { PS.step = 0; PS.opened = 0; PS.replay = 1; }
   function savePS() { if (TEST) return; try { localStorage.setItem(PK, JSON.stringify(PS)); } catch (e) {} try { W20DB.progress(PK, window.W20EXPORT_OBJ()); } catch (e) {} w20SyncHash(); }
   function scene(i) { return i < 0 ? $("#sc-intro") : $("#p" + i); }
   var FL = W20Flow.make({ wheel: 5, N: N, stage: "#stage", scene: scene, onReveal: function (i) { if (i === 6) card(); } });
@@ -194,9 +196,9 @@
     if (S.to && window.W20Intro && !INTRO) {
       $("#openbox").style.display = "none"; $("#tapme").style.display = "none"; var fid = me ? me.id : ""; /* câu thông báo nằm ở dòng trên cùng */
       INTRO = W20Intro.mount($("#vcbscene"), { kind: "sep", id: me ? me.id : "", face: fid ? "assets/women/" + fid + ".webp?v=" + W20Intro.ver : "", fb: "", hint: $("#hello"), keepClass: true,
-        onOpen: function () { PS.opened = 1; try { localStorage.removeItem(PK + ":rp"); } catch (e) {} savePS(); replayBtn(); FL.show(0, false); } });
+        onOpen: function () { PS.opened = 1; savePS(); replayBtn(); FL.show(0, false); } });
     }
-    $("#openbox").onclick = function () { PS.opened = 1; try { localStorage.removeItem(PK + ":rp"); } catch (e) {} savePS(); replayBtn(); FL.unbox(0); };
+    $("#openbox").onclick = function () { PS.opened = 1; savePS(); replayBtn(); FL.unbox(0); };
   }
   function profile() {
     var d = dv();
@@ -284,19 +286,17 @@
   FX.init(); paper(); hero(); profile(); pledges(); flowers(); w20LoadStock(wheel);
   card(); loading = false;
   /* ---------- Chơi lại: mở lại link vẫn làm lại được mọi thao tác (quà đã nhận giữ nguyên) ---------- */
-  function rpFlag() { try { return !!localStorage.getItem(PK + ":rp"); } catch (e) { return false; } }
   function replayBtn() {
     if (!me || TEST || W20CFG.replay === false || $("#replay") || !(PS.opened || PS.step > 0)) return;
     var b = document.createElement("button"); b.type = "button"; b.id = "replay"; b.className = "litebtn replaybtn"; b.textContent = "🔁 Chơi lại từ đầu";
     b.onclick = function () {
       if (!confirm("Chơi lại từ đầu nhé? Quà đã nhận của " + who() + " vẫn được giữ nguyên.")) return;
       PS.step = 0; PS.opened = 0; PS.replay = 1;
-      try { localStorage.setItem(PK + ":rp", String(Date.now())); } catch (e) {}
       savePS(); location.reload();
     };
     document.body.appendChild(b);
   }
-  if (!TEST && !PS.opened && !(PS.step > 0) && !rpFlag()) { /* máy này chưa có tiến độ: thử lấy lại tiến độ vừa chơi gần đây của đúng người này (VD vừa chuyển từ Zalo sang Safari) */
+  if (!TEST && !PS.opened && !(PS.step > 0) && W20CFG.replay === false) { /* máy này chưa có tiến độ: thử lấy lại tiến độ vừa chơi gần đây của đúng người này (VD vừa chuyển từ Zalo sang Safari) */
     try { W20DB.restore(PK, 48 * 3600 * 1000, function (rv) { if (!rv || !rv.ps || PS.opened || PS.step > 0 || !(rv.ps.opened || rv.ps.step > 0)) return; try { localStorage.setItem(PK, JSON.stringify(rv.ps)); if (rv.pr) localStorage.setItem("w20sep3:" + (me ? me.id : "guest"), JSON.stringify(rv.pr)); if (rv.cw) localStorage.setItem("w20sepcw:" + (me ? me.id : "guest"), rv.cw); } catch (e) {} location.reload(); }); } catch (e) {}
   }
   replayBtn();
