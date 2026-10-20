@@ -154,7 +154,7 @@
   function save() { if (TEST) return; try { localStorage.setItem(KEY, JSON.stringify(ST)); } catch (e) {} try { W20DB.progress(KEY, ST); } catch (e) {} w20SyncHash(); }
   function norm() { ST.step = ST.step || 0; ST.notes = ST.notes || []; ST.bq = ST.bq || []; ST.prizes = ST.prizes || []; }
   norm();
-  function freshStart() { ST.best = Math.max(ST.best || 0, ST.step || 0); ST.step = 0; ST.opened = 0; ST.notes = []; ST.bq = []; ST.bqDone = 0; ST.scratched = 0; ST.pulls = 0; ST.slips = []; delete ST.coupon; ST.replay = 1; } /* chơi lại: quà đã nhận giữ nguyên */
+  function freshStart() { ST.best = Math.max(ST.best || 0, ST.step || 0); if (ST.coupon1 === undefined && ST.coupon !== undefined) ST.coupon1 = ST.coupon; if (ST.scratched1 === undefined && ST.scratched) ST.scratched1 = 1; /* giữ kết quả thẻ cào lần đầu cho admin */ ST.step = 0; ST.opened = 0; ST.notes = []; ST.bq = []; ST.bqDone = 0; ST.scratched = 0; ST.pulls = 0; ST.slips = []; delete ST.coupon; ST.replay = 1; } /* chơi lại: quà đã nhận giữ nguyên */
   /* mở lại link (kể cả trên cùng một điện thoại) luôn bắt đầu lại từ đầu */
   if (me && !TEST && W20CFG.replay !== false && (ST.opened || ST.step > 0)) freshStart();
 
