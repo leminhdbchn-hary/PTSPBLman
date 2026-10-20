@@ -10,7 +10,7 @@
 <meta name="theme-color" content="#00381f">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E💐%3C/text%3E%3C/svg%3E">
 <link rel="stylesheet" href="assets/style.css?v=20261013">
-<link rel="stylesheet" href="assets/box.css?v=202610202100">
+<link rel="stylesheet" href="assets/box.css?v=202610201000">
 </head>
 <body class="bx">
 <canvas id="fx" aria-hidden="true"></canvas>
@@ -107,7 +107,7 @@
         <canvas id="card" class="land" width="1536" height="1024"></canvas>
         <div class="side">
           <div class="themes" id="themes" role="group" aria-label="Chọn mẫu thiệp"></div>
-        <div class="cardopts"><button type="button" class="btn ghost" id="optOr"></button><button type="button" class="btn ghost" id="optPn"></button><button type="button" class="btn ghost" id="optMen"></button><button type="button" class="btn ghost" id="optMenRnd">🎲 Đổi anh em</button></div>
+        <div class="cardopts"><button type="button" class="btn ghost" id="optPn"></button><button type="button" class="btn ghost" id="optMen"></button><button type="button" class="btn ghost" id="optMenRnd">🎲 Đổi anh em</button></div>
         <div class="acts">
             <button class="btn" id="dl" type="button">⬇️ Tải thiệp về máy</button>
             <button class="btn pink" id="shr" type="button">📤 Chia sẻ</button>
@@ -134,7 +134,7 @@
 <script src="assets/people.js?v=202610160350"></script>
 <script src="assets/common.js?v=202610192310"></script>
 <script src="assets/flowers.js?v=20261013"></script>
-<script src="assets/modules.js?v=202610202100"></script>
+<script src="assets/modules.js?v=202610192350"></script>
 <script src="assets/boxflow.js?v=202610160731"></script>
 <script src="assets/intro.js?v=8"></script>
 <script src="assets/firebase-sync.js?v=202610190204"></script>
@@ -242,10 +242,10 @@
   /* giấy khen */
   function card() {
     var c = $("#card"), TT = W20THEMES[TH >= 0 && TH < W20THEMES.length ? TH : 0]; if (!OP.seed) OP.seed = 1 + Math.floor(Math.random() * 1e6);
-    var V = OP.orient === "v", CW_ = V ? W20VW : TT.w, CH_ = V ? W20VH : TT.h; if (c.width !== CW_ || c.height !== CH_) { c.width = CW_; c.height = CH_; } c.style.setProperty("--ar", (CW_ / CH_).toFixed(3)); c.classList.toggle("land", !V); c.classList.toggle("vert", V);
+    if (c.width !== TT.w || c.height !== TT.h) { c.width = TT.w; c.height = TT.h; } c.style.setProperty("--ar", (TT.w / TT.h).toFixed(3));
     var g = c.getContext("2d");
     var got = []; try { got = (me && me.test) ? (window.W20TESTGOT || []) : JSON.parse(localStorage.getItem("w20sep3:" + (me ? me.id : "guest")) || "[]"); } catch (e) {}
-    w20DrawCard(g, { mode: "sep", greet: "Thân gửi:", name: S.to ? "Chị " + S.to : "Các chị lãnh đạo của Phòng", sub: me ? w20Sub(me.t) : "", role: W20.sep.roles[ri()], wish: CW ? CW : w20SepWish(wi(), "chị"), prizes: got.map(function (i) { return W20CFG.prizes[i]; }).filter(Boolean), from: S.f, bq: S.bq, theme: TH, orient: OP.orient === "v" ? "v" : "h", panel: OP.nopn !== 1, men: OP.men === 1 ? w20PickMen(OP.seed, 6) : null });
+    w20DrawCard(g, { mode: "sep", greet: "Thân gửi:", name: S.to ? "Chị " + S.to : "Các chị lãnh đạo của Phòng", sub: me ? w20Sub(me.t) : "", role: W20.sep.roles[ri()], wish: CW ? CW : w20SepWish(wi(), "chị"), prizes: got.map(function (i) { return W20CFG.prizes[i]; }).filter(Boolean), from: S.f, bq: S.bq, theme: TH, panel: OP.nopn !== 1, men: OP.men === 1 ? w20PickMen(OP.seed, 6) : null });
   }
   W20CFG.men.forEach(function (m) { var im = w20Img(m.img); if (!im.complete) im.addEventListener("load", function () { card(); }); }); /* ảnh các anh tải xong thì vẽ lại thiệp */
   /* 10 mẫu thiệp (mẫu 1 hồng phấn là mặc định), nhớ lựa chọn trên máy */
@@ -257,8 +257,7 @@
     box.onclick = function (e) { var b = e.target.closest(".thm"); if (!b) return; TH = +b.getAttribute("data-i"); try { if (!TEST) localStorage.setItem("w20septh:" + (me ? me.id : "guest"), String(TH)); } catch (er) {} card(); [].forEach.call(box.children, function (x) { x.classList.toggle("on", x === b); }); };
   }
   themeUI();
-  function optUI() { $("#optOr").textContent = OP.orient === "v" ? "🖼 Thiệp ngang" : "📱 Thiệp dọc (FB/TikTok)"; $("#optPn").textContent = OP.nopn === 1 ? "🪄 Nền lời chúc: Tắt" : "🪄 Nền lời chúc: Bật"; $("#optMen").textContent = OP.men === 1 ? "🧑‍🤝‍🧑 Ẩn anh em" : "🧑‍🤝‍🧑 Hiện anh em"; $("#optMenRnd").style.display = OP.men === 1 ? "" : "none"; }
-  $("#optOr").onclick = function () { OP.orient = OP.orient === "v" ? "h" : "v"; saveOP(); optUI(); card(); };
+  function optUI() { $("#optPn").textContent = OP.nopn === 1 ? "🪄 Nền lời chúc: Tắt" : "🪄 Nền lời chúc: Bật"; $("#optMen").textContent = OP.men === 1 ? "🧑‍🤝‍🧑 Ẩn anh em" : "🧑‍🤝‍🧑 Hiện anh em"; $("#optMenRnd").style.display = OP.men === 1 ? "" : "none"; }
   $("#optPn").onclick = function () { OP.nopn = OP.nopn === 1 ? 0 : 1; saveOP(); optUI(); card(); };
   $("#optMen").onclick = function () { OP.men = OP.men === 1 ? 0 : 1; saveOP(); optUI(); card(); };
   $("#optMenRnd").onclick = function () { OP.seed = 1 + Math.floor(Math.random() * 1e6); saveOP(); card(); };
