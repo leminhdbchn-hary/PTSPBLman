@@ -320,7 +320,48 @@ function w20Panel(g, px, py, pw, ph, pad) { /* tấm nền sáng mờ bo góc d�
   var rd = Math.min(pad * 1.1, ph / 4, pw / 4); g.save(); g.beginPath(); g.moveTo(px + rd, py); g.arcTo(px + pw, py, px + pw, py + ph, rd); g.arcTo(px + pw, py + ph, px, py + ph, rd); g.arcTo(px, py + ph, px, py, rd); g.arcTo(px, py, px + pw, py, rd); g.closePath();
   g.shadowColor = "rgba(90,40,50,.28)"; g.shadowBlur = pad * .9; g.shadowOffsetY = pad * .25; g.fillStyle = "rgba(255,252,247,.80)"; g.fill(); g.shadowColor = "transparent"; g.lineWidth = Math.max(2, pad * .09); g.strokeStyle = "rgba(255,255,255,.95)"; g.stroke(); g.restore();
 }
+/* ===== Thiệp DỌC 1080x1920 (đăng Facebook / TikTok): ảnh thiệp ở trên (tên người nhận nằm trong chỗ trống của ảnh), lời chúc to ở khung giữa, anh em ở góc phải dưới ===== */
+var W20VW = 1080, W20VH = 1920;
+function w20DrawCardV(g, o) {
+  var T = W20THEMES[o.theme >= 0 && o.theme < W20THEMES.length ? o.theme : 0], W = W20VW, H = W20VH, k = W / T.w, ah = Math.round(T.h * k), b = T.blk, i;
+  var bg = w20Img("assets/cards/" + T.file + ".webp"), ok = bg.complete && bg.naturalWidth, panelOn = o.panel !== false;
+  g.save(); g.textBaseline = "alphabetic"; g.textAlign = "center"; W20INK = T.ink;
+  /* nền: ảnh thiệp phóng to và làm mờ (thu nhỏ rồi kéo giãn nên máy nào cũng chạy được) */
+  if (ok) { var sm = document.createElement("canvas"); sm.width = 27; sm.height = 48; var sg = sm.getContext("2d"), cs = Math.max(27 / T.w, 48 / T.h), cw = T.w * cs, ch = T.h * cs; sg.drawImage(bg, (27 - cw) / 2, (48 - ch) / 2, cw, ch);
+    g.imageSmoothingEnabled = true; g.imageSmoothingQuality = "high"; g.drawImage(sm, 0, 0, W, H); g.fillStyle = "rgba(255,250,247,.34)"; g.fillRect(0, 0, W, H); }
+  else { g.fillStyle = "#fdf0ee"; g.fillRect(0, 0, W, H); }
+  /* ảnh thiệp ở trên, bo góc dưới */
+  g.save(); var rr = 46; g.beginPath(); g.moveTo(0, 0); g.lineTo(W, 0); g.lineTo(W, ah - rr); g.arcTo(W, ah, W - rr, ah, rr); g.lineTo(rr, ah); g.arcTo(0, ah, 0, ah - rr, rr); g.closePath();
+  g.shadowColor = "rgba(90,40,50,.35)"; g.shadowBlur = 36; g.shadowOffsetY = 10; g.fillStyle = "#fff"; g.fill(); g.shadowColor = "transparent"; g.clip();
+  if (ok) g.drawImage(bg, 0, 0, W, ah); g.restore();
+  /* lời chào + tên nằm trong chỗ trống của ảnh (toạ độ ảnh gốc, nhân k) */
+  var nm = o.name || "Chị em Phòng PTSPBL", greet = o.greet || "Thân gửi:", gF = Math.max(34, b.w * k * .085), nF = Math.max(48, b.w * k * .12), bw = b.w * k * .94, bx = (b.x + b.w / 2) * k, by = (b.y + b.h / 2) * k;
+  g.font = nF + "px " + W20HW; while (g.measureText(nm).width > bw && nF > 30) { nF -= 2; g.font = nF + "px " + W20HW; }
+  var nw = Math.max(g.measureText(nm).width, (g.font = gF + "px " + W20HW, g.measureText(greet).width)), npad = Math.max(22, nF * .5), nh = gF * 1.05 + nF * 1.1, ny0 = by - nh / 2, nx = bx - nw / 2 - npad * 1.3, nwid = nw + npad * 2.6, nht = nh + npad * 1.5, nty = ny0 - npad * .55;
+  nx = Math.max(16, Math.min(nx, W - 16 - nwid)); nty = Math.max(16, Math.min(nty, ah - 16 - nht)); var ncx = nx + nwid / 2;
+  if (panelOn) w20Panel(g, nx, nty, nwid, nht, npad);
+  W20INK = T.ink; w20Ink(g, greet, ncx, nty + npad * .55 + gF * .85, gF, 0); W20INK = T.acc; w20Ink(g, nm, ncx, nty + npad * .55 + gF * 1.05 + nF * .85, nF, 1);
+  window.W20NAMEBOX = { x: nx, y: nty, w: nwid, h: nht, ah: ah };
+  /* hàng anh em: góc phải phía dưới */
+  var MENL = (typeof W20CFG !== "undefined" && W20CFG.men) || [], mids = (o.men || []).filter(function (id) { return MENL[id]; }), mz = null, mmg = 36;
+  if (mids.length) { var msc = .66, mdx = 86, chw = 112 * msc, mpx = chw * .5, mpt = msc * 24, mpb = msc * 22, gw = (mids.length - 1) * mdx + chw, mph = 190 * msc + mpt + mpb, mpw = gw + mpx * 2;
+    mz = { sc: msc, dx: mdx, x: W - mmg - mpw, y: H - mmg - mph, w: mpw, h: mph, cx0: W - mmg - mpw + mpx + chw / 2, gy: H - mmg - mpb, pad: Math.max(24, msc * 34) }; }
+  /* khung lời chúc: vùng còn lại giữa ảnh và đáy (chừa chỗ cho hàng anh em) */
+  var wish = o.wish || "", sg = "Thương mến, " + (o.from || ""), top = ah + 52, bot = (mz ? mz.y - 34 : H - 48), availH = bot - top, pw = W - 2 * 54, pad = 44, innerW = pw - pad * 2, WF = 74, lines, lh, sgF, hh;
+  function lay(f) { g.font = f + "px " + W20HW; lines = w20WrapBal(g, wish, innerW); lh = f * 1.4; sgF = Math.max(30, f * .56); hh = lines.length * lh + sgF * 2.1; return hh + pad * 1.5 <= availH; }
+  while (WF > 38 && !lay(WF)) WF -= 2; lay(WF);
+  var ph = Math.min(availH, hh + pad * 1.5), py = top + Math.max(0, (availH - ph) / 2), px = 54;
+  if (panelOn) w20Panel(g, px, py, pw, ph, pad);
+  var ty = py + (ph - hh) / 2 + WF * .85; W20INK = T.ink;
+  lines.forEach(function (l, n) { w20Ink(g, l, W / 2, ty + n * lh, WF, 0); });
+  var sy = ty + (lines.length - 1) * lh + sgF * 1.7, sf = sgF; g.font = sf + "px " + W20HW; while (g.measureText(sg).width > innerW - sf * 1.6 && sf > 18) { sf -= 2; g.font = sf + "px " + W20HW; }
+  W20INK = T.acc; w20Ink(g, sg, W / 2, sy, sf, 1); var sw = g.measureText(sg).width; g.save(); g.fillStyle = T.acc; g.textAlign = "left"; g.font = sf + "px " + W20HW; g.fillText("♥", W / 2 + sw / 2 + 8, sy); g.restore();
+  window.W20CARDBOX = { x: px, y: py, w: pw, h: ph, W: W, H: H, wishF: WF, lines: lines.length, textTop: ty - WF * .85, textBot: sy + sf * .3 };
+  if (mz) { if (panelOn) w20Panel(g, mz.x, mz.y, mz.w, mz.h, mz.pad); mids.forEach(function (id, n) { var m = MENL[id]; w20Chibi(g, mz.cx0 + n * mz.dx, mz.gy, mz.sc, { img: w20Img(m.img), dir: 1, step: 1.6, up: n % 2 ? 0 : .85, lift: 0 }); }); window.W20MENBOX = { x: mz.x, y: mz.y, w: mz.w, h: mz.h }; } else window.W20MENBOX = null;
+  g.restore();
+}
 function w20DrawCard(g, o) {
+  if (o && o.orient === "v") return w20DrawCardV(g, o);
   var T = W20THEMES[o.theme >= 0 && o.theme < W20THEMES.length ? o.theme : 0], W = T.w, H = T.h, b = T.blk, cx = b.x + b.w / 2, i;
   W20INK = T.ink; g.save(); g.textBaseline = "alphabetic"; g.textAlign = "center";
   var bg = w20Img("assets/cards/" + T.file + ".webp");
