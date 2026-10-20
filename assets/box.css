@@ -1,6 +1,6 @@
 /* ===== Trang chị em: hộp quà lồng nhau (lớn → bé dần), thiệp viết tay, không cuộn dài ===== */
 :root{--ink:#5b3340;--rose:#a8324f;--rose2:#c8506f}
-body.bx{overflow:hidden;height:100svh;margin:0}
+body.bx{overflow:hidden;height:100vh;height:100svh;margin:0}
 body.bx:before{background:radial-gradient(900px 600px at 80% -10%,rgba(255,93,158,.25),transparent 60%),radial-gradient(800px 600px at -10% 90%,rgba(243,201,105,.18),transparent 60%),linear-gradient(165deg,#012d19 0%,#0a5232 55%,#6b1c46 125%)}
 #stage{position:fixed;inset:0;overflow:hidden}
 .scene{--m:calc(8px + var(--i,0)*5px);display:none;position:absolute;inset:0;padding:calc(env(safe-area-inset-top,0px) + 34px) var(--m,10px) calc(env(safe-area-inset-bottom,0px) + 14px);max-width:none;margin:0;align-items:center;justify-content:center}
@@ -155,7 +155,7 @@ body.bx:before{background:radial-gradient(900px 600px at 80% -10%,rgba(255,93,15
   .scene .note2{font-size:15px}
   #s5 .cardbox{display:grid;grid-template-columns:auto 1fr;gap:30px;align-items:start;text-align:left}
   #s5 .cardbox.land{display:block;text-align:center}
-  #s5 #card{width:auto!important;height:min(560px,calc(100svh - 270px));aspect-ratio:2/3;max-width:none}
+  #s5 #card{width:auto!important;height:min(560px,calc(100vh - 270px));height:min(560px,calc(100svh - 270px));aspect-ratio:2/3;max-width:none}
   #s5 .side{display:flex;flex-direction:column;gap:14px}
   #s5 .side .acts{justify-content:flex-start}
   #s5 .frame{margin-top:6px;max-width:340px}
@@ -176,7 +176,7 @@ body.bx:before{background:radial-gradient(900px 600px at 80% -10%,rgba(255,93,15
   #p5 .wheelbox{grid-area:w;width:min(340px,100%);justify-self:center}#p5 .hw{grid-area:h;align-self:end}#p5 .sub{grid-area:s}#p5 .pbody>p:not(.sub){grid-area:p}#p5 #prize{grid-area:z}
   #p6 .cardbox{display:grid;grid-template-columns:auto 1fr;gap:30px;align-items:start;text-align:left}
   #p6 .cardbox.land{display:block;text-align:center}
-  #p6 #card{width:auto!important;height:min(560px,calc(100svh - 270px));aspect-ratio:2/3;max-width:none}
+  #p6 #card{width:auto!important;height:min(560px,calc(100vh - 270px));height:min(560px,calc(100svh - 270px));aspect-ratio:2/3;max-width:none}
   #p6 .side{display:flex;flex-direction:column;gap:14px}#p6 .side .acts{justify-content:flex-start}
   #p6 .frame{margin-top:6px;max-width:340px}
   #p6 .pbody>.hw,#p6 .pbody>.sub,#p6 .pbody>.endnote{grid-column:1/-1}
@@ -224,7 +224,7 @@ body.bx:before{background:radial-gradient(900px 600px at 80% -10%,rgba(255,93,15
   .intro .hw1{font-size:44px}.intro .tapme{font-size:22px}
   .scene .note b{font-size:17px}.scene .note span{font-size:15.5px}
   .mbx .scr{font-size:17.5px}.endnote{font-size:21px}
-  #s5 #card2,#p6 #card2{width:auto!important;height:min(560px,calc(100svh - 270px));aspect-ratio:2/3;max-width:none}
+  #s5 #card2,#p6 #card2{width:auto!important;height:min(560px,calc(100vh - 270px));height:min(560px,calc(100svh - 270px));aspect-ratio:2/3;max-width:none}
   #s5 .sidetabs,#p6 .sidetabs{grid-column:1/-1;justify-content:flex-start}
 }
 @media (min-width:900px) and (min-height:520px){
@@ -257,7 +257,7 @@ body.bx:before{background:radial-gradient(900px 600px at 80% -10%,rgba(255,93,15
 .savebox{position:fixed;inset:0;z-index:60;background:rgba(0,0,0,.86);display:flex;align-items:center;justify-content:center;padding:14px}
 .sv-in{max-width:420px;width:100%;max-height:100%;display:flex;flex-direction:column;align-items:center;gap:10px;text-align:center;color:#fff;font-family:"Be Vietnam Pro",sans-serif}
 .sv-t{margin:0;font-size:15px}.sv-t b{color:#ffe08a}
-.sv-in img{max-width:100%;max-height:68svh;width:auto;height:auto;border-radius:14px;box-shadow:0 10px 30px rgba(0,0,0,.5);-webkit-touch-callout:default;user-select:auto}
+.sv-in img{max-width:100%;max-height:68vh;max-height:68svh;width:auto;height:auto;border-radius:14px;box-shadow:0 10px 30px rgba(0,0,0,.5);-webkit-touch-callout:default;user-select:auto}
 .sv-b{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}.sv-b .btn{font-size:14px;padding:10px 16px}
 
 .sv-b .btn.pink{font-size:14px}.sv-h{margin:2px 0 0;font-size:12.5px;opacity:.85;line-height:1.5}.sv-h b{color:#ffe08a}
@@ -266,7 +266,7 @@ body.bx:before{background:radial-gradient(900px 600px at 80% -10%,rgba(255,93,15
 .sv-b a.btn{text-decoration:none;display:inline-block}.sv-b [hidden]{display:none}
 .savebox{overflow-y:auto;align-items:flex-start;-webkit-overflow-scrolling:touch}
 .sv-in{max-height:none;margin:auto;padding:6px 0 18px}
-.sv-in img{max-height:50svh}
+.sv-in img{max-height:50vh;max-height:50svh}
 
 /* hướng dẫn mở bằng trình duyệt */
 .guide{position:fixed;inset:0;z-index:70;background:rgba(1,30,17,.94);display:flex;align-items:center;justify-content:center;padding:16px;overflow-y:auto}
@@ -282,7 +282,7 @@ body.bx:before{background:radial-gradient(900px 600px at 80% -10%,rgba(255,93,15
 .gd-b{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}.gd-b .btn{font-size:14px;padding:10px 16px}
 .gd-b .btn.ghost{color:#a8324f;background:rgba(168,50,79,.08);box-shadow:inset 0 0 0 1.5px rgba(168,50,79,.5)}
 .sv-x2{position:absolute;right:12px;top:12px;width:38px;height:38px;border-radius:50%;border:0;background:rgba(255,255,255,.2);color:#fff;font-size:18px;cursor:pointer;z-index:2}
-.savebox .sv-in img{max-height:72svh}
+.savebox .sv-in img{max-height:72vh;max-height:72svh}
 .savebox{background:rgba(0,0,0,.95)}
 
 /* chọn mẫu thiệp */
