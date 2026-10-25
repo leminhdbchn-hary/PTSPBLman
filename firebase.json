@@ -9,7 +9,8 @@
       "docs/**",
       "tools/**",
       "README.md",
-      "firestore.rules"
+      "firestore.rules",
+      "nep-nha/**"
     ],
     "headers": [
       {
