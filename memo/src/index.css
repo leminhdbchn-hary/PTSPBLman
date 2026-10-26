@@ -1,0 +1,37 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root { color-scheme: light; }
+html { -webkit-tap-highlight-color: transparent; }
+/* iPhone: không chờ 300 ms khi chạm hai lần, không để chữ tự phóng to */
+a, button, input, select, textarea, label, summary { touch-action: manipulation; }
+body { overscroll-behavior-y: none; padding-left: env(safe-area-inset-left); padding-right: env(safe-area-inset-right); padding-bottom: env(safe-area-inset-bottom); }
+/* iOS Safari vẽ ô nhập kiểu riêng (bóng đổ trong, góc vuông): trả về giao diện của trang */
+input:not([type=checkbox]):not([type=radio]):not([type=file]), select, textarea { -webkit-appearance: none; appearance: none; border-radius: 0.75rem; }
+select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' fill='none' stroke='%23898176' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 1rem center; padding-right: 2.5rem; }
+input[type=date] { min-height: 50px; text-align: left; }
+input[type=date]::-webkit-date-and-time-value { text-align: left; min-height: 1.5em; }
+textarea { resize: vertical; }
+html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; }
+body { @apply bg-paper font-sans text-ink antialiased; line-height: 1.7; font-size: 17px; }
+h1, h2, h3, h4 { @apply font-serif text-ink; font-weight: 500; line-height: 1.2; letter-spacing: -0.01em; }
+a { text-underline-offset: 3px; }
+:focus-visible { outline: 3px solid #7A816D; outline-offset: 2px; border-radius: 4px; }
+::selection { background: #e4dccb; }
+
+@layer components {
+  .btn { @apply inline-flex min-h-[46px] items-center justify-center gap-2 rounded-full bg-ink px-6 py-2.5 text-[16px] font-medium text-warm transition hover:bg-[#3f372f] disabled:cursor-not-allowed disabled:opacity-60; }
+  .btn-soft { @apply inline-flex min-h-[46px] items-center justify-center gap-2 rounded-full border border-line bg-warm px-6 py-2.5 text-[16px] font-medium text-ink transition hover:border-stone disabled:cursor-not-allowed disabled:opacity-60; }
+  .btn-danger { @apply inline-flex min-h-[46px] items-center justify-center gap-2 rounded-full border border-[#d9b8aa] bg-warm px-6 py-2.5 text-[16px] font-medium text-[#8c3b25] transition hover:bg-[#f7e9e2] disabled:opacity-60; }
+  .btn-sm { @apply min-h-[38px] whitespace-nowrap px-4 py-1.5 text-[15px] max-sm:px-3; }
+  .input { @apply block w-full rounded-xl border border-line bg-warm px-4 py-3 text-[17px] text-ink placeholder:text-stone/80 focus:border-moss; min-height: 50px; }
+  .label { @apply mb-1.5 block text-[15px] font-medium text-ink; }
+  .hint { @apply mt-1.5 text-[14px] text-stone; }
+  .card { @apply rounded-2xl border border-line bg-warm; }
+  .container-page { @apply mx-auto w-full max-w-page px-5 sm:px-8; }
+  .header-safe { padding-top: env(safe-area-inset-top); }
+  .tap { @apply inline-flex min-h-[44px] items-center; }
+  .eyebrow { @apply text-[13px] font-medium uppercase tracking-[0.14em] text-mossdark; }
+}
+@media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto !important; transition: none !important; animation: none !important; } }

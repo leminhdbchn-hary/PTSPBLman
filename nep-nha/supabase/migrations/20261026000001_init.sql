@@ -1,5 +1,5 @@
 -- =====================================================================================
--- Nếp Nhà — schema, hàm nghiệp vụ, Row Level Security và Storage
+-- Memo — schema, hàm nghiệp vụ, Row Level Security và Storage
 -- Chạy trong Supabase (SQL Editor hoặc `supabase db push`). Mọi dữ liệu gia đình đều gắn family_id
 -- và chỉ thành viên của gia đình đó mới đọc/ghi được, kiểm tra ngay ở cơ sở dữ liệu (RLS).
 -- =====================================================================================

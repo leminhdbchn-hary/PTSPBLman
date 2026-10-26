@@ -70,7 +70,7 @@ export function SiteFooter() {
           </ul>
         </div>
       </div>
-      <p className="container-page pb-8 text-[13.5px] text-stone">© {new Date().getFullYear()} Nếp Nhà. Phiên bản thử nghiệm: dữ liệu gia đình luôn thuộc về bạn.</p>
+      <p className="container-page pb-8 text-[13.5px] text-stone">© {new Date().getFullYear()} Memo. Phiên bản thử nghiệm: dữ liệu gia đình luôn thuộc về bạn.</p>
     </footer>
   );
 }

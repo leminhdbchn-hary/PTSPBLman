@@ -1,10 +1,10 @@
-# Nếp Nhà — Phân tích & kế hoạch (Giai đoạn 1)
+# Memo — Phân tích & kế hoạch (Giai đoạn 1)
 
 Tài liệu này ghi lại các quyết định trước khi viết code. Phần "Hiện trạng" ở cuối là bản cập nhật sau khi làm xong.
 
 ## 1. Tóm tắt sản phẩm
 
-Nếp Nhà là sổ ký ức riêng tư của gia đình: mỗi gia đình có một không gian riêng, các thành viên cùng ghi lại ký ức
+Memo là sổ ký ức riêng tư của gia đình: mỗi gia đình có một không gian riêng, các thành viên cùng ghi lại ký ức
 (chữ + ảnh), xem lại theo dòng thời gian, lưu hồ sơ người thân và (sau này) gia phả, lời kể, thư gửi tương lai.
 Trọng tâm: **riêng tư, ấm áp, dễ dùng với người lớn tuổi**, không phải mạng xã hội.
 

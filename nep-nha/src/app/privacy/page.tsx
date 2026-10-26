@@ -10,7 +10,7 @@ export default function Privacy() {
       <SiteHeader />
       <main id="noi-dung" className="container-page max-w-read py-16">
         <h1 className="text-[2.4rem]">Chính sách bảo mật</h1>
-        <p className="mt-3 text-stone">Bản thử nghiệm. Đây là bản mô tả cách Nếp Nhà xử lý dữ liệu; hãy rà soát với tư vấn pháp lý trước khi vận hành thương mại.</p>
+        <p className="mt-3 text-stone">Bản thử nghiệm. Đây là bản mô tả cách Memo xử lý dữ liệu; hãy rà soát với tư vấn pháp lý trước khi vận hành thương mại.</p>
         <div className="mt-10 space-y-8 text-[1.05rem] leading-relaxed">
           <section><h2 className="text-[1.5rem]">Chúng tôi lưu những gì</h2><p className="mt-3">Email, họ tên và mật khẩu (được băm, chúng tôi không đọc được) của bạn; nội dung bạn tự thêm vào sổ gia đình (ký ức, ảnh, hồ sơ thành viên, quan hệ gia phả, bình luận); và thông tin kỹ thuật tối thiểu để đăng nhập.</p></section>
           <section><h2 className="text-[1.5rem]">Ai xem được dữ liệu</h2><p className="mt-3">Chỉ thành viên của gia đình đó, theo vai trò được cấp. Mỗi ký ức có thể đặt chế độ: cả gia đình, chỉ quản trị viên hoặc chỉ mình bạn. Nội dung không công khai ra internet và không hiển thị cho gia đình khác.</p></section>

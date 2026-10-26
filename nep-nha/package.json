@@ -2,7 +2,7 @@
   "name": "nep-nha",
   "version": "0.1.0",
   "private": true,
-  "description": "Nếp Nhà — sổ ký ức gia đình (Next.js + Supabase)",
+  "description": "Memo — sổ ký ức gia đình (Next.js + Supabase)",
   "scripts": {
     "dev": "next dev",
     "build": "next build",

@@ -11,7 +11,7 @@
       "README.md",
       "firestore.rules",
       "nep-nha/**",
-      "nep-nha-firebase/**"
+      "memo/**"
     ],
     "headers": [
       {

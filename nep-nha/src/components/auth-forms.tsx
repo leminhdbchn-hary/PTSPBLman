@@ -52,7 +52,7 @@ export function RegisterForm({ next }: { next?: string }) {
         <input id="password" name="password" type="password" autoComplete="new-password" className="input" required minLength={8} />
       </Field>
       <SubmitButton className="btn w-full" pending="Đang tạo tài khoản…">Tạo tài khoản</SubmitButton>
-      <p className="text-center text-[14px] text-stone">Bằng việc đăng ký, bạn đồng ý với <Link href="/privacy" className="underline">chính sách bảo mật</Link> của Nếp Nhà.</p>
+      <p className="text-center text-[14px] text-stone">Bằng việc đăng ký, bạn đồng ý với <Link href="/privacy" className="underline">chính sách bảo mật</Link> của Memo.</p>
     </form>
   );
 }

@@ -60,13 +60,13 @@ export function LinkBtn({ href, children, soft, sm }: { href: string; children: 
 
 export function Logo({ href = "/" }: { href?: string }) {
   return (
-    <Link href={href} className="inline-flex items-center gap-2.5 font-serif text-[1.45rem] text-ink no-underline" aria-label="Nếp Nhà — trang chủ">
+    <Link href={href} className="inline-flex items-center gap-2.5 font-serif text-[1.45rem] text-ink no-underline" aria-label="Memo — trang chủ">
       <svg width="26" height="26" viewBox="0 0 26 26" fill="none" aria-hidden>
         <path d="M3 12.5 13 4l10 8.5" stroke="#51473D" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
         <path d="M6 11v10h14V11" stroke="#51473D" strokeWidth="1.6" strokeLinejoin="round" />
         <path d="M10.5 21v-6h5v6" stroke="#7A816D" strokeWidth="1.6" strokeLinejoin="round" />
       </svg>
-      Nếp Nhà
+      Memo
     </Link>
   );
 }

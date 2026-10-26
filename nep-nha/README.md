@@ -1,4 +1,4 @@
-# Nếp Nhà — sổ ký ức riêng tư của gia đình
+# Memo — sổ ký ức riêng tư của gia đình
 
 Mỗi gia đình một không gian riêng: ghi lại ký ức (chữ + ảnh), xem lại theo dòng thời gian, lưu hồ sơ người thân và gia phả.
 Giao diện tiếng Việt, tối giản, ưu tiên người lớn tuổi. Dữ liệu **không công khai**.

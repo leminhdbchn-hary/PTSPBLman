@@ -2,7 +2,7 @@ import type { Metadata, Viewport } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: { default: "Nếp Nhà — Sổ ký ức gia đình", template: "%s · Nếp Nhà" },
+  title: { default: "Memo — Sổ ký ức gia đình", template: "%s · Memo" },
   description: "Mỗi gia đình, một câu chuyện. Nơi cả nhà cùng lưu giữ ảnh, lời kể và những ngày đáng nhớ trong một không gian riêng tư.",
   robots: { index: true, follow: true },
 };

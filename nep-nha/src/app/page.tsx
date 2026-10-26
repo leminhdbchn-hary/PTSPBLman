@@ -31,7 +31,7 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ c
           <div>
             <p className="eyebrow mb-5">Sổ ký ức gia đình</p>
             <h1 className="text-[2.7rem] leading-[1.08] sm:text-[3.6rem]">Mỗi gia đình,<br />một câu chuyện.</h1>
-            <p className="mt-6 max-w-lg text-[1.15rem] text-stone">Nếp Nhà là cuốn sổ số của riêng gia đình bạn: nơi cả nhà cùng giữ lại ảnh, lời kể và những ngày bình thường đáng nhớ, để con cháu mở ra sau nhiều năm.</p>
+            <p className="mt-6 max-w-lg text-[1.15rem] text-stone">Memo là cuốn sổ số của riêng gia đình bạn: nơi cả nhà cùng giữ lại ảnh, lời kể và những ngày bình thường đáng nhớ, để con cháu mở ra sau nhiều năm.</p>
             <div className="mt-9 flex flex-wrap gap-4">
               <Link href="/register" className="btn">Tạo sổ gia đình</Link>
               <Link href="/login" className="btn-soft">Tôi đã có tài khoản</Link>
@@ -46,9 +46,9 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ c
 
         <section id="cau-chuyen" className="border-y border-line bg-warm py-20">
           <div className="container-page mx-auto max-w-3xl text-center">
-            <p className="eyebrow mb-4">Vì sao có Nếp Nhà</p>
+            <p className="eyebrow mb-4">Vì sao có Memo</p>
             <h2 className="text-[2rem] sm:text-[2.5rem]">Ảnh nằm rải rác trong điện thoại. Chuyện cũ chỉ còn trong trí nhớ của ông bà.</h2>
-            <p className="mt-6 text-[1.1rem] text-stone">Chúng ta chụp rất nhiều, nhưng ít khi ngồi lại kể. Những bữa cơm, chuyến về quê, câu chuyện tuổi trẻ của cha mẹ… nếu không được ghi lại sẽ mờ dần. Nếp Nhà giúp cả nhà cùng nhau giữ chúng ở một nơi, có ngày tháng, có lời kể, và chỉ dành cho người trong nhà.</p>
+            <p className="mt-6 text-[1.1rem] text-stone">Chúng ta chụp rất nhiều, nhưng ít khi ngồi lại kể. Những bữa cơm, chuyến về quê, câu chuyện tuổi trẻ của cha mẹ… nếu không được ghi lại sẽ mờ dần. Memo giúp cả nhà cùng nhau giữ chúng ở một nơi, có ngày tháng, có lời kể, và chỉ dành cho người trong nhà.</p>
           </div>
         </section>
 
