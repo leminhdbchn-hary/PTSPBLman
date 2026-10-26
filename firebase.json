@@ -10,7 +10,8 @@
       "tools/**",
       "README.md",
       "firestore.rules",
-      "nep-nha/**"
+      "nep-nha/**",
+      "nep-nha-firebase/**"
     ],
     "headers": [
       {

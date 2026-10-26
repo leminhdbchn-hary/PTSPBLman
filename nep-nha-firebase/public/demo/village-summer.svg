@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800" role="img" aria-label="Minh hoạ: chuyến về quê mùa hè">
+  <rect width="1200" height="800" fill="#f1ead6"/>
+  <circle cx="200" cy="140" r="90" fill="#f4dfae"/>
+  <path d="M0 420c200-90 400-90 600 0s400 90 600 0v380H0z" fill="#b9c79d"/>
+  <path d="M0 520c260-70 520-70 780 0s320 40 420 0v280H0z" fill="#9fb27f"/>
+  <path d="M0 640c300-50 700-50 1200 0v160H0z" fill="#889b6a"/>
+  <g transform="translate(830 330)">
+    <rect x="-180" y="40" width="360" height="190" fill="#efe3c9" stroke="#8b7e6c" stroke-width="6"/>
+    <path d="M-210 45l210-120 210 120z" fill="#a4694f"/>
+    <rect x="-40" y="110" width="80" height="120" fill="#8f6f4b"/>
+    <rect x="-150" y="90" width="70" height="60" fill="#bcd0d4" stroke="#8b7e6c" stroke-width="4"/><rect x="80" y="90" width="70" height="60" fill="#bcd0d4" stroke="#8b7e6c" stroke-width="4"/>
+  </g>
+  <g transform="translate(300 430)">
+    <rect x="-16" y="40" width="32" height="200" fill="#7f6648"/>
+    <circle cx="0" cy="10" r="120" fill="#6f8a58"/><circle cx="-90" cy="60" r="80" fill="#7a9663"/><circle cx="90" cy="60" r="80" fill="#7a9663"/>
+  </g>
+  <g stroke="#6f8a58" stroke-width="5" stroke-linecap="round" opacity=".7"><path d="M80 720v-60M110 730v-50M140 720v-60M980 730v-60M1010 720v-50M1040 730v-60"/></g>
+</svg>

@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800" role="img" aria-label="Minh hoạ: Tết đầu tiên cả nhà sum họp">
+  <rect width="1200" height="800" fill="#f1e2cf"/>
+  <rect x="0" y="560" width="1200" height="240" fill="#c9a77d"/>
+  <g transform="translate(180 60)" stroke="#6f5a45" stroke-width="10" fill="none" stroke-linecap="round"><path d="M0 460C80 360 160 300 240 250M120 330c40-70 80-110 140-140M200 270c20-50 50-80 100-110"/></g>
+  <g fill="#e8909a"><circle cx="300" cy="300" r="26"/><circle cx="380" cy="240" r="24"/><circle cx="260" cy="250" r="20"/><circle cx="440" cy="180" r="24"/><circle cx="330" cy="380" r="22"/><circle cx="220" cy="330" r="18"/></g>
+  <g fill="#f4c1c8"><circle cx="300" cy="300" r="10"/><circle cx="380" cy="240" r="9"/><circle cx="440" cy="180" r="9"/></g>
+  <ellipse cx="760" cy="590" rx="330" ry="46" fill="#00000014"/>
+  <rect x="440" y="520" width="640" height="60" rx="10" fill="#a9855c"/>
+  <g transform="translate(560 410)"><rect width="150" height="130" rx="10" fill="#6f8a58"/><path d="M0 44h150M0 88h150M50 0v130M100 0v130" stroke="#d8c9a0" stroke-width="5"/></g>
+  <g transform="translate(760 430)"><ellipse cx="60" cy="100" rx="90" ry="20" fill="#f6f0e4"/><path d="M-30 80c0 70 180 70 180 0z" fill="#fbf7ee" stroke="#cfc3ac" stroke-width="3"/><circle cx="20" cy="70" r="28" fill="#c4553a"/><circle cx="80" cy="64" r="26" fill="#d98a4a"/><circle cx="130" cy="74" r="22" fill="#c4553a"/></g>
+  <g transform="translate(940 440) rotate(-8)"><rect width="90" height="130" rx="10" fill="#b8402c"/><circle cx="45" cy="55" r="20" fill="#f1c36b"/><path d="M45 40v30M30 55h30" stroke="#b8402c" stroke-width="4"/></g>
+</svg>

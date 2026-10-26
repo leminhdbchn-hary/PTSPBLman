@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800" role="img" aria-label="Minh hoạ: bữa cơm chiều ngày mưa">
+  <rect width="1200" height="800" fill="#e9e1d1"/>
+  <rect x="0" y="0" width="1200" height="520" fill="#d9d6c8"/>
+  <rect x="140" y="70" width="440" height="340" rx="10" fill="#b9c4c0" stroke="#8b7e6c" stroke-width="14"/>
+  <path d="M360 70v340M140 240h440" stroke="#8b7e6c" stroke-width="10"/>
+  <g stroke="#f3f6f4" stroke-width="3" stroke-linecap="round" opacity=".8">
+    <path d="M180 100l-10 40M230 130l-10 40M290 90l-10 40M410 110l-10 40M470 150l-10 40M520 100l-10 40M200 280l-10 40M300 300l-10 40M430 290l-10 40M520 320l-10 40"/>
+  </g>
+  <circle cx="860" cy="170" r="150" fill="#f4dfae" opacity=".55"/>
+  <path d="M860 40v70" stroke="#6d6458" stroke-width="6"/>
+  <path d="M800 160c0-34 26-50 60-50s60 16 60 50z" fill="#d4a15c"/>
+  <rect x="0" y="520" width="1200" height="280" fill="#c8a982"/>
+  <rect x="200" y="520" width="800" height="40" rx="8" fill="#a9855c"/>
+  <rect x="240" y="560" width="30" height="190" fill="#8f6f4b"/><rect x="930" y="560" width="30" height="190" fill="#8f6f4b"/>
+  <g>
+    <ellipse cx="420" cy="508" rx="95" ry="22" fill="#f6f0e4"/><path d="M335 488c0 55 170 55 170 0z" fill="#fbf7ee" stroke="#cfc3ac" stroke-width="3"/>
+    <ellipse cx="600" cy="520" rx="110" ry="20" fill="#f6f0e4"/><path d="M510 495c0 62 180 62 180 0z" fill="#fbf7ee" stroke="#cfc3ac" stroke-width="3"/>
+    <ellipse cx="780" cy="508" rx="95" ry="22" fill="#f6f0e4"/><path d="M695 488c0 55 170 55 170 0z" fill="#fbf7ee" stroke="#cfc3ac" stroke-width="3"/>
+    <path d="M560 470c-10-30 14-34 4-62M610 470c-10-30 14-34 4-62M660 470c-10-30 14-34 4-62" stroke="#ffffff" stroke-width="7" fill="none" stroke-linecap="round" opacity=".7"/>
+  </g>
+</svg>
