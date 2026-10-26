@@ -1,4 +1,3 @@
-// TỆP SINH TỰ ĐỘNG bởi scripts/combine-rules.mjs — đừng sửa tay.
 rules_version = '2';
 // ============================================================================================
 // Memo — luật bảo mật Firestore.
@@ -286,25 +285,6 @@ service cloud.firestore {
       }
     }
 
-    // ===== Luật của site Phòng PTSPBL (giữ nguyên, chép từ firestore.rules) =====
-    match /progress/{id} {
-        allow read: if true;
-        allow create, update: if request.resource.size() < 8000;
-        allow delete: if false;
-      }
-      match /requests/{id} {
-        allow read: if true;
-        allow create: if request.resource.data.keys().hasOnly(['id', 'who', 'text', 'at']) && request.resource.size() < 2000;
-        allow update, delete: if false;
-      }
-      // Cấu hình số lượng quà ở vòng quay (trang quản lý lưu, trang chị em đọc)
-      match /settings/{id} {
-        allow read: if true;
-        allow write: if id == 'stock' && request.resource.data.keys().hasOnly(['qty', 'seed', 'map', 'at'])
-          && request.resource.data.qty is list && request.resource.data.qty.size() <= 10
-          && request.resource.data.map is map && request.resource.size() < 8000;
-      }
-      match /{document=**} { allow read, write: if false; }
-
+    // mọi thứ khác trong dự án: không đụng tới (giữ nguyên các luật riêng của site khác nếu gộp chung)
   }
 }
