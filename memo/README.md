@@ -87,7 +87,7 @@ scripts/e2e.mjs           kiểm thử đầu-cuối bằng trình duyệt
 | Lời nhắn (kể cả người chỉ xem) | ✔ |
 | Dữ liệu mẫu, xuất JSON, đổi mật khẩu, **tự xoá tài khoản** | ✔ |
 | **Lời kể bằng giọng nói**: ghi âm ≤ 3 phút bằng micro trình duyệt (Chrome/Android: webm, Safari/iPhone: mp4), tạm dừng, nghe lại trước khi lưu, chọn người kể + câu hỏi gợi ý; lưu trong Firestore, chỉ tải âm thanh khi bấm Nghe | ✔ |
-| **Giao diện Memo (Warm Minimalism)**: nền kem, xanh sage, chữ Playfair Display + DM Sans; trang chủ có ảnh bìa + thống kê + kỷ niệm gần đây; album lưới theo năm, xem ảnh lớn (vuốt/phím mũi tên/Esc); timeline; trạng thái đang tải/trống/lỗi có nút Thử lại (mất mạng không bị nhầm là chưa có dữ liệu) | ✔ |
+| **Giao diện Memo (Warm Minimalism)**: nền kem, xanh sage, chữ Lora + Be Vietnam Pro (hai phông, đều có tiếng Việt đầy đủ); trang chủ có ảnh bìa + thống kê + kỷ niệm gần đây; album lưới theo năm, xem ảnh lớn (vuốt/phím mũi tên/Esc); timeline; trạng thái đang tải/trống/lỗi có nút Thử lại (mất mạng không bị nhầm là chưa có dữ liệu) | ✔ |
 | Thư gửi tương lai, xuất sách | ✘ chưa làm (có trang "sắp ra mắt") |
 
 Giới hạn cần biết:

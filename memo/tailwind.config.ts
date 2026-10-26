@@ -25,8 +25,8 @@ const config: Config = {
         rec: "#B3402A", // nút ghi âm
       },
       fontFamily: {
-        serif: ['"Playfair Display"', "Georgia", '"Times New Roman"', "serif"],
-        sans: ['"DM Sans"', '"Be Vietnam Pro"', "system-ui", "-apple-system", "Segoe UI", "Roboto", "sans-serif"],
+        serif: ['"Lora"', "Georgia", '"Times New Roman"', "serif"],
+        sans: ['"Be Vietnam Pro"', "system-ui", "-apple-system", "Segoe UI", "Roboto", "sans-serif"],
       },
       maxWidth: { page: "72rem", read: "42rem" },
       borderRadius: { "4xl": "2rem" },
