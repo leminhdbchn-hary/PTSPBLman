@@ -6,6 +6,7 @@ import { useSession } from "@/lib/session";
 const NAV = [
   { to: "/family", label: "Tổng quan", end: true },
   { to: "/family/memories", label: "Ký ức" },
+  { to: "/family/stories", label: "Lời kể" },
   { to: "/family/members", label: "Thành viên" },
   { to: "/family/tree", label: "Gia phả" },
 ];
@@ -16,6 +17,7 @@ const Icon = ({ d }: { d: string }) => (
 const ICONS: Record<string, string> = {
   "/family": "M3 11.5 12 4l9 7.5M5.5 10v10h13V10M10 20v-5h4v5",
   "/family/memories": "M4 5h16v14H4zM4 15l4-4 4 4 3-3 5 5M9 9.5h.01",
+  "/family/stories": "M12 15a3.5 3.5 0 0 0 3.5-3.5v-6a3.5 3.5 0 0 0-7 0v6A3.5 3.5 0 0 0 12 15zM6 11.5a6 6 0 0 0 12 0M12 17.5V21M9 21h6",
   "/family/members": "M9 11a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7zM2.5 20c.6-3.5 3.2-5.5 6.5-5.5s5.9 2 6.5 5.5M17 4.5a3.2 3.2 0 0 1 0 6M18.5 14.7c1.7.7 2.7 2.3 3 5.3",
   "/family/tree": "M12 4v5M12 9H6v4M12 9h6v4M6 13v3M18 13v3M4 19h4M16 19h4",
 };
@@ -75,6 +77,7 @@ export function FamilyLayout() {
                   <button key={f.id} type="button" onClick={(e) => { s.setActive(f.id); closeMenu(e); nav("/family"); }} className={`${item} ${f.id === s.active!.id ? "font-medium" : "text-stone"}`}>{f.id === s.active!.id ? "✓ " : ""}{f.name}</button>
                 ))}
                 {s.families.length > 1 && <hr className="my-1 border-line" />}
+                <Link to="/family/tree" onClick={closeMenu} className={item}>Gia phả</Link>
                 {isAdmin && <Link to="/family/manage" onClick={closeMenu} className={item}>Quản lý &amp; mời người thân</Link>}
                 <Link to="/settings" onClick={closeMenu} className={item}>Cài đặt</Link>
                 <button type="button" className={item} onClick={logout}>Đăng xuất</button>

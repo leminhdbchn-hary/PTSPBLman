@@ -119,7 +119,7 @@ async function main() {
   await fetch(`http://127.0.0.1:8080/emulator/v1/projects/${PROJECT}/databases/(default)/documents`, { method: "DELETE" });
   await fetch(`http://127.0.0.1:9099/emulator/v1/projects/${PROJECT}/accounts`, { method: "DELETE" });
   const server = await serveStatic(OUT, APP_PORT);
-  const browser = await chromium.launch({ executablePath: process.env.CHROME_PATH || "/opt/pw-browsers/chromium-1194/chrome-linux/chrome" });
+  const browser = await chromium.launch({ executablePath: process.env.CHROME_PATH || "/opt/pw-browsers/chromium-1194/chrome-linux/chrome", args: ["--use-fake-ui-for-media-stream", "--use-fake-device-for-media-stream", "--autoplay-policy=no-user-gesture-required"] });
   const newCtx = async () => { const ctx = await browser.newContext({ viewport: { width: 1100, height: 900 }, acceptDownloads: true }); return ctx.newPage(); };
   const go = async (page, p) => { await page.goto(APP + p); await page.waitForFunction(() => !document.body.innerText.includes("Đang mở trang sổ"), null, { timeout: 15000 }).catch(() => {}); };
   const register = async (page, name, email, pw = "matkhau123", next = "") => {
@@ -474,6 +474,120 @@ async function main() {
       await pa.waitForSelector("h1:has-text('Ông Hải')");
       ok((await pa.locator("header img").count()) === 0, "ảnh vẫn còn sau khi bỏ");
     }, pa);
+    // ---------- lời kể (ghi âm) ----------
+    const recordStory = async (page, prompt, secs = 2.3) => {
+      await go(page, "/family/stories/new");
+      await page.click(`button:has-text('${prompt}')`);
+      await page.click("button[aria-label='Bắt đầu ghi âm']");
+      await page.waitForSelector("button[aria-label='Dừng và nghe lại']");
+      await page.waitForTimeout(secs * 1000);
+      await page.click("button[aria-label='Dừng và nghe lại']");
+      await page.waitForSelector("text=Nghe lại trước khi lưu");
+      await page.selectOption("#s-who", { label: "Ông Hải (Ông nội)" });
+    };
+    let storyId = "";
+    await step("LỜI KỂ: trang trống có nút ghi âm; câu hỏi gợi ý điền sẵn tên; ghi âm → tạm dừng/ghi tiếp → dừng → nghe lại", async () => {
+      await go(pa, "/family/stories");
+      await pa.waitForSelector("text=Chưa có lời kể nào");
+      await pa.click("a:has-text('Ghi âm lời kể đầu tiên')");
+      await pa.waitForURL(/\/stories\/new$/);
+      await pa.click("button:has-text('Ông bà gặp nhau như thế nào?')");
+      await pa.waitForSelector("p:has-text('“Ông bà gặp nhau như thế nào?”')");
+      await pa.click("button[aria-label='Bắt đầu ghi âm']");
+      await pa.waitForSelector("text=Đang ghi âm…");
+      await pa.waitForFunction(() => /^0:0[2-9]/.test(document.querySelector("[data-testid=timer]")?.textContent ?? ""), null, { timeout: 15000 });
+      await pa.click("button:has-text('Tạm dừng')");
+      await pa.waitForSelector("text=Đã tạm dừng");
+      const t1 = await pa.textContent("[data-testid=timer]");
+      await pa.waitForTimeout(1500);
+      ok((await pa.textContent("[data-testid=timer]")) === t1, "đồng hồ vẫn chạy khi tạm dừng");
+      await pa.click("button:has-text('Ghi tiếp')");
+      await pa.waitForSelector("text=Đang ghi âm…");
+      await pa.waitForTimeout(1200);
+      await pa.click("button[aria-label='Dừng và nghe lại']");
+      await pa.waitForSelector("text=Nghe lại trước khi lưu");
+      const pre = await pa.$eval("audio", (a) => ({ src: a.src.slice(0, 5), label: a.getAttribute("aria-label") }));
+      ok(pre.src === "blob:" && pre.label, "thiếu trình nghe lại: " + JSON.stringify(pre));
+      // thiếu người kể → báo; “Ghi lại” quay về trạng thái ban đầu và giữ câu hỏi đã chọn
+      await pa.click("button:has-text('Lưu lời kể')");
+      await pa.waitForSelector("text=chọn hoặc gõ tên người kể");
+      ok((await pa.inputValue("#s-title")) === "Ông bà gặp nhau như thế nào?", "tên lời kể không lấy từ câu hỏi");
+      await pa.click("button:has-text('Ghi lại')");
+      await pa.waitForSelector("button[aria-label='Bắt đầu ghi âm']");
+      await pa.waitForSelector("p:has-text('“Ông bà gặp nhau như thế nào?”')");
+    }, pa);
+    await step("LỜI KỂ: ghi lại → Lưu lời kể → hiện trong danh sách; thông tin và âm thanh nằm ở Firestore (audio/webm, đúng giới hạn)", async () => {
+      await pa.click("button[aria-label='Bắt đầu ghi âm']");
+      await pa.waitForSelector("button[aria-label='Dừng và nghe lại']");
+      await pa.waitForTimeout(2600);
+      await pa.click("button[aria-label='Dừng và nghe lại']");
+      await pa.waitForSelector("text=Nghe lại trước khi lưu");
+      await pa.selectOption("#s-who", { label: "Ông Hải (Ông nội)" });
+      await pa.click("button:has-text('Lưu lời kể')");
+      await pa.waitForURL(/\/family\/stories$/, { timeout: 30000 });
+      await pa.waitForSelector("h3:has-text('Ông bà gặp nhau như thế nào?')");
+      await pa.waitForSelector("text=Ông Hải kể");
+      const st = await adminList(`nn_families/${famA}/stories`);
+      ok(st.length === 1, "có " + st.length + " lời kể");
+      storyId = st[0].name.split("/").pop();
+      ok(val(st[0], "personName") === "Ông Hải" && Number(val(st[0], "seconds")) >= 2 && val(st[0], "mime") === "audio/webm", "thông tin lời kể sai: " + JSON.stringify(st[0].fields));
+      const au = await adminGet(`nn_families/${famA}/storyAudio/${storyId}`);
+      const data = String(val(au, "data"));
+      ok(/^data:audio\/webm(;codecs=opus)?;base64,/.test(data) && data.length > 2000 && data.length < 900000, "âm thanh lưu sai: " + data.slice(0, 40) + " (" + data.length + ")");
+      ok((await adminList(`nn_families/${famA}/registry`)).some((r) => String(val(r, "path")).endsWith(`/stories/${storyId}`)), "chưa vào sổ đăng ký");
+    }, pa);
+    await step("LỜI KỂ: bấm Nghe → tải âm thanh theo yêu cầu và phát được (không lỗi giải mã)", async () => {
+      ok((await pa.locator("audio").count()) === 0, "âm thanh đã tải sẵn khi chưa bấm Nghe");
+      await pa.click("button[aria-label^='Nghe lời kể']");
+      await pa.waitForSelector("audio[src^='data:audio/webm']");
+      await pa.waitForFunction(() => { const a = document.querySelector("audio"); return a && a.readyState >= 1 && !a.error; }, null, { timeout: 15000 });
+      const st = await pa.$eval("audio", (a) => ({ err: a.error?.code ?? null, secs: a.duration }));
+      ok(st.err === null, "lỗi giải mã âm thanh: " + JSON.stringify(st));
+    }, pa);
+    await step("LỜI KỂ CÁCH LY: người gia đình khác dùng token thật gọi API → không đọc được lời kể, âm thanh", async () => {
+      const t = await idToken(pc);
+      ok(t, "không lấy được token");
+      const H = { Authorization: "Bearer " + t, "Content-Type": "application/json" };
+      for (const p of [`stories/${storyId}`, `storyAudio/${storyId}`, "stories"]) {
+        const r = await fetch(`${FS}/nn_families/${famA}/${p}`, { headers: H });
+        ok(r.status === 403, `đọc được ${p}: ${r.status}`);
+      }
+      const r = await fetch(`${FS}/nn_families/${famA}/storyAudio?documentId=x`, { method: "POST", headers: H, body: JSON.stringify({ fields: { data: { stringValue: "data:audio/webm;base64,AAAA" }, createdBy: { stringValue: "x" } } }) });
+      ok(r.status === 403, "ghi được âm thanh vào nhà An: " + r.status);
+    }, pc);
+    await step("LỜI KỂ: thiếu quyền micro → báo tiếng Việt dễ hiểu; trình duyệt không hỗ trợ → báo rõ", async () => {
+      const mk = async (init) => {
+        const ctxX = await browser.newContext({ viewport: { width: 1100, height: 900 } });
+        await ctxX.addInitScript(init);
+        const px = await ctxX.newPage();
+        await login(px, "an@example.com"); await px.waitForURL(/\/family$/);
+        await go(px, "/family/stories/new");
+        return { px, ctxX };
+      };
+      const a = await mk(() => { navigator.mediaDevices.getUserMedia = () => Promise.reject(Object.assign(new Error("denied"), { name: "NotAllowedError" })); });
+      await a.px.click("button[aria-label='Bắt đầu ghi âm']");
+      await a.px.waitForSelector("text=chưa được phép dùng micro");
+      ok((await a.px.locator("button[aria-label='Bắt đầu ghi âm']").count()) === 1, "mất nút ghi âm sau khi bị từ chối (không thử lại được)");
+      await a.ctxX.close();
+      const b = await mk(() => { delete window.MediaRecorder; });
+      await b.px.waitForSelector("text=chưa hỗ trợ ghi âm");
+      ok(await b.px.locator("button[aria-label='Bắt đầu ghi âm']").isDisabled(), "nút ghi âm vẫn bấm được khi không hỗ trợ");
+      await b.ctxX.close();
+    }, pa);
+    await step("LỜI KỂ: xoá lời kể (xác nhận hai bước) → mất cả thông tin lẫn âm thanh; ghi thêm một lời kể khác", async () => {
+      await go(pa, "/family/stories");
+      await pa.waitForSelector("h3");
+      await pa.click("button:has-text('Xoá')");
+      await pa.click("button:has-text('Xoá lời kể')");
+      await pa.waitForSelector("text=Chưa có lời kể nào");
+      ok(!(await adminGet(`nn_families/${famA}/stories/${storyId}`)) && !(await adminGet(`nn_families/${famA}/storyAudio/${storyId}`)), "còn dữ liệu sau khi xoá");
+      ok(!(await adminList(`nn_families/${famA}/registry`)).some((r) => String(val(r, "path")).includes(storyId)), "sổ đăng ký còn dấu vết");
+      await recordStory(pa, "Tuổi thơ của cha mẹ ra sao?");
+      await pa.click("button:has-text('Lưu lời kể')");
+      await pa.waitForURL(/\/family\/stories$/, { timeout: 30000 });
+      await pa.waitForSelector("h3:has-text('Tuổi thơ của cha mẹ ra sao?')");
+    }, pa);
+
     await step("ngày sinh riêng tư: Bình không thấy ngày sinh của Ông Hải", async () => {
       await go(pb, "/family/members");
       await pb.click("a:has-text('Ông Hải')");
@@ -624,6 +738,12 @@ async function main() {
       ok(okBtn && okBtn.y + okBtn.height <= 844 && okBtn.height >= 44, "nút Dùng ảnh này ngoài màn hình/quá nhỏ: " + JSON.stringify(okBtn));
       ok(cb && cb.x >= 0 && cb.x + cb.width <= 390, "khung cắt tràn ngang: " + JSON.stringify(cb));
       await pm.click("button:has-text('Huỷ')");
+      await pm.goto(APP + "/family/stories/new");
+      const mic = pm.locator("button[aria-label='Bắt đầu ghi âm']");
+      await mic.waitFor({ state: "visible", timeout: 15000 });
+      const mb = await mic.boundingBox();
+      ok(mb && mb.width >= 80 && mb.height >= 80 && mb.y + mb.height <= 844, "nút ghi âm quá nhỏ hoặc ngoài màn hình: " + JSON.stringify(mb));
+      ok((await pm.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth)) <= 0, "trang ghi âm tràn ngang");
       await pm.goto(APP + "/family/memories");
       await pm.waitForSelector("article");
       await pm.click("summary[aria-label='Mở menu']");
@@ -637,7 +757,7 @@ async function main() {
       await pa.click("button:has-text('Xoá vĩnh viễn')");
       await pa.waitForURL(/\/onboarding$/, { timeout: 30000 });
       ok(!(await adminGet(`nn_families/${famA}`)), "gia đình còn");
-      for (const c of ["members", "memories", "photos", "people", "relationships", "invites", "registry"]) {
+      for (const c of ["members", "memories", "photos", "people", "relationships", "invites", "registry", "stories", "storyAudio"]) {
         ok((await adminList(`nn_families/${famA}/${c}`)).length === 0, "còn dữ liệu trong " + c);
       }
     }, pa);

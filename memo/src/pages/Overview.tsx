@@ -93,10 +93,11 @@ export default function Overview() {
 
       <section aria-labelledby="loi-tat">
         <h2 id="loi-tat" className="mb-5 text-[1.7rem]">Đi nhanh tới</h2>
-        <div className="grid gap-4 sm:grid-cols-2">
+        <div className="grid gap-4 sm:grid-cols-3">
           {[
             { to: "/family/members", t: "Thành viên", d: `${data.people.length} hồ sơ` },
             { to: "/family/tree", t: "Gia phả", d: "Các thế hệ trong gia đình" },
+            { to: "/family/stories", t: "Lời kể", d: "Nghe giọng ông bà, cha mẹ" },
           ].map((x) => (
             <Link key={x.to} to={x.to} className="card block p-5 text-ink no-underline transition hover:border-stone"><span className="font-serif text-[1.3rem]">{x.t}</span><span className="mt-1 block text-[15px] text-stone">{x.d}</span></Link>
           ))}

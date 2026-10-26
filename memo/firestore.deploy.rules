@@ -20,6 +20,7 @@ service cloud.firestore {
     function memberPath(fid, uid) { return /databases/$(database)/documents/nn_families/$(fid)/members/$(uid); }
     function memoryPath(fid, mid) { return /databases/$(database)/documents/nn_families/$(fid)/memories/$(mid); }
     function personPath(fid, pid) { return /databases/$(database)/documents/nn_families/$(fid)/people/$(pid); }
+    function storyPath(fid, sid) { return /databases/$(database)/documents/nn_families/$(fid)/stories/$(sid); }
     function invitePath(fid, h) { return /databases/$(database)/documents/nn_families/$(fid)/invites/$(h); }
 
     function isMember(fid) { return signedIn() && exists(memberPath(fid, me())); }
@@ -200,16 +201,44 @@ service cloud.firestore {
         allow delete: if (signedIn() && resource.data.createdBy == me()) || isAdmin(fid) || closingByOwner(fid);
       }
 
+      // ---------- lời kể (ghi âm) ----------
+      // Thông tin lời kể (nhẹ, dùng để liệt kê) và âm thanh (nặng) nằm ở hai nơi để danh sách tải nhanh.
+      match /stories/{sid} {
+        function validStory(d) {
+          return d.keys().hasOnly(['title', 'personId', 'personName', 'seconds', 'mime', 'createdBy', 'createdByName', 'createdAt'])
+            && str(d.title, 1, 140) && optStr(d.personId, 64) && str(d.personName, 1, 100)
+            && d.seconds is int && d.seconds >= 1 && d.seconds <= 300
+            && d.mime is string && d.mime.matches('^audio/[a-z0-9.+-]+$');
+        }
+        allow read: if isMember(fid);
+        allow create: if canWrite(fid) && validStory(request.resource.data) && request.resource.data.createdBy == me()
+          && str(request.resource.data.createdByName, 1, 100);
+        allow update: if false;
+        allow delete: if (signedIn() && resource.data.createdBy == me()) || isAdmin(fid) || closingByOwner(fid);
+      }
+      match /storyAudio/{sid} {
+        allow get: if isMember(fid);
+        allow list: if false;
+        allow create: if canWrite(fid)
+          && request.resource.data.keys().hasOnly(['data', 'createdBy'])
+          && request.resource.data.createdBy == me()
+          && request.resource.data.data is string && request.resource.data.data.size() < 950000
+          && request.resource.data.data.matches('^data:audio/[a-z0-9.+-]+(;codecs=[A-Za-z0-9.,-]+)?;base64,[A-Za-z0-9+/=]+$')
+          && getAfter(storyPath(fid, sid)).data.createdBy == me();
+        allow update: if false;
+        allow delete: if (signedIn() && resource.data.createdBy == me()) || isAdmin(fid) || closingByOwner(fid);
+      }
+
       // ---------- sổ đăng ký id (chỉ chứa đường dẫn, không chứa nội dung) ----------
       // Để chủ sở hữu dọn sạch khi xoá gia đình, kể cả ký ức riêng tư mà họ không được đọc.
       match /registry/{rid} {
         allow read: if isOwner(fid) || closingByOwner(fid) || (signedIn() && resource.data.createdBy == me());
         allow create: if isMember(fid)
           && request.resource.data.keys().hasOnly(['kind', 'path', 'createdBy'])
-          && request.resource.data.kind in ['memory', 'photo', 'comment']
+          && request.resource.data.kind in ['memory', 'photo', 'comment', 'story', 'audio']
           && request.resource.data.createdBy == me()
           && request.resource.data.path is string && request.resource.data.path.size() < 300
-          && request.resource.data.path.matches('^nn_families/' + fid + '/(memories|photos)/[A-Za-z0-9_-]+(/comments/[A-Za-z0-9_-]+)?$');
+          && request.resource.data.path.matches('^nn_families/' + fid + '/(memories|photos|stories|storyAudio)/[A-Za-z0-9_-]+(/comments/[A-Za-z0-9_-]+)?$');
         allow delete: if (signedIn() && resource.data.createdBy == me()) || isOwner(fid) || closingByOwner(fid);
       }
 

@@ -13,7 +13,8 @@ import Timeline from "@/pages/Timeline";
 import { EditMemoryPage, MemoryDetailPage, NewMemoryPage } from "@/pages/MemoryPages";
 import { EditPersonPage, MembersPage, NewPersonPage, PersonPage } from "@/pages/PeoplePages";
 import TreePage from "@/pages/Tree";
-import { LettersPage, StoriesPage } from "@/pages/Soon";
+import { LettersPage } from "@/pages/Soon";
+import { NewStoryPage, StoriesPage } from "@/pages/Stories";
 import Manage from "@/pages/Manage";
 import Settings from "@/pages/Settings";
 
@@ -72,6 +73,7 @@ function Shell() {
         <Route path="members/:id/edit" element={<EditPersonPage />} />
         <Route path="tree" element={<TreePage />} />
         <Route path="stories" element={<StoriesPage />} />
+        <Route path="stories/new" element={<NewStoryPage />} />
         <Route path="letters" element={<LettersPage />} />
         <Route path="manage" element={<Manage />} />
         <Route path="*" element={<NotFound inside />} />

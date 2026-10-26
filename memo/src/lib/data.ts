@@ -4,7 +4,7 @@ import {
   collection, collectionGroup, deleteDoc, doc, getDoc, getDocs, query, serverTimestamp, setDoc, Timestamp, updateDoc, where, writeBatch,
   type DocumentData, type Firestore, type QueryDocumentSnapshot,
 } from "firebase/firestore";
-import type { Comment, Family, FamilyRole, Invite, Member, Memory, MyFamily, Person, Photo, Relationship, Visibility } from "./types";
+import type { Comment, Family, FamilyRole, Invite, Member, Memory, MyFamily, Person, Photo, Relationship, Story, Visibility } from "./types";
 import type { MemoryInput, PersonInput } from "./validation";
 import { randomToken, sha256Hex } from "./utils";
 import { relationshipProblem } from "./tree";
@@ -140,7 +140,7 @@ export async function deleteFamily(ctx: Ctx, onProgress?: (msg: string) => void)
   const reg = await getDocs(sub(db, fid, "registry"));
   const paths = reg.docs.map((d) => String(d.data().path));
   // bình luận → ảnh → ký ức (thứ tự không quan trọng với quyền, chỉ để gọn)
-  const rank = (p: string) => (p.includes("/comments/") ? 0 : p.includes("/photos/") ? 1 : 2);
+  const rank = (p: string) => (p.includes("/comments/") ? 0 : /\/(photos|stories|storyAudio)\//.test(p) ? 1 : 2);
   await del(paths.sort((a, b) => rank(a) - rank(b)).map((path) => ({ path })));
   await del(reg.docs.map((d) => d.ref));
   onProgress?.("Đang xoá hồ sơ, gia phả và lời mời…");
@@ -244,7 +244,7 @@ export async function getPhotos(ctx: Ctx, m: Memory): Promise<Photo[]> {
   return out;
 }
 
-const reg = (ctx: Ctx, kind: "memory" | "photo" | "comment", path: string) =>
+const reg = (ctx: Ctx, kind: "memory" | "photo" | "comment" | "story" | "audio", path: string) =>
   [doc(sub(ctx.db, ctx.fid, "registry")), { kind, path, createdBy: ctx.user.uid }] as const;
 
 /** Tạo hoặc sửa ký ức (chưa gồm ảnh). Trả về id. */
@@ -322,6 +322,42 @@ export async function addComment(ctx: Ctx, memoryId: string, body: string) {
 export async function deleteComment(ctx: Ctx, memoryId: string, id: string) {
   await deleteDoc(doc(ctx.db, F, ctx.fid, "memories", memoryId, "comments", id));
   await dropRegistry(ctx, `${F}/${ctx.fid}/memories/${memoryId}/comments/${id}`);
+}
+
+// ============================== lời kể (ghi âm) ==============================
+
+export async function listStories(ctx: Ctx): Promise<Story[]> {
+  const s = await getDocs(sub(ctx.db, ctx.fid, "stories"));
+  return s.docs.map((d) => withId<Story>(d)).sort((a, b) => (b.createdAt?.toMillis() ?? Date.now()) - (a.createdAt?.toMillis() ?? Date.now()));
+}
+
+/** Lưu một lời kể: thông tin + âm thanh trong cùng một lượt ghi (cùng thành công hoặc cùng thất bại). */
+export async function saveStory(ctx: Ctx, input: { title: string; personId: string | null; personName: string; seconds: number; mime: string; audio: string }): Promise<string> {
+  if (!canWrite(ctx.role)) throw new UserError("Bạn chỉ có quyền xem.");
+  const ref = doc(sub(ctx.db, ctx.fid, "stories"));
+  const b = writeBatch(ctx.db);
+  b.set(ref, {
+    title: input.title, personId: input.personId, personName: input.personName, seconds: Math.max(1, Math.min(300, Math.round(input.seconds))),
+    mime: input.mime, createdBy: ctx.user.uid, createdByName: ctx.user.name, createdAt: serverTimestamp(),
+  });
+  b.set(doc(ctx.db, F, ctx.fid, "storyAudio", ref.id), { data: input.audio, createdBy: ctx.user.uid });
+  b.set(...reg(ctx, "story", ref.path));
+  b.set(...reg(ctx, "audio", `${F}/${ctx.fid}/storyAudio/${ref.id}`));
+  await b.commit();
+  return ref.id;
+}
+
+/** Tải âm thanh của một lời kể (chỉ khi bấm “Nghe”). */
+export async function getStoryAudio(ctx: Ctx, id: string): Promise<string | null> {
+  const s = await getDoc(doc(ctx.db, F, ctx.fid, "storyAudio", id));
+  return s.exists() ? String(s.data().data) : null;
+}
+
+export async function deleteStory(ctx: Ctx, id: string) {
+  await deleteDoc(doc(ctx.db, F, ctx.fid, "storyAudio", id));
+  await deleteDoc(doc(ctx.db, F, ctx.fid, "stories", id));
+  await dropRegistry(ctx, `${F}/${ctx.fid}/storyAudio/${id}`);
+  await dropRegistry(ctx, `${F}/${ctx.fid}/stories/${id}`);
 }
 
 // ============================== hồ sơ & gia phả ==============================
@@ -420,7 +456,7 @@ export async function cleanupBeforeAccountDeletion(db: Firestore, user: User) {
 // ============================== xuất dữ liệu ==============================
 
 export async function exportFamily(ctx: Ctx, familyName: string) {
-  const [memories, people, relationships, members] = await Promise.all([listMemories(ctx), listPeople(ctx), listRelationships(ctx), listMembers(ctx)]);
+  const [memories, people, relationships, members, stories] = await Promise.all([listMemories(ctx), listPeople(ctx), listRelationships(ctx), listMembers(ctx), listStories(ctx)]);
   const comments: Record<string, Comment[]> = {};
   for (const m of memories) comments[m.id] = await listComments(ctx, m.id).catch(() => []);
   const ts = (t: { toDate(): Date } | null | undefined) => (t ? t.toDate().toISOString() : null);
@@ -431,6 +467,7 @@ export async function exportFamily(ctx: Ctx, familyName: string) {
     members: members.map((m) => ({ name: m.name, role: m.role, joinedAt: ts(m.joinedAt) })),
     people: people.map(({ avatar: _a, ...p }) => p),
     relationships: relationships.map(({ a, b, kind }) => ({ a, b, kind })),
+    stories: stories.map((t) => ({ title: t.title, speaker: t.personName, seconds: t.seconds, recordedBy: t.createdByName, at: ts(t.createdAt) })),
     memories: memories.map(({ cover: _c, ...m }) => ({ ...m, createdAt: ts(m.createdAt), updatedAt: ts(m.updatedAt), photoCount: m.photoIds.length, comments: (comments[m.id] ?? []).map((c) => ({ author: c.authorName, body: c.body, at: ts(c.createdAt) })) })),
   };
 }

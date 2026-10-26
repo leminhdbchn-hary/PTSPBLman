@@ -74,3 +74,15 @@ export type Invite = {
 };
 
 export const THEME_TAGS = ["Tuổi thơ", "Ngày cưới", "Sinh nhật", "Chuyến đi", "Bữa cơm gia đình", "Thành tựu", "Những người thân yêu", "Ngày bình thường đáng nhớ"] as const;
+
+export type Story = {
+  id: string;
+  title: string;
+  personId: string | null;
+  personName: string;
+  seconds: number;
+  mime: string;
+  createdBy: string;
+  createdByName: string;
+  createdAt: Timestamp | null;
+};

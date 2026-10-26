@@ -85,3 +85,26 @@ describe("sắp xếp ký ức", () => {
     expect(sortMemories([m("a", "2020-01-01"), m("b", "2024-05-01"), m("c", "2022-02-02")]).map((x) => x.id)).toEqual(["b", "c", "a"]);
   });
 });
+
+import { AUDIO, formatDuration, micError, pickMime } from "../audio";
+
+describe("ghi âm", () => {
+  it("chọn định dạng theo trình duyệt: Chrome → webm/opus, iPhone → mp4", () => {
+    expect(pickMime((t) => ["audio/webm;codecs=opus", "audio/webm"].includes(t))).toBe("audio/webm;codecs=opus");
+    expect(pickMime((t) => t === "audio/mp4")).toBe("audio/mp4");
+    expect(pickMime(() => false)).toBeUndefined();
+  });
+  it("định dạng thời gian và giới hạn", () => {
+    expect(formatDuration(0)).toBe("0:00");
+    expect(formatDuration(65.4)).toBe("1:05");
+    expect(formatDuration(180)).toBe("3:00");
+    // 3 phút ở 24 kbps ≈ 540 KB → base64 ≈ 720 KB, còn dưới giới hạn 950.000 ký tự của luật bảo mật
+    expect(Math.ceil((AUDIO.maxSeconds * AUDIO.bitsPerSecond) / 8 / 3) * 4).toBeLessThan(AUDIO.maxChars);
+  });
+  it("lỗi micro có câu tiếng Việt dễ hiểu", () => {
+    expect(micError({ name: "NotAllowedError" })).toMatch(/phép dùng micro/);
+    expect(micError({ name: "NotFoundError" })).toMatch(/Không tìm thấy micro/);
+    expect(micError({ name: "NotReadableError" })).toMatch(/ứng dụng khác/);
+    expect(micError(new Error("x"))).toMatch(/Chưa bật được micro/);
+  });
+});

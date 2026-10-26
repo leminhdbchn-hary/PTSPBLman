@@ -8,7 +8,7 @@ const FEATURES = [
   { t: "Hồ sơ từng người thân", d: "Giữ lại tên, vai vế, vài dòng tiểu sử và những ký ức gắn với từng người, kể cả người chưa dùng máy tính." },
   { t: "Gia phả", d: "Nối cha mẹ, con cái, vợ chồng và xem các thế hệ trong một sơ đồ rõ ràng. Hệ thống chặn những quan hệ vô lý." },
   { t: "Riêng tư từ gốc", d: "Mỗi gia đình là một không gian khép kín. Chỉ người được mời mới mở được, theo đúng vai trò của mình." },
-  { t: "Sắp tới", d: "Lời kể của ông bà (ghi âm), thư gửi tương lai và xuất cuốn sách gia đình đang được chuẩn bị." },
+  { t: "Lời kể bằng giọng nói", d: "Ghi âm ông bà, cha mẹ kể chuyện ngay trên điện thoại. Giọng nói còn mãi và chỉ người trong nhà nghe được. Thư gửi tương lai và sách gia đình sẽ đến sau." },
 ];
 
 const STEPS = [

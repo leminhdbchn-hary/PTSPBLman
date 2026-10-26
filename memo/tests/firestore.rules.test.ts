@@ -290,6 +290,69 @@ describe("sổ đăng ký id", () => {
   });
 });
 
+describe("lời kể (ghi âm)", () => {
+  const audio = "data:audio/webm;codecs=opus;base64,GkXfo59ChoEBQveBAULygQRC84EIQoKEd2VibUKHgQRChYECGFOAZwEAAAAAAAHTEU2bdLpNu4tTq4QVSalmU6yBoU27i1OrhBVJqWZTrIHfTbuMU6uEFlSua1OsggEjTbuMU6uEHFO7a1OsggHo7AEAAAAAAABZAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==";
+  const meta = (who: Who, o: Record<string, unknown> = {}) => ({ title: "Ông kể chuyện xưa", personId: null, personName: "Ông Hải", seconds: 42, mime: "audio/webm", createdBy: who, createdByName: users[who].name, createdAt: serverTimestamp(), ...o });
+  const save = (who: Who, sid: string, o: Record<string, unknown> = {}, a: Record<string, unknown> = {}) => {
+    const d = db(who); const b = writeBatch(d);
+    b.set(doc(d, "nn_families", famA, "stories", sid), meta(who, o));
+    b.set(doc(d, "nn_families", famA, "storyAudio", sid), { data: audio, createdBy: who, ...a });
+    return b.commit();
+  };
+  it("thành viên đóng góp ghi âm lời kể bằng hàm của ứng dụng; cả nhà đọc được thông tin và nghe được", async () => {
+    const id = await assertSucceeds(D.saveStory(ctx("binh", famA, "contributor"), { title: "Chuyện ngày xưa", personId: null, personName: "Ông Hải", seconds: 42, mime: "audio/webm", audio }));
+    mem.story = id;
+    expect((await D.listStories(ctx("an", famA, "owner"))).map((x) => x.title)).toEqual(["Chuyện ngày xưa"]);
+    expect(await D.getStoryAudio(ctx("an", famA, "owner"), id)).toBe(audio);
+    expect(await D.getStoryAudio(ctx("dung", famA, "admin"), id)).toBe(audio);
+  });
+  it("người chỉ xem nghe được nhưng không ghi được", async () => {
+    await D.setRole(ctx("an", famA, "owner"), "binh", "viewer");
+    await assertSucceeds(D.getStoryAudio(ctx("binh", famA, "viewer"), mem.story));
+    await assertFails(save("binh", "viewer-thu"));
+    await D.setRole(ctx("an", famA, "owner"), "binh", "contributor");
+  });
+  it("người ngoài gia đình không đọc được thông tin lẫn âm thanh; không liệt kê được kho âm thanh", async () => {
+    await assertFails(getDocs(collection(db("chi"), "nn_families", famA, "stories")));
+    await assertFails(getDoc(doc(db("chi"), "nn_families", famA, "stories", mem.story)));
+    await assertFails(getDoc(doc(db("chi"), "nn_families", famA, "storyAudio", mem.story)));
+    await assertFails(getDocs(collection(db("an"), "nn_families", famA, "storyAudio")));
+    await assertFails(getDoc(doc(anon(), "nn_families", famA, "storyAudio", mem.story)));
+    await assertFails(save("chi", "ngoai-gia-dinh"));
+  });
+  it("dữ liệu sai bị từ chối: giả danh, không phải âm thanh, quá lớn, quá dài, thiếu tiêu đề", async () => {
+    await assertFails(save("binh", "gia-danh", { createdBy: "an" }));
+    await assertFails(save("binh", "khong-phai-am-thanh", {}, { data: "data:text/html;base64,PHNjcmlwdD4=" }));
+    await assertFails(save("binh", "script", {}, { data: "javascript:alert(1)" }));
+    await assertFails(save("binh", "qua-lon", {}, { data: "data:audio/webm;base64," + "A".repeat(960000) }));
+    await assertFails(save("binh", "qua-dai", { seconds: 999 }));
+    await assertFails(save("binh", "thieu-tieu-de", { title: "" }));
+    await assertFails(save("binh", "mime-la", { mime: "text/html" }));
+    await assertFails(save("binh", "them-truong", { extra: 1 }));
+  });
+  it("âm thanh phải đi kèm lời kể của chính người ghi (không gắn vào lời kể của người khác)", async () => {
+    await assertFails(setDoc(doc(db("binh"), "nn_families", famA, "storyAudio", "mo-coi"), { data: audio, createdBy: "binh" }));
+    const b = writeBatch(db("dung"));
+    b.set(doc(db("dung"), "nn_families", famA, "storyAudio", mem.story), { data: audio, createdBy: "dung" });
+    await assertFails(b.commit());
+  });
+  it("không sửa được lời kể hay âm thanh sau khi lưu", async () => {
+    await assertFails(updateDoc(doc(db("binh"), "nn_families", famA, "stories", mem.story), { title: "đổi" }));
+    await assertFails(setDoc(doc(db("binh"), "nn_families", famA, "storyAudio", mem.story), { data: audio, createdBy: "binh" }));
+  });
+  it("chỉ người ghi hoặc quản trị xoá được; người đóng góp khác thì không", async () => {
+    const other = await D.saveStory(ctx("dung", famA, "admin"), { title: "Của Dũng", personId: null, personName: "Dũng", seconds: 5, mime: "audio/webm", audio });
+    await assertFails(D.deleteStory(ctx("binh", famA, "contributor"), other));
+    await assertSucceeds(D.deleteStory(ctx("an", famA, "owner"), other)); // chủ sở hữu (quản trị) xoá được
+    await assertSucceeds(D.deleteStory(ctx("binh", famA, "contributor"), mem.story)); // người ghi tự xoá
+    expect(await D.listStories(ctx("an", famA, "owner"))).toEqual([]);
+    expect(await D.getStoryAudio(ctx("an", famA, "owner"), mem.story)).toBeNull();
+  });
+  it("xoá cả gia đình dọn luôn lời kể và âm thanh (kể cả của người khác)", async () => {
+    mem.lastStory = await D.saveStory(ctx("dung", famA, "admin"), { title: "Sẽ bị xoá cùng gia đình", personId: null, personName: "Dũng", seconds: 9, mime: "audio/webm", audio });
+  });
+});
+
 describe("rời và xoá", () => {
   it("Bình rời gia đình: ký ức riêng tư của Bình bị xoá, không còn đọc được gì", async () => {
     await assertSucceeds(D.leaveFamily(ctx("binh", famA, "contributor")));
@@ -308,7 +371,7 @@ describe("rời và xoá", () => {
     await assertSucceeds(D.deleteFamily(ctx("an", famA, "owner")));
     await env.withSecurityRulesDisabled(async (c) => {
       const f = c.firestore() as unknown as Firestore;
-      for (const name of ["members", "memories", "photos", "people", "peoplePrivate", "relationships", "invites", "registry"]) {
+      for (const name of ["members", "memories", "photos", "people", "peoplePrivate", "relationships", "invites", "registry", "stories", "storyAudio"]) {
         expect((await getDocs(collection(f, "nn_families", famA, name))).size, name).toBe(0);
       }
       expect((await getDocs(collection(f, "nn_families", famA, "memories", mem.family, "comments"))).size).toBe(0);
