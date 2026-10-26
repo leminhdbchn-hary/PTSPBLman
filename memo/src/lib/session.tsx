@@ -2,7 +2,7 @@ import { createContext, useCallback, useContext, useEffect, useMemo, useState, t
 import { onAuthStateChanged, type User as FbUser } from "firebase/auth";
 import { doc, getDoc } from "firebase/firestore";
 import { firebase, type FB } from "./firebase";
-import { listMyFamilies, type Ctx, type User } from "./data";
+import { friendlyError, listMyFamilies, withTimeout, type Ctx, type User } from "./data";
 import type { MyFamily } from "./types";
 
 const ACTIVE_KEY = "nn_family";
@@ -16,6 +16,8 @@ type Session = {
   families: MyFamily[];
   active: MyFamily | null;
   setActive: (id: string) => void;
+  /** Lỗi khi tải danh sách gia đình (mạng, quyền…): khác với "chưa có gia đình nào". */
+  familiesError: string | null;
   refresh: () => Promise<MyFamily[]>;
   setName: (name: string) => void;
 };
@@ -28,6 +30,7 @@ export function SessionProvider({ children }: { children: ReactNode }) {
   const [name, setNameState] = useState<string>("");
   const [override, setOverride] = useState<{ uid: string; name: string } | null>(null);
   const [families, setFamilies] = useState<MyFamily[]>([]);
+  const [familiesError, setFamiliesError] = useState<string | null>(null);
   const [activeId, setActiveId] = useState<string | null>(() => { try { return localStorage.getItem(ACTIVE_KEY); } catch { return null; } });
   const [loading, setLoading] = useState(true);
 
@@ -41,7 +44,8 @@ export function SessionProvider({ children }: { children: ReactNode }) {
         if (u) {
           const prof = await getDoc(doc(f.db, "nn_users", u.uid)).catch(() => null);
           setNameState(String(prof?.data()?.fullName ?? u.displayName ?? u.email ?? "Bạn"));
-          setFamilies(await listMyFamilies(f.db, u.uid).catch((e) => { console.error("listMyFamilies", e); return []; }));
+          try { setFamilies(await withTimeout(listMyFamilies(f.db, u.uid))); setFamiliesError(null); }
+          catch (e) { console.error("listMyFamilies", e); setFamilies([]); setFamiliesError(friendlyError(e, "Chưa tải được danh sách gia đình của bạn.")); }
         } else {
           setFamilies([]);
           setNameState("");
@@ -65,13 +69,14 @@ export function SessionProvider({ children }: { children: ReactNode }) {
   }, []);
   const refresh = useCallback(async () => {
     if (!fb || !fbUser) return [];
-    const list = await listMyFamilies(fb.db, fbUser.uid);
+    const list = await withTimeout(listMyFamilies(fb.db, fbUser.uid));
     setFamilies(list);
+    setFamiliesError(null);
     return list;
   }, [fb, fbUser]);
 
   const setName = useCallback((n: string) => { const u = fb?.auth.currentUser; if (u) setOverride({ uid: u.uid, name: n }); }, [fb]);
-  const value: Session = { fb, error, loading, fbUser, user, families, active, setActive, refresh, setName };
+  const value: Session = { fb, error, loading, fbUser, user, families, familiesError, active, setActive, refresh, setName };
   return <SessionCtx.Provider value={value}>{children}</SessionCtx.Provider>;
 }
 
@@ -96,7 +101,7 @@ export function useAsync<T>(fn: () => Promise<T>, deps: unknown[]) {
   useEffect(() => {
     let alive = true;
     setState((s) => ({ ...s, loading: true }));
-    fn().then((data) => alive && setState({ data, error: null, loading: false }), (error) => alive && setState({ data: null, error, loading: false }));
+    withTimeout(fn(), 25000).then((data) => alive && setState({ data, error: null, loading: false }), (error) => alive && setState({ data: null, error, loading: false }));
     return () => { alive = false; };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [...deps, tick]);

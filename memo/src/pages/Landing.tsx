@@ -24,24 +24,26 @@ export default function Landing() {
       <SiteHeader />
       <main id="noi-dung">
 
-        <section className="container-page grid items-center gap-12 py-16 md:grid-cols-[1.05fr_1fr] md:py-24">
-          <div>
-            <p className="eyebrow mb-5">Sổ ký ức gia đình</p>
-            <h1 className="text-[2.7rem] leading-[1.08] sm:text-[3.6rem]">Mỗi gia đình,<br />một câu chuyện.</h1>
-            <p className="mt-6 max-w-lg text-[1.15rem] text-stone">Memo là cuốn sổ số của riêng gia đình bạn: nơi cả nhà cùng giữ lại ảnh, lời kể và những ngày bình thường đáng nhớ, để con cháu mở ra sau nhiều năm.</p>
-            <div className="mt-9 flex flex-wrap gap-4">
-              <Link to="/register" className="btn">Tạo sổ gia đình</Link>
-              <Link to="/login" className="btn-soft">Tôi đã có tài khoản</Link>
+        <section aria-label="Giới thiệu" className="container-page pt-6 sm:pt-10">
+          <div className="grid items-center gap-10 overflow-hidden rounded-[28px] bg-cream p-7 sm:p-12 md:grid-cols-[1.25fr_.85fr] md:p-14">
+            <div>
+              <p className="eyebrow">Sổ ký ức gia đình · Our little forever <span aria-hidden>✦</span></p>
+              <h1 className="mt-5 text-[2.5rem] leading-[1.1] sm:text-[3.4rem]">Mỗi gia đình,<br /><em className="text-moss">một câu chuyện.</em></h1>
+              <p className="mt-6 max-w-lg text-[1.1rem] leading-relaxed text-stone">Memo là cuốn sổ số của riêng gia đình bạn: nơi cả nhà cùng giữ lại ảnh, lời kể và những ngày bình thường đáng nhớ, để con cháu mở ra sau nhiều năm.</p>
+              <div className="mt-8 flex flex-wrap gap-3">
+                <Link to="/register" className="btn">＋ Tạo sổ gia đình</Link>
+                <Link to="/login" className="btn-soft">Tôi đã có tài khoản</Link>
+              </div>
+              <p className="mt-5 text-[14.5px] text-stone">Miễn phí cho bản thử nghiệm. Không quảng cáo, không công khai nội dung.</p>
             </div>
-            <p className="mt-5 text-[14.5px] text-stone">Miễn phí cho bản thử nghiệm. Không quảng cáo, không công khai nội dung.</p>
+            <figure className="mx-auto w-[230px] rotate-[6deg] bg-white p-2.5 pb-0 shadow-lift sm:w-[270px]">
+              <img src="/demo/rainy-dinner.svg" alt="Hình minh hoạ: bữa cơm chiều ngày mưa của một gia đình" className="aspect-[4/4.2] w-full object-cover" fetchPriority="high" />
+              <figcaption className="px-2 py-2.5 text-center font-serif text-[13px] italic">together is home ♡</figcaption>
+            </figure>
           </div>
-          <figure>
-            <img src="/demo/rainy-dinner.svg" alt="Hình minh hoạ: bữa cơm chiều ngày mưa của một gia đình" className="w-full rounded-[28px] border border-line shadow-[0_30px_60px_-30px_rgba(81,71,61,0.35)]" />
-            <figcaption className="mt-3 text-center text-[13.5px] text-stone">Hình minh hoạ</figcaption>
-          </figure>
         </section>
 
-        <section id="cau-chuyen" className="border-y border-line bg-warm py-20">
+        <section id="cau-chuyen" className="border-y border-line bg-cream/60 py-20">
           <div className="container-page mx-auto max-w-3xl text-center">
             <p className="eyebrow mb-4">Vì sao có Memo</p>
             <h2 className="text-[2rem] sm:text-[2.5rem]">Ảnh nằm rải rác trong điện thoại. Chuyện cũ chỉ còn trong trí nhớ của ông bà.</h2>
@@ -62,7 +64,7 @@ export default function Landing() {
           </div>
         </section>
 
-        <section id="cach-hoat-dong" className="border-y border-line bg-warm py-20">
+        <section id="cach-hoat-dong" className="border-y border-line bg-cream/60 py-20">
           <div className="container-page">
             <p className="eyebrow mb-4">Cách hoạt động</p>
             <h2 className="mb-12 text-[2rem] sm:text-[2.5rem]">Ba bước để bắt đầu</h2>
@@ -90,14 +92,14 @@ export default function Landing() {
           </div>
         </section>
 
-        <section id="rieng-tu" className="border-t border-line bg-ink py-20 text-warm">
+        <section id="rieng-tu" className="border-t border-line bg-ink py-20 text-white">
           <div className="container-page grid gap-10 md:grid-cols-[1fr_1.2fr]">
             <div>
-              <p className="eyebrow !text-[#c9d0bb]">Riêng tư</p>
-              <h2 className="mt-3 text-[2rem] !text-warm sm:text-[2.5rem]">Không phải mạng xã hội.</h2>
-              <p className="mt-5 text-[#d9d2c4]">Nội dung của gia đình không bao giờ công khai và không được dùng để huấn luyện AI.</p>
+              <p className="eyebrow !text-sage-mist">Riêng tư</p>
+              <h2 className="mt-3 text-[2rem] !text-white sm:text-[2.5rem]">Không phải mạng xã hội.</h2>
+              <p className="mt-5 text-white/80">Nội dung của gia đình không bao giờ công khai và không được dùng để huấn luyện AI.</p>
             </div>
-            <ul className="space-y-4 text-[1.05rem] text-[#e9e3d6]">
+            <ul className="space-y-4 text-[1.05rem] text-white/90">
               <li>• Mỗi gia đình là một không gian riêng; người ngoài không thể xem bằng cách đoán đường dẫn.</li>
               <li>• Quyền được kiểm tra ngay ở máy chủ cơ sở dữ liệu (luật bảo mật Firestore), không chỉ ẩn nút trên giao diện.</li>
               <li>• Ảnh được nén trên máy bạn rồi lưu trong cơ sở dữ liệu riêng của gia đình, không có đường dẫn công khai.</li>

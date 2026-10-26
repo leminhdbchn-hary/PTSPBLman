@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
-import { EmptyState, LinkBtn, Loading, Notice, PageTitle } from "@/components/ui";
+import { EmptyState, LinkBtn, Loading, Notice, PageTitle, ErrorState } from "@/components/ui";
 import { MemoryCard } from "@/components/MemoryCard";
 import { useAsync, useFamily } from "@/lib/session";
 import { friendlyError, listMemories, listPeople } from "@/lib/data";
@@ -12,7 +12,7 @@ export default function Timeline() {
   const ctx = useFamily();
   const [sp, setSp] = useSearchParams();
   const [limit, setLimit] = useState(PAGE);
-  const { data, error, loading } = useAsync(async () => {
+  const { data, error, loading, reload } = useAsync(async () => {
     const [memories, people] = await Promise.all([listMemories(ctx), listPeople(ctx)]);
     return { memories, people };
   }, [ctx.fid]);
@@ -28,7 +28,7 @@ export default function Timeline() {
       (!person || m.personIds.includes(person)));
   }, [data, q, year, tag, person]);
   if (loading) return <Loading />;
-  if (error || !data) return <Notice kind="error">{friendlyError(error)}</Notice>;
+  if (error || !data) return <ErrorState message={friendlyError(error)} onRetry={reload} />;
   const names = new Map(data.people.map((p) => [p.id, p.fullName]));
   const years = [...new Set(data.memories.map((m) => yearOf(m.happenedOn)).filter(Boolean) as string[])].sort().reverse();
   const tags = [...new Set(data.memories.flatMap((m) => m.tags))].sort((a, b) => a.localeCompare(b, "vi"));
@@ -51,7 +51,7 @@ export default function Timeline() {
 
   return (
     <div>
-      <PageTitle eyebrow="Dòng thời gian" title="Ký ức của gia đình">
+      <PageTitle eyebrow="Our story" title="Ký ức của gia đình">
         {ctx.canWrite && <span className="max-md:hidden"><LinkBtn to="/family/memories/new">Thêm ký ức</LinkBtn></span>}
       </PageTitle>
       {sp.get("deleted") && <div className="mb-6"><Notice kind="success">Đã xoá ký ức.</Notice></div>}
@@ -95,10 +95,15 @@ export default function Timeline() {
         <div className="space-y-12">
           {groups.map((g) => (
             <section key={g.year} id={"y-" + g.year} aria-label={"Năm " + g.year} className="scroll-mt-24">
-              <h2 className="mb-5 font-serif text-[2rem] text-moss">{g.year}</h2>
-              <ul className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-                {g.list.map((m) => <li key={m.id}><MemoryCard m={m} names={names} /></li>)}
-              </ul>
+              <h2 className="mb-6 inline-block rounded-full bg-sage-soft px-5 py-1.5 font-serif text-[1.5rem] text-mossdark">{g.year}</h2>
+              <ol className="ml-3 space-y-6 border-l-2 border-sage-mist pl-5 sm:ml-4 sm:space-y-8 sm:pl-8">
+                {g.list.map((m) => (
+                  <li key={m.id} className="relative">
+                    <span aria-hidden className="absolute -left-[27px] top-7 h-3.5 w-3.5 rounded-full border-[3px] border-paper bg-moss ring-1 ring-moss/30 sm:-left-[41px]" />
+                    <MemoryCard m={m} names={names} layout="row" />
+                  </li>
+                ))}
+              </ol>
             </section>
           ))}
         </div>

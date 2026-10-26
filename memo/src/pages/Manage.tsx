@@ -1,6 +1,6 @@
 import { useState, type FormEvent } from "react";
 import { Navigate, useNavigate } from "react-router-dom";
-import { Avatar, ConfirmButton, CopyField, Field, Loading, Notice, PageTitle, Submit } from "@/components/ui";
+import { Avatar, ConfirmButton, CopyField, Field, Loading, Notice, PageTitle, Submit, ErrorState } from "@/components/ui";
 import { useAsync, useFamily, useSession } from "@/lib/session";
 import { createInvite, deleteFamily, friendlyError, getFamily, leaveFamily, listInvites, listMembers, removeMember, revokeInvite, setRole, transferOwnership, updateFamily } from "@/lib/data";
 import { clearDemoData, seedDemoData } from "@/lib/demo";
@@ -26,7 +26,7 @@ export default function Manage() {
   }, [ctx.fid]);
   if (!ctx.isAdmin) return <Navigate to="/family" replace />;
   if (loading && !data) return <Loading />;
-  if (error || !data) return <Notice kind="error">{friendlyError(error)}</Notice>;
+  if (error || !data) return <ErrorState message={friendlyError(error)} onRetry={reload} />;
   const now = Date.now();
   const status = (i: Invite) => (i.acceptedBy ? "Đã nhận" : i.revoked ? "Đã thu hồi" : i.expiresAt.toMillis() < now ? "Hết hạn" : "Đang chờ");
   const run = async (key: string, fn: () => Promise<unknown>, ok?: string) => {
@@ -143,7 +143,7 @@ export default function Manage() {
         </div>
       </section>
 
-      <section aria-labelledby="nguy" className="rounded-2xl border border-[#dfc3b8] bg-[#fbf3ef] p-6"><h2 id="nguy" className="mb-3 text-[1.5rem]">Khu vực cần cẩn thận</h2>
+      <section aria-labelledby="nguy" className="rounded-2xl border border-danger-line bg-danger-bg/70 p-6"><h2 id="nguy" className="mb-3 text-[1.5rem]">Khu vực cần cẩn thận</h2>
         {progress && <div className="mb-3"><Notice>{progress}</Notice></div>}
         <div className="flex flex-wrap gap-3">
           {!ctx.isOwner && <ConfirmButton label="Rời gia đình" className="btn-danger" question="Rời khỏi gia đình này? Ký ức “chỉ mình tôi” của bạn ở đây sẽ bị xoá." confirmLabel="Rời gia đình"

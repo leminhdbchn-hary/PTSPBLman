@@ -15,6 +15,7 @@ import { EditPersonPage, MembersPage, NewPersonPage, PersonPage } from "@/pages/
 import TreePage from "@/pages/Tree";
 import { LettersPage } from "@/pages/Soon";
 import { NewStoryPage, StoriesPage } from "@/pages/Stories";
+import AlbumPage from "@/pages/Album";
 import Manage from "@/pages/Manage";
 import Settings from "@/pages/Settings";
 
@@ -25,7 +26,7 @@ function ScrollToTop() {
 }
 
 function SkipLink() {
-  return <a href="#noi-dung" className="sr-only focus:not-sr-only focus:fixed focus:left-3 focus:top-3 focus:z-50 focus:rounded-lg focus:bg-ink focus:px-4 focus:py-2 focus:text-warm">Bỏ qua, đến nội dung chính</a>;
+  return <a href="#noi-dung" className="sr-only focus:not-sr-only focus:fixed focus:left-3 focus:top-3 focus:z-50 focus:rounded-lg focus:bg-ink focus:px-4 focus:py-2 focus:text-white">Bỏ qua, đến nội dung chính</a>;
 }
 
 /** Trang cần đăng nhập (ngoài khu vực gia đình). */
@@ -72,6 +73,7 @@ function Shell() {
         <Route path="members/:id" element={<PersonPage />} />
         <Route path="members/:id/edit" element={<EditPersonPage />} />
         <Route path="tree" element={<TreePage />} />
+        <Route path="album" element={<AlbumPage />} />
         <Route path="stories" element={<StoriesPage />} />
         <Route path="stories/new" element={<NewStoryPage />} />
         <Route path="letters" element={<LettersPage />} />

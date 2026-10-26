@@ -12,10 +12,10 @@ Công nghệ: Vite + React 18 + TypeScript · Tailwind CSS · Firebase JS SDK 10
 |---|---|---|
 | `npm run typecheck` | TypeScript | sạch |
 | `npm run lint` | ESLint | sạch |
-| `npm test` | 10 nhóm test đơn vị (kiểm tra dữ liệu, gia phả, mã mời, sắp xếp) | đạt |
-| `npm run test:rules` | 35 bài kiểm tra **luật bảo mật** trên Firestore Emulator: cách ly hai gia đình, lời mời dùng một lần/hết hạn/thu hồi/khoá email, chống nâng quyền, ký ức riêng tư (kể cả chủ sở hữu không đọc được), ảnh theo quyền ký ức, ngày sinh riêng tư, gia phả, rời & xoá gia đình | 35/35 |
-| `RULES_FILE=firestore.deploy.rules …` | như trên, với **bản luật gộp** dùng khi deploy chung dự án với site Phòng (+2 bài kiểm tra site Phòng vẫn chạy như cũ) | 37/37 |
-| `npm run test:e2e` | 50 bước trên **trình duyệt thật** + Firebase Emulator: đăng ký → tạo gia đình → ký ức 2 ảnh → tìm kiếm/lọc → gia đình thứ hai tấn công bằng token thật qua API (bị chặn) → mời → phân quyền → bình luận → hồ sơ + ảnh đại diện → gia phả → dữ liệu mẫu → xoá ký ức → cài đặt/đổi mật khẩu → xuất JSON → rời gia đình → đăng xuất → quên mật khẩu → xoá tài khoản → xoá gia đình | 36/36 |
+| `npm test` | 13 test đơn vị (kiểm tra dữ liệu, gia phả, mã mời, sắp xếp, âm thanh) | 13/13 |
+| `npm run test:rules` | 45 bài kiểm tra **luật bảo mật** trên Firestore Emulator: cách ly hai gia đình, lời mời dùng một lần/hết hạn/thu hồi/khoá email, chống nâng quyền, ký ức riêng tư (kể cả chủ sở hữu không đọc được), ảnh theo quyền ký ức, ngày sinh riêng tư, gia phả, rời & xoá gia đình | 45/45 |
+| `RULES_FILE=firestore.deploy.rules …` | như trên, với **bản luật gộp** dùng khi deploy chung dự án với site Phòng (+2 bài kiểm tra site Phòng vẫn chạy như cũ) | 45/45 (gồm cả luật site Phòng) |
+| `npm run test:e2e` | 55 bước trên **trình duyệt thật** + Firebase Emulator: đăng ký → tạo gia đình → ký ức 2 ảnh → tìm kiếm/lọc → gia đình thứ hai tấn công bằng token thật qua API (bị chặn) → mời → phân quyền → bình luận → hồ sơ + ảnh đại diện → gia phả → dữ liệu mẫu → xoá ký ức → cài đặt/đổi mật khẩu → xuất JSON → rời gia đình → đăng xuất → quên mật khẩu → xoá tài khoản → xoá gia đình | 55/55 |
 
 Emulator dùng project `demo-memo` nên kiểm thử **không chạm** dự án thật. Cần Java (cho Firestore Emulator) và Chromium (biến `CHROME_PATH` nếu khác mặc định).
 
@@ -87,6 +87,7 @@ scripts/e2e.mjs           kiểm thử đầu-cuối bằng trình duyệt
 | Lời nhắn (kể cả người chỉ xem) | ✔ |
 | Dữ liệu mẫu, xuất JSON, đổi mật khẩu, **tự xoá tài khoản** | ✔ |
 | **Lời kể bằng giọng nói**: ghi âm ≤ 3 phút bằng micro trình duyệt (Chrome/Android: webm, Safari/iPhone: mp4), tạm dừng, nghe lại trước khi lưu, chọn người kể + câu hỏi gợi ý; lưu trong Firestore, chỉ tải âm thanh khi bấm Nghe | ✔ |
+| **Giao diện Memo (Warm Minimalism)**: nền kem, xanh sage, chữ Playfair Display + DM Sans; trang chủ có ảnh bìa + thống kê + kỷ niệm gần đây; album lưới theo năm, xem ảnh lớn (vuốt/phím mũi tên/Esc); timeline; trạng thái đang tải/trống/lỗi có nút Thử lại (mất mạng không bị nhầm là chưa có dữ liệu) | ✔ |
 | Thư gửi tương lai, xuất sách | ✘ chưa làm (có trang "sắp ra mắt") |
 
 Giới hạn cần biết:

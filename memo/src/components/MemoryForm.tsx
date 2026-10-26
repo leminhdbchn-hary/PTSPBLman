@@ -156,13 +156,13 @@ export function MemoryForm({ ctx, people, existing, photos = [] }: { ctx: Ctx & 
             {kept.map((p) => (
               <div key={p.id} className="relative aspect-square overflow-hidden rounded-xl border border-line bg-paper">
                 <img src={p.data} alt="Ảnh đã lưu" className="h-full w-full object-cover" />
-                <button type="button" onClick={() => setRemoved((r) => [...r, p.id])} className="absolute right-1 top-1 grid h-8 w-8 place-items-center rounded-full bg-ink/80 text-sm text-warm" aria-label="Gỡ ảnh này khỏi ký ức">✕</button>
+                <button type="button" onClick={() => setRemoved((r) => [...r, p.id])} className="absolute right-1 top-1 grid h-8 w-8 place-items-center rounded-full bg-ink/80 text-sm text-white" aria-label="Gỡ ảnh này khỏi ký ức">✕</button>
               </div>
             ))}
             {files.map((f) => (
               <div key={f.key} className="relative aspect-square overflow-hidden rounded-xl border border-line bg-paper">
                 <img src={f.preview} alt={`Ảnh sẽ tải lên: ${f.file.name}`} className="h-full w-full object-cover" />
-                <button type="button" onClick={() => { URL.revokeObjectURL(f.preview); setFiles((p) => p.filter((x) => x.key !== f.key)); }} className="absolute right-1 top-1 grid h-8 w-8 place-items-center rounded-full bg-ink/80 text-sm text-warm" aria-label="Bỏ ảnh này">✕</button>
+                <button type="button" onClick={() => { URL.revokeObjectURL(f.preview); setFiles((p) => p.filter((x) => x.key !== f.key)); }} className="absolute right-1 top-1 grid h-8 w-8 place-items-center rounded-full bg-ink/80 text-sm text-white" aria-label="Bỏ ảnh này">✕</button>
               </div>
             ))}
             {room > 0 && (
@@ -197,7 +197,7 @@ export function MemoryForm({ ctx, people, existing, photos = [] }: { ctx: Ctx & 
             {(Object.keys(VISIBILITY_LABEL) as Visibility[]).filter((v) => v !== "admins" || ctx.isAdmin || existing?.visibility === "admins").map((v) => (
               <label key={v} className="cursor-pointer">
                 <input type="radio" name="visibility" value={v} checked={visibility === v} onChange={() => setVisibility(v)} className="peer sr-only" />
-                <span className="flex items-center gap-3 rounded-xl border border-line bg-warm px-4 py-3 peer-checked:border-ink peer-checked:bg-[#efe9da] peer-focus-visible:outline peer-focus-visible:outline-[3px] peer-focus-visible:outline-moss">
+                <span className="flex items-center gap-3 rounded-xl border border-line bg-warm px-4 py-3 peer-checked:border-ink peer-checked:bg-sage-soft peer-focus-visible:outline peer-focus-visible:outline-[3px] peer-focus-visible:outline-moss">
                   <span aria-hidden className={`grid h-5 w-5 shrink-0 place-items-center rounded-full border-2 ${visibility === v ? "border-ink" : "border-stone/60"}`}>{visibility === v && <span className="h-2.5 w-2.5 rounded-full bg-ink" />}</span>
                   <span><span className="block font-medium">{VISIBILITY_LABEL[v]}</span><span className="block text-[14px] text-stone">{VIS_HELP[v]}</span></span>
                 </span>
@@ -224,7 +224,7 @@ export function MemoryForm({ ctx, people, existing, photos = [] }: { ctx: Ctx & 
                   const on = who.includes(p.id);
                   return (
                     <button key={p.id} type="button" aria-pressed={on} onClick={() => setWho(on ? who.filter((x) => x !== p.id) : [...who, p.id])}
-                      className={`tap rounded-full border px-4 text-[15px] ${on ? "border-ink bg-ink text-warm" : "border-line bg-paper text-ink"}`}>{p.fullName}</button>
+                      className={`tap rounded-full border px-4 text-[15px] ${on ? "border-sage bg-sage text-white" : "border-line bg-paper text-ink"}`}>{p.fullName}</button>
                   );
                 })}
               </div>
@@ -237,7 +237,7 @@ export function MemoryForm({ ctx, people, existing, photos = [] }: { ctx: Ctx & 
                 const on = tags.includes(t);
                 return (
                   <button key={t} type="button" aria-pressed={on} onClick={() => setTags(on ? tags.filter((x) => x !== t) : [...tags, t].slice(0, 8))}
-                    className={`tap rounded-full border px-4 text-[15px] ${on ? "border-ink bg-ink text-warm" : "border-line bg-paper text-ink"}`}>{t}</button>
+                    className={`tap rounded-full border px-4 text-[15px] ${on ? "border-sage bg-sage text-white" : "border-line bg-paper text-ink"}`}>{t}</button>
                 );
               })}
             </div>

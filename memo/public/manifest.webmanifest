@@ -4,8 +4,8 @@
   "lang": "vi",
   "start_url": "/family",
   "display": "standalone",
-  "background_color": "#F5F1E8",
-  "theme_color": "#F5F1E8",
+  "background_color": "#FBFAF7",
+  "theme_color": "#FBFAF7",
   "icons": [
     { "src": "/icon-192.png", "sizes": "192x192", "type": "image/png" },
     { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png" }

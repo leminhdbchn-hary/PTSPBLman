@@ -1,19 +1,20 @@
 import { useEffect, useState, type FormEvent } from "react";
 import { Link, Navigate, useNavigate, useParams } from "react-router-dom";
-import { Field, Loading, Logo, Notice, Submit } from "@/components/ui";
+import { ErrorState, Field, Loading, Logo, Notice, Submit } from "@/components/ui";
 import { useSession } from "@/lib/session";
 import { familySchema } from "@/lib/validation";
 import { acceptInvite, createFamily, friendlyError, previewInvite, type InvitePreview } from "@/lib/data";
 import { ROLE_LABEL } from "@/lib/types";
 
 export function OnboardingPage() {
-  const { fb, user, families, refresh, setActive, loading } = useSession();
+  const { fb, user, families, familiesError, refresh, setActive, loading } = useSession();
   const nav = useNavigate();
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState<string | null>(null);
   useEffect(() => { document.title = "Bắt đầu · Memo"; }, []);
   if (loading) return <Loading />;
   if (families.length) return <Navigate to="/family" replace />;
+  if (familiesError) return <div className="container-page py-16"><ErrorState message={familiesError} onRetry={() => { void refresh().catch(() => {}); }} /></div>;
   async function submit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
     const parsed = familySchema.safeParse({ name: new FormData(e.currentTarget).get("name") });

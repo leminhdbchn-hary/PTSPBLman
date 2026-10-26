@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { Link, Navigate, useNavigate } from "react-router-dom";
-import { Avatar, ConfirmButton, EmptyState, LinkBtn, Loading, Notice, PageTitle } from "@/components/ui";
+import { Avatar, ConfirmButton, EmptyState, LinkBtn, Loading, Notice, PageTitle, ErrorState } from "@/components/ui";
 import { AudioPlayer } from "@/components/AudioPlayer";
 import { useAsync, useFamily } from "@/lib/session";
 import { deleteStory, friendlyError, getStoryAudio, listPeople, listStories, saveStory } from "@/lib/data";
@@ -58,7 +58,7 @@ export function StoriesPage() {
   const [err, setErr] = useState<string | null>(null);
   const { data, loading, error, reload } = useAsync(() => listStories(ctx), [ctx.fid]);
   if (loading && !data) return <Loading />;
-  if (error || !data) return <Notice kind="error">{friendlyError(error)}</Notice>;
+  if (error || !data) return <ErrorState message={friendlyError(error)} onRetry={reload} />;
   return (
     <div className="mx-auto max-w-3xl">
       <PageTitle eyebrow="Giọng nói của người thân" title="Lời kể">
@@ -195,7 +195,7 @@ export function NewStoryPage() {
           <div className="-mx-1 flex gap-2 overflow-x-auto px-1 pb-2">
             {PROMPTS.map((p) => (
               <button key={p} type="button" aria-pressed={title === p} disabled={recording} onClick={() => setTitle(title === p ? "" : p)}
-                className={`tap shrink-0 whitespace-nowrap rounded-full border px-4 text-[15px] ${title === p ? "border-ink bg-ink text-warm" : "border-line bg-warm text-ink"}`}>{p}</button>
+                className={`tap shrink-0 whitespace-nowrap rounded-full border px-4 text-[15px] ${title === p ? "border-sage bg-sage text-white" : "border-line bg-warm text-ink"}`}>{p}</button>
             ))}
           </div>
         </section>
@@ -215,7 +215,7 @@ export function NewStoryPage() {
             <p className="text-[2.6rem] font-light tabular-nums" role="timer" aria-live="off" data-testid="timer">{formatDuration(elapsed)}<span className="text-[1.1rem] text-stone"> / {formatDuration(AUDIO.maxSeconds)}</span></p>
             {phase === "idle" && (
               <button type="button" onClick={start} aria-label="Bắt đầu ghi âm" disabled={!canStart}
-                className="grid h-24 w-24 place-items-center rounded-full bg-[#b3402a] text-warm shadow-lg active:scale-95 disabled:opacity-40">
+                className="grid h-24 w-24 place-items-center rounded-full bg-rec text-white shadow-lg active:scale-95 disabled:opacity-40">
                 <svg width="38" height="38" viewBox="0 0 24 24" fill="currentColor" aria-hidden><path d="M12 15a3.5 3.5 0 0 0 3.5-3.5v-6a3.5 3.5 0 0 0-7 0v6A3.5 3.5 0 0 0 12 15zm6-3.5a.9.9 0 0 0-1.8 0 4.2 4.2 0 0 1-8.4 0 .9.9 0 0 0-1.8 0 6 6 0 0 0 5.1 5.9V20H9.5a.9.9 0 0 0 0 1.8h5a.9.9 0 0 0 0-1.8h-1.9v-2.6a6 6 0 0 0 5.4-5.9z" /></svg>
               </button>
             )}
@@ -224,14 +224,14 @@ export function NewStoryPage() {
                 {phase === "recording"
                   ? <button type="button" className="btn-soft" onClick={pause}>⏸ Tạm dừng</button>
                   : <button type="button" className="btn-soft" onClick={resume}>● Ghi tiếp</button>}
-                <button type="button" onClick={() => stop()} aria-label="Dừng và nghe lại" className="grid h-20 w-20 place-items-center rounded-full bg-ink text-warm shadow-lg">
+                <button type="button" onClick={() => stop()} aria-label="Dừng và nghe lại" className="grid h-20 w-20 place-items-center rounded-full bg-ink text-white shadow-lg">
                   <span className="h-6 w-6 rounded-sm bg-warm" aria-hidden />
                 </button>
               </div>
             )}
             <p className="max-w-xs text-[15px] text-stone" role="status">
               {phase === "idle" && "Bấm nút đỏ để bắt đầu. Bạn nói gần micro, chỗ yên tĩnh sẽ rõ hơn."}
-              {phase === "recording" && <><span className="mr-1.5 inline-block h-2.5 w-2.5 animate-pulse rounded-full bg-[#b3402a]" aria-hidden />Đang ghi âm… bấm ô vuông để dừng.</>}
+              {phase === "recording" && <><span className="mr-1.5 inline-block h-2.5 w-2.5 animate-pulse rounded-full bg-rec" aria-hidden />Đang ghi âm… bấm ô vuông để dừng.</>}
               {phase === "paused" && "Đã tạm dừng. Bấm “Ghi tiếp” hoặc ô vuông để dừng."}
             </p>
           </>

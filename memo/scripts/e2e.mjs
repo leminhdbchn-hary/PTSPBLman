@@ -21,6 +21,7 @@ fs.mkdirSync(shotDir, { recursive: true });
 let pass = 0, fail = 0;
 const out = [];
 async function step(name, fn, page) {
+  if (process.env.E2E_STOP_BEFORE && name.includes(process.env.E2E_STOP_BEFORE)) { fs.writeFileSync("/tmp/e2e.hold", "1"); await new Promise((r) => setTimeout(r, 3600e3)); }
   try { await fn(); pass++; out.push("✔ " + name); }
   catch (e) {
     fail++;
@@ -632,6 +633,76 @@ async function main() {
     }, pa);
 
     // ---------- xoá ký ức ----------
+    // ---------- giao diện Memo UI: trang chủ, album, trạng thái, truy cập ----------
+    await step("TRANG CHỦ: hero, thống kê đúng số liệu thật (ký ức, ảnh), kỷ niệm gần đây, nhắc nhở cuối trang", async () => {
+      await go(pa, "/family");
+      await pa.waitForSelector("h1:has-text('Nhà An')");
+      await pa.waitForSelector("section[aria-label='Thống kê']");
+      const stats = await pa.$$eval("section[aria-label='Thống kê'] > div", (els) => els.map((e) => [e.querySelector("span")?.textContent, e.querySelector("strong")?.textContent]));
+      const get = (t) => Number(stats.find((x) => x[0] === t)?.[1]);
+      const mems = (await adminList(`nn_families/${famA}/memories`)).filter((m) => val(m, "createdBy") === "" || true).length;
+      ok(get("Ảnh trong album") === 2, "thống kê ảnh sai: " + JSON.stringify(stats));
+      ok(get("Kỷ niệm đã lưu") >= 3 && get("Kỷ niệm đã lưu") <= mems, "thống kê ký ức sai: " + JSON.stringify(stats));
+      ok(await pa.locator("h2:has-text('Mỗi ngày bên nhau')").isVisible(), "thiếu hero");
+      ok((await pa.locator("section[aria-labelledby='moi-nhat'] article").count()) >= 1, "thiếu kỷ niệm gần đây");
+      ok(await pa.locator("text=Gia đình là nơi mọi câu chuyện bắt đầu").isVisible(), "thiếu phần cuối trang");
+    }, pa);
+    await step("ALBUM: lưới ảnh theo năm → bấm xem ảnh lớn (ảnh nhỏ hiện ngay, ảnh đầy đủ thay vào) → phím mũi tên/Esc → Mở ký ức", async () => {
+      await go(pa, "/family/album");
+      await pa.waitForSelector("ul li button[aria-label^='Xem ảnh lớn']");
+      const n = await pa.locator("ul li button[aria-label^='Xem ảnh lớn']").count();
+      await pa.click("ul li button[aria-label^='Xem ảnh lớn'] >> nth=0");
+      await pa.waitForSelector("[role=dialog]");
+      await pa.waitForFunction(() => { const i = document.querySelector("[role=dialog] img"); return i && i.complete && i.naturalWidth > 0 && i.src.startsWith("data:image/"); }, null, { timeout: 15000 });
+      ok((await pa.locator(`[role=dialog] p:has-text('1 / ${n}')`).count()) === 1, "thiếu bộ đếm");
+      if (n > 1) { await pa.keyboard.press("ArrowRight"); await pa.waitForSelector(`[role=dialog] p:has-text('2 / ${n}')`); }
+      await pa.keyboard.press("Escape");
+      await pa.waitForSelector("[role=dialog]", { state: "detached" });
+      await pa.click("ul li button[aria-label^='Xem ảnh lớn'] >> nth=0");
+      await pa.click("[role=dialog] a:has-text('Mở ký ức')");
+      await pa.waitForURL(/\/family\/memories\/[A-Za-z0-9]{20}$/);
+    }, pa);
+    await step("TRẠNG THÁI TRỐNG: gia đình chưa có ảnh → album báo trống và mời thêm ký ức", async () => {
+      await go(pc, "/family/album");
+      await pc.waitForSelector("text=Album chưa có ảnh");
+      ok((await pc.locator("a:has-text('Thêm ký ức có ảnh')").count()) === 1, "thiếu nút thêm");
+    }, pc);
+    await step("TRẠNG THÁI LỖI: mất kết nối Firestore → hiện thông báo + nút Thử lại (không đẩy sang màn tạo gia đình); có mạng lại thì Thử lại vào được", async () => {
+      const ctxE = await browser.newContext({ viewport: { width: 1100, height: 900 } });
+      const pe = await ctxE.newPage();
+      await login(pe, "an@example.com"); await pe.waitForURL(/\/family$/);
+      await pe.waitForSelector("h1:has-text('Nhà An')");
+      await ctxE.route(/:8080\//, (r) => r.abort());
+      await pe.reload();
+      await pe.waitForSelector("text=Chưa mở được trang này", { timeout: 60000 });
+      ok(!/\/onboarding/.test(pe.url()), "bị đẩy sang màn tạo gia đình khi mất mạng: " + pe.url());
+      ok((await pe.locator("button:has-text('Thử lại')").count()) === 1, "thiếu nút Thử lại");
+      await ctxE.unroute(/:8080\//);
+      await pe.click("button:has-text('Thử lại')");
+      await pe.waitForSelector("h1:has-text('Nhà An')", { timeout: 30000 });
+      await ctxE.close();
+    }, pa);
+    await step("TRUY CẬP: mỗi trang chính có đúng 1 tiêu đề h1, vùng main, mọi ảnh có alt, mọi nút/liên kết/ô nhập có tên", async () => {
+      const bad = [];
+      for (const path of ["/family", "/family/memories", "/family/album", "/family/members", "/family/tree", "/family/stories", "/family/stories/new", "/family/memories/new", "/family/manage", "/settings"]) {
+        await go(pa, path);
+        await pa.waitForSelector("h1");
+        await pa.waitForTimeout(300);
+        const r = await pa.evaluate(() => {
+          const name = (e) => (e.getAttribute("aria-label") || e.textContent || e.getAttribute("title") || e.getAttribute("placeholder") || "").trim() || (e.id && document.querySelector(`label[for="${e.id}"]`)?.textContent?.trim()) || (e.closest("label")?.textContent?.trim()) || e.getAttribute("aria-labelledby");
+          const vis = (e) => { const b = e.getBoundingClientRect(); return b.width > 0 && b.height > 0 && getComputedStyle(e).visibility !== "hidden"; };
+          return {
+            h1: [...document.querySelectorAll("h1")].filter(vis).length,
+            main: document.querySelectorAll("main").length,
+            noAlt: [...document.querySelectorAll("img")].filter((i) => !i.hasAttribute("alt")).length,
+            noName: [...document.querySelectorAll("a, button, input:not([type=hidden]), select, textarea, summary")].filter((e) => vis(e) || e.classList.contains("sr-only")).filter((e) => !name(e)).map((e) => e.tagName + "." + String(e.className).slice(0, 30)).slice(0, 3),
+          };
+        });
+        if (r.h1 !== 1 || r.main !== 1 || r.noAlt || r.noName.length) bad.push(path + " " + JSON.stringify(r));
+      }
+      ok(!bad.length, "vấn đề truy cập: " + bad.join(" | "));
+    }, pa);
+
     await step("xoá ký ức (xác nhận hai bước) → ảnh và lời nhắn cũng bị xoá", async () => {
       await go(pa, `/family/memories/${memAId}`);
       await pa.click("button:has-text('Xoá ký ức')");

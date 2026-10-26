@@ -1,6 +1,6 @@
 import { useState, type FormEvent } from "react";
 import { Link } from "react-router-dom";
-import { Avatar, ConfirmButton, EmptyState, LinkBtn, Loading, Notice, PageTitle, Submit } from "@/components/ui";
+import { Avatar, ConfirmButton, EmptyState, LinkBtn, Loading, Notice, PageTitle, Submit, ErrorState } from "@/components/ui";
 import { useAsync, useFamily } from "@/lib/session";
 import { addRelationship, deleteRelationship, friendlyError, listPeople, listRelationships } from "@/lib/data";
 import { layoutTree } from "@/lib/tree";
@@ -14,7 +14,7 @@ export default function TreePage() {
     return { people, rels };
   }, [ctx.fid]);
   if (loading && !data) return <Loading />;
-  if (error || !data) return <Notice kind="error">{friendlyError(error)}</Notice>;
+  if (error || !data) return <ErrorState message={friendlyError(error)} onRetry={reload} />;
   const { people, rels } = data;
   const { generations, orphans } = layoutTree(people, rels);
   const byId = new Map(people.map((p) => [p.id, p]));

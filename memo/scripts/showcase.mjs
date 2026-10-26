@@ -27,7 +27,9 @@ try {
   await p.goto(APP + "/family/manage"); await p.click("button:has-text('Thêm dữ liệu mẫu')"); await p.waitForURL(/\/family\/memories$/, { timeout: 30000 }); await p.waitForSelector("article");
   await shot("02-dong-thoi-gian");
   await p.click("article a"); await p.waitForSelector("h1"); await shot("03-chi-tiet-ky-uc");
-  await p.goto(APP + "/family"); await p.waitForSelector("article"); await shot("04-tong-quan", false);
+  await p.goto(APP + "/family"); await p.waitForSelector("article"); await p.waitForTimeout(800); await shot("04-tong-quan", true);
+  await p.goto(APP + "/family/album"); await p.waitForSelector("ul li button"); await shot("04b-album");
+  await p.click("ul li button"); await p.waitForSelector("[role=dialog]"); await shot("04c-xem-anh-lon", false); await p.keyboard.press("Escape");
   await p.goto(APP + "/family/tree"); await p.waitForSelector("text=Thế hệ thứ 3"); await shot("05-gia-pha");
   await p.goto(APP + "/family/manage"); await p.waitForSelector("text=Mời người thân"); await shot("06-quan-ly");
   const m = await (await b.newContext({ viewport: { width: 390, height: 820 }, deviceScaleFactor: 2 })).newPage();

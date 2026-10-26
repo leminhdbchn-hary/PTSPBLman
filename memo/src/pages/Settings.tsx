@@ -135,7 +135,7 @@ export default function Settings() {
           </section>
         )}
 
-        <section aria-labelledby="xoa-tk" className="rounded-2xl border border-[#dfc3b8] bg-[#fbf3ef] p-6">
+        <section aria-labelledby="xoa-tk" className="rounded-2xl border border-danger-line bg-danger-bg/70 p-6">
           <h2 id="xoa-tk" className="mb-3 text-[1.5rem]">Xoá tài khoản</h2>
           <p className="mb-5 text-[16px]">Tài khoản bị xoá ngay và không khôi phục được. Ký ức “chỉ mình tôi” của bạn bị xoá; ký ức chia sẻ với gia đình vẫn được giữ lại cho mọi người. Nếu bạn là chủ sở hữu một gia đình còn người khác, hãy chuyển quyền trước; gia đình chỉ có mình bạn sẽ bị xoá luôn.</p>
           <form onSubmit={removeAccount} className="space-y-4">

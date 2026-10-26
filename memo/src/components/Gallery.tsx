@@ -25,20 +25,20 @@ export function Gallery({ images, title }: { images: Img[]; title: string }) {
     <>
       <div className="space-y-3">
         <button type="button" onClick={() => setOpen(0)} className="block w-full overflow-hidden rounded-2xl" aria-label={`Xem ảnh lớn: ${title}`}>
-          <img src={first.url} alt={first.caption || title} className="max-h-[70dvh] w-full object-cover" loading="eager" />
+          <img src={first.url} alt={first.caption || title} className="max-h-[70dvh] w-full rounded-3xl object-cover" loading="eager" decoding="async" />
         </button>
         {rest.length > 0 && (
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
             {rest.map((im, i) => (
               <button type="button" key={i} onClick={() => setOpen(i + 1)} className="overflow-hidden rounded-xl" aria-label={`Xem ảnh ${i + 2} trên ${images.length}`}>
-                <img src={im.url} alt={im.caption || `${title} — ảnh ${i + 2}`} className="aspect-[4/3] w-full object-cover" loading="lazy" />
+                <img src={im.url} alt={im.caption || `${title} — ảnh ${i + 2}`} className="aspect-[4/3] w-full object-cover" loading="lazy" decoding="async" />
               </button>
             ))}
           </div>
         )}
       </div>
       {open !== null && (
-        <div role="dialog" aria-modal="true" aria-label="Xem ảnh lớn" className="fixed inset-0 z-50 flex items-center justify-center bg-[#1c1712]/95 p-4" onClick={() => setOpen(null)}
+        <div role="dialog" aria-modal="true" aria-label="Xem ảnh lớn" className="fixed inset-0 z-50 flex items-center justify-center bg-ink/95 p-4" onClick={() => setOpen(null)}
           onTouchStart={(e) => { touch.current = e.touches[0].clientX; }}
           onTouchEnd={(e) => { const x0 = touch.current; touch.current = null; if (x0 === null || images.length < 2) return; const dx = e.changedTouches[0].clientX - x0; if (Math.abs(dx) > 50) setOpen((i) => (i === null ? i : (i + (dx < 0 ? 1 : images.length - 1)) % images.length)); }}>
           <img src={images[open].url} alt={images[open].caption || title} className="max-h-[88dvh] max-w-full rounded-lg object-contain" onClick={(e) => e.stopPropagation()} />

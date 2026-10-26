@@ -1,6 +1,6 @@
 import { useState, type FormEvent } from "react";
 import { Link, Navigate, useNavigate, useParams } from "react-router-dom";
-import { ConfirmButton, LinkBtn, Loading, Notice, PageTitle, Submit } from "@/components/ui";
+import { ConfirmButton, LinkBtn, Loading, Notice, PageTitle, Submit, ErrorState } from "@/components/ui";
 import { Gallery } from "@/components/Gallery";
 import { MemoryCard } from "@/components/MemoryCard";
 import { MemoryForm } from "@/components/MemoryForm";
@@ -26,12 +26,12 @@ export function NewMemoryPage() {
 export function EditMemoryPage() {
   const { id = "" } = useParams();
   const ctx = useFamily();
-  const { data, loading, error } = useAsync(async () => {
+  const { data, loading, error, reload } = useAsync(async () => {
     const m = await getMemory(ctx, id);
     return { m, photos: m ? await getPhotos(ctx, m) : [], people: await listPeople(ctx) };
   }, [ctx.fid, id]);
   if (loading) return <Loading />;
-  if (error) return <Notice kind="error">{friendlyError(error)}</Notice>;
+  if (error) return <ErrorState message={friendlyError(error)} onRetry={reload} />;
   if (!data?.m) return <NotFound inside />;
   const canEdit = (ctx.canWrite && data.m.createdBy === ctx.user.uid) || (ctx.isAdmin && data.m.visibility !== "private");
   if (!canEdit) return <Navigate to={`/family/memories/${id}`} replace />;
@@ -67,7 +67,7 @@ export function MemoryDetailPage() {
     return { m, photos, people, comments, related: related(all, m), older: idx >= 0 ? all[idx + 1] ?? null : null, newer: idx > 0 ? all[idx - 1] : null };
   }, [ctx.fid, id]);
   if (loading && !data) return <Loading />;
-  if (error) return <Notice kind="error">{friendlyError(error)}</Notice>;
+  if (error) return <ErrorState message={friendlyError(error)} onRetry={reload} />;
   if (!data) return <NotFound inside />;
   const { m, photos, people, comments } = data;
   const names = new Map(people.map((p) => [p.id, p.fullName]));
@@ -105,7 +105,7 @@ export function MemoryDetailPage() {
 
       {(m.personIds.length > 0 || m.tags.length > 0) && (
         <div className="mt-8 flex flex-wrap gap-2 text-[14.5px]">
-          {m.personIds.filter((p) => names.has(p)).map((p) => <Link key={p} to={`/family/members/${p}`} className="inline-flex min-h-[40px] items-center rounded-full bg-[#e9e3d3] px-3.5 text-ink no-underline hover:bg-line">{names.get(p)}</Link>)}
+          {m.personIds.filter((p) => names.has(p)).map((p) => <Link key={p} to={`/family/members/${p}`} className="inline-flex min-h-[40px] items-center rounded-full bg-cream px-3.5 text-ink no-underline hover:bg-line">{names.get(p)}</Link>)}
           {m.tags.map((t) => <Link key={t} to={`/family/memories?tag=${encodeURIComponent(t)}`} className="inline-flex min-h-[40px] items-center rounded-full border border-line px-3.5 text-stone no-underline hover:border-stone">{t}</Link>)}
         </div>
       )}

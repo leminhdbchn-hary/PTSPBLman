@@ -2,7 +2,7 @@
 // Quyền thật sự được kiểm tra bởi firestore.rules; các kiểm tra ở đây chỉ để báo lỗi sớm và dễ hiểu.
 import {
   collection, collectionGroup, deleteDoc, doc, getDoc, getDocs, query, serverTimestamp, setDoc, Timestamp, updateDoc, where, writeBatch,
-  type DocumentData, type Firestore, type QueryDocumentSnapshot,
+  type DocumentData, type Firestore, type Query, type QueryDocumentSnapshot, type QuerySnapshot,
 } from "firebase/firestore";
 import type { Comment, Family, FamilyRole, Invite, Member, Memory, MyFamily, Person, Photo, Relationship, Story, Visibility } from "./types";
 import type { MemoryInput, PersonInput } from "./validation";
@@ -15,9 +15,27 @@ export const canWrite = (r: FamilyRole) => r !== "viewer";
 export const isAdmin = (r: FamilyRole) => r === "owner" || r === "admin";
 
 const F = "nn_families";
+
+/**
+ * getDocs có kiểm tra "đã hỏi được máy chủ chưa". Khi mất mạng, Firestore không báo lỗi mà trả về kết quả rỗng lấy từ bộ nhớ đệm;
+ * nếu coi đó là thật thì app sẽ tưởng chưa có ký ức/gia đình nào (nguy hiểm: người dùng có thể tạo trùng gia đình).
+ */
+async function docsFresh(q: Query<DocumentData>): Promise<QuerySnapshot<DocumentData>> {
+  const snap = await getDocs(q);
+  if (snap.metadata.fromCache) throw Object.assign(new Error("offline"), { code: "unavailable" });
+  return snap;
+}
 const fam = (db: Firestore, fid: string) => doc(db, F, fid);
 const sub = (db: Firestore, fid: string, name: string) => collection(db, F, fid, name);
 const withId = <T>(s: QueryDocumentSnapshot<DocumentData> | { id: string; data(): DocumentData | undefined }) => ({ id: s.id, ...(s.data() as object) }) as T;
+
+/** Chờ tối đa `ms` mili-giây: mạng chập chờn thì báo lỗi rõ ràng thay vì quay vòng mãi. */
+export function withTimeout<T>(p: Promise<T>, ms = 20000): Promise<T> {
+  return new Promise<T>((res, rej) => {
+    const t = setTimeout(() => rej(Object.assign(new Error("timeout"), { code: "timeout" })), ms);
+    p.then((v) => { clearTimeout(t); res(v); }, (e) => { clearTimeout(t); rej(e); });
+  });
+}
 
 /** Lỗi mang thông báo tiếng Việt để hiển thị thẳng cho người dùng. */
 export class UserError extends Error {}
@@ -29,6 +47,7 @@ export function friendlyError(e: unknown, fallback = "Có lỗi xảy ra, bạn 
   const map: Record<string, string> = {
     "permission-denied": "Bạn không có quyền thực hiện thao tác này.",
     "unavailable": "Không kết nối được máy chủ. Bạn kiểm tra mạng rồi thử lại nhé.",
+    "timeout": "Kết nối đang chậm hoặc bị gián đoạn. Bạn kiểm tra mạng rồi thử lại nhé.",
     "not-found": "Không tìm thấy dữ liệu.",
     "auth/invalid-credential": "Email hoặc mật khẩu chưa đúng.",
     "auth/wrong-password": "Email hoặc mật khẩu chưa đúng.",
@@ -60,7 +79,7 @@ export async function createFamily(db: Firestore, user: User, name: string, desc
 
 /** Mỗi thành viên có tài khoản có một hồ sơ trong gia phả (tạo một lần). */
 export async function ensureSelfPerson(db: Firestore, fid: string, user: User) {
-  const snap = await getDocs(query(sub(db, fid, "people"), where("userId", "==", user.uid)));
+  const snap = await docsFresh(query(sub(db, fid, "people"), where("userId", "==", user.uid)));
   if (!snap.empty) return;
   await setDoc(doc(sub(db, fid, "people")), {
     fullName: user.name, relationLabel: null, birthDate: null, birthDateVisible: false, bio: null, avatar: null,
@@ -69,7 +88,7 @@ export async function ensureSelfPerson(db: Firestore, fid: string, user: User) {
 }
 
 export async function listMyFamilies(db: Firestore, uid: string): Promise<MyFamily[]> {
-  const snap = await getDocs(query(collectionGroup(db, "members"), where("uid", "==", uid)));
+  const snap = await docsFresh(query(collectionGroup(db, "members"), where("uid", "==", uid)));
   const out: MyFamily[] = [];
   for (const m of snap.docs) {
     const fid = m.ref.parent.parent?.id;
@@ -92,7 +111,7 @@ export async function updateFamily(ctx: Ctx, name: string, description: string |
 }
 
 export async function listMembers(ctx: Ctx): Promise<Member[]> {
-  const s = await getDocs(sub(ctx.db, ctx.fid, "members"));
+  const s = await docsFresh(sub(ctx.db, ctx.fid, "members"));
   const order: FamilyRole[] = ["owner", "admin", "contributor", "viewer"];
   return s.docs.map((d) => d.data() as Member).sort((a, b) => order.indexOf(a.role) - order.indexOf(b.role) || a.name.localeCompare(b.name, "vi"));
 }
@@ -116,7 +135,7 @@ export async function transferOwnership(ctx: Ctx, newOwner: string) {
 /** Rời gia đình. Ký ức riêng tư của mình trong gia đình này bị xoá luôn (không ai khác đọc được chúng). */
 export async function leaveFamily(ctx: Ctx) {
   if (ctx.role === "owner") throw new UserError("Chủ sở hữu cần chuyển quyền cho người khác trước khi rời gia đình (hoặc xoá cả gia đình).");
-  const mine = await getDocs(query(sub(ctx.db, ctx.fid, "memories"), where("createdBy", "==", ctx.user.uid), where("visibility", "==", "private")));
+  const mine = await docsFresh(query(sub(ctx.db, ctx.fid, "memories"), where("createdBy", "==", ctx.user.uid), where("visibility", "==", "private")));
   for (const m of mine.docs) await deleteMemory(ctx, withId<Memory>(m));
   await deleteDoc(doc(ctx.db, F, ctx.fid, "members", ctx.user.uid));
 }
@@ -134,21 +153,21 @@ export async function deleteFamily(ctx: Ctx, onProgress?: (msg: string) => void)
     }
   };
   onProgress?.("Đang mời mọi người ra khỏi gia đình…");
-  const members = await getDocs(sub(db, fid, "members"));
+  const members = await docsFresh(sub(db, fid, "members"));
   await del(members.docs.filter((d) => d.id !== ctx.user.uid).map((d) => d.ref));
   onProgress?.("Đang xoá ký ức và ảnh…");
-  const reg = await getDocs(sub(db, fid, "registry"));
+  const reg = await docsFresh(sub(db, fid, "registry"));
   const paths = reg.docs.map((d) => String(d.data().path));
   // bình luận → ảnh → ký ức (thứ tự không quan trọng với quyền, chỉ để gọn)
   const rank = (p: string) => (p.includes("/comments/") ? 0 : /\/(photos|stories|storyAudio)\//.test(p) ? 1 : 2);
   await del(paths.sort((a, b) => rank(a) - rank(b)).map((path) => ({ path })));
   await del(reg.docs.map((d) => d.ref));
   onProgress?.("Đang xoá hồ sơ, gia phả và lời mời…");
-  const people = await getDocs(sub(db, fid, "people"));
+  const people = await docsFresh(sub(db, fid, "people"));
   await del(people.docs.map((d) => ({ path: `${F}/${fid}/peoplePrivate/${d.id}` })));
   await del(people.docs.map((d) => d.ref));
-  await del((await getDocs(sub(db, fid, "relationships"))).docs.map((d) => d.ref));
-  await del((await getDocs(sub(db, fid, "invites"))).docs.map((d) => d.ref));
+  await del((await docsFresh(sub(db, fid, "relationships"))).docs.map((d) => d.ref));
+  await del((await docsFresh(sub(db, fid, "invites"))).docs.map((d) => d.ref));
   await deleteDoc(doc(db, F, fid, "members", ctx.user.uid));
   await deleteDoc(fam(db, fid));
 }
@@ -169,7 +188,7 @@ export async function createInvite(ctx: Ctx, familyName: string, input: { email:
 }
 
 export async function listInvites(ctx: Ctx): Promise<Invite[]> {
-  const s = await getDocs(sub(ctx.db, ctx.fid, "invites"));
+  const s = await docsFresh(sub(ctx.db, ctx.fid, "invites"));
   return s.docs.map((d) => withId<Invite>(d)).sort((a, b) => (b.createdAt?.toMillis() ?? 0) - (a.createdAt?.toMillis() ?? 0));
 }
 
@@ -213,7 +232,7 @@ export async function listMemories(ctx: Ctx): Promise<Memory[]> {
   const c = sub(ctx.db, ctx.fid, "memories");
   const qs = [query(c, where("visibility", "==", "family")), query(c, where("createdBy", "==", ctx.user.uid))];
   if (isAdmin(ctx.role)) qs.push(query(c, where("visibility", "==", "admins")));
-  const snaps = await Promise.all(qs.map((q) => getDocs(q)));
+  const snaps = await Promise.all(qs.map((q) => docsFresh(q)));
   const map = new Map<string, Memory>();
   for (const s of snaps) for (const d of s.docs) map.set(d.id, withId<Memory>(d));
   return sortMemories([...map.values()]);
@@ -291,7 +310,7 @@ export async function deletePhoto(ctx: Ctx, photoId: string) {
 
 async function dropRegistry(ctx: Ctx, path: string) {
   try {
-    const s = await getDocs(query(sub(ctx.db, ctx.fid, "registry"), where("createdBy", "==", ctx.user.uid), where("path", "==", path)));
+    const s = await docsFresh(query(sub(ctx.db, ctx.fid, "registry"), where("createdBy", "==", ctx.user.uid), where("path", "==", path)));
     for (const d of s.docs) await deleteDoc(d.ref);
   } catch { /* chỉ là sổ đăng ký, không ảnh hưởng dữ liệu */ }
 }
@@ -299,15 +318,15 @@ async function dropRegistry(ctx: Ctx, path: string) {
 export async function deleteMemory(ctx: Ctx, m: Memory) {
   const { db, fid } = ctx;
   for (const pid of m.photoIds) await deleteDoc(doc(db, F, fid, "photos", pid)).catch(() => {});
-  const comments = await getDocs(collection(db, F, fid, "memories", m.id, "comments")).catch(() => null);
+  const comments = await docsFresh(collection(db, F, fid, "memories", m.id, "comments")).catch(() => null);
   for (const c of comments?.docs ?? []) await deleteDoc(c.ref).catch(() => {});
   await deleteDoc(doc(db, F, fid, "memories", m.id));
-  const mine = await getDocs(query(sub(db, fid, "registry"), where("createdBy", "==", ctx.user.uid))).catch(() => null);
+  const mine = await docsFresh(query(sub(db, fid, "registry"), where("createdBy", "==", ctx.user.uid))).catch(() => null);
   for (const r of mine?.docs ?? []) if (String(r.data().path).includes(m.id) || m.photoIds.some((p) => String(r.data().path).endsWith(p))) await deleteDoc(r.ref).catch(() => {});
 }
 
 export async function listComments(ctx: Ctx, memoryId: string): Promise<Comment[]> {
-  const s = await getDocs(collection(ctx.db, F, ctx.fid, "memories", memoryId, "comments"));
+  const s = await docsFresh(collection(ctx.db, F, ctx.fid, "memories", memoryId, "comments"));
   return s.docs.map((d) => withId<Comment>(d)).sort((a, b) => (a.createdAt?.toMillis() ?? Date.now()) - (b.createdAt?.toMillis() ?? Date.now()));
 }
 
@@ -327,7 +346,7 @@ export async function deleteComment(ctx: Ctx, memoryId: string, id: string) {
 // ============================== lời kể (ghi âm) ==============================
 
 export async function listStories(ctx: Ctx): Promise<Story[]> {
-  const s = await getDocs(sub(ctx.db, ctx.fid, "stories"));
+  const s = await docsFresh(sub(ctx.db, ctx.fid, "stories"));
   return s.docs.map((d) => withId<Story>(d)).sort((a, b) => (b.createdAt?.toMillis() ?? Date.now()) - (a.createdAt?.toMillis() ?? Date.now()));
 }
 
@@ -363,7 +382,7 @@ export async function deleteStory(ctx: Ctx, id: string) {
 // ============================== hồ sơ & gia phả ==============================
 
 export async function listPeople(ctx: Ctx): Promise<Person[]> {
-  const s = await getDocs(sub(ctx.db, ctx.fid, "people"));
+  const s = await docsFresh(sub(ctx.db, ctx.fid, "people"));
   return s.docs.map((d) => withId<Person>(d)).sort((a, b) => a.fullName.localeCompare(b.fullName, "vi"));
 }
 
@@ -405,7 +424,7 @@ export async function deletePerson(ctx: Ctx, p: Person) {
 }
 
 export async function listRelationships(ctx: Ctx): Promise<Relationship[]> {
-  const s = await getDocs(sub(ctx.db, ctx.fid, "relationships"));
+  const s = await docsFresh(sub(ctx.db, ctx.fid, "relationships"));
   return s.docs.map((d) => withId<Relationship>(d));
 }
 
@@ -429,7 +448,7 @@ export async function saveProfile(db: Firestore, user: User, fullName: string, b
   const fams = await listMyFamilies(db, user.uid);
   for (const f of fams) {
     await updateDoc(doc(db, F, f.id, "members", user.uid), { name: fullName }).catch(() => {});
-    const ps = await getDocs(query(sub(db, f.id, "people"), where("userId", "==", user.uid))).catch(() => null);
+    const ps = await docsFresh(query(sub(db, f.id, "people"), where("userId", "==", user.uid))).catch(() => null);
     for (const p of ps?.docs ?? []) await updateDoc(p.ref, { fullName, updatedAt: serverTimestamp() }).catch(() => {});
   }
 }
@@ -442,7 +461,7 @@ export async function cleanupBeforeAccountDeletion(db: Firestore, user: User) {
   const fams = await listMyFamilies(db, user.uid);
   for (const f of fams) {
     if (f.role !== "owner") continue;
-    const members = await getDocs(sub(db, f.id, "members"));
+    const members = await docsFresh(sub(db, f.id, "members"));
     if (members.size > 1) throw new UserError(`Bạn đang là chủ sở hữu “${f.name}”. Hãy chuyển quyền cho người khác trước khi xoá tài khoản.`);
   }
   for (const f of fams) {

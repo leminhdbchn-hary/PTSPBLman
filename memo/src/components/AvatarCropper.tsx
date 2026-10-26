@@ -132,14 +132,14 @@ export function AvatarCropper({ file, onCancel, onDone }: { file: File; onCancel
         <h2 id="crop-title" className="text-[1.4rem]">Cắt ảnh đại diện</h2>
         <p className="mt-1 text-[15px] text-stone">Kéo ảnh để đặt khuôn mặt vào giữa vòng tròn. Dùng thanh trượt hoặc chụm hai ngón để phóng to.</p>
         {err ? (
-          <div className="mt-5 space-y-4"><div role="alert" className="rounded-xl border border-[#e2b9ab] bg-[#fbeee8] px-4 py-3 text-[15.5px] text-[#7d3220]">{err}</div><button type="button" className="btn-soft w-full" onClick={onCancel}>Đóng</button></div>
+          <div className="mt-5 space-y-4"><div role="alert" className="rounded-xl border border-danger-line bg-danger-bg px-4 py-3 text-[15.5px] text-danger-deep">{err}</div><button type="button" className="btn-soft w-full" onClick={onCancel}>Đóng</button></div>
         ) : !src || !imgUrl ? (
           <p className="py-16 text-center text-stone" role="status">Đang mở ảnh…</p>
         ) : (
           <>
             <div
               ref={box} tabIndex={0} role="img" aria-label="Khung cắt ảnh. Dùng phím mũi tên để di chuyển, dấu cộng trừ để phóng to"
-              className="relative mx-auto mt-5 touch-none select-none overflow-hidden rounded-2xl bg-[#d9d2c4] outline-offset-4"
+              className="relative mx-auto mt-5 touch-none select-none overflow-hidden rounded-2xl bg-sage-mist outline-offset-4"
               style={{ width: view, height: view, cursor: "grab" }}
               onPointerDown={onDown} onPointerMove={onMove} onPointerUp={onUp} onPointerCancel={onUp} onKeyDown={onKey} data-testid="crop-box"
             >

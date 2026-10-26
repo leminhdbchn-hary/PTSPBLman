@@ -1,6 +1,6 @@
 import { useRef, useState, type FormEvent } from "react";
 import { Link, Navigate, useNavigate, useParams, useSearchParams } from "react-router-dom";
-import { Avatar, ConfirmButton, EmptyState, Field, LinkBtn, Loading, Notice, PageTitle } from "@/components/ui";
+import { Avatar, ConfirmButton, EmptyState, Field, LinkBtn, Loading, Notice, PageTitle, ErrorState } from "@/components/ui";
 import { MemoryCard } from "@/components/MemoryCard";
 import NotFound from "./NotFound";
 import { useAsync, useFamily } from "@/lib/session";
@@ -14,9 +14,9 @@ import { formatDate } from "@/lib/utils";
 export function MembersPage() {
   const ctx = useFamily();
   const [sp] = useSearchParams();
-  const { data, loading, error } = useAsync(() => listPeople(ctx), [ctx.fid]);
+  const { data, loading, error, reload } = useAsync(() => listPeople(ctx), [ctx.fid]);
   if (loading) return <Loading />;
-  if (error || !data) return <Notice kind="error">{friendlyError(error)}</Notice>;
+  if (error || !data) return <ErrorState message={friendlyError(error)} onRetry={reload} />;
   return (
     <>
       <PageTitle eyebrow="Gia đình" title="Những người thân yêu">{ctx.canWrite && <LinkBtn to="/family/members/new">Thêm hồ sơ</LinkBtn>}</PageTitle>
@@ -47,14 +47,14 @@ export function PersonPage() {
   const ctx = useFamily();
   const nav = useNavigate();
   const [err, setErr] = useState<string | null>(null);
-  const { data, loading, error } = useAsync(async () => {
+  const { data, loading, error, reload } = useAsync(async () => {
     const p = await getPerson(ctx, id);
     if (!p) return null;
     const [people, memories, privateBirth] = await Promise.all([listPeople(ctx), listMemories(ctx), getPrivateBirthDate(ctx, id)]);
     return { p, people, memories: memories.filter((m) => m.personIds.includes(id)), privateBirth };
   }, [ctx.fid, id]);
   if (loading) return <Loading />;
-  if (error) return <Notice kind="error">{friendlyError(error)}</Notice>;
+  if (error) return <ErrorState message={friendlyError(error)} onRetry={reload} />;
   if (!data) return <NotFound inside />;
   const { p } = data;
   const names = new Map(data.people.map((x) => [x.id, x.fullName]));

@@ -45,6 +45,9 @@ try {
   await p.goto(APP + "/family/manage"); await p.click("button:has-text('Thêm dữ liệu mẫu')"); await p.waitForURL(/\/family\/memories$/, { timeout: 30000 }); await p.waitForSelector("article");
   await check("05-dong-thoi-gian");
   await p.goto(APP + "/family"); await p.waitForSelector("article"); await check("06-tong-quan");
+  await p.goto(APP + "/family/album"); await p.waitForSelector("ul li button"); await check("06b-album");
+  await p.click("ul li button"); await p.waitForSelector("[role=dialog]"); await p.waitForTimeout(400); await p.screenshot({ path: path.join(outDir, "06c-xem-anh.png") }); await p.keyboard.press("Escape");
+  await p.goto(APP + "/family/stories"); await check("06d-loi-ke");
   await p.click("article a"); await p.waitForSelector("h1"); await check("07-chi-tiet-ky-uc");
   await p.goto(APP + "/family/memories/new"); await p.waitForSelector("#title"); await check("08-them-ky-uc");
   await p.goto(APP + "/family/members"); await p.waitForSelector("ul li a"); await check("09-thanh-vien");
