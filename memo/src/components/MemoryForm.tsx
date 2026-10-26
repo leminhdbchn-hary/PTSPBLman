@@ -170,7 +170,7 @@ export function MemoryForm({ ctx, people, existing, photos = [] }: { ctx: Ctx & 
             )}
           </div>
         )}
-        <input ref={fileRef} type="file" accept="image/jpeg,image/png,image/webp,image/heic,image/heif,image/gif" multiple className="sr-only" onChange={(e) => pick(e.target.files)} aria-label="Chọn ảnh từ máy" />
+        <input ref={fileRef} type="file" accept="image/*" multiple className="sr-only" onChange={(e) => pick(e.target.files)} aria-label="Chọn ảnh từ máy" />
       </section>
 
       <div>

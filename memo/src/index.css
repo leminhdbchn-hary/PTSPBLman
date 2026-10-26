@@ -8,7 +8,7 @@ html { -webkit-tap-highlight-color: transparent; }
 a, button, input, select, textarea, label, summary { touch-action: manipulation; }
 body { overscroll-behavior-y: none; padding-left: env(safe-area-inset-left); padding-right: env(safe-area-inset-right); padding-bottom: env(safe-area-inset-bottom); }
 /* iOS Safari vẽ ô nhập kiểu riêng (bóng đổ trong, góc vuông): trả về giao diện của trang */
-input:not([type=checkbox]):not([type=radio]):not([type=file]), select, textarea { -webkit-appearance: none; appearance: none; border-radius: 0.75rem; }
+input:not([type=checkbox]):not([type=radio]):not([type=file]):not([type=range]), select, textarea { -webkit-appearance: none; appearance: none; border-radius: 0.75rem; }
 select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' fill='none' stroke='%23898176' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 1rem center; padding-right: 2.5rem; }
 input[type=date] { min-height: 50px; text-align: left; }
 input[type=date]::-webkit-date-and-time-value { text-align: left; min-height: 1.5em; }
@@ -26,6 +26,8 @@ a { text-underline-offset: 3px; }
   .btn-danger { @apply inline-flex min-h-[46px] items-center justify-center gap-2 rounded-full border border-[#d9b8aa] bg-warm px-6 py-2.5 text-[16px] font-medium text-[#8c3b25] transition hover:bg-[#f7e9e2] disabled:opacity-60; }
   .btn-sm { @apply min-h-[38px] whitespace-nowrap px-4 py-1.5 text-[15px] max-sm:px-3; }
   .input { @apply block w-full rounded-xl border border-line bg-warm px-4 py-3 text-[17px] text-ink placeholder:text-stone/80 focus:border-moss; min-height: 50px; }
+  .btn, .btn-soft, .btn-danger { white-space: nowrap; }
+  input[type=range] { @apply h-11 w-full cursor-pointer accent-ink; background: transparent; }
   .label { @apply mb-1.5 block text-[15px] font-medium text-ink; }
   .hint { @apply mt-1.5 text-[14px] text-stone; }
   .card { @apply rounded-2xl border border-line bg-warm; }

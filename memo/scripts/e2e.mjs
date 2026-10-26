@@ -33,6 +33,16 @@ async function step(name, fn, page) {
 }
 const ok = (c, msg) => { if (!c) throw new Error(msg); };
 
+/** PNG chữ nhật w×h: nửa trái ĐỎ, nửa phải XANH (để kiểm tra phép cắt ảnh đúng vị trí). */
+function pngSplit(w, h) {
+  const crc = (buf) => { let c, v = ~0; for (let n = 0; n < buf.length; n++) { c = (v ^ buf[n]) & 0xff; for (let k = 0; k < 8; k++) c = c & 1 ? 0xedb88320 ^ (c >>> 1) : c >>> 1; v = (v >>> 8) ^ c; } return ~v >>> 0; };
+  const chunk = (t, d) => { const len = Buffer.alloc(4); len.writeUInt32BE(d.length); const td = Buffer.concat([Buffer.from(t), d]); const cr = Buffer.alloc(4); cr.writeUInt32BE(crc(td)); return Buffer.concat([len, td, cr]); };
+  const ihdr = Buffer.alloc(13); ihdr.writeUInt32BE(w, 0); ihdr.writeUInt32BE(h, 4); ihdr[8] = 8; ihdr[9] = 2;
+  const rows = [];
+  for (let y = 0; y < h; y++) { const row = [0]; for (let x = 0; x < w; x++) row.push(...(x < w / 2 ? [230, 20, 20] : [20, 20, 230])); rows.push(Buffer.from(row)); }
+  return Buffer.concat([Buffer.from([137, 80, 78, 71, 13, 10, 26, 10]), chunk("IHDR", ihdr), chunk("IDAT", zlib.deflateSync(Buffer.concat(rows))), chunk("IEND", Buffer.alloc(0))]);
+}
+
 /** PNG thật (gradient) để kiểm tra nén và hiển thị ảnh. */
 function png(r, g, b, size = 64) {
   const crc = (buf) => { let c, v = ~0; for (let n = 0; n < buf.length; n++) { c = (v ^ buf[n]) & 0xff; for (let k = 0; k < 8; k++) c = c & 1 ? 0xedb88320 ^ (c >>> 1) : c >>> 1; v = (v >>> 8) ^ c; } return ~v >>> 0; };
@@ -375,15 +385,94 @@ async function main() {
     }, pb);
 
     // ---------- hồ sơ & gia phả ----------
-    await step("thêm hồ sơ có ảnh đại diện và ngày sinh ẩn", async () => {
+    // màu điểm ảnh của ảnh đại diện đang xem trước (đọc từ data URL)
+    const sample = (page) => page.evaluate(async () => {
+      const src = [...document.querySelectorAll("img")].map((i) => i.src).find((u) => u.startsWith("data:image/jpeg"));
+      if (!src) return null;
+      const img = new Image(); img.src = src; await img.decode();
+      const c = document.createElement("canvas"); c.width = img.naturalWidth; c.height = img.naturalHeight;
+      const g = c.getContext("2d"); g.drawImage(img, 0, 0);
+      const px = (x, y) => Array.from(g.getImageData(x, y, 1, 1).data.slice(0, 3));
+      return { w: img.naturalWidth, h: img.naturalHeight, left: px(40, c.height / 2), right: px(c.width - 40, c.height / 2) };
+    });
+    const redish = (p) => p[0] > 150 && p[2] < 110, blueish = (p) => p[2] > 150 && p[0] < 110;
+    await step("ẢNH ĐẠI DIỆN: chọn ảnh → cửa sổ cắt; mặc định cắt giữa ảnh đúng vị trí, ra ảnh vuông 320 px", async () => {
       await go(pa, "/family/members/new");
       await pa.fill("#fullName", "Ông Hải"); await pa.fill("#relationLabel", "Ông nội"); await pa.fill("#birthDate", "1940-03-02");
-      await pa.setInputFiles("input[aria-label='Chọn ảnh đại diện']", { name: "o.png", mimeType: "image/png", buffer: png(120, 120, 120) });
-      await pa.waitForFunction(() => [...document.querySelectorAll("img")].some((i) => i.src.startsWith("data:image/jpeg")));
+      await pa.setInputFiles("input[aria-label='Chọn ảnh đại diện']", { name: "o.png", mimeType: "image/png", buffer: pngSplit(400, 200) });
+      await pa.waitForSelector("[role=dialog] >> text=Cắt ảnh đại diện");
+      await pa.waitForSelector("[data-testid=crop-box] img");
+      await pa.click("button:has-text('Dùng ảnh này')");
+      await pa.waitForSelector("[role=dialog]", { state: "detached" });
+      const r = await sample(pa);
+      ok(r && r.w === 320 && r.h === 320, "ảnh không vuông 320: " + JSON.stringify(r));
+      // ảnh gốc 400×200 cắt giữa → hình vuông 200×200: nửa trái đỏ, nửa phải xanh
+      ok(redish(r.left) && blueish(r.right), "cắt giữa sai: " + JSON.stringify(r));
+    }, pa);
+    await step("ẢNH ĐẠI DIỆN: kéo ảnh sang trái → khung cắt chuyển sang phần xanh; phóng to; xoay; Huỷ không đổi gì", async () => {
+      await pa.click("button:has-text('Đổi ảnh đại diện')");
+      await pa.waitForSelector("[data-testid=crop-box] img", { state: "visible" }).catch(() => {});
+      await pa.setInputFiles("input[aria-label='Chọn ảnh đại diện']", { name: "o.png", mimeType: "image/png", buffer: pngSplit(400, 200) }).catch(() => {});
+      await pa.waitForSelector("[data-testid=crop-box] img");
+      const bx = await pa.locator("[data-testid=crop-box]").boundingBox();
+      await pa.mouse.move(bx.x + bx.width / 2, bx.y + bx.height / 2);
+      await pa.mouse.down(); await pa.mouse.move(bx.x + bx.width / 2 - 300, bx.y + bx.height / 2, { steps: 8 }); await pa.mouse.up();
+      await pa.click("button:has-text('Dùng ảnh này')");
+      await pa.waitForSelector("[role=dialog]", { state: "detached" });
+      const r = await sample(pa);
+      ok(blueish(r.left) && blueish(r.right), "kéo sang trái phải ra toàn xanh: " + JSON.stringify(r));
+      // phóng to ×3 ở giữa: vẫn nửa đỏ nửa xanh (vì giữa ảnh là đường chia)
+      await pa.setInputFiles("input[aria-label='Chọn ảnh đại diện']", { name: "o.png", mimeType: "image/png", buffer: pngSplit(400, 200) });
+      await pa.waitForSelector("[data-testid=crop-box] img");
+      await pa.locator("#crop-zoom").fill("3");
+      await pa.click("button:has-text('Xoay')");
+      await pa.waitForTimeout(300);
+      await pa.click("button:has-text('Huỷ')");
+      await pa.waitForSelector("[role=dialog]", { state: "detached" });
+      const r2 = await sample(pa);
+      ok(JSON.stringify(r2) === JSON.stringify(r), "Huỷ mà ảnh vẫn đổi");
+    }, pa);
+    await step("ẢNH ĐẠI DIỆN: ảnh có kiểu tệp rỗng (.JPG từ thư viện ảnh Android/Windows) vẫn mở được; tệp không phải ảnh báo lỗi dễ hiểu", async () => {
+      await pa.evaluate(() => {
+        const bytes = Uint8Array.from(atob("iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg=="), (c) => c.charCodeAt(0));
+        const dt = new DataTransfer(); dt.items.add(new File([bytes], "IMG_0001.PNG", { type: "" }));
+        const input = document.querySelector("input[aria-label='Chọn ảnh đại diện']"); input.files = dt.files; input.dispatchEvent(new Event("change", { bubbles: true }));
+      });
+      await pa.waitForSelector("[role=dialog] >> text=Cắt ảnh đại diện");
+      await pa.keyboard.press("Escape");
+      await pa.waitForSelector("[role=dialog]", { state: "detached" });
+      await pa.setInputFiles("input[aria-label='Chọn ảnh đại diện']", { name: "ghi-chu.txt", mimeType: "text/plain", buffer: Buffer.from("không phải ảnh") });
+      await pa.waitForSelector("text=không phải ảnh được hỗ trợ");
+      ok((await pa.locator("[role=dialog]").count()) === 0, "mở cửa sổ cắt với tệp không phải ảnh");
+      // ảnh hỏng (đuôi .png nhưng nội dung không phải ảnh) → báo lỗi trong cửa sổ cắt
+      await pa.setInputFiles("input[aria-label='Chọn ảnh đại diện']", { name: "hong.png", mimeType: "image/png", buffer: Buffer.from("rác rưởi") });
+      await pa.waitForSelector("[role=dialog] [role=alert]");
+      await pa.click("[role=dialog] button:has-text('Đóng')");
+    }, pa);
+    await step("thêm hồ sơ có ảnh đại diện (cắt) và ngày sinh ẩn → lưu và hiện ở trang hồ sơ", async () => {
       await pa.click("button:has-text('Thêm hồ sơ')");
       await pa.waitForSelector("h1:has-text('Ông Hải')");
       await pa.waitForSelector("text=sinh 2 tháng 3, 1940");
       ok((await loadedImgs(pa, "header img")) === 1, "ảnh đại diện không hiện");
+      const dims = await pa.$eval("header img", (i) => [i.naturalWidth, i.naturalHeight]);
+      ok(dims[0] === 320 && dims[1] === 320, "ảnh lưu không vuông 320: " + dims);
+    }, pa);
+    await step("ẢNH ĐẠI DIỆN: sửa hồ sơ → đổi ảnh khác, rồi “Bỏ ảnh” → quay về chữ cái đầu", async () => {
+      await pa.click("a:has-text('Sửa hồ sơ')");
+      await pa.waitForSelector("#fullName");
+      await pa.setInputFiles("input[aria-label='Chọn ảnh đại diện']", { name: "m.png", mimeType: "image/png", buffer: png(10, 200, 90, 128) });
+      await pa.waitForSelector("[data-testid=crop-box] img");
+      await pa.click("button:has-text('Dùng ảnh này')");
+      await pa.click("button:has-text('Lưu thay đổi')");
+      await pa.waitForSelector("h1:has-text('Ông Hải')");
+      await pa.waitForTimeout(500);
+      ok((await loadedImgs(pa, "header img")) === 1, "ảnh mới không hiện");
+      await pa.click("a:has-text('Sửa hồ sơ')");
+      await pa.waitForSelector("button:has-text('Bỏ ảnh')");
+      await pa.click("button:has-text('Bỏ ảnh')");
+      await pa.click("button:has-text('Lưu thay đổi')");
+      await pa.waitForSelector("h1:has-text('Ông Hải')");
+      ok((await pa.locator("header img").count()) === 0, "ảnh vẫn còn sau khi bỏ");
     }, pa);
     await step("ngày sinh riêng tư: Bình không thấy ngày sinh của Ông Hải", async () => {
       await go(pb, "/family/members");
@@ -514,6 +603,7 @@ async function main() {
       await pm.waitForURL(/\/memories\/new$/);
       ok(!(await pm.locator("nav[aria-label='Điều hướng chính']").isVisible().catch(() => false)), "thanh dưới còn hiện trong form");
       const save = pm.locator("button:has-text('Lưu vào sổ')");
+      await save.waitFor({ state: "visible", timeout: 15000 }).catch(() => {});
       ok(await save.isVisible(), "không thấy nút Lưu");
       const box = await save.boundingBox();
       ok(box && box.y + box.height <= 844 && box.height >= 44, "nút Lưu không nằm trong màn hình hoặc quá nhỏ: " + JSON.stringify(box));
@@ -525,6 +615,17 @@ async function main() {
       await pm.click("nav[aria-label='Điều hướng chính'] a:has-text('Ký ức')");
       await pm.waitForSelector("article");
       ok((await pm.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth)) <= 0, "danh sách ký ức tràn ngang");
+      await pm.goto(APP + "/family/members/new");
+      await pm.waitForSelector("#fullName");
+      await pm.setInputFiles("input[aria-label='Chọn ảnh đại diện']", { name: "m.png", mimeType: "image/png", buffer: pngSplit(300, 400) });
+      await pm.waitForSelector("[data-testid=crop-box] img");
+      const okBtn = await pm.locator("button:has-text('Dùng ảnh này')").boundingBox();
+      const cb = await pm.locator("[data-testid=crop-box]").boundingBox();
+      ok(okBtn && okBtn.y + okBtn.height <= 844 && okBtn.height >= 44, "nút Dùng ảnh này ngoài màn hình/quá nhỏ: " + JSON.stringify(okBtn));
+      ok(cb && cb.x >= 0 && cb.x + cb.width <= 390, "khung cắt tràn ngang: " + JSON.stringify(cb));
+      await pm.click("button:has-text('Huỷ')");
+      await pm.goto(APP + "/family/memories");
+      await pm.waitForSelector("article");
       await pm.click("summary[aria-label='Mở menu']");
       await pm.click("[role=menu] >> text=Cài đặt");
       await pm.waitForURL(/\/settings$/);

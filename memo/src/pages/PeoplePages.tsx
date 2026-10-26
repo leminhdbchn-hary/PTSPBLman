@@ -5,7 +5,8 @@ import { MemoryCard } from "@/components/MemoryCard";
 import NotFound from "./NotFound";
 import { useAsync, useFamily } from "@/lib/session";
 import { deletePerson, friendlyError, getPerson, getPrivateBirthDate, listMemories, listPeople, savePerson } from "@/lib/data";
-import { checkFile, thumbnailFrom } from "@/lib/image";
+import { checkFile } from "@/lib/image";
+import { AvatarCropper } from "@/components/AvatarCropper";
 import { personSchema } from "@/lib/validation";
 import type { Person } from "@/lib/types";
 import { formatDate } from "@/lib/utils";
@@ -95,6 +96,7 @@ function PersonForm({ existing, privateBirth }: { existing?: Person; privateBirt
   const [error, setError] = useState<string | null>(null);
   const [fe, setFe] = useState<Record<string, string>>({});
   const [avatar, setAvatar] = useState<string | null | undefined>(undefined); // undefined = giữ nguyên
+  const [cropFile, setCropFile] = useState<File | null>(null);
   const ref = useRef<HTMLInputElement>(null);
   const preview = avatar === undefined ? existing?.avatar ?? null : avatar;
 
@@ -121,19 +123,22 @@ function PersonForm({ existing, privateBirth }: { existing?: Person; privateBirt
 
   return (
     <form onSubmit={submit} className="mx-auto max-w-read space-y-6" noValidate>
+      {cropFile && <AvatarCropper file={cropFile} onCancel={() => setCropFile(null)} onDone={(d) => { setAvatar(d); setCropFile(null); }} />}
       {error && <Notice kind="error">{error}</Notice>}
       <div className="flex flex-wrap items-center gap-5">
         <Avatar name={existing?.fullName || "?"} url={preview} size={88} />
         <div className="flex gap-2">
-          <button type="button" className="btn-soft btn-sm" onClick={() => ref.current?.click()}>{preview ? "Đổi ảnh đại diện" : "Thêm ảnh đại diện"}</button>
-          {preview && <button type="button" className="btn-soft btn-sm" onClick={() => setAvatar(null)}>Bỏ ảnh</button>}
-          <input ref={ref} type="file" accept="image/jpeg,image/png,image/webp,image/heic,image/heif" className="sr-only" aria-label="Chọn ảnh đại diện"
-            onChange={async (e) => {
+          <button type="button" className="btn-soft" onClick={() => ref.current?.click()}>{preview ? "Đổi ảnh đại diện" : "Thêm ảnh đại diện"}</button>
+          {preview && cropFile === null && <span className="sr-only">Ảnh đại diện đã chọn</span>}
+          {preview && <button type="button" className="btn-soft" onClick={() => setAvatar(null)}>Bỏ ảnh</button>}
+          <input ref={ref} type="file" accept="image/*" className="sr-only" aria-label="Chọn ảnh đại diện"
+            onChange={(e) => {
               const file = e.target.files?.[0];
+              e.target.value = ""; // cho phép chọn lại đúng ảnh vừa chọn
               if (!file) return;
               const er = checkFile(file);
               if (er) { setError(er); return; }
-              try { setError(null); setAvatar(await thumbnailFrom(file, 320)); } catch { setError("Trình duyệt chưa đọc được ảnh này, bạn thử ảnh JPG nhé."); }
+              setError(null); setCropFile(file);
             }} />
         </div>
       </div>

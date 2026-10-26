@@ -50,6 +50,9 @@ try {
   await p.goto(APP + "/family/members"); await p.waitForSelector("ul li a"); await check("09-thanh-vien");
   await p.click("ul li a"); await p.waitForSelector("h1"); await check("10-ho-so");
   await p.goto(APP + "/family/members/new"); await p.waitForSelector("#fullName"); await check("11-them-ho-so");
+  { const f = await p.evaluate(() => { const c = document.createElement("canvas"); c.width = 600; c.height = 800; const g = c.getContext("2d"); g.fillStyle = "#9db0c8"; g.fillRect(0, 0, 600, 800); g.fillStyle = "#e8c4a0"; g.beginPath(); g.ellipse(300, 330, 130, 170, 0, 0, 7); g.fill(); g.fillStyle = "#333"; g.fillRect(250, 300, 20, 20); g.fillRect(330, 300, 20, 20); return c.toDataURL("image/png").split(",")[1]; });
+    await p.setInputFiles("input[aria-label='Chọn ảnh đại diện']", { name: "mat.png", mimeType: "image/png", buffer: Buffer.from(f, "base64") });
+    await p.waitForSelector("[data-testid=crop-box] img"); await p.waitForTimeout(400); await check("11b-cat-anh"); await p.click("button:has-text('Huỷ')"); }
   await p.goto(APP + "/family/tree"); await p.waitForSelector("text=Thế hệ thứ 3"); await check("12-gia-pha");
   await p.goto(APP + "/family/manage"); await p.waitForSelector("h2:has-text('Mời người thân')"); await check("13-quan-ly");
   await p.goto(APP + "/settings"); await p.waitForSelector("#fullName"); await check("14-cai-dat");
