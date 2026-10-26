@@ -175,7 +175,7 @@ async function main() {
     await step("tạo ký ức có 2 ảnh thật → nén, lưu vào Firestore, hiện ở chi tiết", async () => {
       await go(pa, "/family/memories/new");
       await pa.fill("#title", "Bữa cơm chiều ngày mưa"); await pa.fill("#happenedOn", "2024-05-01"); await pa.fill("#body", "Cả nhà ngồi quanh mâm cơm.\nMưa rất to.");
-      await pa.click("button:has-text('Chuyến đi')");
+      await pa.click("summary:has-text('Thêm chi tiết')"); await pa.click("button:has-text('Chuyến đi')");
       await pa.setInputFiles("input[type=file]", [{ name: "a.png", mimeType: "image/png", buffer: png(180, 90, 60) }, { name: "b.png", mimeType: "image/png", buffer: png(60, 120, 90) }]);
       await pa.waitForSelector("img[alt^='Ảnh sẽ tải lên']");
       await pa.click("button:has-text('Lưu vào sổ')");
@@ -190,25 +190,76 @@ async function main() {
       const m = await adminGet(`nn_families/${famA}/memories/${memAId}`);
       ok(String(val(m, "cover")).startsWith("data:image/jpeg"), "thiếu ảnh bìa");
     }, pa);
-    await step("tạo ký ức thứ hai (không ảnh, riêng tư) + kiểm tra tiêu đề trống", async () => {
+    await step("tạo ký ức thứ hai: chỉ viết vài dòng, không đặt tiêu đề → tự đặt tiêu đề; chọn “Chỉ mình tôi”", async () => {
       await go(pa, "/family/memories/new");
-      await pa.fill("#body", "chỉ có nội dung");
       await pa.click("button:has-text('Lưu vào sổ')");
-      await pa.waitForSelector("text=Bạn đặt tiêu đề cho ký ức nhé");
-      ok((await pa.inputValue("#body")) === "chỉ có nội dung", "mất nội dung đã gõ");
-      await pa.fill("#title", "Nhật ký riêng của An"); await pa.selectOption("#visibility", "private");
+      await pa.waitForSelector("text=Hãy thêm ảnh hoặc viết vài dòng");
+      await pa.fill("#body", "Chiều nay mình ngồi nghĩ lại chuyện cũ. Nhiều điều chưa kể.");
+      await pa.click("label:has-text('Chỉ mình tôi')");
       await pa.click("button:has-text('Lưu vào sổ')");
       await pa.waitForURL(/\/family\/memories\/[A-Za-z0-9]{20}$/);
+      await pa.waitForSelector("h1:has-text('Chiều nay mình ngồi nghĩ lại chuyện cũ.')");
+      const ms = await adminList(`nn_families/${famA}/memories`);
+      ok(ms.some((m) => val(m, "visibility") === "private" && val(m, "title") === "Chiều nay mình ngồi nghĩ lại chuyện cũ."), "tiêu đề tự đặt / chế độ riêng tư sai");
     }, pa);
-    await step("dòng thời gian: nhóm theo năm, tìm kiếm không dấu, lọc chủ đề", async () => {
+    await step("bản nháp: viết dở rồi rời trang → quay lại được khôi phục; lưu xong thì xoá nháp", async () => {
+      await go(pa, "/family/memories/new");
+      await pa.fill("#body", "Đoạn nháp chưa viết xong");
+      await pa.waitForTimeout(700);
+      await go(pa, "/family");
+      await go(pa, "/family/memories/new");
+      await pa.waitForSelector("text=khôi phục bản nháp");
+      ok((await pa.inputValue("#body")) === "Đoạn nháp chưa viết xong", "chưa khôi phục nội dung");
+      await pa.click("button:has-text('Bỏ bản nháp')");
+      ok((await pa.inputValue("#body")) === "", "chưa bỏ nháp");
+      await pa.fill("#body", "Nháp để thử lưu"); await pa.waitForTimeout(700);
+      await pa.click("button:has-text('Lưu vào sổ')"); await pa.waitForURL(/\/family\/memories\/[A-Za-z0-9]{20}$/);
+      await go(pa, "/family/memories/new");
+      await pa.waitForTimeout(500);
+      ok((await pa.locator("text=khôi phục bản nháp").count()) === 0 && (await pa.inputValue("#body")) === "", "bản nháp còn sau khi lưu");
+    }, pa);
+    await step("chọn ảnh → ngày xảy ra tự lấy từ ngày chụp của ảnh", async () => {
+      await go(pa, "/family/memories/new");
+      await pa.evaluate(async () => {
+        const bytes = Uint8Array.from(atob("iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg=="), (c) => c.charCodeAt(0));
+        const dt = new DataTransfer();
+        dt.items.add(new File([bytes], "x.png", { type: "image/png", lastModified: Date.UTC(2021, 6, 4, 12) }));
+        const input = document.querySelector("input[type=file]");
+        input.files = dt.files;
+        input.dispatchEvent(new Event("change", { bubbles: true }));
+      });
+      await pa.waitForSelector("text=lấy ngày từ ảnh");
+      ok((await pa.inputValue("#happenedOn")) === "2021-07-04", "ngày sai: " + (await pa.inputValue("#happenedOn")));
+    }, pa);
+    await step("dòng thời gian: nhóm theo năm, gõ là lọc ngay (không dấu), lọc theo chủ đề, bỏ lọc", async () => {
       await go(pa, "/family/memories");
       await pa.waitForSelector("h2:has-text('2024')");
-      await pa.fill("#q", "mam com"); await pa.click("button:has-text('Lọc')");
+      await pa.fill("#q", "mam com");
       await pa.waitForFunction(() => document.querySelectorAll("article").length === 1);
       ok((await pa.locator("article h3").first().textContent()) === "Bữa cơm chiều ngày mưa", "tìm sai");
       await pa.click("button:has-text('Bỏ lọc')");
-      await pa.selectOption("#tag", "Chuyến đi"); await pa.click("button:has-text('Lọc')");
+      await pa.click("button:has-text('Lọc')");
+      await pa.selectOption("#tag", "Chuyến đi");
       await pa.waitForFunction(() => document.querySelectorAll("article").length === 1);
+      await pa.click("button:has-text('Bỏ lọc')");
+      await pa.waitForFunction(() => document.querySelectorAll("article").length >= 3);
+    }, pa);
+    await step("chi tiết ký ức: nút ký ức trước/sau; vuốt ngang trong khung xem ảnh lớn", async () => {
+      await go(pa, `/family/memories/${memAId}`);
+      await pa.waitForSelector("nav[aria-label='Ký ức kế tiếp']");
+      ok((await pa.locator("nav[aria-label='Ký ức kế tiếp'] a").count()) >= 1, "thiếu liên kết ký ức kế tiếp");
+      await pa.click("button[aria-label^='Xem ảnh lớn']");
+      await pa.waitForSelector("[role=dialog]");
+      ok((await pa.locator("[role=dialog] p:has-text('1 / 2')").count()) === 1, "thiếu bộ đếm ảnh");
+      await pa.evaluate(() => {
+        const el = document.querySelector("[role=dialog]");
+        const t = (x) => new Touch({ identifier: 1, target: el, clientX: x, clientY: 300 });
+        el.dispatchEvent(new TouchEvent("touchstart", { touches: [t(300)], changedTouches: [t(300)], bubbles: true }));
+        el.dispatchEvent(new TouchEvent("touchend", { touches: [], changedTouches: [t(80)], bubbles: true }));
+      });
+      await pa.waitForSelector("[role=dialog] p:has-text('2 / 2')");
+      await pa.keyboard.press("Escape");
+      await pa.waitForSelector("[role=dialog]", { state: "detached" });
     }, pa);
 
     // ---------- cách ly hai gia đình ----------
@@ -279,7 +330,7 @@ async function main() {
       await go(pb, "/family/memories");
       await pb.waitForSelector("article h3");
       const titles = await pb.$$eval("article h3", (e) => e.map((x) => x.textContent));
-      ok(titles.includes("Bữa cơm chiều ngày mưa") && !titles.includes("Nhật ký riêng của An"), JSON.stringify(titles));
+      ok(titles.includes("Bữa cơm chiều ngày mưa") && !titles.includes("Chiều nay mình ngồi nghĩ lại chuyện cũ."), JSON.stringify(titles));
       ok((await pb.locator("a:has-text('Thêm ký ức')").count()) === 0, "viewer thấy nút thêm");
       ok((await pb.locator("a:has-text('Quản lý')").count()) === 0, "viewer thấy Quản lý");
       await go(pb, "/family/memories/new"); await pb.waitForURL(/\/family\/memories$/);
@@ -302,7 +353,7 @@ async function main() {
       await sel.selectOption("contributor"); await sel.locator("xpath=ancestor::form").locator("button").click();
       await pa.waitForSelector("text=Đã đổi vai trò");
       await pb.reload(); // vai trò được đọc lại khi mở trang
-      await go(pb, "/family/memories/new"); await pb.fill("#title", "Chuyến đi của Bình"); await pb.selectOption("#visibility", "private"); await pb.click("button:has-text('Lưu vào sổ')");
+      await go(pb, "/family/memories/new"); await pb.fill("#title", "Chuyến đi của Bình"); await pb.click("label:has-text('Chỉ mình tôi')"); await pb.click("button:has-text('Lưu vào sổ')");
       await pb.waitForURL(/\/family\/memories\/[A-Za-z0-9]{20}$/);
     }, pb);
     await step("ký ức riêng tư của Bình KHÔNG hiện với An (kể cả chủ sở hữu)", async () => {
@@ -359,12 +410,12 @@ async function main() {
     }, pa);
 
     // ---------- dữ liệu mẫu ----------
-    await step("thêm dữ liệu mẫu → có nhãn “Dữ liệu mẫu”; xoá mẫu giữ nguyên nội dung thật", async () => {
+    await step("thêm dữ liệu mẫu → có nhãn “Mẫu”; xoá mẫu giữ nguyên nội dung thật", async () => {
       await go(pa, "/family/manage");
       await pa.click("button:has-text('Thêm dữ liệu mẫu')");
       await pa.waitForURL(/\/family\/memories$/, { timeout: 30000 });
-      await pa.waitForSelector("article >> text=Dữ liệu mẫu");
-      ok((await pa.locator("text=Dữ liệu mẫu").count()) >= 5, "thiếu nhãn mẫu");
+      await pa.waitForSelector("article >> text=· Mẫu");
+      ok((await pa.locator("article:has-text('· Mẫu')").count()) >= 5, "thiếu nhãn mẫu");
       ok((await pa.$$eval("article img", (els) => els.filter((e) => e.src.includes("/demo/")).length)) >= 5, "thiếu ảnh minh hoạ mẫu");
       await pa.waitForFunction(() => { const i = document.querySelector("article img[src*='/demo/']"); return i && i.complete && i.naturalWidth > 0; });
       await go(pa, "/family/manage");
@@ -373,7 +424,7 @@ async function main() {
       await pa.waitForSelector("text=Đã xoá dữ liệu mẫu");
       await go(pa, "/family/memories");
       await pa.waitForSelector("article");
-      ok((await pa.locator("article").count()) === 2, "sau khi xoá mẫu phải còn 2 ký ức thật của An: " + (await pa.locator("article").count()));
+      ok((await pa.locator("article").count()) === 3, "sau khi xoá mẫu phải còn 3 ký ức thật của An: " + (await pa.locator("article").count()));
       ok((await adminList(`nn_families/${famA}/people`)).every((p) => val(p, "isDemo") !== true), "còn hồ sơ mẫu");
     }, pa);
 
@@ -450,6 +501,35 @@ async function main() {
       ok((await adminList(`nn_families/${famC}/memories`)).length === 0, "ký ức của Chi còn");
       await login(pc, "chi@example.com"); await pc.waitForSelector("text=Email hoặc mật khẩu chưa đúng");
     }, pc);
+    await step("ĐIỆN THOẠI (390×844): thanh điều hướng dưới + nút “+”; form có thanh Lưu cố định; menu gọn; không tràn ngang", async () => {
+      const ctxM = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, hasTouch: true, isMobile: true });
+      const pm = await ctxM.newPage();
+      await login(pm, "an@example.com", "matkhaumoi1");
+      await pm.waitForURL(/\/family$/);
+      await pm.waitForSelector("nav[aria-label='Điều hướng chính']");
+      ok(!(await pm.locator("nav[aria-label='Khu vực gia đình']").isVisible()), "thanh trên (máy tính) vẫn hiện trên điện thoại");
+      const over = await pm.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
+      ok(over <= 0, "tràn ngang " + over + "px");
+      await pm.click("a[aria-label='Thêm ký ức mới']");
+      await pm.waitForURL(/\/memories\/new$/);
+      ok(!(await pm.locator("nav[aria-label='Điều hướng chính']").isVisible().catch(() => false)), "thanh dưới còn hiện trong form");
+      const save = pm.locator("button:has-text('Lưu vào sổ')");
+      ok(await save.isVisible(), "không thấy nút Lưu");
+      const box = await save.boundingBox();
+      ok(box && box.y + box.height <= 844 && box.height >= 44, "nút Lưu không nằm trong màn hình hoặc quá nhỏ: " + JSON.stringify(box));
+      const fs = await pm.$$eval("input:not([type=file]):not([type=radio]), textarea, select", (e) => e.filter((x) => x.getBoundingClientRect().width > 0 && parseFloat(getComputedStyle(x).fontSize) < 16).length);
+      ok(fs === 0, fs + " ô nhập nhỏ hơn 16px (iPhone sẽ tự phóng to)");
+      await pm.fill("#body", "Ký ức viết từ điện thoại"); await save.click();
+      await pm.waitForURL(/\/family\/memories\/[A-Za-z0-9]{20}$/);
+      await pm.waitForSelector("h1:has-text('Ký ức viết từ điện thoại')");
+      await pm.click("nav[aria-label='Điều hướng chính'] a:has-text('Ký ức')");
+      await pm.waitForSelector("article");
+      ok((await pm.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth)) <= 0, "danh sách ký ức tràn ngang");
+      await pm.click("summary[aria-label='Mở menu']");
+      await pm.click("[role=menu] >> text=Cài đặt");
+      await pm.waitForURL(/\/settings$/);
+      await ctxM.close();
+    }, pa);
     await step("chủ sở hữu xoá cả gia đình → mọi dữ liệu biến mất", async () => {
       await go(pa, "/family/manage");
       await pa.click("button:has-text('Xoá cả gia đình')");

@@ -63,7 +63,8 @@ export function MemoryDetailPage() {
     const m = await getMemory(ctx, id);
     if (!m) return null;
     const [photos, people, comments, all] = await Promise.all([getPhotos(ctx, m), listPeople(ctx), listComments(ctx, id), listMemories(ctx)]);
-    return { m, photos, people, comments, related: related(all, m) };
+    const idx = all.findIndex((x) => x.id === m.id);
+    return { m, photos, people, comments, related: related(all, m), older: idx >= 0 ? all[idx + 1] ?? null : null, newer: idx > 0 ? all[idx - 1] : null };
   }, [ctx.fid, id]);
   if (loading && !data) return <Loading />;
   if (error) return <Notice kind="error">{friendlyError(error)}</Notice>;
@@ -91,7 +92,7 @@ export function MemoryDetailPage() {
       <Link to="/family/memories" className="tap text-[15px] text-stone underline">← Dòng thời gian</Link>
       <header className="mb-8 mt-5">
         <p className="eyebrow">{formatDate(m.happenedOn)}{m.location ? ` · ${m.location}` : ""}{m.isDemo ? " · Dữ liệu mẫu" : ""}</p>
-        <h1 className="mt-3 text-[2.4rem] leading-tight sm:text-[3.1rem]">{m.title}</h1>
+        <h1 className="mt-3 text-[2.1rem] leading-tight sm:text-[3.1rem]">{m.title}</h1>
         <p className="mt-4 text-[14.5px] text-stone">
           Ghi lại bởi {m.createdByName}{created ? ` · đăng ngày ${created}` : ""}{updated ? ` · sửa ${updated}` : ""} · {VISIBILITY_LABEL[m.visibility]}
         </p>
@@ -139,6 +140,13 @@ export function MemoryDetailPage() {
           <Submit busy={busy} className="btn btn-sm" busyText="Đang gửi…">Gửi</Submit>
         </form>
       </section>
+
+      {(data.older || data.newer) && (
+        <nav aria-label="Ký ức kế tiếp" className="mt-14 grid gap-3 sm:grid-cols-2">
+          {data.older ? <Link to={`/family/memories/${data.older.id}`} className="card block p-4 text-ink no-underline hover:border-stone"><span className="eyebrow">← Ký ức trước</span><span className="mt-1 block truncate font-serif text-[1.15rem]">{data.older.title}</span></Link> : <span />}
+          {data.newer ? <Link to={`/family/memories/${data.newer.id}`} className="card block p-4 text-ink no-underline hover:border-stone sm:text-right"><span className="eyebrow">Ký ức sau →</span><span className="mt-1 block truncate font-serif text-[1.15rem]">{data.newer.title}</span></Link> : <span />}
+        </nav>
+      )}
 
       {data.related.length > 0 && (
         <section className="mt-16" aria-labelledby="lien-quan">

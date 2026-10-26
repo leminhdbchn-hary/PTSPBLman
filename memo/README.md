@@ -15,7 +15,7 @@ Công nghệ: Vite + React 18 + TypeScript · Tailwind CSS · Firebase JS SDK 10
 | `npm test` | 10 nhóm test đơn vị (kiểm tra dữ liệu, gia phả, mã mời, sắp xếp) | đạt |
 | `npm run test:rules` | 35 bài kiểm tra **luật bảo mật** trên Firestore Emulator: cách ly hai gia đình, lời mời dùng một lần/hết hạn/thu hồi/khoá email, chống nâng quyền, ký ức riêng tư (kể cả chủ sở hữu không đọc được), ảnh theo quyền ký ức, ngày sinh riêng tư, gia phả, rời & xoá gia đình | 35/35 |
 | `RULES_FILE=firestore.deploy.rules …` | như trên, với **bản luật gộp** dùng khi deploy chung dự án với site Phòng (+2 bài kiểm tra site Phòng vẫn chạy như cũ) | 37/37 |
-| `npm run test:e2e` | 36 bước trên **trình duyệt thật** + Firebase Emulator: đăng ký → tạo gia đình → ký ức 2 ảnh → tìm kiếm/lọc → gia đình thứ hai tấn công bằng token thật qua API (bị chặn) → mời → phân quyền → bình luận → hồ sơ + ảnh đại diện → gia phả → dữ liệu mẫu → xoá ký ức → cài đặt/đổi mật khẩu → xuất JSON → rời gia đình → đăng xuất → quên mật khẩu → xoá tài khoản → xoá gia đình | 36/36 |
+| `npm run test:e2e` | 40 bước trên **trình duyệt thật** + Firebase Emulator: đăng ký → tạo gia đình → ký ức 2 ảnh → tìm kiếm/lọc → gia đình thứ hai tấn công bằng token thật qua API (bị chặn) → mời → phân quyền → bình luận → hồ sơ + ảnh đại diện → gia phả → dữ liệu mẫu → xoá ký ức → cài đặt/đổi mật khẩu → xuất JSON → rời gia đình → đăng xuất → quên mật khẩu → xoá tài khoản → xoá gia đình | 36/36 |
 
 Emulator dùng project `demo-memo` nên kiểm thử **không chạm** dự án thật. Cần Java (cho Firestore Emulator) và Chromium (biến `CHROME_PATH` nếu khác mặc định).
 
@@ -80,8 +80,9 @@ scripts/e2e.mjs           kiểm thử đầu-cuối bằng trình duyệt
 |---|---|
 | Đăng ký, đăng nhập, đăng xuất, quên mật khẩu (email của Firebase) | ✔ |
 | Tạo gia đình, nhiều gia đình, mời bằng liên kết (một lần, có hạn, thu hồi, khoá email), vai trò | ✔ (liên kết mời tự sao chép gửi, chưa tự gửi email) |
-| Ký ức: nhiều ảnh, thẻ, người liên quan, 3 mức hiển thị, sửa/xoá | ✔ |
-| Dòng thời gian, tìm kiếm không dấu, lọc năm/chủ đề/người, xem thêm | ✔ |
+| Ký ức: ảnh trước – chữ sau, tiêu đề tự đặt nếu bỏ trống, ngày tự lấy từ ảnh, tự lưu bản nháp, 3 mức hiển thị, sửa/xoá | ✔ |
+| Dòng thời gian dạng album: gõ là lọc ngay (không dấu), nhảy theo năm, lọc chủ đề/người, xem thêm; ký ức trước/sau, vuốt ảnh | ✔ |
+| Điện thoại (iPhone): thanh điều hướng dưới + nút “+”, vùng an toàn, ô nhập ≥ 16 px, ô bấm ≥ 40 px | ✔ (`npm run` → `node scripts/mobile-audit.mjs`) |
 | Hồ sơ người thân, ảnh đại diện, ngày sinh riêng tư; gia phả, chặn vòng lặp | ✔ |
 | Lời nhắn (kể cả người chỉ xem) | ✔ |
 | Dữ liệu mẫu, xuất JSON, đổi mật khẩu, **tự xoá tài khoản** | ✔ |

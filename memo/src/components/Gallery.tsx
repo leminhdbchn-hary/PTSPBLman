@@ -1,11 +1,12 @@
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 type Img = { url: string; caption: string | null };
 
 /** Hiển thị ảnh của một ký ức; bấm để xem lớn, có phím ← → và Esc. */
 export function Gallery({ images, title }: { images: Img[]; title: string }) {
   const [open, setOpen] = useState<number | null>(null);
+  const touch = useRef<number | null>(null);
   useEffect(() => {
     if (open === null) return;
     const onKey = (e: KeyboardEvent) => {
@@ -37,7 +38,9 @@ export function Gallery({ images, title }: { images: Img[]; title: string }) {
         )}
       </div>
       {open !== null && (
-        <div role="dialog" aria-modal="true" aria-label="Xem ảnh lớn" className="fixed inset-0 z-50 flex items-center justify-center bg-[#1c1712]/95 p-4" onClick={() => setOpen(null)}>
+        <div role="dialog" aria-modal="true" aria-label="Xem ảnh lớn" className="fixed inset-0 z-50 flex items-center justify-center bg-[#1c1712]/95 p-4" onClick={() => setOpen(null)}
+          onTouchStart={(e) => { touch.current = e.touches[0].clientX; }}
+          onTouchEnd={(e) => { const x0 = touch.current; touch.current = null; if (x0 === null || images.length < 2) return; const dx = e.changedTouches[0].clientX - x0; if (Math.abs(dx) > 50) setOpen((i) => (i === null ? i : (i + (dx < 0 ? 1 : images.length - 1)) % images.length)); }}>
           <img src={images[open].url} alt={images[open].caption || title} className="max-h-[88dvh] max-w-full rounded-lg object-contain" onClick={(e) => e.stopPropagation()} />
           <button type="button" className="absolute right-4 top-[max(1rem,env(safe-area-inset-top))] grid h-12 w-12 place-items-center rounded-full bg-white/15 text-xl text-white" onClick={() => setOpen(null)} aria-label="Đóng" autoFocus>✕</button>
           {images.length > 1 && (

@@ -44,10 +44,27 @@ export default function Overview() {
         {data.family?.description && <p className="mt-4 text-[1.1rem] text-stone">{data.family.description}</p>}
         <div className="mt-7 flex flex-wrap gap-3">
           {ctx.canWrite && <LinkBtn to="/family/memories/new">Thêm ký ức mới</LinkBtn>}
-          <LinkBtn to="/family/memories" soft>Mở dòng thời gian</LinkBtn>
-          {ctx.isAdmin && <LinkBtn to="/family/manage" soft>Mời thành viên</LinkBtn>}
+          <LinkBtn to="/family/memories" soft>Xem tất cả ký ức</LinkBtn>
         </div>
       </section>
+
+      {ctx.canWrite && data.memories.length < 3 && (
+        <section aria-labelledby="bat-dau" className="card p-5 sm:p-6">
+          <h2 id="bat-dau" className="text-[1.4rem]">Bắt đầu cuốn sổ trong 3 bước</h2>
+          <ol className="mt-4 space-y-2.5">
+            {[
+              { done: true, text: "Tạo sổ gia đình", to: null as string | null },
+              { done: data.memories.length > 0, text: "Thêm ký ức đầu tiên (một tấm ảnh và vài dòng là đủ)", to: "/family/memories/new" },
+              ...(ctx.isAdmin ? [{ done: false, text: "Mời người thân cùng viết", to: "/family/manage" }] : []),
+            ].map((st) => (
+              <li key={st.text} className="flex items-start gap-3">
+                <span aria-hidden className={`mt-0.5 grid h-6 w-6 shrink-0 place-items-center rounded-full text-[14px] ${st.done ? "bg-moss text-warm" : "border border-stone/60"}`}>{st.done ? "✓" : ""}</span>
+                {st.to && !st.done ? <Link to={st.to} className="tap underline">{st.text}</Link> : <span className={st.done ? "text-stone line-through" : ""}>{st.text}</span>}
+              </li>
+            ))}
+          </ol>
+        </section>
+      )}
 
       <section aria-labelledby="moi-nhat">
         <div className="mb-6 flex items-baseline justify-between"><h2 id="moi-nhat" className="text-[1.7rem]">Những trang mới nhất</h2><Link to="/family/memories" className="tap text-[15.5px] text-ink underline">Xem tất cả</Link></div>
@@ -56,7 +73,7 @@ export default function Overview() {
             Hãy thêm ký ức đầu tiên của gia đình. {ctx.isAdmin && <>Hoặc <Link to="/family/manage#du-lieu-mau" className="underline">thêm dữ liệu mẫu</Link> để xem sổ trông như thế nào.</>}
           </EmptyState>
         ) : (
-          <div className="grid gap-6 md:grid-cols-2">{latest.map((m) => <MemoryCard key={m.id} m={m} names={names} />)}</div>
+          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">{latest.slice(0, 3).map((m) => <MemoryCard key={m.id} m={m} names={names} />)}</div>
         )}
       </section>
 
@@ -76,11 +93,10 @@ export default function Overview() {
 
       <section aria-labelledby="loi-tat">
         <h2 id="loi-tat" className="mb-5 text-[1.7rem]">Đi nhanh tới</h2>
-        <div className="grid gap-4 sm:grid-cols-3">
+        <div className="grid gap-4 sm:grid-cols-2">
           {[
             { to: "/family/members", t: "Thành viên", d: `${data.people.length} hồ sơ` },
             { to: "/family/tree", t: "Gia phả", d: "Các thế hệ trong gia đình" },
-            { to: "/family/stories", t: "Lời kể của người thân", d: "Sắp ra mắt" },
           ].map((x) => (
             <Link key={x.to} to={x.to} className="card block p-5 text-ink no-underline transition hover:border-stone"><span className="font-serif text-[1.3rem]">{x.t}</span><span className="mt-1 block text-[15px] text-stone">{x.d}</span></Link>
           ))}

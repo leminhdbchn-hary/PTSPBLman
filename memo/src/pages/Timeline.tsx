@@ -1,12 +1,12 @@
-import { useMemo, useState, type FormEvent } from "react";
-import { useSearchParams } from "react-router-dom";
+import { useMemo, useState } from "react";
+import { Link, useSearchParams } from "react-router-dom";
 import { EmptyState, LinkBtn, Loading, Notice, PageTitle } from "@/components/ui";
 import { MemoryCard } from "@/components/MemoryCard";
 import { useAsync, useFamily } from "@/lib/session";
 import { friendlyError, listMemories, listPeople } from "@/lib/data";
 import { fold, yearOf } from "@/lib/utils";
 
-const PAGE = 8;
+const PAGE = 9;
 
 export default function Timeline() {
   const ctx = useFamily();
@@ -18,6 +18,7 @@ export default function Timeline() {
   }, [ctx.fid]);
   const q = sp.get("q") ?? "", year = sp.get("year") ?? "", tag = sp.get("tag") ?? "", person = sp.get("person") ?? "";
   const filtered = !!(q || year || tag || person);
+  const [open, setOpen] = useState(!!(year || tag || person));
   const items = useMemo(() => {
     const fq = fold(q.trim());
     return (data?.memories ?? []).filter((m) =>
@@ -32,55 +33,78 @@ export default function Timeline() {
   const years = [...new Set(data.memories.map((m) => yearOf(m.happenedOn)).filter(Boolean) as string[])].sort().reverse();
   const tags = [...new Set(data.memories.flatMap((m) => m.tags))].sort((a, b) => a.localeCompare(b, "vi"));
   const shown = items.slice(0, limit);
-
-  function submit(e: FormEvent<HTMLFormElement>) {
-    e.preventDefault();
-    const f = new FormData(e.currentTarget);
-    const next = new URLSearchParams();
-    for (const k of ["q", "year", "tag", "person"]) { const v = String(f.get(k) ?? "").trim(); if (v) next.set(k, v); }
+  const set = (k: string, v: string) => {
+    const next = new URLSearchParams(sp);
+    if (v) next.set(k, v); else next.delete(k);
     setLimit(PAGE);
-    setSp(next);
-  }
+    setSp(next, { replace: true });
+  };
 
-  let lastYear: string | null | undefined;
+  // gom theo năm, giữ thứ tự mới nhất trước
+  const groups: { year: string; list: typeof shown }[] = [];
+  for (const m of shown) {
+    const y = yearOf(m.happenedOn) ?? "Chưa rõ năm";
+    const g = groups[groups.length - 1];
+    if (g && g.year === y) g.list.push(m); else groups.push({ year: y, list: [m] });
+  }
+  const jump = (y: string) => document.getElementById("y-" + y)?.scrollIntoView({ behavior: "smooth", block: "start" });
+
   return (
     <div>
       <PageTitle eyebrow="Dòng thời gian" title="Ký ức của gia đình">
-        {ctx.canWrite && <LinkBtn to="/family/memories/new">Thêm ký ức</LinkBtn>}
+        {ctx.canWrite && <span className="max-md:hidden"><LinkBtn to="/family/memories/new">Thêm ký ức</LinkBtn></span>}
       </PageTitle>
       {sp.get("deleted") && <div className="mb-6"><Notice kind="success">Đã xoá ký ức.</Notice></div>}
 
-      <form onSubmit={submit} key={sp.toString()} className="mb-10 grid gap-3 rounded-2xl border border-line bg-warm p-4 sm:grid-cols-[2fr_1fr_1fr_1fr_auto]" role="search" aria-label="Tìm và lọc ký ức">
-        <div><label htmlFor="q" className="sr-only">Tìm theo tiêu đề, nội dung</label><input id="q" name="q" defaultValue={q} className="input" placeholder="Tìm theo tiêu đề, nội dung…" /></div>
-        <div><label htmlFor="year" className="sr-only">Năm</label>
-          <select id="year" name="year" defaultValue={year} className="input"><option value="">Mọi năm</option>{years.map((y) => <option key={y} value={y}>{y}</option>)}</select></div>
-        <div><label htmlFor="tag" className="sr-only">Chủ đề</label>
-          <select id="tag" name="tag" defaultValue={tag} className="input"><option value="">Mọi chủ đề</option>{tags.map((t) => <option key={t} value={t}>{t}</option>)}</select></div>
-        <div><label htmlFor="person" className="sr-only">Thành viên</label>
-          <select id="person" name="person" defaultValue={person} className="input"><option value="">Mọi người</option>{data.people.map((p) => <option key={p.id} value={p.id}>{p.fullName}</option>)}</select></div>
-        <div className="flex gap-2"><button className="btn btn-sm !min-h-[50px]" type="submit">Lọc</button>{filtered && <button type="button" className="btn-soft btn-sm !min-h-[50px]" onClick={() => setSp(new URLSearchParams())}>Bỏ lọc</button>}</div>
-      </form>
+      <div className="mb-8 space-y-3" role="search" aria-label="Tìm và lọc ký ức">
+        <div className="flex gap-2">
+          <div className="relative flex-1">
+            <svg className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-stone" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" aria-hidden><circle cx="11" cy="11" r="7" /><path d="m20 20-3.5-3.5" /></svg>
+            <label htmlFor="q" className="sr-only">Tìm ký ức</label>
+            <input id="q" type="search" value={q} onChange={(e) => set("q", e.target.value)} className="input !pl-12" placeholder="Tìm theo tên, nội dung, địa điểm…" autoComplete="off" enterKeyHint="search" />
+          </div>
+          <button type="button" className="btn-soft shrink-0 !px-4" aria-expanded={open} onClick={() => setOpen(!open)}>Lọc{year || tag || person ? " •" : ""}</button>
+        </div>
+        {open && (
+          <div className="grid gap-3 rounded-2xl border border-line bg-warm p-4 sm:grid-cols-3">
+            <div><label htmlFor="year" className="label">Năm</label>
+              <select id="year" value={year} onChange={(e) => set("year", e.target.value)} className="input"><option value="">Mọi năm</option>{years.map((y) => <option key={y} value={y}>{y}</option>)}</select></div>
+            <div><label htmlFor="tag" className="label">Chủ đề</label>
+              <select id="tag" value={tag} onChange={(e) => set("tag", e.target.value)} className="input"><option value="">Mọi chủ đề</option>{tags.map((t) => <option key={t} value={t}>{t}</option>)}</select></div>
+            <div><label htmlFor="person" className="label">Có ai</label>
+              <select id="person" value={person} onChange={(e) => set("person", e.target.value)} className="input"><option value="">Mọi người</option>{data.people.map((p) => <option key={p.id} value={p.id}>{p.fullName}</option>)}</select></div>
+          </div>
+        )}
+        {filtered && (
+          <p className="flex flex-wrap items-center gap-3 text-[15px] text-stone">
+            {items.length} ký ức khớp
+            <button type="button" className="tap underline" onClick={() => { setSp(new URLSearchParams(), { replace: true }); setOpen(false); }}>Bỏ lọc</button>
+          </p>
+        )}
+        {!filtered && years.length > 1 && (
+          <div className="-mx-1 flex gap-2 overflow-x-auto px-1 pb-1" aria-label="Nhảy tới năm">
+            {years.map((y) => <button key={y} type="button" onClick={() => jump(y)} className="tap shrink-0 rounded-full border border-line bg-warm px-4 text-[15px] text-ink">{y}</button>)}
+          </div>
+        )}
+      </div>
 
       {shown.length === 0 ? (
         filtered ? <EmptyState title="Không có ký ức nào khớp">Thử bỏ bớt bộ lọc hoặc tìm bằng từ khác nhé.</EmptyState>
-          : <EmptyState title="Chưa có ký ức nào" action={ctx.canWrite ? <LinkBtn to="/family/memories/new">Viết trang đầu tiên</LinkBtn> : undefined}>Cuốn sổ đang chờ câu chuyện đầu tiên của gia đình.</EmptyState>
+          : <EmptyState title="Chưa có ký ức nào" action={ctx.canWrite ? <LinkBtn to="/family/memories/new">Thêm ký ức đầu tiên</LinkBtn> : undefined}>Cuốn sổ đang chờ câu chuyện đầu tiên của gia đình.</EmptyState>
       ) : (
-        <ol className="relative space-y-8 border-l border-dashed border-stone/50 pl-6 sm:pl-10">
-          {shown.map((m) => {
-            const y = yearOf(m.happenedOn);
-            const head = y !== lastYear;
-            lastYear = y;
-            return (
-              <li key={m.id} className="relative">
-                {head && <h2 className="mb-5 font-serif text-[2.2rem] text-moss">{y ?? "Chưa rõ năm"}</h2>}
-                <span aria-hidden className="absolute -left-[31px] top-2 h-3 w-3 rounded-full border-2 border-paper bg-stone sm:-left-[47px]" />
-                <MemoryCard m={m} names={names} />
-              </li>
-            );
-          })}
-        </ol>
+        <div className="space-y-12">
+          {groups.map((g) => (
+            <section key={g.year} id={"y-" + g.year} aria-label={"Năm " + g.year} className="scroll-mt-24">
+              <h2 className="mb-5 font-serif text-[2rem] text-moss">{g.year}</h2>
+              <ul className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+                {g.list.map((m) => <li key={m.id}><MemoryCard m={m} names={names} /></li>)}
+              </ul>
+            </section>
+          ))}
+        </div>
       )}
-      {items.length > limit && <div className="mt-10 flex justify-center"><button type="button" className="btn-soft" onClick={() => setLimit((n) => n + PAGE)}>Xem thêm ký ức</button></div>}
+      {items.length > limit && <div className="mt-10 flex justify-center"><button type="button" className="btn-soft" onClick={() => setLimit((n) => n + PAGE)}>Xem thêm ({items.length - limit})</button></div>}
+      {!ctx.canWrite && data.memories.length > 0 && <p className="mt-10 text-center text-[14.5px] text-stone">Bạn đang ở chế độ chỉ xem. <Link to="/family" className="underline">Về trang chính</Link></p>}
     </div>
   );
 }

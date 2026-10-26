@@ -51,7 +51,7 @@ try {
   await p.click("ul li a"); await p.waitForSelector("h1"); await check("10-ho-so");
   await p.goto(APP + "/family/members/new"); await p.waitForSelector("#fullName"); await check("11-them-ho-so");
   await p.goto(APP + "/family/tree"); await p.waitForSelector("text=Thế hệ thứ 3"); await check("12-gia-pha");
-  await p.goto(APP + "/family/manage"); await p.waitForSelector("text=Mời người thân"); await check("13-quan-ly");
+  await p.goto(APP + "/family/manage"); await p.waitForSelector("h2:has-text('Mời người thân')"); await check("13-quan-ly");
   await p.goto(APP + "/settings"); await p.waitForSelector("#fullName"); await check("14-cai-dat");
   await p.goto(APP + "/privacy"); await check("15-chinh-sach");
   await p.goto(APP + "/"); await p.click("summary"); await p.waitForTimeout(300); await p.screenshot({ path: path.join(outDir, "16-menu.png") });
